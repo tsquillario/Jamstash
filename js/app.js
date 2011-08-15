@@ -15,14 +15,6 @@ function loadTabContent(tab) {
                 $(this).addClass('selected');
                 getAlbums($(this).attr("id"));
             });
-            // Load in a track on click
-            $('#Albums li.song').live('dblclick', function (e) {
-                e.preventDefault();
-                $(this).addClass('playing').siblings().removeClass('playing');
-                var songid = $(this).attr('childid');
-                var albumid = $(this).attr('parentid');
-                playSong(songid, albumid);
-            });
             break;
         case '#tabPlaylists':
             loadPlaylists();
@@ -387,9 +379,11 @@ function getPlaylist(id) {
                     }
                     var track;
                     if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
+                    var time = secondsToTime(child.duration);
                     html = '<li class=\"song ' + rowcolor + '\" childid=\"' + child.id + '\" parentid=\"' + child.parent + '\">';
                     html += '<span class=\"track\">' + track + '</span> ';
                     html += child.title;
+                    html += ' <small>' + time['m'] + ':' + time['s'] + '</small>';
                     html += '</li>';
                     $(html).appendTo("#TrackContainer");
                 });

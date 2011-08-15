@@ -188,6 +188,13 @@ ul.songlist li.song span
     text-align: right;
     width: 30px;
 }
+ul.songlist li small
+{
+    color: #B6B6B6;
+    font-size: 10px;
+    margin: 1px 0 0;
+    float: right;
+}
 ul.songlist li.playing
 {
     background: url('images/play_6x8.png') 9px 7px no-repeat;
@@ -199,10 +206,7 @@ ul.songlist li.selected
     background-color: #4B95E5;
     border-bottom: 1px solid #73ABE7;
 }
-ul.songlist li small
-{
-    font-size: 10px;
-}
+
 .actions
 {
     margin: 5px;
@@ -262,6 +266,7 @@ div#submenu a:hover
 {
     margin: 0 8px;
     float: left;
+    width: 460px;
 }
 #songdetails ul
 {
@@ -275,7 +280,12 @@ div#submenu a:hover
 }
 #songdetails li span.label
 {
-    font-variant: small-caps;
+    color: #B6B6B6;
+    display: block;
+    float: left;
+    margin: 0 4px 0 0;
+    text-align: right;
+    width: 37px;
 }
 ul.preferences 
 {

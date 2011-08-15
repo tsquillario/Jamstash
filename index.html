@@ -63,18 +63,14 @@
             });
 
             // Keyboard shortcuts
-            $('#Artists').keydown(function (e) {
+            $(document).keydown(function (e) {
                 var unicode = e.charCode ? e.charCode : e.keyCode;
+                // right arrow
                 if (unicode >= 65 && unicode <= 90) {
                     var key = findKeyForCode(unicode);
                     var el = '#index_' + key.toUpperCase();
                     $('#Artists').stop().scrollTo(el);
-                }
-            });
-            $(document).keydown(function (e) {
-                var unicode = e.charCode ? e.charCode : e.keyCode;
-                // right arrow
-                if (unicode == 39) {
+                } else if (unicode == 39) {
                     var next = $('ul.songlist li.playing').next();
                     if (!next.length) next = $('ul.songlist li').first();
                     changeTrack(next);
@@ -113,7 +109,17 @@
                 lastChecked = this;
             });
 
-            // Action Menu - Click Events
+            // Main Click Events
+            // Load in a track on click
+            $('ul.songlist li.song').live('dblclick', function (e) {
+                e.preventDefault();
+                $(this).addClass('playing').siblings().removeClass('playing');
+                var songid = $(this).attr('childid');
+                var albumid = $(this).attr('parentid');
+                playSong(songid, albumid);
+            });
+
+            // Action Menu Click Events
             $('a#action_AddToPlaylist').click(function () {
                 var submenu = $('div#submenu');
                 if (submenu.is(":visible")) {
@@ -211,7 +217,7 @@
                 $.cookie('password', null);
             });
 
-        });         // End document.ready
+        });          // End document.ready
 
         var a;
         var audio;
