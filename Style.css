@@ -281,8 +281,7 @@ div#submenu a:hover
 #songdetails li span.label
 {
     color: #B6B6B6;
-    display: block;
-    float: left;
+    display: inline;
     margin: 0 4px 0 0;
     text-align: right;
     width: 37px;
