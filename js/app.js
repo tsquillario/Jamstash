@@ -1,6 +1,6 @@
 ﻿// Global Variables
 var hostURL = location.href;
-var baseURL = 'http://' + location.host + '/rest';
+var baseURL = location.protocol + '//' + location.host + '/rest';
 var username = $.cookie('username');
 var password = $.cookie('password');
 var auth = makeBaseAuth(username, password);
