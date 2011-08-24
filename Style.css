@@ -143,12 +143,14 @@ ul.simplelist li:hover
 {
     background: #F7FBFF;
 }
-ul.mainlist li.index
+ul.simplelist li.index
 {
     background: #EDEDED;
     border-bottom: 1px solid #DDDDDD;
     color: #A1A1A1;
     font-size: 11px;
+    margin: 2px 0;
+    padding: 0 4px;
 }
 ul.mainlist li.selected
 {

@@ -87,15 +87,19 @@
                 }
             });
 
+            // Main Click Events
             // Multiple Select
             $('.noselect').disableTextSelect();
             var lastChecked = null;
             $('ul.songlist li.song').live('click', function (event) {
                 var checkboxclass = 'ul.songlist li.song';
+                var songid = $(this).attr('childid');
+                var albumid = $(this).attr('parentid');
                 if ($(this).hasClass('selected')) {
                     $(this).removeClass('selected');
                 } else {
                     $(this).addClass('selected');
+                    playSong('selected', this, songid, albumid);
                 }
                 if (!lastChecked) {
                     lastChecked = this;
@@ -111,14 +115,13 @@
                 lastChecked = this;
             });
 
-            // Main Click Events
-            // Load in a track on click
+            // Play Track - Global Click Event
             $('ul.songlist li.song').live('dblclick', function (e) {
                 e.preventDefault();
-                $(this).addClass('playing').siblings().removeClass('playing');
+                //$(this).addClass('playing').siblings().removeClass('playing');
                 var songid = $(this).attr('childid');
                 var albumid = $(this).attr('parentid');
-                playSong(songid, albumid);
+                playSong('', this, songid, albumid);
             });
 
             // Action Menu Click Events
@@ -219,7 +222,7 @@
                 $.cookie('password', null);
             });
 
-        });          // End document.ready
+        });            // End document.ready
 
         var a;
         var audio;
@@ -236,10 +239,10 @@
 
         function changeTrack(next) {
             if (!next.length) next = $('ul.songlist li').first();
-            next.addClass('playing').siblings().removeClass('playing');
+            //next.addClass('playing').siblings().removeClass('playing');
             var songid = $(next).attr('childid');
             var albumid = $(next).attr('parentid');
-            playSong(songid, albumid);
+            playSong('', next, songid, albumid);
         }
 
 	</script>
@@ -286,7 +289,16 @@
             </div>
             <div class="clear"></div>
             <div id="Playlists" class="smsection floatleft noselect">
+                <ul class="simplelist"><li class="index">Saved Playlists</li></ul>
                 <ul id="PlaylistContainer" class="simplelist mainlist"></ul>
+                <ul id="AutoPlaylistContainer" class="simplelist mainlist">
+                <li class="index" id="auto">Auto Playlists</li>
+                <li class="item" id="random"><span>5 Random Albums</span></li>
+                <li class="item" id="recent"><span>5 Recent Albums</span></li>
+                <li class="item" id="newest"><span>5 Latest Albums</span></li>
+                <li class="item" id="highest"><span>5 Best Rated Albums</span></li>
+                <li class="item" id="frequent"><span>5 Most Frequent Albums</span></li>
+                </ul>
             </div>
             <div id="Tracks" class="lgsection floatleft noselect">
                 <div class="loading"></div>
