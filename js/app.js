@@ -141,7 +141,8 @@ function playSong(action, el, songid, albumid) {
                     });
                 }
             }
-            $('#songdetails_song').html(title);
+            playhtml = ' <a href=\"#\" onclick=\"javascript:playSong(\'\',\'\', \'' + songid + '\', \'' + albumid + '\'); return false;\" title=\"Play\"><img src=\"images/play_alt_8x8.png\"/></a>';
+            $('#songdetails_song').html(title + playhtml);
             $('#songdetails_artist').html(artist);
             $('#songdetails_album').html(album);
             $('#coverartimage').attr('src', baseURL + '/getCoverArt.view?v=1.5.0&c=subweb&f=json&size=120&id=' + songid);
