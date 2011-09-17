@@ -184,6 +184,9 @@ function playPauseSong() {
         if (changeTrack(play)) {
             $(el).find('img').attr('src', 'images/pause_24x32.png');
             $(el).addClass('playing');
+        } else {
+            var first = $('ul.songlist li').first();
+            changeTrack(first);
         }
     }
 }
