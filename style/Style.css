@@ -33,7 +33,8 @@ img
 	min-height: 600px;
     min-width: 810px;
 }
-#nav {
+#nav 
+{
     height: 36px;
 	padding: 4px 0 0 5px;
 }
@@ -82,6 +83,11 @@ img
     margin: 5px;
     padding: 0;
 }
+.tabcontent
+{
+    height: 600px;
+    min-width: 810px;
+}
 .smsection
 {
     width: 200px;
@@ -114,6 +120,33 @@ img
 .subsection
 {
     margin: 5px 10px;
+}
+.indexlist
+{
+    float: right;
+}
+.indexlist ul
+{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.indexlist li
+{
+    color: #545454;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 4px 9px 10px 0;
+    text-align: right;
+}
+.indexlist li a
+{
+    color: #4B95E5;
+    text-decoration: none;
+}
+.indexlist li a:hover
+{
+    text-decoration: underline;
 }
 .resize
 {
@@ -148,8 +181,9 @@ ul.simplelist
 ul.simplelist li
 {
     font-size: 13px;
-    padding: 1px 8px;
     cursor: pointer;
+    padding: 8px;
+    border-bottom: 1px solid #f2f2f2;
 }
 ul.simplelist li a
 {
@@ -170,6 +204,10 @@ ul.simplelist li.index
     margin: 2px 0;
     padding: 1px 4px;
 }
+ul.simplelist li.index a
+{
+    color: #A7A7A7;
+}
 ul.mainlist li.selected
 {
     color: #f2f2f2;
@@ -178,8 +216,9 @@ ul.mainlist li.selected
 ul.songlist li.album
 {
     font-size: 13px;
-    padding: 1px 4px;
+    padding: 6px 4px;
     height: 50px;
+    border-bottom: 1px solid #f0f0f0;
 }
 ul.songlist li.album a
 {
@@ -196,9 +235,9 @@ ul.songlist .albumart
 ul.songlist li.song
 {
     font-size: 13px;
-    padding: 2px 8px;
+    padding: 8px;
     cursor: pointer;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f0f0f0;
 }
 ul.songlist li.song span
 {
@@ -217,29 +256,32 @@ ul.songlist li small
 }
 ul.songlist li.playing
 {
-    background: url('../images/play_6x8.png') 9px 7px no-repeat;
+    background: url('../images/play_6x8.png') 9px 13px no-repeat;
 }
 ul.songlist li.selected
 {
     color: #f2f2f2;
-    background: url('../images/check_8x7.png') 8px 8px no-repeat;
+    background: url('../images/check_8x7.png') 8px 14px no-repeat;
     background-color: #4B95E5;
     border-bottom: 1px solid #73ABE7;
 }
-
+#ArtistContainer 
+{
+    margin: 0 30px 0 0;
+}
 .actions
 {
     margin: 4px 2px 0 2px;
     padding: 0 5px;   
 }
-div#submenu 
+.submenu 
 {
     position: absolute;
     background: #fff;
     padding: 5px 10px;
-    margin: 0 0 0 1px;
+    margin: 2px 0 0 1px;
 }
-div#submenu a
+.submenu a
 {
     font-size: 12px;
     color: #545454;
@@ -248,9 +290,41 @@ div#submenu a
     padding: 0;
     text-decoration: none;
 }
-div#submenu a:hover
+.submenu a:hover
 {
     text-decoration: underline;
+}
+.positionabove
+{
+    left: 526px;
+    bottom: 55px;
+    margin: 0 0 0 1px;
+    position: absolute;
+    width: 220px;
+    text-align: right;
+}
+#ChatMsgs
+{
+    padding: 5px;
+    text-align: right;
+}
+#ChatMsgs .msg
+{
+    margin: 0 0 5px 0;
+}
+#ChatMsgs .msg span.msg
+{
+    font-size: 12px;
+}
+#ChatMsgs .msg span.user
+{
+    font-size: 10px;
+    color: #B3B8BE;
+}
+#ChatMsgs .msg span.time
+{
+    font-size: 9px;
+    color: #CAD0D7;
 }
 
 /* Player Style */
@@ -259,27 +333,51 @@ div#submenu a:hover
     background: #fff;
     border: 1px solid #cbcbcb;
     margin: 5px 5px 10px 5px;
-    width: 850px;
+    position: relative;
 }
 #audiocontainer
 {
-    width: 650px;
 }
 .audiojs 
 {
-    margin: 10px 5px;
+    width: auto;
+    height: 17px;
+    margin: 0 9px 2px 0;
+    background: none;
+    background: #404040;
+    font-family: inherit;
+    font-size: 10px;
+    box-shadow: none;
+}
+.audiojs .play-pause
+{
+    display: none;
+}
+.audiojs .scrubber
+{
+    height: 5px;
+    margin: 5px;
+}
+.audiojs .time
+{
+    border: none;
+    line-height: 17px;
+    padding: 0 6px 0 6px;
 }
 .playeractions
 {
-    margin: 12px 5px;
+    margin: 9px 20px;
+}
+.playeractionssmall
+{
+    margin: 18px 5px;
 }
 #coverart
 {
-    width: 120px;
-    height: 120px;
+    width: 60px;
+    height: 60px;
     overflow: hidden;
-    border: 1px solid #f2f2f2;
-    margin: 5px;
+    margin: 2px 0 2px 0;
     float: left;
     padding: 2px;
 }
@@ -287,17 +385,18 @@ div#submenu a:hover
 {
     margin: 0 8px;
     float: left;
-    width: 460px;
 }
 #songdetails ul
 {
 	list-style-type: none;
-	margin: 0;
+	margin: 6px 0;
 	padding: 0;
+	height: 30px;
+	overflow: hidden;
 }
 #songdetails li
 {
-    font-size: 12px;
+    font-size: 11px;
 }
 #songdetails li span.label
 {
@@ -351,7 +450,7 @@ a.button {
     color: #6e6e6e;
     font: bold 12px Helvetica, Arial, sans-serif;
     text-decoration: none;
-    padding: 8px 12px 6px;
+    padding: 6px 12px;
     position: relative;
     display: inline-block;
     text-shadow: 0 1px 0 #fff;
@@ -379,7 +478,7 @@ a.button:active {
 }
 .shadow
 {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Form Style */

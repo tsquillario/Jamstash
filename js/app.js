@@ -15,6 +15,11 @@ function loadTabContent(tab) {
                 $(this).addClass('selected');
                 getAlbums($(this).attr("id"));
             });
+            $('.indexlist li a').live('click', function () {
+                var el = '#index_' + $(this).text();
+                $('#Artists').stop().scrollTo(el);
+                return false;
+            });
             break;
         case '#tabPlaylists':
             loadPlaylists();
@@ -54,18 +59,22 @@ function loadArtists(refresh) {
                 req.setRequestHeader('Authorization', auth);
             },
             success: function (data) {
+                var indexlist = '<ul>';
                 $.each(data["subsonic-response"].indexes.index, function (i, index) {
-                    $('<li class=\"index\" id=\"index_' + index.name + '\">' + index.name + '</li>').appendTo("#ArtistContainer");
-                        $.each(index.artist, function (i, artist) {
-                            if (artist.name != undefined) {
-                                var html = "";
-                                html += '<li id=\"' + artist.id + '\" class=\"item\">';
-                                html += '<span>' + artist.name + '</span>';
-                                html += '</li>';
-                                $(html).appendTo("#ArtistContainer");
-                            }
+                    $('<li class=\"index\" id=\"index_' + index.name + '\">' + index.name + '<a href=\"#\" class=\"indextop floatright\">&uarr;</a></li>').appendTo("#ArtistContainer");
+                    indexlist += '<li><a href=\"#\">' + index.name + '</a></li>';
+                    $.each(index.artist, function (i, artist) {
+                        if (artist.name != undefined) {
+                            var html = "";
+                            html += '<li id=\"' + artist.id + '\" class=\"item\">';
+                            html += '<span>' + artist.name + '</span>';
+                            html += '</li>';
+                            $(html).appendTo("#ArtistContainer");
+                        }
                     });
                 });
+                indexlist += '</ul>';
+                $(indexlist).appendTo("#IndexList");
             }
         });
     }
@@ -141,19 +150,54 @@ function playSong(action, el, songid, albumid) {
                     });
                 }
             }
-            playhtml = ' <a href=\"#\" onclick=\"javascript:playSong(\'\',\'\', \'' + songid + '\', \'' + albumid + '\'); return false;\" title=\"Play\"><img src=\"images/play_alt_8x8.png\"/></a>';
-            $('#songdetails_song').html(title + playhtml);
-            $('#songdetails_artist').html(artist);
-            $('#songdetails_album').html(album);
-            $('#coverartimage').attr('src', baseURL + '/getCoverArt.view?v=1.5.0&c=subweb&f=json&size=120&id=' + songid);
+            $('#songdetails_song').html(title);
+            $('#songdetails_song').attr('parentid', albumid);
+            $('#songdetails_song').attr('childid', songid);
+            $('#songdetails_artist').html(artist + ' - ' + album);
+            $('#coverartimage').attr('src', baseURL + '/getCoverArt.view?v=1.5.0&c=subweb&f=json&size=60&id=' + songid);
             if (action != 'selected') {
                 audio.load(baseURL + '/stream.view?v=1.5.0&c=subweb&f=json&id=' + songid);
                 audio.play();
                 $('ul.songlist li.song').removeClass('playing');
                 $(el).addClass('playing');
+                $('#PlayTrack').find('img').attr('src', 'images/pause_24x32.png');
+                $('#PlayTrack').addClass('playing');
             }
         }
     });
+}
+function playPauseSong() {
+    var el = '#PlayTrack';
+    if ($(el).hasClass('playing')) {
+        $(el).find('img').attr('src', 'images/play_24x32.png');
+        $(el).removeClass('playing');
+        $(el).addClass('paused');
+        audio.playPause();
+    } else if ($(el).hasClass('paused')) {
+        $(el).find('img').attr('src', 'images/pause_24x32.png');
+        $(el).removeClass('paused');
+        $(el).addClass('playing');
+        audio.playPause();
+    } else {
+        // Start playing song
+        var play = $('ul.songlist li.selected');
+        if (changeTrack(play)) {
+            $(el).find('img').attr('src', 'images/pause_24x32.png');
+            $(el).addClass('playing');
+        }
+    }
+}
+function changeTrack(next) {
+    var songid = $(next).attr('childid');
+    if (songid != undefined) {
+        if (!next.length) next = $('ul.songlist li').first();
+        //next.addClass('playing').siblings().removeClass('playing');
+        var albumid = $(next).attr('parentid');
+        playSong('', next, songid, albumid);
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function search(type, query) {
@@ -196,6 +240,90 @@ function search(type, query) {
         }
     });
 }
+var starttime;
+function loadChatMessages() {
+    $.ajax({
+        url: baseURL + '/getChatMessages.view?v=1.5.0&c=subweb&f=json',
+        method: 'GET',
+        dataType: 'json',
+        beforeSend: function (req) {
+            req.setRequestHeader('Authorization', auth);
+        },
+        success: function (data) {
+            $('#ChatMsgs').empty();
+            var sorted = data["subsonic-response"].chatMessages.chatMessage.sort(function (a, b) {
+                return a.time - b.time;
+            });
+            $.each(sorted, function (i, msg) {
+                var chathtml = '<div class=\"msg\">';
+                chathtml += '<span class=\"time\">' + $.format.date(new Date(parseInt(msg.time)), 'hh:mm:ss a') + '</span> ';
+                chathtml += '<span class=\"user\">' + msg.username + '</span></br>';
+                chathtml += '<span class=\"msg\">' + msg.message + '</span>';
+                chathtml += '</div>';
+                $(chathtml).appendTo("#ChatMsgs");
+                if (i = 1) {
+                    starttime = msg.time;
+                }
+            });
+        }
+    });
+}
+var updater;
+function updateChatMessages() {
+    updater = $.periodic({ period: 2000, decay: 1.5, max_period: 1800000 }, function () {
+        $.ajax({
+            periodic: this,
+            url: baseURL + '/getChatMessages.view?v=1.5.0&c=subweb&f=json&since=' + starttime,
+            method: 'GET',
+            dataType: 'json',
+            beforeSend: function (req) {
+                req.setRequestHeader('Authorization', auth);
+            },
+            success: function (data) {
+                if (data["subsonic-response"].chatMessages.chatMessage === undefined) {
+                    this.periodic.increment();
+                } else {
+                    var msgs = [];
+                    if (data["subsonic-response"].chatMessages.chatMessage.length > 0) {
+                        msgs = data["subsonic-response"].chatMessages.chatMessage;
+                    } else {
+                        msgs[0] = data["subsonic-response"].chatMessages.chatMessage;
+                    }
+                    this.periodic.reset();
+                    var sorted = msgs.sort(function (a, b) {
+                        return a.time - b.time;
+                    });
+                    $.each(sorted, function (i, msg) {
+                        var chathtml = '<div class=\"msg\">';
+                        chathtml += '<span class=\"time\">' + $.format.date(new Date(parseInt(msg.time)), 'hh:mm:ss a') + '</span> ';
+                        chathtml += '<span class=\"user\">' + msg.username + '</span></br>';
+                        chathtml += '<span class=\"msg\">' + msg.message + '</span>';
+                        chathtml += '</div>';
+                        $(chathtml).appendTo("#ChatMsgs");
+                        if (i = 1) {
+                            starttime = msg.time;
+                        }
+                    });
+                }
+            }
+        });
+    });
+}
+function addChatMessage(msg) {
+    $.ajax({
+        type: 'POST',
+        url: baseURL + '/addChatMessage.view',
+        data: { v: "1.5.0", c: "subweb", f: "json", message: msg },
+        beforeSend: function (req) {
+            req.setRequestHeader('Authorization', auth);
+        },
+        success: function () {
+            updater.reset();
+            //loadChatMessages();        
+        },
+        traditional: true // Fixes POST with an array in JQuery 1.4
+    });
+}
 
 function loadPlaylists(refresh) {
     if (refresh) {
@@ -224,7 +352,7 @@ function loadPlaylists(refresh) {
     }
 }
 function loadPlaylistsForMenu() {
-    $('#submenu').empty();
+    $('#submenu_AddToPlaylist').empty();
     $.ajax({
         url: baseURL + '/getPlaylists.view?v=1.5.0&c=subweb&f=json',
         method: 'GET',
@@ -234,7 +362,7 @@ function loadPlaylistsForMenu() {
         },
         success: function (data) {
             $.each(data["subsonic-response"].playlists.playlist, function (i, playlist) {
-                $("<a href=\"#\" onclick=\"javascript:addToPlaylist('" + playlist.id + "'); return false;\">" + playlist.name + "</a><br />").appendTo("#submenu");
+                $("<a href=\"#\" onclick=\"javascript:addToPlaylist('" + playlist.id + "'); return false;\">" + playlist.name + "</a><br />").appendTo("#submenu_AddToPlaylist");
             });
             //$("<a href=\"#\" onclick=\"javascript:addToPlaylist('new'); return false;\">+ New Playlist</a><br />").appendTo("#submenu");
         }

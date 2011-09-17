@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>SubWeb</title>
+    <title>Subsonic - MiniSub</title>
     <link rel="icon" href="images/subsonic_48x48.png" sizes="48x48"/>
     <link rel="icon" href="images/subsonic_32x32.png" sizes="32x32"/>
     <link href="style/Style.css" rel="stylesheet" type="text/css" />
@@ -12,6 +12,8 @@
     <script src="js/jquery.disable.text.select.pack.js" type="text/javascript"></script>
     <script src="js/jquery.cookie.js" type="text/javascript"></script>
     <script src="js/jquery.base64.js" type="text/javascript"></script>
+    <script src="js/jquery.dateFormat-1.0.js" type="text/javascript"></script>
+    <script src="js/jquery.periodic.js" type="text/javascript"></script>
     <script src="js/jquery.shuffle.js" type="text/javascript"></script>
     <script src="js/app.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -65,24 +67,27 @@
 
             // Keyboard shortcuts
             $(document).keydown(function (e) {
-                var unicode = e.charCode ? e.charCode : e.keyCode;
-                // right arrow
-                if (unicode >= 65 && unicode <= 90) {
-                    var key = findKeyForCode(unicode);
-                    var el = '#index_' + key.toUpperCase();
-                    $('#Artists').stop().scrollTo(el);
-                } else if (unicode == 39) {
-                    var next = $('ul.songlist li.playing').next();
-                    if (!next.length) next = $('ul.songlist li').first();
-                    changeTrack(next);
-                    // back arrow
-                } else if (unicode == 37) {
-                    var prev = $('ul.songlist li.playing').prev();
-                    if (!prev.length) prev = $('ul.songlist li').last();
-                    changeTrack(prev);
-                    // spacebar
-                } else if (unicode == 32) {
-                    audio.playPause();
+                var source = e.target.id;
+                if (source != 'Search' && source != 'ChatMsg') {
+                    var unicode = e.charCode ? e.charCode : e.keyCode;
+                    // right arrow
+                    if (unicode >= 65 && unicode <= 90) {
+                        var key = findKeyForCode(unicode);
+                        var el = '#index_' + key.toUpperCase();
+                        $('#Artists').stop().scrollTo(el);
+                    } else if (unicode == 39) {
+                        var next = $('ul.songlist li.playing').next();
+                        if (!next.length) next = $('ul.songlist li').first();
+                        changeTrack(next);
+                        // back arrow
+                    } else if (unicode == 37) {
+                        var prev = $('ul.songlist li.playing').prev();
+                        if (!prev.length) prev = $('ul.songlist li').last();
+                        changeTrack(prev);
+                        // spacebar
+                    } else if (unicode == 32) {
+                        playPauseSong();
+                    }
                 }
             });
 
@@ -94,6 +99,9 @@
                 var checkboxclass = 'ul.songlist li.song';
                 var songid = $(this).attr('childid');
                 var albumid = $(this).attr('parentid');
+                if (!event.ctrlKey) {
+                    $('ul.songlist li.song').removeClass('selected');
+                }
                 if ($(this).hasClass('selected')) {
                     $(this).removeClass('selected');
                 } else {
@@ -122,10 +130,13 @@
                 var albumid = $(this).attr('parentid');
                 playSong('', this, songid, albumid);
             });
-
+            $('a.indextop').live('click', function (e) {
+                $('#Artists').stop().scrollTo('#index_A');
+                return false;
+            });
             // Action Menu Click Events
             $('a#action_AddToPlaylist').click(function () {
-                var submenu = $('div#submenu');
+                var submenu = $('div#submenu_AddToPlaylist');
                 if (submenu.is(":visible")) {
                     submenu.fadeOut();
                 } else {
@@ -205,6 +216,10 @@
             });
 
             // Player Click Events
+            $('#PlayTrack').live('click', function () {
+                playPauseSong();
+                return false;
+            });
             $('#NextTrack').live('click', function () {
                 var next = $('ul.songlist li.playing').next();
                 changeTrack(next);
@@ -218,6 +233,32 @@
             $('#Shuffle').live('click', function () {
                 $('ul.songlist').shuffle();
                 return false;
+            });
+            $('a#Chat').click(function () {
+                var submenu = $('div#submenu_Chat');
+                if (submenu.is(":visible")) {
+                    submenu.fadeOut();
+                    updater.cancel();
+                } else {
+                    //loadChatMessages();
+                    updateChatMessages();
+                    submenu.fadeIn(400);
+                }
+                $('input#ChatMsg').focus();
+            });
+            $('#action_AddChatMsg').click(function () {
+                var msg = $('#ChatMsg').val();
+                if (msg != '') {
+                    addChatMessage(msg);
+                }
+                $('#ChatMsg').val("");
+                return false;
+            });
+            $('input#ChatMsg').keydown(function (e) {
+                var unicode = e.charCode ? e.charCode : e.keyCode;
+                if (unicode == 13) {
+                    $('#action_AddChatMsg').click();
+                }
             });
 
             // Preferences Click Events
@@ -244,22 +285,18 @@
                 $.cookie('css', style, { expires: 365, path: '/' });
                 location.reload(true);
             });
-        });             // End document.ready
+        });                                      // End document.ready
 
         $(window).load(function () {
-            var smwidth = $('.smsection').width() + 52;
             // Set Default Height
-            $('.tabcontent').css({ 'height': (($(window).height() - 252)) + 'px' });
-            $('.lgsection').css({ 'width': (($(window).width() - smwidth)) + 'px' });
             if ($.cookie('defaultsmwidth')) {
                 var width = $.cookie('defaultsmwidth');
                 $('.smsection').css({ 'width': (width) + 'px' });
-                resizeContent();
             }
-
-            $(window).resize(function () {
-                resizeContent();
-            });
+            resizeContent();
+        });
+        $(window).resize(function () {
+            resizeContent();
         });
         function resizeSMSection(width) {
             var smwidth = $('.smsection').width();
@@ -270,8 +307,13 @@
         }
         function resizeContent() {
             var smwidth = $('.smsection').width() + 52;
-            $('.tabcontent').css({ 'height': (($(window).height() - 252)) + 'px' });
-            $('.lgsection').css({ 'width': (($(window).width() - smwidth)) + 'px' });
+            var lgwidth = $(window).width() - smwidth;
+            if ((smwidth + lgwidth) >= 810) {
+                $('.lgsection').css({ 'width': (lgwidth) + 'px' });
+            } else {
+                $('.lgsection').css({ 'width': '558px' });
+            }
+            $('.tabcontent').css({ 'height': (($(window).height() - 183)) + 'px' });
         }
         var a;
         var audio;
@@ -285,14 +327,6 @@
             // Load in the first track
             audio = a[0];
         });
-
-        function changeTrack(next) {
-            if (!next.length) next = $('ul.songlist li').first();
-            //next.addClass('playing').siblings().removeClass('playing');
-            var songid = $(next).attr('childid');
-            var albumid = $(next).attr('parentid');
-            playSong('', next, songid, albumid);
-        }
 
 	</script>
 </head>
@@ -315,13 +349,14 @@
             </div>
             <div class="actions floatright">
                 <a href="#" class="button" id="action_AddToPlaylist" title="Add Selected To Playlist">+ Playlist <img src="images/arrow_down_8x8.png" /></a>
-                <div id="submenu" class="shadow" style="display: none;"></div>
+                <div id="submenu_AddToPlaylist" class="submenu shadow" style="display: none;"></div>
                 <a href="#" class="button" id="action_SelectAll" title="Select All">All</a>
                 <a href="#" class="button" id="action_SelectNone" title="Select None">None</a>
                 <input type="text" id="Search" class="medium" /><a href="#" class="button" id="action_Search" title="Search"><img src="images/magnifying_glass_alt_12x12.png" /></a>
             </div>
             <div class="clear"></div>
             <div id="Artists" class="smsection floatleft noselect" tabindex="0">
+                <div id="IndexList" class="indexlist"></div>
                 <ul id="ArtistContainer" class="simplelist mainlist"></ul>
             </div>
             <div class="resize"><a href="#" id="IncreaseWidth"><img src="images/plus_8x8.png" /></a><br /><a href="#" id="DecreaseWidth"><img src="images/minus_8x2.png" /></a></div>
@@ -389,24 +424,31 @@
         <!-- Audio Player -->
         <div class="clear"></div>
         <div id="player">
-            <div id="coverart"><img id="coverartimage" src="images/albumdefault.jpg" /></div>
-            <div id="audiocontainer" class="floatleft">
-                <div class="floatleft"><audio src="" preload="none" /></div>
-                <div class="playeractions floatleft">
-                <a href="#" class="button" id="PreviousTrack" title="Previous Track"><img src="images/first_12x12.png" /></a>
-                <a href="#" class="button" id="NextTrack" title="Next Track"><img src="images/last_12x12.png" /></a>
-                <a href="#" class="button" id="Shuffle" title="Shuffle"><img src="images/fork_11x12.png" /></a>
-                </div>
+            <div class="playeractions floatleft">
+                <a href="#" class="button" id="PreviousTrack" title="Previous Track"><img src="images/first_24x24.png" /></a>
+                <a href="#" class="button" id="PlayTrack" title="Play/Pause"><img src="images/play_24x32.png" /></a>
+                <a href="#" class="button" id="NextTrack" title="Next Track"><img src="images/last_24x24.png" /></a>
             </div>
+            <div id="coverart"><img id="coverartimage" src="images/albumdefault_60.jpg" /></div>
             <div id="songdetails" class="floatleft">
                 <ul>
-                <li><span class="label">Song: </span><span id="songdetails_song"></span></li>
-                <li><span class="label">Album: </span><span id="songdetails_album"></span></li>
-                <li><span class="label">Artist: </span><span id="songdetails_artist"></span></li>
+                <li id="songdetails_song"></li>
+                <li id="songdetails_artist"></li>
                 </ul>
+                <div id="audiocontainer" class="floatleft">
+                <div class="floatleft"><audio src="" preload="none" /></div>
+                </div>
+            </div>
+            <div id="submenu_Chat" class="submenu positionabove shadow" style="display: none;">
+                <div id="ChatMsgs"></div>
+                <input type="text" id="ChatMsg" class="medium" /><a href="#" class="button" id="action_AddChatMsg" title="Add Chat Message"><img src="images/comment_stroke_12x11.png" /></a>
+            </div>
+            <div class="playeractionssmall floatleft">
+                <a href="#" class="button" id="Shuffle" title="Shuffle"><img src="images/fork_11x12.png" /></a>
+                <a href="#" class="button" id="Chat" title="Chat"><img src="images/chat_alt_stroke_12x12.png" /> Chat</a>
+                <span id="Notifications"></span>
             </div>
             <div class="clear"></div>
-            
         </div>
 
     <div class="clear"></div>
