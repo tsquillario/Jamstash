@@ -7,3 +7,13 @@ External Subsonic Music Player
 8/24/2011 .005 playlist fixes, added auto playlists
 8/25/2011 .006 flexible layout, added buttons to player
 9/17/2011 .007 display tweaks for tablet, chat feature added
+9/17/2011 .008 pause/play button tweak
+9/30/2011 .009 now playing support, added back button to track list
+
+TO DO: (In no particular order...)
+- Jukebox Control
+- Download Links
+- What Other Are Listening To support
+- Ratings
+- Chrome App???
+- Add notification when trial license has expired

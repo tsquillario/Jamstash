@@ -59,15 +59,18 @@ img
     font-size: 17px;
 	text-decoration: none;
 	background: #f4f4f4;
-    border-top: 1px solid #CBCBCB;
-    border-left: 1px solid #CBCBCB;
-    border-right: 1px solid #CBCBCB;
+    border-top: 1px solid #E4E4E4;
+    border-left: 1px solid #E4E4E4;
+    border-right: 1px solid #E4E4E4;
 }
 #nav a.active  
 {
     color: #545454; 
     background: #EDEDED; 
 	padding: 6px 15px 6px 15px;
+	border-top: 1px solid #CBCBCB;
+    border-left: 1px solid #CBCBCB;
+    border-right: 1px solid #CBCBCB;
 }
 #nav a:hover { color: #545454; }
 #content 
@@ -238,6 +241,7 @@ ul.songlist li.song
     padding: 8px;
     cursor: pointer;
     border-bottom: 1px solid #f0f0f0;
+    height: 19px;
 }
 ul.songlist li.song span
 {
@@ -245,7 +249,25 @@ ul.songlist li.song span
     float: left;
     padding: 0 10px 0 0;
     text-align: right;
+}
+ul.songlist li.song span.track
+{
     width: 30px;
+    text-align: right;
+}
+ul.songlist li.song span.album
+{
+    color: #B3B8BE;
+    font-size: 10px;
+    padding: 2px 0 0 0;
+}
+ul.songlist li.back a
+{
+    color: #4B95E5;
+}
+ul.songlist li.back a:hover
+{
+    text-decoration: underline;
 }
 ul.songlist li small
 {
@@ -294,7 +316,7 @@ ul.songlist li.selected
 {
     text-decoration: underline;
 }
-.positionabove
+#submenu_Chat
 {
     left: 526px;
     bottom: 55px;
@@ -325,6 +347,37 @@ ul.songlist li.selected
 {
     font-size: 9px;
     color: #CAD0D7;
+}
+#submenu_NowPlaying
+{
+    left: 641px;
+    bottom: 55px;
+    margin: 0 0 0 1px;
+    position: absolute;
+    width: 220px;
+    text-align: right;
+}
+#NowPlayingList
+{
+    padding: 5px;
+    text-align: right;
+}
+#NowPlayingList .msg
+{
+    margin: 0 0 5px 0;
+    font-size: 11px;
+}
+#NowPlayingList span.user
+{
+    font-size: 10px;
+    color: #B3B8BE;
+}
+#NowPlayingList span.artist
+{
+    font-style: italic;
+}
+#NowPlayingList span.title
+{
 }
 
 /* Player Style */
