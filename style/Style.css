@@ -124,6 +124,11 @@ img
 {
     margin: 5px 10px;
 }
+.subsection small
+{
+    font-size: 10px;
+    margin: 0 5px;
+}
 .indexlist
 {
     float: right;
@@ -223,10 +228,10 @@ ul.songlist li.album
     height: 50px;
     border-bottom: 1px solid #f0f0f0;
 }
-ul.songlist li.album a
+ul.songlist li.album a.title
 {
     display: block;
-    padding: 16px 60px;
+    padding: 16px 90px;
 }
 ul.songlist .albumart
 {
@@ -234,6 +239,22 @@ ul.songlist .albumart
     height: 50px;
     overflow: hidden;
     float: left;
+}
+ul.songlist .albumplay
+{
+    float: left;
+}
+ul.songlist li.album a.play
+{
+    width: 20px;
+    height: 50px;
+    display: block;
+    margin: 0 5px 0 0;
+    background: url('../images/play_gl_6x8.png') no-repeat 6px center;
+}
+ul.songlist li.album a.play:hover
+{
+    background: url('../images/play_6x8.png') no-repeat 6px center #DEECFB;
 }
 ul.songlist li.song
 {
@@ -334,16 +355,16 @@ ul.songlist li.selected
 {
     margin: 0 0 5px 0;
 }
-#ChatMsgs .msg span.msg
+#ChatMsgs span.msg
 {
     font-size: 12px;
 }
-#ChatMsgs .msg span.user
+#ChatMsgs span.user
 {
     font-size: 10px;
     color: #B3B8BE;
 }
-#ChatMsgs .msg span.time
+#ChatMsgs span.time
 {
     font-size: 9px;
     color: #CAD0D7;

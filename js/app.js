@@ -1,10 +1,14 @@
 ﻿// Global Variables
 var hostURL = location.href;
-var baseURL = location.protocol + '//' + location.host + '/rest';
+var baseURL;
+if ($.cookie('subdirectory')) {
+    baseURL = location.protocol + '//' + location.host + '/' + $.cookie('subdirectory') + '/rest';
+} else {
+    baseURL = location.protocol + '//' + location.host + '/rest';
+}
 var username = $.cookie('username');
 var password = $.cookie('password');
 var auth = makeBaseAuth(username, password);
-
 function loadTabContent(tab) {
     switch (tab) {
         case '#tabLibrary':
@@ -79,7 +83,7 @@ function loadArtists(refresh) {
         });
     }
 }
-function getAlbums(id, albumid) {
+function getAlbums(id, artistid, autoplay) {
     $.ajax({
         url: baseURL + '/getMusicDirectory.view?v=1.6.0&c=subweb&f=json&id=' + id,
         method: 'GET',
@@ -108,16 +112,17 @@ function getAlbums(id, albumid) {
                     }
 
                     if (child.isDir == true) {
-                        albumhtml = '<li class=\"album ' + rowcolor + '\">';
+                        albumhtml = '<li class=\"album ' + rowcolor + '\" childid=\"' + child.id + '\" parentid=\"' + child.parent + '\">';
+                        albumhtml += '<div class=\"albumplay\"><a class=\"play\" href=\"\" title=\"Play Album\"></a></div>';
                         albumhtml += '<div class=\"albumart\"><img class=\"floatleft\" src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&size=50&id=' + child.coverArt + '\" /></div>';
-                        albumhtml += '<a href=\"#\" onclick=\"javascript:getAlbums(\'' + child.id + '\', \'' + child.parent + '\'); return false;\">' + child.title + '</a>';
+                        albumhtml += '<a href=\"#\" class=\"title\" onclick=\"javascript:getAlbums(\'' + child.id + '\', \'' + child.parent + '\'); return false;\">' + child.title + '</a>';
                         albumhtml += '</li>';
                         $(albumhtml).appendTo("#AlbumContainer");
                     } else {
                         var track;
                         if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
                         if (i == 0) {
-                            var backhtml = '<li class=\"back\"><a href=\"#\" onclick=\"javascript:getAlbums(\'' + albumid + '\'); return false;\">&laquo; Back</a></li>';
+                            var backhtml = '<li class=\"back\"><a href=\"#\" onclick=\"javascript:getAlbums(\'' + artistid + '\'); return false;\">&laquo; Back</a></li>';
                             $(backhtml).appendTo("#AlbumContainer");
                         }
                         var time = secondsToTime(child.duration);
@@ -130,6 +135,12 @@ function getAlbums(id, albumid) {
                         $(albumhtml).appendTo("#AlbumContainer");
                     }
                 });
+                if (autoplay) {
+                    var firstsong = $('ul.songlist li.song:first');
+                    var songid = $(firstsong).attr('childid');
+                    var albumid = $(firstsong).attr('parentid');
+                    playSong('', firstsong, songid, albumid);
+                }
             }
         }
     });

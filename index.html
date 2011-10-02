@@ -121,6 +121,13 @@
                 }
                 lastChecked = this;
             });
+            // Albums
+            $('li.album a.play').live('click', function (e) {
+                var albumid = $(this).parent().parent().attr('childid');
+                var artistid = $(this).parent().parent().attr('parentid');
+                getAlbums(albumid, artistid, true);
+                return false;
+            });
 
             // Play Track - Global Click Event
             $('ul.songlist li.song').live('dblclick', function (e) {
@@ -292,13 +299,21 @@
                 $.cookie('username', null);
                 $.cookie('password', null);
             });
+            $('#SaveSubDirectory').live('click', function () {
+                var subdirectory = $('#SubDirectory').val();
+                if (subdirectory != "") {
+                    $.cookie('subdirectory', subdirectory, { expires: 365 });
+                    location.reload(true);
+                }
+                return false;
+            });
             $('#StyleSwitcher').live('change', function () {
                 var style = $(this).val();
                 $('link').attr('href', style);
                 $.cookie('css', style, { expires: 365, path: '/' });
                 location.reload(true);
             });
-        });                                        // End document.ready
+        });       // End document.ready
 
         $(window).load(function () {
             // Set Default Height
@@ -369,7 +384,7 @@
                 <a href="#" class="button" id="action_RefreshArtists" title="Refresh Artist List"><img src="images/reload_9x11.png" /></a>
             </div>
             <div class="actions floatright">
-                <a href="#" class="button" id="action_AddToPlaylist" title="Add Selected To Playlist">+ Playlist <img src="images/arrow_down_8x8.png" /></a>
+                <a href="#" class="button" id="action_AddToPlaylist" title="Add Selected To Playlist">+ Playlist</a>
                 <div id="submenu_AddToPlaylist" class="submenu shadow" style="display: none;"></div>
                 <a href="#" class="button" id="action_SelectAll" title="Select All">All</a>
                 <a href="#" class="button" id="action_SelectNone" title="Select None">None</a>
@@ -416,6 +431,7 @@
             $(document).ready(function () {
                 $('#Username').val($.cookie('username'));
                 $('#Password').val($.cookie('password'));
+                $('#SubDirectory').val($.cookie('subdirectory'));
             });
         </script>
             <div class="fullsection floatleft">
@@ -426,6 +442,13 @@
                     <input type="password" id="Password" name="Password" class="large"/><br />
                     <a href="#" class="button submit floatright" id="SavePreferences" title="Save">Save</a>
                     <a href="#" class="button submit floatright" id="ResetPreferences" title="Reset">Reset</a>
+                </div>
+                <div class="clear"></div>
+                <div class="subsection floatleft">
+                    <label for="SubDirectory">Subdirectory</label><br />
+                    <small>*For custom installations</small><br />
+                    <input type="text" id="SubDirectory" name="SubDirectory" class="large"/><br />
+                    <a href="#" class="button submit floatright" id="SaveSubDirectory" title="Save">Save</a>
                 </div>
                 <div class="clear"></div>
                 <div class="subsection floatleft">
