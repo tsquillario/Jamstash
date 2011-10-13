@@ -1,28 +1,15 @@
-/*
- * jQuery shuffle
+/**
+ * jQuery Shuffle (http://mktgdept.com/jquery-shuffle)
+ * A jQuery plugin for shuffling a set of elements
  *
- * Copyright (c) 2008 Ca-Phun Ung <caphun at yelotofu dot com>
- * Dual licensed under the MIT (MIT-LICENSE.txt)
- * and GPL (GPL-LICENSE.txt) licenses.
+ * v0.0.1 - 13 November 2009
  *
- * http://yelotofu.com/labs/jquery/snippets/shuffle/
+ * Copyright (c) 2009 Chad Smith (http://twitter.com/chadsmith)
+ * Dual licensed under the MIT and GPL licenses.
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.opensource.org/licenses/gpl-license.php
  *
- * Shuffles an array or the children of a element container.
- * This uses the Fisher-Yates shuffle algorithm <http://jsfromhell.com/array/shuffle [v1.0]>
- */
- 
-(function($){
-
-	$.fn.shuffle = function() {
-		return this.each(function(){
-			var items = $(this).children().clone(true);
-			return (items.length) ? $(this).html($.shuffle(items)) : this;
-		});
-	}
-	
-	$.shuffle = function(arr) {
-		for(var j, x, i = arr.length; i; j = parseInt(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x);
-		return arr;
-	}
-	
-})(jQuery);
+ * Shuffle elements using: $(selector).shuffle() or $.shuffle(selector)
+ *
+ **/
+(function(d){d.fn.shuffle=function(c){c=[];return this.each(function(){c.push(d(this).clone(true))}).each(function(a,b){d(b).replaceWith(c[a=Math.floor(Math.random()*c.length)]);c.splice(a,1)})};d.shuffle=function(a){return d(a).shuffle()}})(jQuery);
