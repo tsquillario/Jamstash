@@ -13,41 +13,9 @@ function loadTabContent(tab) {
     switch (tab) {
         case '#tabLibrary':
             loadArtists();
-            // Load Albums Click Event
-            $('ul#ArtistContainer li.item').live('click', function () {
-                $('ul#AutoAlbumContainer li').removeClass('selected');
-                $('ul#ArtistContainer li').removeClass('selected');
-                $(this).addClass('selected');
-                getAlbums($(this).attr("id"), '', '', '#AlbumContainer');
-            });
-            $('.indexlist li a').live('click', function () {
-                var el = '#index_' + $(this).text();
-                $('#Artists').stop().scrollTo(el);
-                return false;
-            });
-            $('ul#AutoAlbumContainer li.item').live('click', function () {
-                $('ul#AutoAlbumContainer li').removeClass('selected');
-                $('ul#ArtistContainer li').removeClass('selected');
-                $(this).addClass('selected');
-                getAlbumListBy($(this).attr("id"));
-            });
             break;
         case '#tabPlaylists':
             loadPlaylists();
-            // Load Playlist Click Event
-            $('ul#PlaylistContainer li.item').live('click', function () {
-                $('ul#PlaylistContainer li').removeClass('selected');
-                $(this).addClass('selected');
-                getPlaylist($(this).attr("id"), '', '#TrackContainer');
-            });
-            $('ul#PlaylistContainer li.item a.play').live('click', function () {
-                getPlaylist($(this).parent().parent().attr("id"), 'autoplay', '#CurrentPlaylistContainer');
-                return false;
-            });
-            $('ul#PlaylistContainer li.item a.add').live('click', function () {
-                getPlaylist($(this).parent().parent().attr("id"), '', '#CurrentPlaylistContainer');
-                return false;
-            });
             break;
         case '#tabPreferences':
             //loadPreferences();
