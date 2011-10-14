@@ -12,6 +12,7 @@ External Subsonic Music Player
 10/1/2011 .010 fix for subdirectory custom installs
 10/2/2011 .011 added play button from album list
 10/13/2011 .012 added Current Playlist, fixed some bugs
+10/14/2011 .013 moved auto playlists, album display tweaks
 
 TO DO: (In no particular order...)
 - Jukebox Control

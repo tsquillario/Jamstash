@@ -105,9 +105,9 @@
                 getAlbums(albumid, artistid, 'add', '#CurrentPlaylistContainer');
                 return false;
             });
-            $('li.album a.title').live('click', function (e) {
-                var albumid = $(this).parent().attr('childid');
-                var artistid = $(this).parent().attr('parentid');
+            $('li.album').live('click', function (e) {
+                var albumid = $(this).attr('childid');
+                var artistid = $(this).attr('parentid');
                 getAlbums(albumid, artistid, '', '#AlbumContainer');
                 return false;
             });
@@ -438,6 +438,14 @@
                         <li><a href="#" id="DecreaseWidth" title="Decrease Width"><img src="images/minus_8x2.png" /></a></li>
                         </ul>
                     </div>
+                    <ul id="AutoAlbumContainer" class="simplelist mainlist">
+                    <li class="index" id="auto">Auto Albums</li>
+                    <li class="item" id="random"><span>Random</span></li>
+                    <li class="item" id="recent"><span>Recently Played</span></li>
+                    <li class="item" id="newest"><span>Recently Added</span></li>
+                    <li class="item" id="highest"><span>Top Rated</span></li>
+                    <li class="item" id="frequent"><span>Most Played</span></li>
+                    </ul>
                     <ul id="ArtistContainer" class="simplelist mainlist"></ul>
                     </div>
                 </div>
@@ -467,14 +475,6 @@
                     <div class="padder">
                     <ul class="simplelist"><li class="index">Saved Playlists</li></ul>
                     <ul id="PlaylistContainer" class="simplelist mainlist"></ul>
-                    <ul id="AutoPlaylistContainer" class="simplelist mainlist">
-                    <li class="index" id="auto">Auto Playlists</li>
-                    <li class="item" id="random"><span>5 Random Albums</span></li>
-                    <li class="item" id="recent"><span>5 Recent Albums</span></li>
-                    <li class="item" id="newest"><span>5 Latest Albums</span></li>
-                    <li class="item" id="highest"><span>5 Best Rated Albums</span></li>
-                    <li class="item" id="frequent"><span>5 Most Frequent Albums</span></li>
-                    </ul>
                     </div>
                 </div>
                 <ul id="TrackContainer" class="simplelist songlist"></ul>

@@ -289,7 +289,14 @@ ul.songlist li.album
 ul.songlist li.album a.title
 {
     display: block;
-    padding: 16px 115px;
+    padding: 9px 115px 0px;
+    margin-bottom: -3px;
+}
+ul.songlist li.album span.artist
+{
+    font-size: 11px;
+    color: #78B0EC;
+    padding-left: 15px;
 }
 ul.songlist .albumart
 {
@@ -402,7 +409,7 @@ ul.songlist li.selected
     background-color: #4B95E5;
     border-bottom: 1px solid #73ABE7;
 }
-#ArtistContainer 
+#ArtistContainer, #AutoAlbumContainer
 {
     margin: 0 30px 0 0;
 }
