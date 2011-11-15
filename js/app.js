@@ -188,6 +188,7 @@ function refreshRowColor() {
         $(this).addClass(rowcolor);
     });
 }
+var scrobbled = false;
 function playSong(el, songid, albumid) {
     $.ajax({
         url: baseURL + '/getMusicDirectory.view?v=1.6.0&c=subweb&f=json&id=' + albumid,
@@ -220,6 +221,24 @@ function playSong(el, songid, albumid) {
             $(el).addClass('playing');
             $('#PlayTrack').find('img').attr('src', 'images/pause_24x32.png');
             $('#PlayTrack').addClass('playing');
+            scrobbleSong(false);
+            scrobbled = false;
+        }
+    });
+}
+function scrobbleSong(submission) {
+    var songid = $('#songdetails_song').attr('childid');
+    $.ajax({
+        url: baseURL + '/scrobble.view?v=1.6.0&c=subweb&f=json&id=' + songid + "&submission=" + submission,
+        method: 'GET',
+        dataType: 'json',
+        beforeSend: function (req) {
+            req.setRequestHeader('Authorization', auth);
+        },
+        success: function () {
+            if (submission) {
+                scrobbled = true;
+            }
         }
     });
 }
@@ -295,10 +314,8 @@ function search(type, query) {
 
                     var track;
                     if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
-                    albumhtml = '<li class=\"song ' + rowcolor + '\" childid=\"' + child.id + '\" parentid=\"' + child.parent + '\">';
-                    albumhtml += '<span class=\"track\">' + track + '</span> ';
-                    albumhtml += child.title;
-                    albumhtml += '</li>';
+                    var time = secondsToTime(child.duration);
+                    albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.album, time['m'], time['s']);
                     $(albumhtml).appendTo("#AlbumContainer");
                 });
             }

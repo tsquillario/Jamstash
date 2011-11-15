@@ -418,6 +418,23 @@
                     var next = $('#CurrentPlaylistContainer li.playing').next();
                     changeTrack(next);
                 },
+                updatePlayhead: function (percent) {
+                    var player = this.settings.createPlayer;
+                    var scrubber = $(this.wrapper).find("." + player.scrubberClass);
+                    var progress = $(this.wrapper).find("." + player.progressClass);
+
+                    progress.css('width', (scrubber.get(0).offsetWidth * percent) + 'px');
+
+                    var played = $(this.wrapper).find("." + player.playedClass);
+                    var p = this.duration * percent,
+                        m = Math.floor(p / 60),
+                        s = Math.floor(p % 60);
+                    played.html((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
+
+                    if (!scrobbled && p > 30 && (percent > 0.5 || p > 480)) {
+                        scrobbleSong(true);
+                    }
+                },
                 useFlash: (function() {
                 var a = document.createElement('audio'),
                     userAgent = navigator.userAgent.toLowerCase(),

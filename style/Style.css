@@ -441,8 +441,8 @@ ul.songlist li.selected
 }
 #submenu_Chat
 {
-    left: 526px;
-    bottom: 55px;
+    left: 490px;
+    bottom: 59px;
     margin: 0 0 0 1px;
     position: absolute;
     width: 220px;
@@ -473,8 +473,8 @@ ul.songlist li.selected
 }
 #submenu_NowPlaying
 {
-    left: 641px;
-    bottom: 55px;
+    left: 605px;
+    bottom: 59px;
     margin: 0 0 0 1px;
     position: absolute;
     width: 220px;
