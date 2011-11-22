@@ -41,21 +41,36 @@ function loadArtists(refresh) {
                 req.setRequestHeader('Authorization', auth);
             },
             success: function (data) {
-                var indexlist;
-                $.each(data["subsonic-response"].indexes.index, function (i, index) {
-                    $('<li class=\"index\" id=\"index_' + index.name + '\">' + index.name + '<a href=\"#\" class=\"indextop floatright\">&uarr;</a></li>').appendTo("#ArtistContainer");
-                    indexlist += '<li><a href=\"#\">' + index.name + '</a></li>';
-                    $.each(index.artist, function (i, artist) {
-                        if (artist.name != undefined) {
-                            var html = "";
-                            html += '<li id=\"' + artist.id + '\" class=\"item\">';
-                            html += '<span>' + artist.name + '</span>';
-                            html += '</li>';
-                            $(html).appendTo("#ArtistContainer");
+                if (data["subsonic-response"].status == 'ok') {
+                    var indexlist;
+                    $.each(data["subsonic-response"].indexes.index, function (i, index) {
+                        $('<li class=\"index\" id=\"index_' + index.name + '\">' + index.name + '<a href=\"#\" class=\"indextop floatright\">&uarr;</a></li>').appendTo("#ArtistContainer");
+                        indexlist += '<li><a href=\"#\">' + index.name + '</a></li>';
+                        var artists = [];
+                        if (index.artist.length > 0) {
+                            artists = index.artist;
+                        } else {
+                            artists[0] = index.artist;
                         }
+                        $.each(artists, function (i, artist) {
+                            if (artist.name != undefined) {
+                                var html = "";
+                                html += '<li id=\"' + artist.id + '\" class=\"item\">';
+                                html += '<span>' + artist.name + '</span>';
+                                html += '</li>';
+                                $(html).appendTo("#ArtistContainer");
+                            }
+                        });
                     });
-                });
-                $(indexlist).appendTo("#IndexList");
+                    $(indexlist).appendTo("#IndexList");
+                } else {
+                    var error = data["subsonic-response"].status;
+                    var errorcode = data["subsonic-response"].error.code;
+                    var errormsg = data["subsonic-response"].error.message;
+                    alert('Status: ' + error + ', Code: ' + errorcode + ', Message: ' + errormsg);
+                    //var errorhtml = '<li class=\"item\"><span>' + error + '</span></li>';
+                    //$(errorhtml).appendTo("#IndexList");
+                }
             }
         });
     }

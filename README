@@ -15,10 +15,10 @@ External Subsonic Music Player
 10/14/2011 .013 moved auto playlists, album display tweaks
 10/14/2011 .014 multiple api call issue fix
 11/15/2011 .015 fixed search issue, added last.fm support from smrq
+11/22/2011 .016 single artist bug fix, added API error notification
 
 TO DO: (In no particular order...)
 - Jukebox Control
 - Download Links
 - Ratings
 - Chrome App???
-- Add notification when trial license has expired
