@@ -185,6 +185,14 @@ img
     background: url('../images/ajax-loader.gif') no-repeat center center;
     float: left;
 }
+#messages
+{
+    display: none;
+    color: #A6CBF3;
+    float: left;
+    font-size: 12px;
+    padding: 9px 0 0 10px;
+}
 /* Library Style */
 ul.simplelist
 {

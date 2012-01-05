@@ -229,7 +229,8 @@ function playSong(el, songid, albumid) {
             $('#songdetails_song').attr('parentid', albumid);
             $('#songdetails_song').attr('childid', songid);
             $('#songdetails_artist').html(artist + ' - ' + album);
-            $('#coverartimage').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&size=60&id=' + songid);
+            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&id=' + songid);
+            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&size=60&id=' + songid);
             audio.load(baseURL + '/stream.view?v=1.6.0&c=subweb&f=json&id=' + songid);
             audio.play();
             $('ul.songlist li.song').removeClass('playing');
@@ -498,8 +499,8 @@ function loadPlaylists(refresh) {
         });
     }
 }
-function loadPlaylistsForMenu() {
-    $('#submenu_AddToPlaylist').empty();
+function loadPlaylistsForMenu(menu) {
+    $('#' + menu).empty();
     $.ajax({
         url: baseURL + '/getPlaylists.view?v=1.6.0&c=subweb&f=json',
         method: 'GET',
@@ -509,7 +510,11 @@ function loadPlaylistsForMenu() {
         },
         success: function (data) {
             $.each(data["subsonic-response"].playlists.playlist, function (i, playlist) {
-                $("<a href=\"#\" onclick=\"javascript:addToPlaylist('" + playlist.id + "'); return false;\">" + playlist.name + "</a><br />").appendTo("#submenu_AddToPlaylist");
+                if (menu == 'submenu_AddCurrentToPlaylist') {
+                    $("<a href=\"#\" onclick=\"javascript:addToPlaylist('" + playlist.id + "', 'current'); return false;\">" + playlist.name + "</a><br />").appendTo("#" + menu);
+                } else {
+                    $("<a href=\"#\" onclick=\"javascript:addToPlaylist('" + playlist.id + "', ''); return false;\">" + playlist.name + "</a><br />").appendTo("#" + menu);
+                }
             });
             //$("<a href=\"#\" onclick=\"javascript:addToPlaylist('new'); return false;\">+ New Playlist</a><br />").appendTo("#submenu");
         }
@@ -545,9 +550,15 @@ function deletePlaylist(id) {
         }
     });
 }
-function addToPlaylist(playlistid) {
+function addToPlaylist(playlistid, from) {
     var selected = [];
-    $('ul.songlist li.selected').each(function (index) {
+    var el;
+    if (from == 'current') {
+        el = $('#CurrentPlaylist ul.songlist li.selected');
+    } else {
+        el = $('#Albums ul.songlist li.selected');
+    }
+    el.each(function (index) {
         selected.push($(this).attr('childid'));
     });
     if (selected.length > 0) {
@@ -594,7 +605,7 @@ function addToPlaylist(playlistid) {
                                 $('ul.songlist li.song').each(function () {
                                     $(this).removeClass('selected');
                                 });
-                                alert('Playlist Updated!');
+                                updateMessage('Playlist Updated!');
                             },
                             traditional: true // Fixes POST with an array in JQuery 1.4
                         });
@@ -613,12 +624,17 @@ function addToPlaylist(playlistid) {
                     $('ul.songlist li.song').each(function () {
                         $(this).removeClass('selected');
                     });
-                    alert('Playlist Created!');
+                    updateMessage('Playlist Created!');
                 },
                 traditional: true // Fixes POST with an array in JQuery 1.4
             });
         }
     }
+}
+function addToCurrent() {
+    $('ul.songlist li.selected').each(function (index) {
+        $(this).clone().appendTo('ul#CurrentPlaylistContainer');
+    });
 }
 function savePlaylist(playlistid) {
     var songs = [];
@@ -635,7 +651,7 @@ function savePlaylist(playlistid) {
             },
             success: function () {
                 getPlaylist(playlistid);
-                alert('Playlist Updated!');
+                updateMessage('Playlist Updated!');
             },
             traditional: true // Fixes POST with an array in JQuery 1.4
         });
@@ -764,4 +780,9 @@ function secondsToTime(secs) {
         "s": seconds
     };
     return obj;
+}
+function updateMessage(msg) {
+    $('#messages').text(msg);
+    $('#messages').fadeIn()
+    setTimeout(function () { $('#messages').fadeOut(); }, 5000);
 }
