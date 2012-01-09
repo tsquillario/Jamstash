@@ -77,17 +77,17 @@
                         var key = findKeyForCode(unicode);
                         var el = '#index_' + key.toUpperCase();
                         $('#Artists').stop().scrollTo(el);
-                    } else if (unicode == 39) {
+                    } else if (unicode == 39 || unicode == 176) {
                         var next = $('ul.songlist li.playing').next();
                         if (!next.length) next = $('ul.songlist li').first();
                         changeTrack(next);
                         // back arrow
-                    } else if (unicode == 37) {
+                    } else if (unicode == 37 || unicode == 177) {
                         var prev = $('ul.songlist li.playing').prev();
                         if (!prev.length) prev = $('ul.songlist li').last();
                         changeTrack(prev);
                         // spacebar
-                    } else if (unicode == 32) {
+                    } else if (unicode == 32 || unicode == 179 || unicode == 0179) {
                         playPauseSong();
                     }
                 }
