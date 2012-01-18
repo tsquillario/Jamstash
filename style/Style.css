@@ -142,33 +142,6 @@ img
     font-size: 10px;
     margin: 0 5px;
 }
-.indexlist
-{
-    float: right;
-}
-.indexlist ul
-{
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-.indexlist li
-{
-    color: #545454;
-    font-size: 14px;
-    font-weight: normal;
-    padding: 4px 9px 10px 0;
-    text-align: right;
-}
-.indexlist li a
-{
-    color: #4B95E5;
-    text-decoration: none;
-}
-.indexlist li a:hover
-{
-    text-decoration: underline;
-}
 .loading
 {
     display: none;
@@ -297,7 +270,7 @@ ul.songlist li.album
 ul.songlist li.album a.title
 {
     display: block;
-    padding: 9px 115px 0px;
+    padding: 9px 140px 0px;
     margin-bottom: -3px;
 }
 ul.songlist li.album span.artist
@@ -341,6 +314,26 @@ ul.songlist li.album a.remove
 {
     display: none;
 }
+ul.songlist li.album a.rate
+{
+	height: 50px;
+    width: 20px;
+    margin: 0 5px 0 0;
+    display: block;
+	background: url('../images/star_w_12x12.png') 2px center no-repeat;	
+}
+ul.songlist li.album a.rate:hover
+{
+    background: url('../images/star_lg_12x12.png') 2px center no-repeat;
+}
+ul.songlist li.album a.favorite
+{
+	height: 50px;
+    width: 20px;
+    margin: 0 5px 0 0;
+    display: block;
+	background: url('../images/star_lg_12x12.png') 2px center no-repeat;	
+}
 ul.songlist li.song
 {
     font-size: 13px;
@@ -367,6 +360,12 @@ ul.songlist li.song span.album
     font-size: 10px;
     padding: 2px 0 0 0;
 }
+ul.songlist li.song span.artist
+{
+    color: #B3B8BE;
+    font-size: 10px;
+    padding: 2px 4px 0 0;
+}
 ul.songlist li.song a.play
 {
     width: 20px;
@@ -390,6 +389,26 @@ ul.songlist li.song a.add
 ul.songlist li.song a.add:hover
 {
     background: url('../images/plus_8x8.png') no-repeat 6px center #DEECFB;
+}
+ul.songlist li.song a.rate
+{
+	height: 20px;
+    width: 20px;
+    margin: 0;
+    display: block;
+	background: url('../images/star_w_12x12.png') center 3px no-repeat;	
+}
+ul.songlist li.song a.rate:hover
+{
+    background: url('../images/star_lg_12x12.png') center 3px no-repeat;
+}
+ul.songlist li.song a.favorite
+{
+	height: 20px;
+    width: 20px;
+    margin: 0;
+    display: block;
+	background: url('../images/star_lg_12x12.png') center 3px no-repeat;	
 }
 ul.songlist li.back a
 {
@@ -417,9 +436,34 @@ ul.songlist li.selected
     background-color: #4B95E5;
     border-bottom: 1px solid #73ABE7;
 }
-#ArtistContainer, #AutoAlbumContainer
+#BottomContainer
 {
-    margin: 0 30px 0 0;
+    border-top: 1px solid #F2F2F2;
+    background: #fff;
+    position: fixed;
+    height: 43px;
+}
+#BottomContainer ul 
+{
+  list-style-type: none;
+  margin: 0;
+  padding: 0 0 0 10px;
+}
+#BottomContainer #BottomIndex li
+{
+    float: left;
+    height: 18px;
+}
+#BottomContainer #BottomIndex li a
+{
+    color: #4B95E5;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 0 5px 0 0;
+}
+#BottomContainer #BottomIndex li a:hover
+{
+    text-decoration: underline;
 }
 .actions
 {
