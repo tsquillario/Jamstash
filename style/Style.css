@@ -94,6 +94,7 @@ img
 {
     width: 200px;
     min-height: 200px;
+    padding: 0 0 40px 0;
     float: left;
     overflow-y: auto;
     overflow-x: hidden;
@@ -232,7 +233,7 @@ ul.mainlist li.item a.add:hover
 {
     background: url('../images/plus_8x8.png') no-repeat 6px center #DEECFB;
 }
-#AlbumContainer 
+#AlbumContainer
 {
     margin: 5px 5px 5px 206px;
 }
@@ -240,202 +241,272 @@ ul.mainlist li.item a.add:hover
 {
     margin: 5px 5px 5px 206px;
 }
-#CurrentPlaylistContainer li.song a.add
+#CurrentPlaylistContainer tr.song a.add
 {
     display: none;
 }
-#CurrentPlaylistContainer li.song a.remove
+#CurrentPlaylistContainer tr.song a.remove
 {
     width: 20px;
     height: 20px;
     display: block;
+    float: left;
     margin: 0;
     background: url('../images/minus_gl_8x2.png') no-repeat 6px center;
 }
-#CurrentPlaylistContainer li.song a.remove:hover
+#CurrentPlaylistContainer tr.song a.remove:hover
 {
     background: url('../images/minus_8x2.png') no-repeat 6px center #DEECFB;
 }
-ul.songlist
+#BreadCrumb a
+{
+    color: #4B95E5;
+    font-size: 12px;
+}
+#BreadCrumb a:hover
+{
+    text-decoration: underline;
+}
+table.songlist
 {
     margin: 5px;
+    border-collapse: collapse;
 }
-ul.songlist li.album
+table.songlist th
+{
+    font-size: 14px;
+    font-variant: small-caps;
+    padding: 5px 4px;
+}
+table.songlist tr:hover
+{
+    background: #EEF5FD;
+}
+table.songlist tr.album
 {
     font-size: 13px;
-    padding: 6px 4px;
-    height: 50px;
     border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
 }
-ul.songlist li.album a.title
+table.songlist tr.album td
 {
-    display: block;
-    padding: 9px 140px 0px;
-    margin-bottom: -3px;
+    padding: 4px;
 }
-ul.songlist li.album span.artist
+table.songlist tr.album td.title
 {
-    font-size: 11px;
-    color: #78B0EC;
-    padding-left: 15px;
 }
-ul.songlist .albumart
+table.songlist tr.album td.artist
 {
+}
+table.songlist tr.album td.itemactions
+{
+    width: 80px;
+}
+table.songlist tr.album td.albumart
+{
+    padding: 0;
     width: 50px;
-    height: 50px;
-    overflow: hidden;
-    float: left;
 }
-ul.songlist li.album a.play
+table.songlist tr.album td.albumart img
 {
+    margin: 5px 10px 0 10px;
+    padding: 2px;
+    border: 1px solid #F0F0F0;
+}
+table.songlist tr.album a.play
+{
+    float: left;
     width: 20px;
     height: 50px;
     display: block;
     margin: 0 5px 0 0;
     background: url('../images/play_gl_6x8.png') no-repeat 6px center;
 }
-ul.songlist li.album a.play:hover
+table.songlist tr.album a.play:hover
 {
     background: url('../images/play_6x8.png') no-repeat 6px center #DEECFB;
 }
-ul.songlist li.album a.add
+table.songlist tr.album a.add
 {
+    float: left;
     width: 20px;
     height: 50px;
     display: block;
     margin: 0 5px 0 0;
     background: url('../images/plus_gl_8x8.png') no-repeat 6px center;
 }
-ul.songlist li.album a.add:hover
+table.songlist tr.album a.add:hover
 {
     background: url('../images/plus_8x8.png') no-repeat 6px center #DEECFB;
 }
-ul.songlist li.album a.remove
+table.songlist tr.album a.remove
 {
     display: none;
 }
-ul.songlist li.album a.rate
+table.songlist tr.album a.rate
 {
+    float: left;
 	height: 50px;
     width: 20px;
     margin: 0 5px 0 0;
     display: block;
 	background: url('../images/star_w_12x12.png') 2px center no-repeat;	
 }
-ul.songlist li.album a.rate:hover
+table.songlist tr.album a.rate:hover
 {
-    background: url('../images/star_lg_12x12.png') 2px center no-repeat;
+    background: url('../images/star_wo_12x12.png') 2px center no-repeat;
 }
-ul.songlist li.album a.favorite
+table.songlist tr.album a.favorite
 {
+    float: left;
 	height: 50px;
     width: 20px;
     margin: 0 5px 0 0;
     display: block;
-	background: url('../images/star_lg_12x12.png') 2px center no-repeat;	
+	background: url('../images/star_yo_12x12.png') 2px center no-repeat;	
 }
-ul.songlist li.song
+table.songlist tr.song
 {
-    font-size: 13px;
-    padding: 8px 30px;
     cursor: pointer;
     border-bottom: 1px solid #f0f0f0;
-    height: 19px;
 }
-ul.songlist li.song span
+table.songlist tr.song td
 {
-    display: block;
-    float: left;
-    padding: 0 10px 0 0;
-    text-align: right;
+    font-size: 13px;
+    padding: 9px 10px;
 }
-ul.songlist li.song span.track
+table.songlist tr.song td.itemactions
+{
+    width: 80px;
+    padding-left: 25px;
+}
+table.songlist tr.song td.track
 {
     width: 40px;
     text-align: right;
 }
-ul.songlist li.song span.album
+table.songlist tr.song td.title
 {
-    color: #B3B8BE;
-    font-size: 10px;
-    padding: 2px 0 0 0;
 }
-ul.songlist li.song span.artist
+table.songlist tr.song td.album
 {
-    color: #B3B8BE;
-    font-size: 10px;
-    padding: 2px 4px 0 0;
+    padding: 0;
+    line-height: 31px;
 }
-ul.songlist li.song a.play
+table.songlist tr.song td.album img
 {
+    border: 1px solid #F0F0F0;
+    display: block;
+    float: left;
+    margin: 0 5px;
+    padding: 2px;
+}
+table.songlist tr.song td.artist
+{
+}
+table.songlist tr.song td.time
+{
+    text-align: right;
+}
+table.songlist tr.song a.play
+{
+    float: left;
     width: 20px;
     height: 20px;
     display: block;
     margin: 0;
     background: url('../images/play_gl_6x8.png') no-repeat 6px center;
 }
-ul.songlist li.song a.play:hover
+table.songlist tr.song a.play:hover
 {
     background: url('../images/play_6x8.png') no-repeat 6px center #DEECFB;
 }
-ul.songlist li.song a.add
+table.songlist tr.song a.add
 {
+    float: left;
     width: 20px;
     height: 20px;
     display: block;
     margin: 0;
     background: url('../images/plus_gl_8x8.png') no-repeat 6px center;
 }
-ul.songlist li.song a.add:hover
+table.songlist tr.song a.add:hover
 {
     background: url('../images/plus_8x8.png') no-repeat 6px center #DEECFB;
 }
-ul.songlist li.song a.rate
+table.songlist tr.song a.rate
 {
+    float: left;
 	height: 20px;
     width: 20px;
     margin: 0;
     display: block;
 	background: url('../images/star_w_12x12.png') center 3px no-repeat;	
 }
-ul.songlist li.song a.rate:hover
+table.songlist tr.song a.rate:hover
 {
-    background: url('../images/star_lg_12x12.png') center 3px no-repeat;
+    background: url('../images/star_wo_12x12.png') center 3px no-repeat;
 }
-ul.songlist li.song a.favorite
+table.songlist tr.song a.favorite
 {
+    float: left;
 	height: 20px;
     width: 20px;
     margin: 0;
     display: block;
-	background: url('../images/star_lg_12x12.png') center 3px no-repeat;	
+	background: url('../images/star_yo_12x12.png') center 3px no-repeat;	
 }
-ul.songlist li.back a
-{
-    color: #4B95E5;
-}
-ul.songlist li.back a:hover
-{
-    text-decoration: underline;
-}
-ul.songlist li small
-{
-    color: #B6B6B6;
-    font-size: 10px;
-    margin: 1px 0 0;
-    float: right;
-}
-ul.songlist li.playing
+table.songlist tr.playing
 {
     background: url('../images/play_alt_16x16.png') 6px 10px no-repeat #DEEBFA;
 }
-ul.songlist li.selected
+table.songlist tr.selected
 {
     color: #f2f2f2;
-    background: url('../images/check_8x7.png') 10px 15px no-repeat;
+    background: url('../images/check_8x7.png') 10px 16px no-repeat;
     background-color: #4B95E5;
     border-bottom: 1px solid #73ABE7;
 }
+/* tablesorter style */
+table.tablesorter {
+	font-family:arial;
+	background-color: #CDCDCD;
+	margin:10px 0pt 15px;
+	font-size: 8pt;
+	width: 100%;
+	text-align: left;
+}
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
+	background-color: #e6EEEE;
+	border: 1px solid #FFF;
+	font-size: 8pt;
+	padding: 4px;
+}
+table.tablesorter thead tr .header {
+	background-image: url(../images/bg.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+}
+table.tablesorter tbody td {
+	color: #3D3D3D;
+	padding: 4px;
+	background-color: #FFF;
+	vertical-align: top;
+}
+table.tablesorter tbody tr.odd td {
+	background-color:#F0F0F6;
+}
+table.tablesorter thead tr .headerSortUp {
+	background-image: url(../images/asc.gif);
+}
+table.tablesorter thead tr .headerSortDown {
+	background-image: url(../images/desc.gif);
+}
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+background-color: #8dbdd8;
+}
+
 #BottomContainer
 {
     border-top: 1px solid #F2F2F2;
@@ -467,9 +538,9 @@ ul.songlist li.selected
 }
 .actions
 {
-    margin: 4px 2px 0 2px;
-    padding: 0 5px;   
     height: 29px;
+    margin: 4px 0 0 0;
+    padding: 0 0 0 5px;
 }
 .submenu 
 {
@@ -602,12 +673,13 @@ ul.songlist li.selected
 }
 #coverart
 {
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     overflow: hidden;
     margin: 2px 0 2px 0;
     float: left;
     padding: 2px;
+    border: 1px solid #F0F0F0;    
 }
 #songdetails
 {

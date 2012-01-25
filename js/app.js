@@ -14,6 +14,10 @@ function loadTabContent(tab) {
         case '#tabLibrary':
             loadArtists();
             break;
+        case '#tabCurrent':
+            var header = generateSongHeaderHTML();
+            $("#CurrentPlaylistContainer thead").html(header);
+            break;
         case '#tabPlaylists':
             loadPlaylists();
             break;
@@ -42,10 +46,15 @@ function loadArtists(refresh) {
             },
             success: function (data) {
                 if (data["subsonic-response"].status == 'ok') {
-                    var indexlist;
+                    var indexlist, indexname;
                     $.each(data["subsonic-response"].indexes.index, function (i, index) {
-                        $('<li class=\"index\" id=\"index_' + index.name + '\" title=\"Scroll to Top\">' + index.name + '<span class=\"floatright\">&uarr;</span></li>').appendTo("#ArtistContainer");
-                        indexlist += '<li><a href=\"#\">' + index.name + '</a></li>';
+                        if (index.name == '#') {
+                            indexname = '0-9';
+                        } else {
+                            indexname = index.name;
+                        }
+                        $('<li class=\"index\" id=\"index_' + indexname + '\" title=\"Scroll to Top\">' + indexname + '<span class=\"floatright\">&uarr;</span></li>').appendTo("#ArtistContainer");
+                        indexlist += '<li><a href=\"#\">' + indexname + '</a></li>';
                         var artists = [];
                         if (index.artist.length > 0) {
                             artists = index.artist;
@@ -63,6 +72,7 @@ function loadArtists(refresh) {
                         });
                     });
                     //$(indexlist).appendTo("#IndexList");
+                    $("#BottomIndex").empty();
                     $(indexlist).appendTo("#BottomIndex");
                 } else {
                     var error = data["subsonic-response"].status;
@@ -76,7 +86,7 @@ function loadArtists(refresh) {
         });
     }
 }
-function getAlbums(id, artistid, action, appendto) {
+function getAlbums(id, appendto) {
     $.ajax({
         url: baseURL + '/getMusicDirectory.view?v=1.6.0&c=subweb&f=json&id=' + id,
         method: 'GET',
@@ -85,8 +95,46 @@ function getAlbums(id, artistid, action, appendto) {
             req.setRequestHeader('Authorization', auth);
         },
         success: function (data) {
-            if (appendto == '#AlbumContainer' && action == '') {
-                $('#AlbumContainer').empty();
+            $("#AlbumRows").empty();
+            if (data["subsonic-response"].directory.child != undefined) {
+                // There is a bug in the API that doesn't return a JSON array for one artist
+                var children = [];
+                if (data["subsonic-response"].directory.child.length > 0) {
+                    children = data["subsonic-response"].directory.child;
+                } else {
+                    children[0] = data["subsonic-response"].directory.child;
+                }
+
+                var rowcolor;
+                var albumhtml;
+                $.each(children, function (i, child) {
+                    if (i % 2 == 0) {
+                        rowcolor = 'even';
+                    } else {
+                        rowcolor = 'odd';
+                    }
+                    albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating);
+                    $(albumhtml).appendTo("#AlbumRows");
+                });
+                var header = generateAlbumHeaderHTML();
+                $("#AlbumHeader").html(header);
+            }
+        }
+    });
+}
+function getSongs(id, artistid, action, appendto) {
+    $.ajax({
+        url: baseURL + '/getMusicDirectory.view?v=1.6.0&c=subweb&f=json&id=' + id,
+        method: 'GET',
+        dataType: 'json',
+        beforeSend: function (req) {
+            req.setRequestHeader('Authorization', auth);
+        },
+        success: function (data) {
+            if (appendto == '#AlbumRows' && action == '') {
+                $('#AlbumRows').empty();
+                var header = generateSongHeaderHTML();
+                $("#AlbumHeader").html(header);
             }
             if (action == 'autoplay') {
                 $('#CurrentPlaylistContainer').empty();
@@ -108,22 +156,20 @@ function getAlbums(id, artistid, action, appendto) {
                     } else {
                         rowcolor = 'odd';
                     }
-                    if (child.isDir == true) {
-                        albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating);
-                        $(albumhtml).appendTo("#AlbumContainer");
-                    } else {
-                        var track;
-                        if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
-                        var time = secondsToTime(child.duration);
-                        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.userRating, time['m'], time['s']);
-                        if (appendto == '#AlbumContainer') {
-                            if (i == 0) {
-                                var backhtml = '<li class=\"back\"><a href=\"#\" onclick=\"javascript:getAlbums(\'' + artistid + '\', \'\', \'\', \'#AlbumContainer\'); return false;\">&laquo; Back to ' + child.artist + '</a></li>';
-                                $(backhtml).appendTo("#AlbumContainer");
-                            }
+                    var track;
+                    if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
+                    var time = secondsToTime(child.duration);
+                    albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+                    /*
+                    if (appendto == '#AlbumRows') {
+                        if (i == 0) {
+                            //var backhtml = '<tr class=\"back\"><td colspan=\"6\"><a href=\"#\" onclick=\"javascript:getAlbums(\'' + artistid + '\', \'\', \'\', \'#AlbumRows\'); return false;\">&laquo; Back to ' + child.artist + '</a></td></tr>';
+                            var backhtml = '<a href=\"#\" onclick=\"javascript:getAlbums(\'' + artistid + '\', \'\', \'\', \'#AlbumRows\'); return false;\">' + child.artist + '</a>';
+                            $("#BreadCrumb").html($(backhtml));
                         }
-                        $(albumhtml).appendTo(appendto);
                     }
+                    */
+                    $(albumhtml).appendTo(appendto);
                 });
                 if (action == 'autoplay') {
                     autoPlay();
@@ -148,7 +194,9 @@ function getAlbumListBy(id) {
         },
         success: function (data) {
             if (data["subsonic-response"].albumList.album != undefined) {
-                $("#AlbumContainer").empty();
+                $("#AlbumRows").empty();
+                var header = generateAlbumHeaderHTML();
+                $("#AlbumHeader").html(header);
                 // There is a bug in the API that doesn't return a JSON array for one artist
                 var albums = [];
                 if (data["subsonic-response"].albumList.album.length > 0) {
@@ -170,10 +218,10 @@ function getAlbumListBy(id) {
                     if (album.isDir == true) {
                         albumhtml = generateAlbumHTML(rowcolor, album.id, album.parent, album.coverArt, album.title, album.artist, album.userRating);
                     }
-                    $(albumhtml).appendTo("#AlbumContainer")
+                    $(albumhtml).appendTo("#AlbumRows")
                 });
             } else {
-                $('#AlbumContainer').empty();
+                $('#AlbumRows').empty();
             }
         }
     });
@@ -219,7 +267,7 @@ function getRandomSongList(action, appendto) {
                     var track;
                     if (item.track === undefined) { track = "&nbsp;"; } else { track = item.track; }
                     var time = secondsToTime(item.duration);
-                    html = generateSongHTML(rowcolor, item.id, item.parent, track, item.title, item.artist, item.album, item.userRating, time['m'], time['s']);
+                    html = generateSongHTML(rowcolor, item.id, item.parent, track, item.title, item.artist, item.album, item.coverArt, item.userRating, time['m'], time['s']);
                     $(html).appendTo(appendto);
                 });
                 if (action == 'autoplay') {
@@ -231,43 +279,56 @@ function getRandomSongList(action, appendto) {
         }
     });
 }
+function generateAlbumHeaderHTML() {
+    var html;
+    html = '<tr><th></th><th></th><th>Album</th><th>Artist</th></tr>';
+    return html;
+}
 function generateAlbumHTML(rowcolor, childid, parentid, coverart, title, artist, rating) {
     var html;
-    html = '<li class=\"album ' + rowcolor + '\" childid=\"' + childid + '\" parentid=\"' + parentid + '\" userrating=\"' + rating + '\">';
-    html += '<div class=\"floatleft\"><a class=\"add\" href=\"\" title=\"Add\"></a></div>';
-    html += '<div class=\"floatleft\"><a class=\"play\" href=\"\" title=\"Play\"></a></div>';
+    html = '<tr class=\"album ' + rowcolor + '\" childid=\"' + childid + '\" parentid=\"' + parentid + '\" userrating=\"' + rating + '\">';
+    html += '<td class=\"itemactions\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a>';
+    html += '<a class=\"play\" href=\"\" title=\"Play\"></a>';
     if (rating == 5) {
-        html += '<div class=\"floatleft\"><a class=\"favorite\" href=\"\" title=\"Favorite\"></a></div>';
+        html += '<a class=\"favorite\" href=\"\" title=\"Favorite\"></a>';
     } else {
-        html += '<div class=\"floatleft\"><a class=\"rate\" href=\"\" title=\"Add To Favorites\"></a></div>';
+        html += '<a class=\"rate\" href=\"\" title=\"Add To Favorites\"></a>';
     }
-    html += '<div class=\"albumart\"><img class=\"floatleft\" src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&size=50&id=' + coverart + '\" /></div>';
-    html += '<a href=\"#\" class=\"title\">' + title + '</a>';
-    html += '<span class=\"artist\">' + artist + '</span>';
-    html += '</li>';
+    html += '</td>';
+    html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&size=50&id=' + coverart + '\" /></td>';
+    html += '<td class=\"album\">' + title + '</td>';
+    html += '<td class=\"artist\">' + artist + '</td>';
+    html += '</tr>';
     return html;
 }
-function generateSongHTML(rowcolor, childid, parentid, track, title, artist, album, rating, m, s) {
+function generateSongHeaderHTML() {
     var html;
-    html = '<li class=\"song ' + rowcolor + '\" childid=\"' + childid + '\" parentid=\"' + parentid + '\" userrating=\"' + rating + '\">';
-    html += '<div class=\"floatleft\"><a class=\"add\" href=\"\" title=\"Add\"></a></div>';
-    html += '<div class=\"floatleft\"><a class=\"remove\" href=\"\" title=\"Remove\"></a></div>';
-    html += '<div class=\"floatleft\"><a class=\"play\" href=\"\" title=\"Play\"></a></div>';
-    if (rating == 5) {
-        html += '<div class=\"floatleft\"><a class=\"favorite\" href=\"\" title=\"Favorite\"></a></div>';
-    } else {
-        html += '<div class=\"floatleft\"><a class=\"rate\" href=\"\" title=\"Add To Favorites\"></a></div>';
-    }
-    html += '<span class=\"track\">' + track + '</span> ';
-    html += '<span class=\"title\">' + title + '</span> ';
-    html += '<span class=\"artist\">' + artist + ':</span> ';
-    html += '<span class=\"album\">' + album + '</span> ';
-    html += ' <small>' + m + ':' + s + '</small>';
-    html += '</li>';
+    html = '<tr><th></th><th>Track</th><th>Title</th><th>Artist</th><th>Album</th><th class=\"alignright\">Time</th></tr>';
     return html;
 }
+function generateSongHTML(rowcolor, childid, parentid, track, title, artist, album, coverart, rating, m, s) {
+    var html;
+    html = '<tr class=\"song ' + rowcolor + '\" childid=\"' + childid + '\" parentid=\"' + parentid + '\" userrating=\"' + rating + '\">';
+    html += '<td class=\"itemactions\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a>';
+    html += '<a class=\"remove\" href=\"\" title=\"Remove\"></a>';
+    html += '<a class=\"play\" href=\"\" title=\"Play\"></a>';
+    if (rating == 5) {
+        html += '<a class=\"favorite\" href=\"\" title=\"Favorite\"></a>';
+    } else {
+        html += '<a class=\"rate\" href=\"\" title=\"Add To Favorites\"></a>';
+    }
+    html += '</td>';
+    html += '<td class=\"track\">' + track + '</td>';
+    html += '<td class=\"title\">' + title + '</td>';
+    html += '<td class=\"artist\">' + artist + '</td>';
+    html += '<td class=\"album\">' + album + '<img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&size=25&id=' + coverart + '\" /></td>';
+    html += '<td class=\"time\">' + m + ':' + s + '</td>';
+    html += '</tr>';
+    return html;
+}
+
 function refreshRowColor() {
-    $.each($('ul.songlist li.song'), function (i) {
+    $.each($('table.songlist tr.song'), function (i) {
         $(this).removeClass('even odd');
         var rowcolor;
         if (i % 2 == 0) {
@@ -304,11 +365,12 @@ function playSong(el, songid, albumid) {
             $('#songdetails_song').attr('parentid', albumid);
             $('#songdetails_song').attr('childid', songid);
             $('#songdetails_artist').html(artist + ' - ' + album);
+            //$('#songdetails_artist').html('<a href=\"#\" onclick=\"javascript:getAlbums(\'' + artistid + '\', \'\', \'\', \'#AlbumRows\'); return false;\">&laquo; Back to ' + artist + '</a>');
             $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&id=' + songid);
-            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&size=60&id=' + songid);
+            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&size=56&id=' + songid);
             audio.load(baseURL + '/stream.view?v=1.6.0&c=subweb&f=json&id=' + songid);
             audio.play();
-            $('ul.songlist li.song').removeClass('playing');
+            $('table.songlist tr.song').removeClass('playing');
             $(el).addClass('playing');
             $('#PlayTrack').find('img').attr('src', 'images/pause_24x32.png');
             $('#PlayTrack').addClass('playing');
@@ -360,12 +422,12 @@ function playPauseSong() {
         audio.playPause();
     } else {
         // Start playing song
-        var play = $('#CurrentPlaylistContainer li.selected');
+        var play = $('#CurrentPlaylistContainer tr.selected').first();
         if (changeTrack(play)) {
             $(el).find('img').attr('src', 'images/pause_24x32.png');
             $(el).addClass('playing');
         } else {
-            var first = $('#CurrentPlaylistContainer li').first();
+            var first = $('#CurrentPlaylistContainer tr').first();
             changeTrack(first);
         }
     }
@@ -373,7 +435,7 @@ function playPauseSong() {
 function changeTrack(next) {
     var songid = $(next).attr('childid');
     if (songid != undefined) {
-        if (!next.length) next = $('#CurrentPlaylistContainer li').first();
+        if (!next.length) next = $('#CurrentPlaylistContainer tr').first();
         //next.addClass('playing').siblings().removeClass('playing');
         var albumid = $(next).attr('parentid');
         playSong(next, songid, albumid);
@@ -383,7 +445,7 @@ function changeTrack(next) {
     }
 }
 function autoPlay() {
-    var firstsong = $('#CurrentPlaylistContainer li.song:first');
+    var firstsong = $('#CurrentPlaylistContainer tr.song:first');
     var songid = $(firstsong).attr('childid');
     var albumid = $(firstsong).attr('parentid');
     playSong(firstsong, songid, albumid);
@@ -398,7 +460,9 @@ function search(type, query) {
         },
         success: function (data) {
             if (data["subsonic-response"].searchResult2 != "") {
-                $("#AlbumContainer").empty();
+                $("#AlbumRows").empty();
+                var header = generateSongHeaderHTML();
+                $("#AlbumHeader").html(header);
                 // There is a bug in the API that doesn't return a JSON array for one artist
                 var children = [];
                 if (data["subsonic-response"].searchResult2.song.length > 0) {
@@ -419,8 +483,8 @@ function search(type, query) {
                     var track;
                     if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
                     var time = secondsToTime(child.duration);
-                    albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.userRating, time['m'], time['s']);
-                    $(albumhtml).appendTo("#AlbumContainer");
+                    albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+                    $(albumhtml).appendTo("#AlbumRows");
                 });
             }
         }
@@ -579,7 +643,7 @@ function loadPlaylists(refresh) {
                     html += '<li id=\"' + playlist.id + '\" class=\"item\">';
                     html += '<span>' + playlist.name + '</span>';
                     html += '<div class=\"floatright\"><a class=\"play\" href=\"\" title=\"Play\"></a></div>';
-                    html += '<div class=\"floatright\"><a class=\"add\" href=\"\" title=\"Add\"></a></div>';
+                    html += '<div class=\"floatright\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a></div>';
                     html += '</li>';
                     $(html).appendTo("#PlaylistContainer");
                 });
@@ -610,7 +674,7 @@ function loadPlaylistsForMenu(menu) {
 }
 function newPlaylist() {
     var reply = prompt("Choose a name for your new playlist.", "");
-    if (reply != "") {
+    if (reply) {
         $.ajax({
             url: baseURL + '/createPlaylist.view?v=1.6.0&c=subweb&f=json&name=' + reply,
             method: 'GET',
@@ -634,7 +698,7 @@ function deletePlaylist(id) {
         },
         success: function (data) {
             loadPlaylists(true);
-            $('ul#TrackContainer').empty();
+            $('#TrackContainer tbody').empty();
         }
     });
 }
@@ -642,9 +706,9 @@ function addToPlaylist(playlistid, from) {
     var selected = [];
     var el;
     if (from == 'current') {
-        el = $('#CurrentPlaylist ul.songlist li.selected');
+        el = $('#CurrentPlaylist table.songlist tr.selected');
     } else {
-        el = $('#Albums ul.songlist li.selected');
+        el = $('#Albums table.songlist tr.selected');
     }
     el.each(function (index) {
         selected.push($(this).attr('childid'));
@@ -690,7 +754,7 @@ function addToPlaylist(playlistid, from) {
                                 req.setRequestHeader('Authorization', auth);
                             },
                             success: function () {
-                                $('ul.songlist li.song').each(function () {
+                                $('table.songlist tr.song').each(function () {
                                     $(this).removeClass('selected');
                                 });
                                 updateMessage('Playlist Updated!');
@@ -709,7 +773,7 @@ function addToPlaylist(playlistid, from) {
                     req.setRequestHeader('Authorization', auth);
                 },
                 success: function () {
-                    $('ul.songlist li.song').each(function () {
+                    $('table.songlist tr.song').each(function () {
                         $(this).removeClass('selected');
                     });
                     updateMessage('Playlist Created!');
@@ -720,15 +784,15 @@ function addToPlaylist(playlistid, from) {
     }
 }
 function addToCurrent() {
-    var count = $('ul.songlist li.selected').length;
-    $('ul.songlist li.selected').each(function (index) {
-        $(this).clone().appendTo('ul#CurrentPlaylistContainer');
+    var count = $('table.songlist tr.selected').length;
+    $('table.songlist tr.selected').each(function (index) {
+        $(this).clone().appendTo('#CurrentPlaylistContainer tbody');
         updateMessage(count + ' Song(s) Added');
     });
 }
 function savePlaylist(playlistid) {
     var songs = [];
-    $('ul#TrackContainer li.song').each(function (index) {
+    $('#TrackContainer tr.song').each(function (index) {
         songs.push($(this).attr('childid'));
     });
     if (songs.length > 0) {
@@ -757,8 +821,10 @@ function getPlaylist(id, action, appendto) {
         },
         success: function (data) {
             if (data["subsonic-response"].playlist.entry != undefined) {
-                if (appendto == '#TrackContainer') {
-                    $("#TrackContainer").empty();
+                if (appendto == '#TrackContainer tbody') {
+                    $(appendto).empty();
+                    var header = generateSongHeaderHTML();
+                    $("#TrackContainer thead").html(header);
                 }
                 if (action == 'autoplay') {
                     $(appendto).empty();
@@ -782,14 +848,16 @@ function getPlaylist(id, action, appendto) {
                     var track;
                     if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
                     var time = secondsToTime(child.duration);
-                    html = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.userRating, time['m'], time['s']);
+                    html = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
                     $(html).appendTo(appendto);
                 });
                 if (action == 'autoplay') {
                     autoPlay();
                 }
             } else {
-                //$(appentTo).empty();
+                if (appendto == '#TrackContainer tbody') {
+                    $(appendto).empty();
+                }
             }
         }
     });
