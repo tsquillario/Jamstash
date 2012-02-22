@@ -89,11 +89,13 @@ img
 }
 .tabcontent
 {
+    min-height: 400px;
+    min-width: 700px;
 }
 .smsection
 {
     width: 200px;
-    min-height: 200px;
+    min-height: 360px;
     padding: 0 0 40px 0;
     float: left;
     overflow-y: auto;
@@ -108,7 +110,7 @@ img
 {
     height: 100%;
     width: 100%;
-    min-height: 200px;
+    min-height: 400px;
     overflow: auto;
     background: #fff;
     border: 1px solid #cbcbcb;
@@ -119,7 +121,7 @@ img
     height: 100%;
     width: 100%;
     min-width: 450px;
-    min-height: 200px;
+    min-height: 400px;
     overflow: auto;
     background: #fff;
     border: 1px solid #cbcbcb;
@@ -129,14 +131,9 @@ img
 {
     padding: 5px;
 }
-.nosection
-{
-    height: 100%;
-    margin: 5px 5px 0 5px;
-}
 .subsection
 {
-    margin: 5px 10px;
+    margin: 15px 20px;
 }
 .subsection small
 {
@@ -311,7 +308,7 @@ table.songlist tr.album td.albumart img
 {
     margin: 5px 10px 0 10px;
     padding: 2px;
-    border: 1px solid #F0F0F0;
+    border: 1px solid #DEDEDE;
 }
 table.songlist tr.album a.play
 {
@@ -395,7 +392,7 @@ table.songlist tr.song td.album
 }
 table.songlist tr.song td.album img
 {
-    border: 1px solid #F0F0F0;
+    border: 1px solid #DEDEDE;
     display: block;
     float: left;
     margin: 0 5px;
@@ -458,14 +455,21 @@ table.songlist tr.song a.favorite
 }
 table.songlist tr.playing
 {
-    background: url('../images/play_alt_16x16.png') 6px 10px no-repeat #DEEBFA;
+    background-color: #DEEBFA;
+}
+table.songlist tr.playing td:first-child
+{
+    background: url('../images/play_alt_16x16.png') 6px 10px no-repeat;
 }
 table.songlist tr.selected
 {
     color: #f2f2f2;
-    background: url('../images/check_8x7.png') 10px 16px no-repeat;
-    background-color: #4B95E5;
     border-bottom: 1px solid #73ABE7;
+    background-color: #4B95E5;
+}
+table.songlist tr.selected td:first-child
+{
+    background: url('../images/check_8x7.png') 10px 16px no-repeat;
 }
 /* tablesorter style */
 table.tablesorter {
@@ -507,12 +511,17 @@ table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSo
 background-color: #8dbdd8;
 }
 
+#ArtistContainer
+{
+    min-height: 360px;
+}
 #BottomContainer
 {
     border-top: 1px solid #F2F2F2;
     background: #fff;
     position: fixed;
     height: 43px;
+    width: 184px;
 }
 #BottomContainer ul 
 {
@@ -571,10 +580,33 @@ background-color: #8dbdd8;
     width: 220px;
     text-align: right;
 }
-#ChatMsgs
+#SideBar 
+{
+    display: none;
+    width: 200px;
+    position: fixed;
+    top: 78px;
+    right: 4px;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #CBCBCB;
+    min-height: 400px;
+}
+#SideBar .header
 {
     padding: 5px;
+    font-size: 12px;
+    color: #545454;
+    font-variant: small-caps;
+    font-weight: bold;
+}
+#ChatMsgs
+{
+    border-bottom: 1px solid #F2F2F2;
+    padding: 5px;
+    margin: 0 0 2px;
     text-align: right;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 #ChatMsgs .msg
 {
@@ -594,6 +626,10 @@ background-color: #8dbdd8;
     font-size: 9px;
     color: #CAD0D7;
 }
+#Chat .submit
+{
+    padding: 0 2px;
+}
 #submenu_NowPlaying
 {
     left: 605px;
@@ -603,10 +639,18 @@ background-color: #8dbdd8;
     width: 220px;
     text-align: right;
 }
+#NowPlaying
+{
+    border-bottom: 1px solid #F2F2F2;
+    margin: 2px 0;
+}
 #NowPlayingList
 {
+    height: 150px;
     padding: 5px;
     text-align: right;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 #NowPlayingList .msg
 {
@@ -679,7 +723,7 @@ background-color: #8dbdd8;
     margin: 2px 0 2px 0;
     float: left;
     padding: 2px;
-    border: 1px solid #F0F0F0;    
+    border: 1px solid #DEDEDE;    
 }
 #songdetails
 {
@@ -710,7 +754,7 @@ ul.preferences
 {
     list-style-type: none;
     padding: 0;
-    margin: 5px;
+    margin: 0 5px;
 }
 ul.preferences li
 {
@@ -723,6 +767,7 @@ ul.preferences li.title
     font-weight: bold;
     font-size: 14px;
     font-variant: small-caps;
+    padding: 0;
 }
 ul.preferences li span
 {
@@ -798,6 +843,12 @@ input.large
 {
     border: 1px solid #DCDCDC;
     width: 180px;
+    margin: 5px;
+}
+input.chat
+{
+    border: 1px solid #ffffff;
+    width: 150px;
     margin: 5px;
 }
 select

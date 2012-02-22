@@ -100,7 +100,7 @@
                 $('#AutoAlbumContainer li').removeClass('selected');
                 $('#ArtistContainer li').removeClass('selected');
                 $(this).addClass('selected');
-                getAlbums($(this).attr("id"), '#AlbumRows');
+                getAlbums($(this).attr("id"), '', '#AlbumRows');
             });
             $('#BottomIndex li a').live('click', function () {
                 var el = '#index_' + $(this).text();
@@ -116,13 +116,13 @@
             $('tr.album a.play').live('click', function (e) {
                 var albumid = $(this).parent().parent().attr('childid');
                 var artistid = $(this).parent().parent().attr('parentid');
-                getSongs(albumid, artistid, 'autoplay', '#CurrentPlaylistContainer');
+                getAlbums(albumid, 'autoplay', '#CurrentPlaylistContainer');
                 return false;
             });
             $('tr.album a.add').live('click', function (e) {
                 var albumid = $(this).parent().parent().attr('childid');
                 var artistid = $(this).parent().parent().attr('parentid');
-                getSongs(albumid, artistid, 'add', '#CurrentPlaylistContainer');
+                getAlbums(albumid, 'add', '#CurrentPlaylistContainer');
                 return false;
             });
             $('tr.album a.rate').live('click', function (event) {
@@ -138,7 +138,7 @@
             $('tr.album').live('click', function (e) {
                 var albumid = $(this).attr('childid');
                 var artistid = $(this).attr('parentid');
-                getSongs(albumid, artistid, '', '#AlbumRows');
+                getAlbums(albumid, '', '#AlbumRows');
                 return false;
             });
             // Track - Click Events
@@ -379,48 +379,36 @@
                 changeTrack(prev);
                 return false;
             });
-            $('a#Chat').click(function () {
-                var submenu = $('div#submenu_Chat');
-                if (submenu.is(":visible")) {
-                    submenu.fadeOut();
-                    updater.cancel();
-                } else {
-                    //loadChatMessages();
-                    updateChatMessages();
-                    $('div#submenu_NowPlaying').fadeOut();
-                    submenu.fadeIn(400);
-                }
-                $('input#ChatMsg').focus();
+            $("a#coverartimage").fancybox({
+                'hideOnContentClick': true,
+                'type': 'image'
             });
-            $('#action_AddChatMsg').click(function () {
-                var msg = $('#ChatMsg').val();
-                if (msg != '') {
-                    addChatMessage(msg);
+
+            // Side Bar Click Events
+            $('#action_ToggleSideBar').live('click', function () {
+                if ($.cookie('sidebar')) {
+                    $.cookie('sidebar', null);
+                    $('#SideBar').hide();
+                    stopUpdateChatMessages();
+                    stopUpdateNowPlaying();
+                } else {
+                    $.cookie('sidebar', true, { expires: 365 });
+                    $('#SideBar').show();
+                    updateChatMessages();
+                    updateNowPlaying();
                 }
-                $('#ChatMsg').val("");
+                resizeContent();
                 return false;
             });
             $('input#ChatMsg').keydown(function (e) {
                 var unicode = e.charCode ? e.charCode : e.keyCode;
                 if (unicode == 13) {
-                    $('#action_AddChatMsg').click();
+                    var msg = $('#ChatMsg').val();
+                    if (msg != '') {
+                        addChatMessage(msg);
+                    }
+                    $('#ChatMsg').val("");
                 }
-            });
-            $('a#NowPlaying').click(function () {
-                var submenu = $('div#submenu_NowPlaying');
-                if (submenu.is(":visible")) {
-                    submenu.fadeOut();
-                    updaterNowPlaying.cancel();
-                } else {
-                    //loadChatMessages();
-                    updateNowPlaying();
-                    $('div#submenu_Chat').fadeOut();
-                    submenu.fadeIn(400);
-                }
-            });
-            $("a#coverartimage").fancybox({
-                'hideOnContentClick': true,
-                'type': 'image'
             });
 
             // Preferences Click Events
@@ -433,6 +421,14 @@
                 var AutoPlaylistSize = $('#AutoPlaylistSize').val();
                 $.cookie('AutoAlbumSize', AutoAlbumSize, { expires: 365 });
                 $.cookie('AutoPlaylistSize', AutoPlaylistSize, { expires: 365 });
+                var subdirectory = $('#SubDirectory').val();
+                if (subdirectory != "") {
+                    $.cookie('subdirectory', subdirectory, { expires: 365 });
+                }
+                var applicationname = $('#ApplicationName').val();
+                if (applicationname != "") {
+                    $.cookie('applicationname', applicationname, { expires: 365 });
+                }
                 location.reload(true);
             });
             $('input#Password').keydown(function (e) {
@@ -446,14 +442,9 @@
                 $.cookie('password', null);
                 $.cookie('AutoAlbumSize', null);
                 $.cookie('AutoPlaylistSize', null);
-            });
-            $('#SaveSubDirectory').live('click', function () {
-                var subdirectory = $('#SubDirectory').val();
-                if (subdirectory != "") {
-                    $.cookie('subdirectory', subdirectory, { expires: 365 });
-                    location.reload(true);
-                }
-                return false;
+                $.cookie('SubDirectory', null);
+                $.cookie('ApplicationName', null);
+                location.reload(true);
             });
             $('#StyleSwitcher').live('change', function () {
                 var style = $(this).val();
@@ -461,7 +452,7 @@
                 $.cookie('css', style, { expires: 365, path: '/' });
                 location.reload(true);
             });
-        });                 // End document.ready
+        });       // End document.ready
 
         $(window).load(function () {
             if ($.cookie('defaultsmwidth')) {
@@ -473,21 +464,40 @@
                 $('#AlbumContainer').css({ 'margin-left': ulwidth + 'px' });
                 $('#TrackContainer').css({ 'margin-left': ulwidth + 'px' });
             }
+            if ($.cookie('sidebar') && $.cookie('username') && $.cookie('password')) {
+                $('#SideBar').show();
+                updateChatMessages();
+                updateNowPlaying();
+            }
             resizeContent();
         });
         $(window).resize(function () {
-        resizeContent();
+            resizeContent();
         });
         function resizeContent() {
+            var screenwidth = $(window).width();
             $('.tabcontent').css({ 'height': (($(window).height() - 160)) + 'px' });
             $('.smsection').css({ 'height': (($(window).height() - 200)) + 'px' });
             var smheight = $('.smsection').height();
             var smwidth = $('.smsection').width();
             $('#BottomContainer').css({ 'top': smheight + 75 + 'px' });
-            var screenwidth = $(window).width();
-            $('#AlbumContainer').css({ 'width': (screenwidth - smwidth - 35) + 'px' });
-            $('#TrackContainer').css({ 'width': (screenwidth - smwidth - 35) + 'px' });
-            $('#CurrentPlaylistContainer').css({ 'width': (screenwidth - 35) + 'px' });
+            if ($.cookie('sidebar')) {
+                var tabwidth = $(window).width() - 218;
+                if (tabwidth >= 700) {
+                    $('.tabcontent').css({ 'width': tabwidth + 'px' });
+                }
+                var sbheight = $(window).height() - 160;
+                $('#SideBar').css({ 'height': sbheight + 'px' });
+                $('#ChatMsgs').css({ 'height': (sbheight - 270) + 'px' });
+            } else {
+                var tabwidth = $(window).width() - 11;
+                if (tabwidth >= 700) {
+                    $('.tabcontent').css({ 'width': tabwidth + 'px' });
+                }
+            }
+            var tabwidth = $('.tabcontent').width();
+            $('#AlbumContainer, #TrackContainer, #CurrentPlaylistContainer').css({ 'width': (tabwidth - smwidth - 30) + 'px' });
+            $('#CurrentPlaylistContainer').css({ 'width': (tabwidth - 30) + 'px' });
         }
         function resizeSMSection(x) {
             var smwidth = $('.smsection').width();
@@ -644,31 +654,21 @@
                 $('#AutoAlbumSize').val($.cookie('AutoAlbumSize'));
                 $('#AutoPlaylistSize').val($.cookie('AutoPlaylistSize'));
                 $('#SubDirectory').val($.cookie('subdirectory'));
+                $('#ApplicationName').val($.cookie('applicationname'));
             });
         </script>
-            <div class="actions floatleft"></div>
+            <div class="actions floatleft">
+                <a href="#" class="button" id="ResetPreferences" title="Reset Preferences">Reset</a>
+                <a href="#" class="button" id="SavePreferences" title="Save Preferences">Save</a>
+            </div>
             <div class="clear"></div>
-            <div class="nosection floatleft">
+            <div class="lgsection floatleft">
                 <div class="subsection floatleft">
                     <label for="Username">Username</label><br />
                     <input type="text" id="Username" name="Username" class="large"/><br />
                     <label for="Password">Password</label><br />
                     <input type="password" id="Password" name="Password" class="large"/><br /><br />
-                    <label for="AutoAlbumSize">Auto Album Size (Default 15)</label><br />
-                    <input type="text" id="AutoAlbumSize" name="AutoAlbumSize" class="large" title="Number of albums to get on the Music Library tab"/><br />
-                    <label for="AutoPlaylistSize">Auto Playlist Size (Default 25)</label><br />
-                    <input type="text" id="AutoPlaylistSize" name="AutoPlaylistSize" class="large" title="Number of songs to get on the Playlist tab"/><br />
-                    <a href="#" class="button submit floatright" id="SavePreferences" title="Save">Save</a>
-                    <a href="#" class="button submit floatright" id="ResetPreferences" title="Reset">Reset</a>
                 </div>
-                <div class="clear"></div>
-                <div class="subsection floatleft">
-                    <label for="SubDirectory">Subdirectory</label><br />
-                    <small>*For custom installations</small><br />
-                    <input type="text" id="SubDirectory" name="SubDirectory" class="large"/><br />
-                    <a href="#" class="button submit floatright" id="SaveSubDirectory" title="Save">Save</a>
-                </div>
-                <div class="clear"></div>
                 <div class="subsection floatleft">
                     <ul class="preferences">
                     <li class="title">Keyboard Shortcuts</li>
@@ -679,10 +679,35 @@
                     <li><span></span></li>
                     </ul>
                 </div>
+                <div class="clear"></div>
+                <div class="subsection floatleft">
+                    <label for="AutoAlbumSize">Auto Album Size (Default 15)</label><br />
+                    <input type="text" id="AutoAlbumSize" name="AutoAlbumSize" class="large" title="Number of albums to get on the Music Library tab"/><br />
+                    <label for="AutoPlaylistSize">Auto Playlist Size (Default 25)</label><br />
+                    <input type="text" id="AutoPlaylistSize" name="AutoPlaylistSize" class="large" title="Number of songs to get on the Playlist tab"/><br />
+                </div>
+                <div class="subsection floatleft">
+                    <label for="SubDirectory">Subdirectory</label><br />
+                    <input type="text" id="SubDirectory" name="SubDirectory" class="large" title="Used for custom installations (Tomcat)"/><br />
+                    <label for="ApplicationName">Application Name (Default MiniSub)</label><br />
+                    <input type="text" id="ApplicationName" name="ApplicationName" class="large" title="Used for custom player name"/><br />
+                </div>
+                <div class="clear"></div>
             </div>
             <div class="clear"></div>
         </div>
 
+        <div id="SideBar">
+            <div id="NowPlaying">
+                <div class="header"><img src="images/rss_12x12.png" /> Now Playing</div>
+                <div id="NowPlayingList"><span class="user">Loading...</span></div>
+            </div>
+            <div id="Chat">
+                <div class="header"><img src="images/chat_alt_stroke_12x12.png" /> Chat</div>
+                <div id="ChatMsgs"></div>
+                <div class="submit"><img src="images/comment_stroke_gl_12x11.png" /><input type="text" id="ChatMsg" class="chat" title="Hit [Enter] to Post" /></div>
+            </div>
+        </div>
         <!-- Audio Player -->
         <div class="clear"></div>
         <div id="player">
@@ -701,19 +726,7 @@
                 <div class="floatleft"><audio src="" preload="none" /></div>
                 </div>
             </div>
-            <div id="submenu_Chat" class="submenu shadow" style="display: none;">
-                <div id="ChatMsgs"></div>
-                <input type="text" id="ChatMsg" class="medium" /><a href="#" class="button" id="action_AddChatMsg" title="Add Chat Message"><img src="images/comment_stroke_12x11.png" /></a>
-            </div>
-            <div id="submenu_NowPlaying" class="submenu shadow" style="display: none;">
-                <div id="NowPlayingList"><span class="user">Loading...</span></div>
-            </div>
-            <div class="playeractionssmall floatleft">
-                <a href="#" class="button" id="Chat" title="Chat"><img src="images/chat_alt_stroke_12x12.png" /> Chat</a>
-                <a href="#" class="button" id="NowPlaying" title="Now Playing"><img src="images/rss_12x12.png" /> Now Playing</a>
-                <span id="Notifications"></span>
-            </div>
-
+            <div class="playeractionssmall floatright"><a href="#" class="button" id="action_ToggleSideBar" title="Toggle Side Bar"><img src="images/arrow_right_gl_12x12.png" /></a></div>
             <div class="clear"></div>
         </div>
 

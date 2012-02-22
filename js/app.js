@@ -6,6 +6,12 @@ if ($.cookie('subdirectory')) {
 } else {
     baseURL = location.protocol + '//' + location.host + '/rest';
 }
+var applicationName;
+if ($.cookie('applicationname')) {
+    applicationName = $.cookie('applicationname');
+} else {
+    applicationName = 'MiniSub';
+}
 var username = $.cookie('username');
 var password = $.cookie('password');
 var auth = makeBaseAuth(username, password);
@@ -38,7 +44,7 @@ function loadArtists(refresh) {
     if (content == "") {
         // Load Artist List
         $.ajax({
-            url: baseURL + '/getIndexes.view?v=1.6.0&c=subweb&f=json',
+            url: baseURL + '/getIndexes.view?v=1.6.0&c=' + applicationName + '&f=json',
             method: 'GET',
             dataType: 'json',
             beforeSend: function (req) {
@@ -86,58 +92,20 @@ function loadArtists(refresh) {
         });
     }
 }
-function getAlbums(id, appendto) {
+function getAlbums(id, action, appendto) {
     $.ajax({
-        url: baseURL + '/getMusicDirectory.view?v=1.6.0&c=subweb&f=json&id=' + id,
+        url: baseURL + '/getMusicDirectory.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + id,
         method: 'GET',
         dataType: 'json',
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
         success: function (data) {
-            $("#AlbumRows").empty();
-            if (data["subsonic-response"].directory.child != undefined) {
-                // There is a bug in the API that doesn't return a JSON array for one artist
-                var children = [];
-                if (data["subsonic-response"].directory.child.length > 0) {
-                    children = data["subsonic-response"].directory.child;
-                } else {
-                    children[0] = data["subsonic-response"].directory.child;
-                }
-
-                var rowcolor;
-                var albumhtml;
-                $.each(children, function (i, child) {
-                    if (i % 2 == 0) {
-                        rowcolor = 'even';
-                    } else {
-                        rowcolor = 'odd';
-                    }
-                    albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating);
-                    $(albumhtml).appendTo("#AlbumRows");
-                });
-                var header = generateAlbumHeaderHTML();
-                $("#AlbumHeader").html(header);
-            }
-        }
-    });
-}
-function getSongs(id, artistid, action, appendto) {
-    $.ajax({
-        url: baseURL + '/getMusicDirectory.view?v=1.6.0&c=subweb&f=json&id=' + id,
-        method: 'GET',
-        dataType: 'json',
-        beforeSend: function (req) {
-            req.setRequestHeader('Authorization', auth);
-        },
-        success: function (data) {
-            if (appendto == '#AlbumRows' && action == '') {
+            if (action == '') {
                 $('#AlbumRows').empty();
-                var header = generateSongHeaderHTML();
-                $("#AlbumHeader").html(header);
             }
             if (action == 'autoplay') {
-                $('#CurrentPlaylistContainer').empty();
+                $('#CurrentPlaylistContainer tbody').empty();
             }
             if (data["subsonic-response"].directory.child != undefined) {
                 // There is a bug in the API that doesn't return a JSON array for one artist
@@ -150,27 +118,31 @@ function getSongs(id, artistid, action, appendto) {
 
                 var rowcolor;
                 var albumhtml;
+                var isDir;
                 $.each(children, function (i, child) {
                     if (i % 2 == 0) {
                         rowcolor = 'even';
                     } else {
                         rowcolor = 'odd';
                     }
-                    var track;
-                    if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
-                    var time = secondsToTime(child.duration);
-                    albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
-                    /*
-                    if (appendto == '#AlbumRows') {
-                        if (i == 0) {
-                            //var backhtml = '<tr class=\"back\"><td colspan=\"6\"><a href=\"#\" onclick=\"javascript:getAlbums(\'' + artistid + '\', \'\', \'\', \'#AlbumRows\'); return false;\">&laquo; Back to ' + child.artist + '</a></td></tr>';
-                            var backhtml = '<a href=\"#\" onclick=\"javascript:getAlbums(\'' + artistid + '\', \'\', \'\', \'#AlbumRows\'); return false;\">' + child.artist + '</a>';
-                            $("#BreadCrumb").html($(backhtml));
-                        }
+                    isDir = child.isDir;
+                    if (isDir == true) {
+                        albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating);
+                    } else {
+                        var track;
+                        if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
+                        var time = secondsToTime(child.duration);
+                        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
                     }
-                    */
                     $(albumhtml).appendTo(appendto);
                 });
+                if (appendto == '#AlbumRows' && isDir == true) {
+                    var header = generateAlbumHeaderHTML();
+                }
+                if (appendto == '#AlbumRows' && isDir == false) {
+                    var header = generateSongHeaderHTML();
+                }
+                $("#AlbumHeader").html(header);
                 if (action == 'autoplay') {
                     autoPlay();
                 }
@@ -186,7 +158,7 @@ function getAlbumListBy(id) {
         size = $.cookie('AutoAlbumSize');
     }
     $.ajax({
-        url: baseURL + '/getAlbumList.view?v=1.6.0&c=subweb&f=json&size=' + size + '&type=' + id,
+        url: baseURL + '/getAlbumList.view?v=1.6.0&c=' + applicationName + '&f=json&size=' + size + '&type=' + id,
         method: 'GET',
         dataType: 'json',
         beforeSend: function (req) {
@@ -234,7 +206,7 @@ function getRandomSongList(action, appendto) {
         size = $.cookie('AutoPlaylistSize');
     }
     $.ajax({
-        url: baseURL + '/getRandomSongs.view?v=1.5.0&c=subweb&f=json&size=' + size,
+        url: baseURL + '/getRandomSongs.view?v=1.6.0&c=' + applicationName + '&f=json&size=' + size,
         method: 'GET',
         dataType: 'json',
         beforeSend: function (req) {
@@ -295,7 +267,7 @@ function generateAlbumHTML(rowcolor, childid, parentid, coverart, title, artist,
         html += '<a class=\"rate\" href=\"\" title=\"Add To Favorites\"></a>';
     }
     html += '</td>';
-    html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&size=50&id=' + coverart + '\" /></td>';
+    html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&size=50&id=' + coverart + '\" /></td>';
     html += '<td class=\"album\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
     html += '</tr>';
@@ -321,7 +293,7 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, artist, alb
     html += '<td class=\"track\">' + track + '</td>';
     html += '<td class=\"title\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
-    html += '<td class=\"album\">' + album + '<img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&size=25&id=' + coverart + '\" /></td>';
+    html += '<td class=\"album\">' + album + '<img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&size=25&id=' + coverart + '\" /></td>';
     html += '<td class=\"time\">' + m + ':' + s + '</td>';
     html += '</tr>';
     return html;
@@ -342,7 +314,7 @@ function refreshRowColor() {
 var scrobbled = false;
 function playSong(el, songid, albumid) {
     $.ajax({
-        url: baseURL + '/getMusicDirectory.view?v=1.6.0&c=subweb&f=json&id=' + albumid,
+        url: baseURL + '/getMusicDirectory.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + albumid,
         method: 'GET',
         dataType: 'json',
         beforeSend: function (req) {
@@ -365,10 +337,9 @@ function playSong(el, songid, albumid) {
             $('#songdetails_song').attr('parentid', albumid);
             $('#songdetails_song').attr('childid', songid);
             $('#songdetails_artist').html(artist + ' - ' + album);
-            //$('#songdetails_artist').html('<a href=\"#\" onclick=\"javascript:getAlbums(\'' + artistid + '\', \'\', \'\', \'#AlbumRows\'); return false;\">&laquo; Back to ' + artist + '</a>');
-            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&id=' + songid);
-            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=subweb&f=json&size=56&id=' + songid);
-            audio.load(baseURL + '/stream.view?v=1.6.0&c=subweb&f=json&id=' + songid);
+            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + songid);
+            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&size=56&id=' + songid);
+            audio.load(baseURL + '/stream.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + songid);
             audio.play();
             $('table.songlist tr.song').removeClass('playing');
             $(el).addClass('playing');
@@ -382,7 +353,7 @@ function playSong(el, songid, albumid) {
 function scrobbleSong(submission) {
     var songid = $('#songdetails_song').attr('childid');
     $.ajax({
-        url: baseURL + '/scrobble.view?v=1.6.0&c=subweb&f=json&id=' + songid + "&submission=" + submission,
+        url: baseURL + '/scrobble.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + songid + "&submission=" + submission,
         method: 'GET',
         dataType: 'json',
         beforeSend: function (req) {
@@ -397,7 +368,7 @@ function scrobbleSong(submission) {
 }
 function rateSong(songid, rating) {
     $.ajax({
-        url: baseURL + '/setRating.view?v=1.6.0&c=subweb&f=json&id=' + songid + "&rating=" + rating,
+        url: baseURL + '/setRating.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + songid + "&rating=" + rating,
         method: 'GET',
         dataType: 'json',
         beforeSend: function (req) {
@@ -452,7 +423,7 @@ function autoPlay() {
 }
 function search(type, query) {
     $.ajax({
-        url: baseURL + '/search2.view?v=1.6.0&c=subweb&f=json&query=' + query,
+        url: baseURL + '/search2.view?v=1.6.0&c=' + applicationName + '&f=json&query=' + query,
         method: 'GET',
         dataType: 'json',
         beforeSend: function (req) {
@@ -493,7 +464,7 @@ function search(type, query) {
 var starttime;
 function loadChatMessages() {
     $.ajax({
-        url: baseURL + '/getChatMessages.view?v=1.6.0&c=subweb&f=json',
+        url: baseURL + '/getChatMessages.view?v=1.6.0&c=' + applicationName + '&f=json',
         method: 'GET',
         dataType: 'json',
         beforeSend: function (req) {
@@ -520,10 +491,10 @@ function loadChatMessages() {
 }
 var updater;
 function updateChatMessages() {
-    updater = $.periodic({ period: 2000, decay: 1.5, max_period: 1800000 }, function () {
+    updater = $.periodic({ period: 1000, decay: 1.5, max_period: 1800000 }, function () {
         $.ajax({
             periodic: this,
-            url: baseURL + '/getChatMessages.view?v=1.6.0&c=subweb&f=json&since=' + starttime,
+            url: baseURL + '/getChatMessages.view?v=1.6.0&c=' + applicationName + '&f=json&since=' + starttime,
             method: 'GET',
             dataType: 'json',
             beforeSend: function (req) {
@@ -554,16 +525,20 @@ function updateChatMessages() {
                             starttime = msg.time;
                         }
                     });
+                    $("#ChatMsgs").attr({ scrollTop: $("#ChatMsgs").attr("scrollHeight") });
                 }
             }
         });
     });
 }
+function stopUpdateChatMessages() {
+    updater.cancel();
+}
 function addChatMessage(msg) {
     $.ajax({
         type: 'POST',
         url: baseURL + '/addChatMessage.view',
-        data: { v: "1.5.0", c: "subweb", f: "json", message: msg },
+        data: { v: "1.6.0", c: applicationName, f: "json", message: msg },
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
@@ -577,10 +552,10 @@ function addChatMessage(msg) {
 var updaterNowPlaying;
 var updaterNowPlayingData;
 function updateNowPlaying() {
-    updaterNowPlaying = $.periodic({ period: 2000, decay: 1.5, max_period: 1800000 }, function () {
+    updaterNowPlaying = $.periodic({ period: 4000, decay: 1.5, max_period: 1800000 }, function () {
         $.ajax({
             periodic: this,
-            url: baseURL + '/getNowPlaying.view?v=1.6.0&c=subweb&f=json',
+            url: baseURL + '/getNowPlaying.view?v=1.6.0&c=' + applicationName + '&f=json',
             method: 'GET',
             dataType: 'json',
             beforeSend: function (req) {
@@ -622,6 +597,9 @@ function updateNowPlaying() {
         });
     });
 }
+function stopUpdateNowPlaying() {
+    updaterNowPlaying.cancel();
+}
 
 function loadPlaylists(refresh) {
     if (refresh) {
@@ -631,7 +609,7 @@ function loadPlaylists(refresh) {
     if (content == "") {
         // Load Playlists
         $.ajax({
-            url: baseURL + '/getPlaylists.view?v=1.6.0&c=subweb&f=json',
+            url: baseURL + '/getPlaylists.view?v=1.6.0&c=' + applicationName + '&f=json',
             method: 'GET',
             dataType: 'json',
             beforeSend: function (req) {
@@ -654,7 +632,7 @@ function loadPlaylists(refresh) {
 function loadPlaylistsForMenu(menu) {
     $('#' + menu).empty();
     $.ajax({
-        url: baseURL + '/getPlaylists.view?v=1.6.0&c=subweb&f=json',
+        url: baseURL + '/getPlaylists.view?v=1.6.0&c=' + applicationName + '&f=json',
         method: 'GET',
         dataType: 'json',
         beforeSend: function (req) {
@@ -676,7 +654,7 @@ function newPlaylist() {
     var reply = prompt("Choose a name for your new playlist.", "");
     if (reply) {
         $.ajax({
-            url: baseURL + '/createPlaylist.view?v=1.6.0&c=subweb&f=json&name=' + reply,
+            url: baseURL + '/createPlaylist.view?v=1.6.0&c=' + applicationName + '&f=json&name=' + reply,
             method: 'GET',
             dataType: 'json',
             beforeSend: function (req) {
@@ -690,7 +668,7 @@ function newPlaylist() {
 }
 function deletePlaylist(id) {
     $.ajax({
-        url: baseURL + '/deletePlaylist.view?v=1.6.0&c=subweb&f=json&id=' + id,
+        url: baseURL + '/deletePlaylist.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + id,
         method: 'GET',
         dataType: 'json',
         beforeSend: function (req) {
@@ -718,7 +696,7 @@ function addToPlaylist(playlistid, from) {
             // Get songs from playlist
             var currentsongs = [];
             $.ajax({
-                url: baseURL + '/getPlaylist.view?v=1.6.0&c=subweb&f=json&id=' + playlistid,
+                url: baseURL + '/getPlaylist.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + playlistid,
                 method: 'GET',
                 dataType: 'json',
                 beforeSend: function (req) {
@@ -749,7 +727,7 @@ function addToPlaylist(playlistid, from) {
                         $.ajax({
                             type: 'POST',
                             url: baseURL + '/createPlaylist.view',
-                            data: { v: "1.5.0", c: "subweb", f: "json", playlistId: playlistid, songId: currentsongs },
+                            data: { v: "1.6.0", c: applicationName, f: "json", playlistId: playlistid, songId: currentsongs },
                             beforeSend: function (req) {
                                 req.setRequestHeader('Authorization', auth);
                             },
@@ -768,7 +746,7 @@ function addToPlaylist(playlistid, from) {
             $.ajax({
                 type: 'POST',
                 url: baseURL + '/createPlaylist.view',
-                data: { v: "1.5.0", c: "subweb", f: "json", name: 'New Playlist', songId: selected },
+                data: { v: "1.6.0", c: applicationName, f: "json", name: 'New Playlist', songId: selected },
                 beforeSend: function (req) {
                     req.setRequestHeader('Authorization', auth);
                 },
@@ -799,7 +777,7 @@ function savePlaylist(playlistid) {
         $.ajax({
             type: 'POST',
             url: baseURL + '/createPlaylist.view',
-            data: { v: "1.5.0", c: "subweb", f: "json", playlistId: playlistid, songId: songs },
+            data: { v: "1.6.0", c: applicationName, f: "json", playlistId: playlistid, songId: songs },
             beforeSend: function (req) {
                 req.setRequestHeader('Authorization', auth);
             },
@@ -813,7 +791,7 @@ function savePlaylist(playlistid) {
 }
 function getPlaylist(id, action, appendto) {
     $.ajax({
-        url: baseURL + '/getPlaylist.view?v=1.6.0&c=subweb&f=json&id=' + id,
+        url: baseURL + '/getPlaylist.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + id,
         method: 'GET',
         dataType: 'json',
         beforeSend: function (req) {
