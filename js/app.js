@@ -119,6 +119,7 @@ function getAlbums(id, action, appendto) {
                 var rowcolor;
                 var albumhtml;
                 var isDir;
+                var header;
                 $.each(children, function (i, child) {
                     if (i % 2 === 0) {
                         rowcolor = 'even';
@@ -137,10 +138,10 @@ function getAlbums(id, action, appendto) {
                     $(albumhtml).appendTo(appendto);
                 });
                 if (appendto === '#AlbumRows' && isDir === true) {
-                    var header = generateAlbumHeaderHTML();
+                    header = generateAlbumHeaderHTML();
                 }
                 if (appendto === '#AlbumRows' && isDir === false) {
-                    var header = generateSongHeaderHTML();
+                    header = generateSongHeaderHTML();
                 }
                 $("#AlbumHeader").html(header);
                 if (action === 'autoplay') {
