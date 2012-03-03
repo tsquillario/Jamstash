@@ -190,7 +190,7 @@ function getAlbumListBy(id) {
                     if (album.isDir === true) {
                         albumhtml = generateAlbumHTML(rowcolor, album.id, album.parent, album.coverArt, album.title, album.artist, album.userRating);
                     }
-                    $(albumhtml).appendTo("#AlbumRows")
+                    $(albumhtml).appendTo("#AlbumRows");
                 });
             } else {
                 $('#AlbumRows').empty();
@@ -896,7 +896,7 @@ function findKeyForCode(code) {
 }
 function popOut()
 {
-    window.open(hostURL, "External Player", "status = 1, height = 735, width = 840, resizable = 0")
+    window.open(hostURL, "External Player", "status = 1, height = 735, width = 840, resizable = 0");
 }
 function secondsToTime(secs) {
     var hours = Math.floor(secs / (60 * 60));
@@ -919,6 +919,6 @@ function secondsToTime(secs) {
 }
 function updateMessage(msg) {
     $('#messages').text(msg);
-    $('#messages').fadeIn()
+    $('#messages').fadeIn();
     setTimeout(function () { $('#messages').fadeOut(); }, 5000);
 }
