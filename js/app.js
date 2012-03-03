@@ -375,7 +375,7 @@ function rateSong(songid, rating) {
             req.setRequestHeader('Authorization', auth);
         },
         success: function () {
-            updateMessage('Rating Updated!');        
+            updateMessage('Rating Updated!');
         }
     });
 }
@@ -544,7 +544,7 @@ function addChatMessage(msg) {
         },
         success: function () {
             updater.reset();
-            //loadChatMessages();        
+            //loadChatMessages();
         },
         traditional: true // Fixes POST with an array in JQuery 1.4
     });
@@ -894,7 +894,7 @@ function findKeyForCode(code) {
     });
     return keyFound;
 }
-function popOut() 
+function popOut()
 {
     window.open(hostURL, "External Player", "status = 1, height = 735, width = 840, resizable = 0")
 }
