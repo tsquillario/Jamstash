@@ -329,6 +329,7 @@ function playSong(el, songid, albumid) {
                             title = child.title;
                             artist = child.artist;
                             album = child.album;
+                            coverart = child.coverArt;
                         }
                     });
                 }
@@ -337,8 +338,8 @@ function playSong(el, songid, albumid) {
             $('#songdetails_song').attr('parentid', albumid);
             $('#songdetails_song').attr('childid', songid);
             $('#songdetails_artist').html(artist + ' - ' + album);
-            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + songid);
-            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&size=56&id=' + songid);
+            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + coverart);
+            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&size=56&id=' + coverart);
             audio.load(baseURL + '/stream.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + songid);
             audio.play();
             $('table.songlist tr.song').removeClass('playing');
@@ -375,7 +376,7 @@ function rateSong(songid, rating) {
             req.setRequestHeader('Authorization', auth);
         },
         success: function () {
-            updateMessage('Rating Updated!');        
+            updateMessage('Rating Updated!');
         }
     });
 }
@@ -544,7 +545,7 @@ function addChatMessage(msg) {
         },
         success: function () {
             updater.reset();
-            //loadChatMessages();        
+            //loadChatMessages();
         },
         traditional: true // Fixes POST with an array in JQuery 1.4
     });
@@ -894,7 +895,7 @@ function findKeyForCode(code) {
     });
     return keyFound;
 }
-function popOut() 
+function popOut()
 {
     window.open(hostURL, "External Player", "status = 1, height = 735, width = 840, resizable = 0")
 }
