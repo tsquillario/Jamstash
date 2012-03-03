@@ -477,12 +477,12 @@ function loadChatMessages() {
             });
             $.each(sorted, function (i, msg) {
                 var chathtml = '<div class=\"msg\">';
-                chathtml += '<span class=\"time\">' + $.format.date(new Date(parseInt(msg.time)), 'hh:mm:ss a') + '</span> ';
+                chathtml += '<span class=\"time\">' + $.format.date(new Date(parseInt(msg.time, 10)), 'hh:mm:ss a') + '</span> ';
                 chathtml += '<span class=\"user\">' + msg.username + '</span></br>';
                 chathtml += '<span class=\"msg\">' + msg.message + '</span>';
                 chathtml += '</div>';
                 $(chathtml).appendTo("#ChatMsgs");
-                if (i = 1) {
+                if (i === 1) {
                     starttime = msg.time;
                 }
             });
@@ -516,12 +516,12 @@ function updateChatMessages() {
                     });
                     $.each(sorted, function (i, msg) {
                         var chathtml = '<div class=\"msg\">';
-                        chathtml += '<span class=\"time\">' + $.format.date(new Date(parseInt(msg.time)), 'hh:mm:ss a') + '</span> ';
+                        chathtml += '<span class=\"time\">' + $.format.date(new Date(parseInt(msg.time, 10)), 'hh:mm:ss a') + '</span> ';
                         chathtml += '<span class=\"user\">' + msg.username + '</span></br>';
                         chathtml += '<span class=\"msg\">' + msg.message + '</span>';
                         chathtml += '</div>';
                         $(chathtml).appendTo("#ChatMsgs");
-                        if (i = 1) {
+                        if (i === 1) {
                             starttime = msg.time;
                         }
                     });
