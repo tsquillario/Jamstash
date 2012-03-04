@@ -330,6 +330,7 @@ function playSong(el, songid, albumid) {
                             title = child.title;
                             artist = child.artist;
                             album = child.album;
+                            coverart = child.coverArt;
                         }
                     });
                 }
@@ -338,8 +339,8 @@ function playSong(el, songid, albumid) {
             $('#songdetails_song').attr('parentid', albumid);
             $('#songdetails_song').attr('childid', songid);
             $('#songdetails_artist').html(artist + ' - ' + album);
-            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + songid);
-            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&size=56&id=' + songid);
+            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + coverart);
+            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&size=56&id=' + coverart);
             audio.load(baseURL + '/stream.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + songid);
             audio.play();
             $('table.songlist tr.song').removeClass('playing');
