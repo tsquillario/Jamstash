@@ -1,20 +1,21 @@
 ﻿// Global Variables
 var hostURL = location.href;
 var baseURL;
-if ($.cookie('subdirectory')) {
-    baseURL = location.protocol + '//' + location.host + '/' + $.cookie('subdirectory') + '/rest';
-} else {
-    baseURL = location.protocol + '//' + location.host + '/rest';
+if ($.cookie('Server')) {
+    baseURL = $.cookie('Server') + '/rest';
 }
 var applicationName;
-if ($.cookie('applicationname')) {
-    applicationName = $.cookie('applicationname');
+if ($.cookie('ApplicationName')) {
+    applicationName = $.cookie('ApplicationName');
 } else {
     applicationName = 'MiniSub';
 }
 var username = $.cookie('username');
 var password = $.cookie('password');
 var auth = makeBaseAuth(username, password);
+var passwordenc = 'enc:' + HexEncode($.cookie('password'));
+var version = '1.7.0';
+
 function loadTabContent(tab) {
     switch (tab) {
         case '#tabLibrary':
@@ -28,10 +29,8 @@ function loadTabContent(tab) {
             loadPlaylists();
             break;
         case '#tabPreferences':
-            //loadPreferences();
             break;
         default:
-            //alert('default');
             break;
     }
 }
@@ -44,12 +43,10 @@ function loadArtists(refresh) {
     if (content === "") {
         // Load Artist List
         $.ajax({
-            url: baseURL + '/getIndexes.view?v=1.6.0&c=' + applicationName + '&f=json',
+            url: baseURL + '/getIndexes.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp',
             method: 'GET',
-            dataType: 'json',
-            beforeSend: function (req) {
-                req.setRequestHeader('Authorization', auth);
-            },
+            dataType: 'jsonp',
+            timeout: 10000,
             success: function (data) {
                 if (data["subsonic-response"].status === 'ok') {
                     var indexlist, indexname;
@@ -94,9 +91,10 @@ function loadArtists(refresh) {
 }
 function getAlbums(id, action, appendto) {
     $.ajax({
-        url: baseURL + '/getMusicDirectory.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + id,
+        url: baseURL + '/getMusicDirectory.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + id,
         method: 'GET',
-        dataType: 'json',
+        dataType: 'jsonp',
+        timeout: 10000,
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
@@ -159,9 +157,10 @@ function getAlbumListBy(id) {
         size = $.cookie('AutoAlbumSize');
     }
     $.ajax({
-        url: baseURL + '/getAlbumList.view?v=1.6.0&c=' + applicationName + '&f=json&size=' + size + '&type=' + id,
+        url: baseURL + '/getAlbumList.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&size=' + size + '&type=' + id,
         method: 'GET',
-        dataType: 'json',
+        dataType: 'jsonp',
+        timeout: 10000,
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
@@ -207,9 +206,10 @@ function getRandomSongList(action, appendto) {
         size = $.cookie('AutoPlaylistSize');
     }
     $.ajax({
-        url: baseURL + '/getRandomSongs.view?v=1.6.0&c=' + applicationName + '&f=json&size=' + size,
+        url: baseURL + '/getRandomSongs.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&size=' + size,
         method: 'GET',
-        dataType: 'json',
+        dataType: 'jsonp',
+        timeout: 10000,
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
@@ -268,7 +268,7 @@ function generateAlbumHTML(rowcolor, childid, parentid, coverart, title, artist,
         html += '<a class=\"rate\" href=\"\" title=\"Add To Favorites\"></a>';
     }
     html += '</td>';
-    html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&size=50&id=' + coverart + '\" /></td>';
+    html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart + '\" /></td>';
     html += '<td class=\"album\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
     html += '</tr>';
@@ -294,7 +294,7 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, artist, alb
     html += '<td class=\"track\">' + track + '</td>';
     html += '<td class=\"title\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
-    html += '<td class=\"album\">' + album + '<img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&size=25&id=' + coverart + '\" /></td>';
+    html += '<td class=\"album\">' + album + '<img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart + '\" /></td>';
     html += '<td class=\"time\">' + m + ':' + s + '</td>';
     html += '</tr>';
     return html;
@@ -315,9 +315,10 @@ function refreshRowColor() {
 var scrobbled = false;
 function playSong(el, songid, albumid) {
     $.ajax({
-        url: baseURL + '/getMusicDirectory.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + albumid,
+        url: baseURL + '/getMusicDirectory.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + albumid,
         method: 'GET',
-        dataType: 'json',
+        dataType: 'jsonp',
+        timeout: 10000,
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
@@ -339,9 +340,9 @@ function playSong(el, songid, albumid) {
             $('#songdetails_song').attr('parentid', albumid);
             $('#songdetails_song').attr('childid', songid);
             $('#songdetails_artist').html(artist + ' - ' + album);
-            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + coverart);
-            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=json&size=56&id=' + coverart);
-            audio.load(baseURL + '/stream.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + songid);
+            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&id=' + coverart);
+            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&size=56&id=' + coverart);
+            audio.load(baseURL + '/stream.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid);
             audio.play();
             $('table.songlist tr.song').removeClass('playing');
             $(el).addClass('playing');
@@ -355,9 +356,10 @@ function playSong(el, songid, albumid) {
 function scrobbleSong(submission) {
     var songid = $('#songdetails_song').attr('childid');
     $.ajax({
-        url: baseURL + '/scrobble.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + songid + "&submission=" + submission,
+        url: baseURL + '/scrobble.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid + "&submission=" + submission,
         method: 'GET',
-        dataType: 'json',
+        dataType: 'jsonp',
+        timeout: 10000,
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
@@ -370,9 +372,10 @@ function scrobbleSong(submission) {
 }
 function rateSong(songid, rating) {
     $.ajax({
-        url: baseURL + '/setRating.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + songid + "&rating=" + rating,
+        url: baseURL + '/setRating.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid + "&rating=" + rating,
         method: 'GET',
-        dataType: 'json',
+        dataType: 'jsonp',
+        timeout: 10000,
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
@@ -425,9 +428,10 @@ function autoPlay() {
 }
 function search(type, query) {
     $.ajax({
-        url: baseURL + '/search2.view?v=1.6.0&c=' + applicationName + '&f=json&query=' + query,
+        url: baseURL + '/search2.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&query=' + query,
         method: 'GET',
-        dataType: 'json',
+        dataType: 'jsonp',
+        timeout: 10000,
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
@@ -464,41 +468,15 @@ function search(type, query) {
     });
 }
 var starttime;
-function loadChatMessages() {
-    $.ajax({
-        url: baseURL + '/getChatMessages.view?v=1.6.0&c=' + applicationName + '&f=json',
-        method: 'GET',
-        dataType: 'json',
-        beforeSend: function (req) {
-            req.setRequestHeader('Authorization', auth);
-        },
-        success: function (data) {
-            $('#ChatMsgs').empty();
-            var sorted = data["subsonic-response"].chatMessages.chatMessage.sort(function (a, b) {
-                return a.time - b.time;
-            });
-            $.each(sorted, function (i, msg) {
-                var chathtml = '<div class=\"msg\">';
-                chathtml += '<span class=\"time\">' + $.format.date(new Date(parseInt(msg.time, 10)), 'hh:mm:ss a') + '</span> ';
-                chathtml += '<span class=\"user\">' + msg.username + '</span></br>';
-                chathtml += '<span class=\"msg\">' + msg.message + '</span>';
-                chathtml += '</div>';
-                $(chathtml).appendTo("#ChatMsgs");
-                if (i === 1) {
-                    starttime = msg.time;
-                }
-            });
-        }
-    });
-}
 var updater;
 function updateChatMessages() {
     updater = $.periodic({ period: 1000, decay: 1.5, max_period: 1800000 }, function () {
         $.ajax({
             periodic: this,
-            url: baseURL + '/getChatMessages.view?v=1.6.0&c=' + applicationName + '&f=json&since=' + starttime,
+            url: baseURL + '/getChatMessages.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&since=' + starttime,
             method: 'GET',
-            dataType: 'json',
+            dataType: 'jsonp',
+            timeout: 10000,
             beforeSend: function (req) {
                 req.setRequestHeader('Authorization', auth);
             },
@@ -516,6 +494,7 @@ function updateChatMessages() {
                     var sorted = msgs.sort(function (a, b) {
                         return a.time - b.time;
                     });
+                    var x = 1;
                     $.each(sorted, function (i, msg) {
                         var chathtml = '<div class=\"msg\">';
                         chathtml += '<span class=\"time\">' + $.format.date(new Date(parseInt(msg.time, 10)), 'hh:mm:ss a') + '</span> ';
@@ -523,10 +502,12 @@ function updateChatMessages() {
                         chathtml += '<span class=\"msg\">' + msg.message + '</span>';
                         chathtml += '</div>';
                         $(chathtml).appendTo("#ChatMsgs");
-                        if (i === 1) {
+                        if (x === sorted.length) {
                             starttime = msg.time;
                         }
+                        x++;
                     });
+                    $("#ChatMsgs").linkify();
                     $("#ChatMsgs").attr({ scrollTop: $("#ChatMsgs").attr("scrollHeight") });
                 }
             }
@@ -538,15 +519,16 @@ function stopUpdateChatMessages() {
 }
 function addChatMessage(msg) {
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         url: baseURL + '/addChatMessage.view',
-        data: { v: "1.6.0", c: applicationName, f: "json", message: msg },
+        dataType: 'jsonp',
+        timeout: 10000,
+        data: { u: username, p: passwordenc, v: version, c: applicationName, f: "jsonp", message: msg },
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
         success: function () {
             updater.reset();
-            //loadChatMessages();
         },
         traditional: true // Fixes POST with an array in JQuery 1.4
     });
@@ -557,9 +539,10 @@ function updateNowPlaying() {
     updaterNowPlaying = $.periodic({ period: 4000, decay: 1.5, max_period: 1800000 }, function () {
         $.ajax({
             periodic: this,
-            url: baseURL + '/getNowPlaying.view?v=1.6.0&c=' + applicationName + '&f=json',
+            url: baseURL + '/getNowPlaying.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp',
             method: 'GET',
-            dataType: 'json',
+            dataType: 'jsonp',
+            timeout: 10000,
             beforeSend: function (req) {
                 req.setRequestHeader('Authorization', auth);
             },
@@ -611,14 +594,21 @@ function loadPlaylists(refresh) {
     if (content === "") {
         // Load Playlists
         $.ajax({
-            url: baseURL + '/getPlaylists.view?v=1.6.0&c=' + applicationName + '&f=json',
+            url: baseURL + '/getPlaylists.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp',
             method: 'GET',
-            dataType: 'json',
+            dataType: 'jsonp',
+            timeout: 10000,
             beforeSend: function (req) {
                 req.setRequestHeader('Authorization', auth);
             },
             success: function (data) {
-                $.each(data["subsonic-response"].playlists.playlist, function (i, playlist) {
+                var playlists = [];
+                if (data["subsonic-response"].playlists.playlist.length > 0) {
+                    playlists = data["subsonic-response"].playlists.playlist;
+                } else {
+                    playlists[0] = data["subsonic-response"].playlists.playlist;
+                }
+                $.each(playlists, function (i, playlist) {
                     var html = "";
                     html += '<li id=\"' + playlist.id + '\" class=\"item\">';
                     html += '<span>' + playlist.name + '</span>';
@@ -634,14 +624,21 @@ function loadPlaylists(refresh) {
 function loadPlaylistsForMenu(menu) {
     $('#' + menu).empty();
     $.ajax({
-        url: baseURL + '/getPlaylists.view?v=1.6.0&c=' + applicationName + '&f=json',
+        url: baseURL + '/getPlaylists.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp',
         method: 'GET',
-        dataType: 'json',
+        dataType: 'jsonp',
+        timeout: 10000,
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
         success: function (data) {
-            $.each(data["subsonic-response"].playlists.playlist, function (i, playlist) {
+            var playlists = [];
+            if (data["subsonic-response"].playlists.playlist.length > 0) {
+                playlists = data["subsonic-response"].playlists.playlist;
+            } else {
+                playlists[0] = data["subsonic-response"].playlists.playlist;
+            }
+            $.each(playlists, function (i, playlist) {
                 if (menu === 'submenu_AddCurrentToPlaylist') {
                     $("<a href=\"#\" onclick=\"javascript:addToPlaylist('" + playlist.id + "', 'current'); return false;\">" + playlist.name + "</a><br />").appendTo("#" + menu);
                 } else {
@@ -656,9 +653,10 @@ function newPlaylist() {
     var reply = prompt("Choose a name for your new playlist.", "");
     if (reply) {
         $.ajax({
-            url: baseURL + '/createPlaylist.view?v=1.6.0&c=' + applicationName + '&f=json&name=' + reply,
+            url: baseURL + '/createPlaylist.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&name=' + reply,
             method: 'GET',
-            dataType: 'json',
+            dataType: 'jsonp',
+            timeout: 10000,
             beforeSend: function (req) {
                 req.setRequestHeader('Authorization', auth);
             },
@@ -670,9 +668,10 @@ function newPlaylist() {
 }
 function deletePlaylist(id) {
     $.ajax({
-        url: baseURL + '/deletePlaylist.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + id,
+        url: baseURL + '/deletePlaylist.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + id,
         method: 'GET',
-        dataType: 'json',
+        dataType: 'jsonp',
+        timeout: 10000,
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
@@ -698,9 +697,10 @@ function addToPlaylist(playlistid, from) {
             // Get songs from playlist
             var currentsongs = [];
             $.ajax({
-                url: baseURL + '/getPlaylist.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + playlistid,
+                url: baseURL + '/getPlaylist.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + playlistid,
                 method: 'GET',
-                dataType: 'json',
+                dataType: 'jsonp',
+                timeout: 10000,
                 beforeSend: function (req) {
                     req.setRequestHeader('Authorization', auth);
                 },
@@ -727,9 +727,11 @@ function addToPlaylist(playlistid, from) {
                     });
                     if (count > 0) {
                         $.ajax({
-                            type: 'POST',
+                            type: 'GET',
                             url: baseURL + '/createPlaylist.view',
-                            data: { v: "1.6.0", c: applicationName, f: "json", playlistId: playlistid, songId: currentsongs },
+                            dataType: 'jsonp',
+                            timeout: 10000,
+                            data: { u: username, p: passwordenc, v: version, c: applicationName, f: "jsonp", playlistId: playlistid, songId: currentsongs },
                             beforeSend: function (req) {
                                 req.setRequestHeader('Authorization', auth);
                             },
@@ -746,9 +748,11 @@ function addToPlaylist(playlistid, from) {
             });
         } else {
             $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: baseURL + '/createPlaylist.view',
-                data: { v: "1.6.0", c: applicationName, f: "json", name: 'New Playlist', songId: selected },
+                dataType: 'jsonp',
+                timeout: 10000,
+                data: { u: username, p: passwordenc, v: version, c: applicationName, f: "jsonp", name: 'New Playlist', songId: selected },
                 beforeSend: function (req) {
                     req.setRequestHeader('Authorization', auth);
                 },
@@ -761,6 +765,7 @@ function addToPlaylist(playlistid, from) {
                 traditional: true // Fixes POST with an array in JQuery 1.4
             });
         }
+        setTimeout(function () { $('div.submenu').fadeOut(); }, 100);
     }
 }
 function addToCurrent() {
@@ -777,9 +782,11 @@ function savePlaylist(playlistid) {
     });
     if (songs.length > 0) {
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: baseURL + '/createPlaylist.view',
-            data: { v: "1.6.0", c: applicationName, f: "json", playlistId: playlistid, songId: songs },
+            dataType: 'jsonp',
+            timeout: 10000,
+            data: { u: username, p: passwordenc, v: version, c: applicationName, f: "jsonp", playlistId: playlistid, songId: songs },
             beforeSend: function (req) {
                 req.setRequestHeader('Authorization', auth);
             },
@@ -793,9 +800,10 @@ function savePlaylist(playlistid) {
 }
 function getPlaylist(id, action, appendto) {
     $.ajax({
-        url: baseURL + '/getPlaylist.view?v=1.6.0&c=' + applicationName + '&f=json&id=' + id,
+        url: baseURL + '/getPlaylist.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + id,
         method: 'GET',
-        dataType: 'json',
+        dataType: 'jsonp',
+        timeout: 10000,
         beforeSend: function (req) {
             req.setRequestHeader('Authorization', auth);
         },
@@ -857,6 +865,13 @@ function makeBaseAuth(user, password) {
     var tok = user + ':' + password;
     var hash = $.base64Encode(tok);
     return "Basic " + hash;
+}
+function HexEncode(n) {
+    for (var u = "0123456789abcdef", i = [], r = [], t = 0; t < 256; t++)
+        i[t] = u.charAt(t >> 4) + u.charAt(t & 15);
+    for (t = 0; t < n.length; t++)
+        r[t] = i[n.charCodeAt(t)];
+    return r.join("") 
 }
 function findKeyForCode(code) {
     var map = { 'keymap': [

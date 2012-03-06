@@ -12,6 +12,14 @@ img
 	border: none;
 	background: none;
 }
+h3.title
+{
+    font-weight: bold;
+    font-size: 14px;
+    font-variant: small-caps;
+    padding: 0;
+    margin: 5px 0;
+}
 
 .border { border: 2px solid #d9d9d9; }
 .floatleft { float: left; }
@@ -25,7 +33,7 @@ img
 .padright { padding: 0 10px 0 0; }
 .odd { background: #fff; }
 .even { background: #f4f4f4; }
-
+.red { color: #E64F4C; }
 .italic { font-style: italic; }
 
 #container {
@@ -36,7 +44,8 @@ img
 #nav 
 {
     height: 36px;
-	padding: 4px 0 0 5px;
+	padding: 4px 0 0 52px;
+	background: url('../images/subsonic-36.png') no-repeat 6px 2px;
 }
 #nav ul 
 {
@@ -557,6 +566,7 @@ background-color: #8dbdd8;
     background: #fff;
     padding: 5px 10px;
     margin: 2px 0 0 1px;
+    z-index:99;
 }
 .submenu a
 {
@@ -760,7 +770,7 @@ ul.preferences li
 {
     color: #646464;
     font-size: 11px;
-    padding: 6px 0;
+    padding: 8px 0;
 }
 ul.preferences li.title
 {
@@ -843,6 +853,12 @@ input.large
 {
     border: 1px solid #DCDCDC;
     width: 180px;
+    margin: 5px;
+}
+input.xlarge
+{
+    border: 1px solid #DCDCDC;
+    width: 350px;
     margin: 5px;
 }
 input.chat

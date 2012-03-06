@@ -7,7 +7,7 @@
     <link rel="icon" href="images/subsonic_32x32.png" sizes="32x32"/>
     <link href="style/Style.css" rel="stylesheet" type="text/css" />
     <link href="js/fancybox/jquery.fancybox-1.3.4.css" rel="stylesheet" type="text/css" />
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="js/audiojs/audio.min.js" type="text/javascript"></script>
     <script src="js/jquery.scrollTo-1.4.2-min.js" type="text/javascript"></script>
     <script src="js/jquery.disable.text.select.pack.js" type="text/javascript"></script>
@@ -17,6 +17,7 @@
     <script src="js/jquery.periodic.js" type="text/javascript"></script>
     <script src="js/jquery.shuffle.js" type="text/javascript"></script>
     <script src="js/fancybox/jquery.fancybox-1.3.4.pack.js" type="text/javascript"></script>
+    <script src="js/jquery.linkify-1.0-min.js" type="text/javascript"></script>
     <script src="js/app.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -363,6 +364,11 @@
                 }
                 return false;
             });
+            $('#action_ShufflePlaylist').live('click', function () {
+                $('#TrackContainer tr.song').shuffle();
+                refreshRowColor();
+                return false;
+            });
 
             // Player Click Events
             $('#PlayTrack').live('click', function () {
@@ -421,15 +427,14 @@
                 var AutoPlaylistSize = $('#AutoPlaylistSize').val();
                 $.cookie('AutoAlbumSize', AutoAlbumSize, { expires: 365 });
                 $.cookie('AutoPlaylistSize', AutoPlaylistSize, { expires: 365 });
-                var subdirectory = $('#SubDirectory').val();
-                if (subdirectory != "") {
-                    $.cookie('subdirectory', subdirectory, { expires: 365 });
+                var server = $('#Server').val();
+                if (server != "") {
+                    $.cookie('Server', server, { expires: 365 });
                 }
                 var applicationname = $('#ApplicationName').val();
                 if (applicationname != "") {
-                    $.cookie('applicationname', applicationname, { expires: 365 });
+                    $.cookie('ApplicationName', applicationname, { expires: 365 });
                 }
-                location.reload(true);
             });
             $('input#Password').keydown(function (e) {
                 var unicode = e.charCode ? e.charCode : e.keyCode;
@@ -442,14 +447,8 @@
                 $.cookie('password', null);
                 $.cookie('AutoAlbumSize', null);
                 $.cookie('AutoPlaylistSize', null);
-                $.cookie('SubDirectory', null);
+                $.cookie('Server', null);
                 $.cookie('ApplicationName', null);
-                location.reload(true);
-            });
-            $('#StyleSwitcher').live('change', function () {
-                var style = $(this).val();
-                $('link').attr('href', style);
-                $.cookie('css', style, { expires: 365, path: '/' });
                 location.reload(true);
             });
         });       // End document.ready
@@ -561,7 +560,6 @@
         <li><a href="#tabLibrary">Music Library</a></li>
         <li><a href="#tabCurrent">Current Playlist</a></li>
         <li><a href="#tabPlaylists">Playlists</a></li>
-        <!--<li><a href="#tabCurrentPlaylist">Current Playlist</a></li>-->
         <li><a href="#tabPreferences" class="last">Preferences</a></li>
         </ul>
         <div class="toploading"></div>
@@ -625,6 +623,7 @@
                 <a href="#" class="button" id="action_NewPlaylist" onclick="newPlaylist(); return false;" title="New Playlist">+ New</a>
                 <a href="#" class="button" id="action_DeletePlaylist" title="Delete Playlist">Delete</a>
                 <a href="#" class="button" id="action_SavePlaylist" title="Save Playlist">Save</a>
+                <a href="#" class="button" id="action_ShufflePlaylist" title="Shuffle Playlist"><img src="images/fork_11x12.png" /></a>
                 <a href="#" class="button" id="action_RemoveSongs" title="Remove selected song(s) from playlist">Remove Song(s)</a>
             </div>
             <div class="clear"></div>
@@ -653,8 +652,8 @@
                 $('#Password').val($.cookie('password'));
                 $('#AutoAlbumSize').val($.cookie('AutoAlbumSize'));
                 $('#AutoPlaylistSize').val($.cookie('AutoPlaylistSize'));
-                $('#SubDirectory').val($.cookie('subdirectory'));
-                $('#ApplicationName').val($.cookie('applicationname'));
+                $('#Server').val($.cookie('Server'));
+                $('#ApplicationName').val($.cookie('ApplicationName'));
             });
         </script>
             <div class="actions floatleft">
@@ -664,33 +663,33 @@
             <div class="clear"></div>
             <div class="lgsection floatleft">
                 <div class="subsection floatleft">
-                    <label for="Username">Username</label><br />
+                    <h3 class="title">Login</h3>
+                    <label for="Username">Username <span class="red">*</span></label><br />
                     <input type="text" id="Username" name="Username" class="large"/><br />
-                    <label for="Password">Password</label><br />
-                    <input type="password" id="Password" name="Password" class="large"/><br /><br />
+                    <label for="Password">Password <span class="red">*</span></label><br />
+                    <input type="password" id="Password" name="Password" class="large"/><br />
+                    <label for="Server">Server <span class="red">*</span></label><br />
+                    <input type="text" id="Server" name="Server" class="xlarge" title="Subsonic Server URL Ex: http://host:port/subsonic"/><br />
+                </div>
+                <div class="clear"></div>
+                <div class="subsection floatleft">
+                    <h3 class="title">Options</h3>
+                    <label for="AutoAlbumSize">Auto Album Size (Default 15)</label><br />
+                    <input type="text" id="AutoAlbumSize" name="AutoAlbumSize" class="large" title="Number of Albums to Get on the Music Library tab"/><br />
+                    <label for="AutoPlaylistSize">Auto Playlist Size (Default 25)</label><br />
+                    <input type="text" id="AutoPlaylistSize" name="AutoPlaylistSize" class="large" title="Number of Songs to Get on the Playlist tab"/><br />
+                    <label for="ApplicationName">Application Name (Default MiniSub)</label><br />
+                    <input type="text" id="ApplicationName" name="ApplicationName" class="large" title="Custom Player Name"/><br />
                 </div>
                 <div class="subsection floatleft">
+                    <h3 class="title">Keyboard Shortcuts</h3>
                     <ul class="preferences">
-                    <li class="title">Keyboard Shortcuts</li>
                     <li><em>[a-z]</em> Click the Album list, use to quickly browse to an artist</li>
                     <li><em>Spacebar</em> Play/Pause</li>
                     <li><em>&rarr;</em> Next Track</li>
                     <li><em>&larr;</em> Previous Track</li>
                     <li><span></span></li>
                     </ul>
-                </div>
-                <div class="clear"></div>
-                <div class="subsection floatleft">
-                    <label for="AutoAlbumSize">Auto Album Size (Default 15)</label><br />
-                    <input type="text" id="AutoAlbumSize" name="AutoAlbumSize" class="large" title="Number of albums to get on the Music Library tab"/><br />
-                    <label for="AutoPlaylistSize">Auto Playlist Size (Default 25)</label><br />
-                    <input type="text" id="AutoPlaylistSize" name="AutoPlaylistSize" class="large" title="Number of songs to get on the Playlist tab"/><br />
-                </div>
-                <div class="subsection floatleft">
-                    <label for="SubDirectory">Subdirectory</label><br />
-                    <input type="text" id="SubDirectory" name="SubDirectory" class="large" title="Used for custom installations (Tomcat)"/><br />
-                    <label for="ApplicationName">Application Name (Default MiniSub)</label><br />
-                    <input type="text" id="ApplicationName" name="ApplicationName" class="large" title="Used for custom player name"/><br />
                 </div>
                 <div class="clear"></div>
             </div>
@@ -732,7 +731,6 @@
 
     <div class="clear"></div>
     </div><!-- end #content -->
-    <!--<div class="floatright"><a href="#" title="Launch external player" onclick="popOut(); return false;"><img src="images/new_window_12x12.png" /></a></div>-->
 </div><!-- end #container -->
 </body>
 </html>
