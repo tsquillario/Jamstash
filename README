@@ -1,27 +1,21 @@
-MiniSub
-External Subsonic Music Player
+MiniSub - HTML5 Mini Player for Subsonic
 
-8/15/2011 .001 Initial Release
-8/15/2011 .003 Fixed song details on player 
-8/17/2011 .004 https fix, audio player tweaks
-8/24/2011 .005 playlist fixes, added auto playlists
-8/25/2011 .006 flexible layout, added buttons to player
-9/17/2011 .007 display tweaks for tablet, chat feature added
-9/17/2011 .008 pause/play button tweak
-9/30/2011 .009 now playing support, added back button to track list, other tweaks
-10/1/2011 .010 fix for subdirectory custom installs
-10/2/2011 .011 added play button from album list
-10/13/2011 .012 added Current Playlist, fixed some bugs
-10/14/2011 .013 moved auto playlists, album display tweaks
-10/14/2011 .014 multiple api call issue fix
-11/15/2011 .015 fixed search issue, added last.fm support from @smrq
-11/22/2011 .016 single artist bug fix, added API error notification
-1/5/2012	.017 added FancyBox to CoverArt, improved current playlist functions
-1/9/2012	.018 added media keyboard bindings from @itchy
-1/18/2012	.019 rating support, random playlist, new preferences added
-1/25/2012	.020 table layout for songs, bug fixes, display tweaks
-2/22/2012	.021 added sidebar for chat and now playing, bug fixes
-3/6/2012	.022 can be installed anywhere, Chrome App support, JSONP implementation
+Imagine you can stream all your music from home, to any device, where ever you are. That is Subsonic! Now imagine having a Web App to stream your music that is as beautiful and well designed as it is functional, that is MiniSub!
+
+MiniSub is an HTML5 Mini Player for the Subsonic streaming server. 
+
+Features
+- Flexible Layout (will scale to whatever size your browser window is)
+- Customizable (features can be turned on/off and settings are saved)
+- Keyboard shortcuts (back, forward, play/pause, skip to artist)
+- Playlists (create new, add to existing, delete)
+- Artist/Album Ratings
+- Chat and Now Playing
+- Last.fm
+
+You will need a Subsonic server to be able to play your own music. Subsonic is a free, web-based media streamer, providing ubiquitous access to your music. Use it to share your music with friends, or to listen to your own music while at work. Please see http://www.subsonic.org
+
+Change Log inside...
 
 TO DO: (In no particular order...)
 - Jukebox Control

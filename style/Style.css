@@ -81,7 +81,24 @@ h3.title
     border-left: 1px solid #CBCBCB;
     border-right: 1px solid #CBCBCB;
 }
-#nav a:hover { color: #545454; }
+#nav a:hover  
+{
+    color: #545454; 
+    border-top: 1px solid #CBCBCB;
+    border-left: 1px solid #CBCBCB;
+    border-right: 1px solid #CBCBCB;
+}
+#nav a img 
+{
+    display: block;
+    margin: 3px 0 4px 0;
+}
+#nav a.active img 
+{
+    display: block;
+    margin: 3px 0 4px 0;
+}
+
 #content 
 {
     border-top: 1px solid #cbcbcb;
@@ -468,7 +485,7 @@ table.songlist tr.playing
 }
 table.songlist tr.playing td:first-child
 {
-    background: url('../images/play_alt_16x16.png') 6px 10px no-repeat;
+    background: url('../images/play_alt_16x16.png') 6px 11px no-repeat;
 }
 table.songlist tr.selected
 {
@@ -694,10 +711,9 @@ background-color: #8dbdd8;
 .audiojs 
 {
     width: auto;
-    height: 17px;
-    margin: 0 9px 2px 0;
+    height: 56px;
+    margin: 0;
     background: none;
-    background: #404040;
     font-family: inherit;
     font-size: 10px;
     box-shadow: none;
@@ -708,49 +724,83 @@ background-color: #8dbdd8;
 }
 .audiojs .scrubber
 {
-    height: 5px;
-    margin: 5px;
+    height: 2px;
+    margin: 26px 5px 0px 5px;
+    float: none;
+    width: auto;
 }
 .audiojs .time
 {
+    float: right;
     border: none;
     line-height: 17px;
-    padding: 0 6px 0 6px;
+    padding: 0 5px;
+    font-size: 11px;
+    color: #333333;
+    text-shadow: none;
+}
+.audiojs .time em
+{
+    color: #333333;
 }
 .playeractions
 {
-    margin: 9px 20px;
+    margin: 5px 20px 0 20px;
+    width: 160px;
 }
 .playeractionssmall
 {
-    margin: 18px 5px;
+    margin: 14px 8px 0 14px;
+    width: 50px;
+    float: right;
+}
+#playermiddle
+{
+    width: 100%;
+    visibility: hidden;
 }
 #coverart
 {
-    width: 56px;
-    height: 56px;
+    width: 50px;
+    height: 50px;
     overflow: hidden;
-    margin: 2px 0 2px 0;
+    margin: 2px 8px 0 0;
     float: left;
     padding: 2px;
     border: 1px solid #DEDEDE;    
 }
 #songdetails
 {
+    width: 250px;
     margin: 0 8px;
     float: left;
+    visibility: hidden;
 }
 #songdetails ul
 {
 	list-style-type: none;
-	margin: 6px 0;
+	margin: 4px 0;
 	padding: 0;
-	height: 30px;
+	height: 52px;
+	width: 185px;
 	overflow: hidden;
+	white-space: nowrap;
+	float: left;
 }
 #songdetails li
 {
+}
+#songdetails li.song
+{
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 14px;
+    margin: 12px 0 2px 0;
+}
+#songdetails li.album
+{
     font-size: 11px;
+    line-height: 14px;
 }
 #songdetails li span.label
 {
@@ -759,6 +809,14 @@ background-color: #8dbdd8;
     margin: 0 4px 0 0;
     text-align: right;
     width: 37px;
+}
+.vertshade {
+    position: relative;
+    top: 0;
+    left: 229px;
+    width: 20px;
+    height: 60px;
+    background-image: -webkit-gradient( linear, left top, right top, from(rgba(255, 255, 255, 0)), to(rgba(255, 255, 255, 1)));
 }
 ul.preferences 
 {
@@ -779,13 +837,6 @@ ul.preferences li.title
     font-variant: small-caps;
     padding: 0;
 }
-ul.preferences li span
-{
-    clear: both;
-    display: block;
-    float: left;
-    width: 80px;
-}
 ul.preferences li em 
 {
     background: none repeat scroll 0 0 #D3D3D3;
@@ -796,7 +847,30 @@ ul.preferences li em
     padding: 3px 9px 3px;
     position: relative;
 }
-
+ul.preferences li.log
+{
+    padding: 2px 0;
+}
+ul.preferences li span.version
+{
+    color: #646464;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 0;
+    display: block;
+}
+ul.preferences li.log span.changes
+{
+    color: #646464;
+    font-size: 11px;
+    padding: 0 0 0 5px;
+    display: block;
+}
+span.code
+{
+    font-family:"Courier New",Courier,mono;
+    font-size: 11px;
+}
 
 
 
@@ -882,4 +956,25 @@ label
 {
     font-size: 12px;
     margin: 0 5px;
+}
+.inputwrap
+{
+    float: left;
+    border: 1px solid #DCDCDC;
+    padding: 3px;
+    margin-bottom: 5px;
+}
+.checkboxes
+{
+    margin: 10px 5px;
+    vertical-align: middle;
+}
+.checkboxes input
+{
+    float: left;
+}
+.checkboxes label
+{
+    float: left;
+    margin: 5px 5px 0 5px;
 }

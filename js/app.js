@@ -341,7 +341,9 @@ function playSong(el, songid, albumid) {
             $('#songdetails_song').attr('childid', songid);
             $('#songdetails_artist').html(artist + ' - ' + album);
             $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&id=' + coverart);
-            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&size=56&id=' + coverart);
+            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart);
+            $('#playermiddle').css('visibility', 'visible');
+            $('#songdetails').css('visibility', 'visible');
             audio.load(baseURL + '/stream.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid);
             audio.play();
             $('table.songlist tr.song').removeClass('playing');
@@ -350,6 +352,16 @@ function playSong(el, songid, albumid) {
             $('#PlayTrack').addClass('playing');
             scrobbleSong(false);
             scrobbled = false;
+
+            if ($.cookie('EnableNotifications')) {
+                showNotification(baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart, title, artist + ' - ' + album);
+            }
+            if ($.cookie('ScrollTitle')) {
+                //clearTimeout(timer);
+                scrollTitle(artist + ' - ' + title);
+            } else {
+                setTitle(artist + ' - ' + title);
+            }
         }
     });
 }
@@ -938,4 +950,67 @@ function updateMessage(msg) {
     $('#messages').text(msg);
     $('#messages').fadeIn();
     setTimeout(function () { $('#messages').fadeOut(); }, 5000);
+}
+function setTitle(text) {
+    if (text != "") {
+        document.title = text;
+    }
+}
+var timer = null;
+var scrollMsg = "";
+var pos = 0;
+function scrollTitle(text) {
+    if (scrollMsg === "") {
+        if (text === "") {
+            scrollMsg = document.title;
+        } else {
+            scrollMsg = text;
+        }
+    } else {
+        if (text != undefined && text != scrollMsg) {
+            scrollMsg = text;
+        }
+    }
+    var msg = scrollMsg;
+    var speed = 1200;
+    var endChar = "   ";
+    var ml = msg.length;
+
+    title = msg.substr(pos, ml) + endChar + msg.substr(0, pos);
+    document.title = title;
+
+    pos++;
+    if (pos > ml) {
+        pos = 0;
+    } else {
+        timer = window.setTimeout("scrollTitle()", speed);
+    }
+    // To stop timer, clearTimeout(timer);
+}
+function requestPermissionIfRequired() {
+    if (!hasNotificationPermission() && (window.webkitNotifications)) {
+        window.webkitNotifications.requestPermission();
+    }
+}
+function hasNotificationPermission() {
+    return !!(window.webkitNotifications) && (window.webkitNotifications.checkPermission() == 0);
+}
+var notifications = new Array();
+function showNotification(pic, title, text) {
+    if (hasNotificationPermission()) {
+        closeAllNotifications()
+        var popup = window.webkitNotifications.createNotification(pic, title, text);
+        notifications.push(popup);
+        setTimeout(function (notWin) {
+        notWin.cancel();
+        }, 10000, popup);
+        popup.show();
+    } else {
+        console.log("showNotification: No Permission");
+    }
+}
+function closeAllNotifications() {
+    for (notification in notifications) {
+        notifications[notification].cancel();
+    }
 }
