@@ -8,8 +8,8 @@
     <link href="style/Style.css" rel="stylesheet" type="text/css" />
     <link href="js/fancybox/jquery.fancybox-1.3.4.css" rel="stylesheet" type="text/css" />
     <link href="js/contextMenu/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    <script src="js/audiojs/audio.min.js" type="text/javascript"></script>
+    <script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+    <script src="js/sm/soundmanager2-jsmin.js" type="text/javascript"></script>
     <script src="js/jquery.scrollTo-1.4.2-min.js" type="text/javascript"></script>
     <script src="js/jquery.disable.text.select.pack.js" type="text/javascript"></script>
     <script src="js/jquery.cookie.js" type="text/javascript"></script>
@@ -23,50 +23,17 @@
     <script src="js/ui-load.js" type="text/javascript"></script>
     <script src="js/ui-ready.js" type="text/javascript"></script>
     <script type="text/javascript">
-        var a;
-        var audio;
-        audiojs.events.ready(function () {
-            a = audiojs.createAll({
-                trackEnded: function () {
-                    var next = $('#CurrentPlaylistContainer tr.playing').next();
-                    changeTrack(next);
-                },
-                updatePlayhead: function (percent) {
-                    var player = this.settings.createPlayer;
-                    var scrubber = $(this.wrapper).find("." + player.scrubberClass);
-                    var progress = $(this.wrapper).find("." + player.progressClass);
-
-                    progress.css('width', (scrubber.get(0).offsetWidth * percent) + 'px');
-
-                    var played = $(this.wrapper).find("." + player.playedClass);
-                    var p = this.duration * percent,
-                        m = Math.floor(p / 60),
-                        s = Math.floor(p % 60);
-                    played.html((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
-
-                    if (!scrobbled && p > 30 && (percent > 0.5 || p > 480)) {
-                        scrobbleSong(true);
-                    }
-                },
-                useFlash: (function() {
-                var a = document.createElement('audio'),
-                    userAgent = navigator.userAgent.toLowerCase(),
-                    version = parseFloat((userAgent.match( /.+(?:rv|it|ra|ie|me)[\/: ]([\d.]+)/ ) || [])[1]);
-
-                if (/chrome/.test(userAgent) && version < 10) return false;
-                return !(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''));
-                })()
-            });
-            // Load in the first track
-            audio = a[0];
-        });
-
+        soundManager.url = 'js/sm/swf';
+        soundManager.preferFlash = false;
+        soundManager.debugMode = false; 
+        //soundManager.flashVersion = 9; // optional: shiny features (default = 8)
+        //soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
 	</script>
 </head>
 <body>
 
 <div id="container">
-    <div id="messages">This is a test!</div>    
+    <div id="messages"></div>    
     <div id="nav">
         <ul class="tabs">
         <li><a href="#tabLibrary" class="first" title="Library"><img src="images/headphones_gd_16x14.png" /></a></li>
@@ -247,7 +214,11 @@
                         <span class="changes"></span>
                     </li>
                     -->
-                    <li class="log"><span class="version">Current - 1.8</span>
+                    <li class="log"><span class="version">3/31/2012 - 1.9</span>
+                        <span class="changes">Switched to SoundManager2 audio library (changing track position currently not functional, next update)</span>
+                        <span class="changes">Other minor bug fixes</span>
+                    </li>
+                    <li class="log"><span class="version">3/27/2012 - 1.8</span>
                         <span class="changes">Added Download link to Albums</span>
                         <span class="changes">Fixed bug with Next/Previous keyboard shortcuts</span>
                         <span class="changes">Moved navigation since most displays are widescreen</span>
@@ -287,7 +258,7 @@
                     <h3 class="title">Thanks</h3>
                     <ul class="preferences">
                     <li>Icons - <a href="http://somerandomdude.com/work/iconic" target="_blank">http://somerandomdude.com/work/iconic</a></li>
-                    <li>Audio Library - <a href="http://kolber.github.com/audiojs" target="_blank">http://kolber.github.com/audiojs</a></li>
+                    <li>Audio Library - <a href="http://www.schillmania.com/projects/soundmanager2" target="_blank">http://www.schillmania.com/projects/soundmanager2</a></li>
                     </ul>
                 </div>
             </div>
@@ -325,7 +296,12 @@
             </div>
             <div class="playeractionssmall"><a href="#" class="button" id="action_ToggleSideBar" title="Toggle Side Bar"><img src="images/arrow_right_gl_12x12.png" /></a></div>
             <div id="playermiddle">
-                <div id="audiocontainer"><audio src="" preload="none" /></div>
+                <div id="audiocontainer">
+                    <div class="audiojs" id="audio_wrapper0">
+                    <div class="scrubber"><div class="progress"></div><div class="loaded" ></div></div>
+                    <div class="time"><em class="played">00:00</em>/<strong class="duration">00:00</strong></div><div class="error-message"></div>
+                    </div>
+                </div>
             </div>
             <div class="clear"></div>
         </div>

@@ -408,8 +408,49 @@ function playSong(el, songid, albumid) {
             $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart);
             $('#playermiddle').css('visibility', 'visible');
             $('#songdetails').css('visibility', 'visible');
-            audio.load(baseURL + '/stream.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid);
-            audio.play();
+            // SoundManager Initialize
+            soundManager.destroySound('audio');
+            soundManager.createSound({
+                id: 'audio',
+                url: baseURL + '/stream.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid,
+                whileloading: function () {
+                    console.log('loaded:' + this.bytesLoaded + ' total:' + this.bytesTotal);
+                    var percent = this.bytesLoaded / this.bytesTotal;
+                    var scrubber = $('#audio_wrapper0').find(".scrubber");
+                    var loaded = $('#audio_wrapper0').find(".loaded");
+                    loaded.css('width', (scrubber.get(0).offsetWidth * percent) + 'px');
+                },
+                whileplaying: function () {
+                    //console.log('position:' + this.position + ' duration:' + this.duration);
+                    var percent = this.position / this.duration;
+                    var scrubber = $('#audio_wrapper0').find(".scrubber");
+                    var progress = $('#audio_wrapper0').find(".progress");
+                    progress.css('width', (scrubber.get(0).offsetWidth * percent) + 'px');
+
+                    var played = $('#audio_wrapper0').find(".played");
+                    var p = (this.duration / 1000) * percent,
+                        m = Math.floor(p / 60),
+                        s = Math.floor(p % 60);
+                    played.html((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
+                    
+                    // Scrobble song once percentage is reached
+                    if (!scrobbled && p > 30 && (percent > 0.5 || p > 480)) {
+                    scrobbleSong(true);
+                    }                },
+                onload: function () {
+                    var duration = $('#audio_wrapper0').find(".duration");
+                    var dp = this.duration / 1000,
+                        dm = Math.floor(dp / 60),
+                        ds = Math.floor(dp % 60);
+                    duration.html((dm < 10 ? '0' : '') + dm + ':' + (ds < 10 ? '0' : '') + ds);
+                },
+                onfinish: function () {
+                    var next = $('#CurrentPlaylistContainer tr.playing').next();
+                    changeTrack(next);
+                }
+            });
+            soundManager.play('audio');
+
             $('table.songlist tr.song').removeClass('playing');
             $(el).addClass('playing');
             $('#PlayTrack').find('img').attr('src', 'images/pause_24x32.png');
@@ -466,12 +507,12 @@ function playPauseSong() {
         $(el).find('img').attr('src', 'images/play_24x32.png');
         $(el).removeClass('playing');
         $(el).addClass('paused');
-        audio.playPause();
+        soundManager.pause('audio');
     } else if ($(el).hasClass('paused')) {
         $(el).find('img').attr('src', 'images/pause_24x32.png');
         $(el).removeClass('paused');
         $(el).addClass('playing');
-        audio.playPause();
+        soundManager.resume('audio');
     } else {
         // Start playing song
         var play = $('#CurrentPlaylistContainer tr.selected').first();

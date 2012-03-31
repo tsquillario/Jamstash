@@ -441,7 +441,7 @@ table.songlist tr.song td
 table.songlist tr.song td.itemactions
 {
     width: 80px;
-    padding-left: 22px;
+    padding-left: 27px;
 }
 table.songlist tr.song td.track
 {
@@ -525,7 +525,7 @@ table.songlist tr.playing
 }
 table.songlist tr.playing td:first-child
 {
-    background: url('../images/play_alt_16x16.png') 6px 11px no-repeat;
+    background: url('../images/play_alt_gd_16x16.png') 8px 11px no-repeat;
 }
 table.songlist tr.selected
 {
@@ -764,6 +764,7 @@ background-color: #8dbdd8;
     font-family: inherit;
     font-size: 10px;
     box-shadow: none;
+    overflow: hidden;
 }
 .audiojs .play-pause
 {
@@ -775,6 +776,35 @@ background-color: #8dbdd8;
     margin: 26px 5px 0px 5px;
     float: none;
     width: auto;
+    position: relative;
+    background: #5A5A5A;
+    border-top: 1px solid #3F3F3F;
+    border-left: 0px;
+    border-bottom: 0px;
+    overflow: hidden;
+}
+.audiojs .progress 
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 14px;
+    width: 0px;
+    background: #CCC;
+    z-index: 1;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #CCC), color-stop(0.5, #DDD), color-stop(0.51, #CCC), color-stop(1, #CCC));
+    background-image: -moz-linear-gradient(center top, #CCC 0%, #DDD 50%, #CCC 51%, #CCC 100%);
+}
+.audiojs .loaded 
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 14px;
+    width: 0px;
+    background: black;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #222), color-stop(0.5, #333), color-stop(0.51, #222), color-stop(1, #222));
+    background-image: -moz-linear-gradient(center top, #222 0%, #333 50%, #222 51%, #222 100%);
 }
 .audiojs .time
 {
@@ -785,10 +815,14 @@ background-color: #8dbdd8;
     font-size: 11px;
     color: #333333;
     text-shadow: none;
+    height: 36px;
+    margin: 0px 0px 0px 6px;
 }
 .audiojs .time em
 {
     color: #333333;
+    padding: 0px 2px 0px 0px;
+    font-style: normal;
 }
 .playeractions
 {
@@ -804,7 +838,7 @@ background-color: #8dbdd8;
 #playermiddle
 {
     width: 100%;
-    visibility: hidden;
+    /*visibility: hidden;*/
 }
 #coverart
 {
