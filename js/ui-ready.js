@@ -235,7 +235,17 @@
         setTimeout(function () { if (submenu_active == false) $('div.submenu').fadeOut(); }, 400);
     });
     $('a#action_AddToCurrent').click(function () {
-        addToCurrent();
+        addToCurrent(false);
+        return false;
+    });
+    $('a#action_AddAllToCurrent').click(function () {
+        addToCurrent(true);
+        return false;
+    });
+    $('a#action_PlayAll').click(function () {
+        $('#CurrentPlaylistContainer tbody').empty();
+        addToCurrent(true);
+        playAll();
         return false;
     });
     $('#action_RefreshArtists').click(function () {
@@ -377,7 +387,13 @@
         return false;
     });
     $('#NextTrack').live('click', function () {
-        var next = $('#CurrentPlaylistContainer tr.playing').next();
+        var next;
+        var length = $('#CurrentPlaylistContainer tr.song').size();
+        if (length > 0) {
+            next = $('#CurrentPlaylistContainer tr.playing').next();
+        } else {
+            next = $('#AlbumContainer tr.playing').next();
+        }
         changeTrack(next);
         return false;
     });
@@ -485,4 +501,4 @@
         return false;
     });
 
-});                            // End document.ready
+});                                 // End document.ready
