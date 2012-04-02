@@ -411,12 +411,13 @@ function playSong(el, songid, albumid) {
             $('#playermiddle').css('visibility', 'visible');
             $('#songdetails').css('visibility', 'visible');
             // SoundManager Initialize
+            var salt = Math.floor(Math.random()*100000);
             if (audio) {
                 soundManager.destroySound('audio');
             }
             audio = soundManager.createSound({
                 id: 'audio',
-                url: baseURL + '/stream.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid,
+                url: baseURL + '/stream.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid + '&salt=' + salt,
                 stream: true,
                 whileloading: function () {
                     if (debug) {
