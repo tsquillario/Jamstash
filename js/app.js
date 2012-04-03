@@ -3,6 +3,23 @@ var debug = false;
 var audio;
 var hostURL = location.href;
 var baseURL;
+
+// Set auth cookies if specified in URL on launch
+var u = getParameterByName('u');
+var p = getParameterByName('p');
+var s = getParameterByName('s');
+if (u && p && s) {
+    if (!$.cookie('username')) {
+        $.cookie('username', u, { expires: 365 });
+    }
+    if (!$.cookie('password')) {
+        $.cookie('password', p, { expires: 365 });
+    }
+    if (!$.cookie('Server')) {
+        $.cookie('Server', s, { expires: 365 });
+    }
+    window.location.href = getPathFromUrl(window.location);
+}
 if ($.cookie('Server')) {
     baseURL = $.cookie('Server') + '/rest';
 }
@@ -468,7 +485,7 @@ function playSong(el, songid, albumid) {
             scrobbled = false;
 
             if ($.cookie('EnableNotifications')) {
-                showNotification(baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart, title, artist + ' - ' + album);
+                showNotification(baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart, toHTML.un(title), toHTML.un(artist + ' - ' + album));
             }
             if ($.cookie('ScrollTitle')) {
                 scrollTitle(toHTML.un(artist) + ' - ' + toHTML.un(title));
@@ -1121,6 +1138,21 @@ var toHTML = {
         })
     }
 };
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regexS = "[\\?&]" + name + "=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.search);
+    if (results == null)
+        return "";
+    else
+        return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+function getPathFromUrl(url) {
+    var strurl = url.toString();
+    var u = strurl.substring(0, strurl.indexOf('?'));
+    return u
+}
 function setTitle(text) {
     if (text != "") {
         document.title = text;

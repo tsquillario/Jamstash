@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
     // Tabs
     $(".tabcontent").hide(); //Hide all content
-    if ($.cookie('username') == null) {
+    if (!$.cookie('username') && !$.cookie('password') && !$.cookie('Server')) {
         $('ul.tabs li a').each(function () {
             if ($(this).attr("href") == '#tabPreferences') {
                 $(this).addClass("active"); //Add "active" class to selected tab
