@@ -30,7 +30,7 @@ function resizeContent() {
     $('.smsection').css({ 'height': (($(window).height() - 152)) + 'px' });
     var smheight = $('.smsection').height();
     var smwidth = $('.smsection').width();
-    $('#BottomContainer').css({ 'top': smheight + 34 + 'px' });
+    $('#BottomContainer').css({ 'top': smheight + 35 + 'px' });
     if ($.cookie('sidebar')) {
         var tabwidth = $(window).width() - 268;
         if (tabwidth >= 700) {
