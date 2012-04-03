@@ -1,5 +1,5 @@
 ﻿// Global Variables
-var debug = false;
+var debug = true;
 var audio;
 var hostURL = location.href;
 var baseURL;
@@ -16,7 +16,7 @@ var username = $.cookie('username');
 var password = $.cookie('password');
 var auth = makeBaseAuth(username, password);
 var passwordenc = 'enc:' + HexEncode($.cookie('password'));
-var version = '1.7.0';
+var version = '1.6.0';
 
 function loadTabContent(tab) {
     switch (tab) {
@@ -334,7 +334,7 @@ function generateAlbumHTML(rowcolor, childid, parentid, coverart, title, artist,
         html += '<a class=\"rate\" href=\"\" title=\"Add To Favorites\"></a>';
     }
     html += '</td>';
-    html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart + '\" /></td>';
+    html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart + '\" /></td>';
     html += '<td class=\"album\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
     html += '</tr>';
@@ -360,7 +360,7 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, artist, alb
     html += '<td class=\"track\">' + track + '</td>';
     html += '<td class=\"title\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
-    html += '<td class=\"album\">' + album + '<img src=\"' + baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart + '\" /></td>';
+    html += '<td class=\"album\">' + album + '<img src=\"' + baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart + '\" /></td>';
     html += '<td class=\"time\">' + m + ':' + s + '</td>';
     html += '</tr>';
     return html;
@@ -406,8 +406,8 @@ function playSong(el, songid, albumid) {
             $('#songdetails_song').attr('parentid', albumid);
             $('#songdetails_song').attr('childid', songid);
             $('#songdetails_artist').html(artist + ' - ' + album);
-            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&id=' + coverart);
-            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart);
+            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + coverart);
+            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart);
             $('#playermiddle').css('visibility', 'visible');
             $('#songdetails').css('visibility', 'visible');
             // SoundManager Initialize
@@ -468,7 +468,7 @@ function playSong(el, songid, albumid) {
             scrobbled = false;
 
             if ($.cookie('EnableNotifications')) {
-                showNotification(baseURL + '/getCoverArt.view?v=1.6.0&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart, title, artist + ' - ' + album);
+                showNotification(baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart, title, artist + ' - ' + album);
             }
             if ($.cookie('ScrollTitle')) {
                 scrollTitle(toHTML.un(artist) + ' - ' + toHTML.un(title));
