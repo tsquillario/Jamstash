@@ -5,7 +5,7 @@ var hostURL = location.href;
 var baseURL;
 
 // Set auth cookies if specified in URL on launch
-var u = getParameterByName('u');
+var u = getParameterByName('u'); 
 var p = getParameterByName('p');
 var s = getParameterByName('s');
 if (u && p && s) {
