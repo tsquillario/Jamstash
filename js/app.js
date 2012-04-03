@@ -408,16 +408,21 @@ function playSong(el, songid, albumid) {
         success: function (data) {
             var title, artist, album;
             if (data["subsonic-response"].directory !== undefined) {
+                // There is a bug in the API that doesn't return a JSON array for one artist
+                var children = [];
                 if (data["subsonic-response"].directory.child.length > 0) {
-                    $.each(data["subsonic-response"].directory.child, function (i, child) {
-                        if (child.id === songid) {
-                            title = child.title;
-                            artist = child.artist;
-                            album = child.album;
-                            coverart = child.coverArt;
-                        }
-                    });
+                    children = data["subsonic-response"].directory.child;
+                } else {
+                    children[0] = data["subsonic-response"].directory.child;
                 }
+                $.each(children, function (i, child) {
+                    if (child.id === songid) {
+                        title = child.title;
+                        artist = child.artist;
+                        album = child.album;
+                        coverart = child.coverArt;
+                    }
+                });
             }
             $('#songdetails_song').html(title);
             $('#songdetails_song').attr('parentid', albumid);
@@ -428,7 +433,7 @@ function playSong(el, songid, albumid) {
             $('#playermiddle').css('visibility', 'visible');
             $('#songdetails').css('visibility', 'visible');
             // SoundManager Initialize
-            var salt = Math.floor(Math.random()*100000);
+            var salt = Math.floor(Math.random() * 100000);
             if (audio) {
                 soundManager.destroySound('audio');
             }
@@ -1125,16 +1130,16 @@ function updateMessage(msg) {
 }
 // Convert to unicode support
 var toHTML = {
-        on: function(str) {
+    on: function (str) {
         var a = [],
         i = 0;
-        for (; i < str.length;) a[i] = str.charCodeAt(i++);
+        for (; i < str.length; ) a[i] = str.charCodeAt(i++);
         return "&#" + a.join(";&#") + ";"
-        },
-        un: function(str) {
+    },
+    un: function (str) {
         return str.replace(/&#(x)?([^&]{1,5});?/g,
-        function(a, b, c) {
-        return String.fromCharCode(parseInt(c, b ? 16 : 10))
+        function (a, b, c) {
+            return String.fromCharCode(parseInt(c, b ? 16 : 10))
         })
     }
 };
