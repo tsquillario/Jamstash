@@ -1,5 +1,5 @@
 ﻿// Global Variables
-var debug = true;
+var debug = false;
 var audio;
 var hostURL = location.href;
 var baseURL;
@@ -548,7 +548,6 @@ function changeTrack(next) {
     var songid = $(next).attr('childid');
     if (songid !== undefined) {
         var albumid = $(next).attr('parentid');
-        if (debug) { console.log(next + " " + songid +" " + albumid) }
         playSong(next, songid, albumid);
         return true;
     } else {
