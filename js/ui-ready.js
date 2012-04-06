@@ -242,10 +242,12 @@
         addToCurrent(true);
         return false;
     });
-    $('a#action_PlayAll').click(function () {
+    $('a#action_PlayAlbum').click(function () {
         $('#CurrentPlaylistContainer tbody').empty();
         addToCurrent(true);
-        playAll();
+        // Start playing song
+        var first = $('#CurrentPlaylistContainer tr.song').first();
+        changeTrack(first);
         return false;
     });
     $('#action_RefreshArtists').click(function () {

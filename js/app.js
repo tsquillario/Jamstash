@@ -439,7 +439,7 @@ function playSong(el, songid, albumid) {
             }
             audio = soundManager.createSound({
                 id: 'audio',
-                url: baseURL + '/stream.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid + '&salt=' + salt,
+                url: baseURL + '/stream.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
                 stream: true,
                 whileloading: function () {
                     if (debug) {
@@ -554,17 +554,6 @@ function playPauseSong() {
             changeTrack(first);
         }
     }
-}
-function playAll() {
-        // Start playing song
-        var play = $('#CurrentPlaylistContainer tr.selected').first();
-        if (changeTrack(play)) {
-            $(el).find('img').attr('src', 'images/pause_24x32.png');
-            $(el).addClass('playing');
-        } else {
-            var first = $('#CurrentPlaylistContainer tr').first();
-            changeTrack(first);
-        }
 }
 function changeTrack(next) {
     var songid = $(next).attr('childid');
@@ -925,9 +914,9 @@ function addToPlaylist(playlistid, from) {
     }
 }
 function addToCurrent(addAll) {
-    var count
+    var count;
     if (addAll) {
-        count = $('#AlbumContainer tr').length;
+        count = $('#AlbumContainer tr.song').length;
     } else {
         count = $('#AlbumContainer tr.selected').length;
     }
