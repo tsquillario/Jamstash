@@ -38,6 +38,7 @@ var version = '1.6.0';
 function loadTabContent(tab) {
     switch (tab) {
         case '#tabLibrary':
+            console.log("TAG LIBRARY");
             if ($.cookie('MusicFolders')) {
                 loadArtists($.cookie('MusicFolders'), false);
             } else {
@@ -46,10 +47,12 @@ function loadTabContent(tab) {
             getMusicFolders();
             break;
         case '#tabCurrent':
+            console.log("TAG CURRENT");
             var header = generateSongHeaderHTML();
             $("#CurrentPlaylistContainer thead").html(header);
             break;
         case '#tabPlaylists':
+            console.log("TAG PLAYLIST");
             loadPlaylists();
             break;
         case '#tabPreferences':
@@ -60,6 +63,7 @@ function loadTabContent(tab) {
 }
 
 function loadArtists(id, refresh) {
+    console.log("LOAD ARTISTS");
     if (refresh) {
         $('#ArtistContainer').empty();
     }
@@ -71,6 +75,7 @@ function loadArtists(id, refresh) {
     } else {
         url = baseURL + '/getIndexes.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp';
     }
+    console.log(url);
     var content = $('#ArtistContainer').html();
     if (content === "") {
         // Load Artist List
@@ -79,7 +84,10 @@ function loadArtists(id, refresh) {
             method: 'GET',
             dataType: 'jsonp',
             timeout: 10000,
+            done: function() { console.log("DONE!"); },
+            error: function() { console.log("ERROR!"); },
             success: function (data) {
+                console.log("SUCCESS");
                 if (data["subsonic-response"].status === 'ok') {
                     var indexlist, indexname;
 
