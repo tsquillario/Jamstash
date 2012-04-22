@@ -1,7 +1,7 @@
 require(["jquery", "sm/soundmanager2-jsmin", "jquery.scrollTo-1.4.2-min", "jquery.disable.text.select.pack",
          "jquery.cookie", "jquery.base64", "jquery.dateFormat-1.0", "jquery.periodic", "jquery.shuffle",
          "fancybox/jquery.fancybox-1.3.4.pack",
-         "jquery.linkify-1.0-min", "app", "ui-load", "ui-ready"
+         "jquery.linkify-1.0-min", "utils", "api", "generators", "app", "ui-load", "ui-ready"
         ], function($) {
 
         $(function() {
