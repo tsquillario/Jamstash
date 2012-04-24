@@ -278,3 +278,343 @@ function getRandomSongList(action, appendto) {
         }
     });
 }
+
+function search(type, query) {
+    $.ajax({
+        url: baseURL + '/search2.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&query=' + query,
+        method: 'GET',
+        dataType: 'jsonp',
+        timeout: 10000,
+        beforeSend: function (req) {
+            req.setRequestHeader('Authorization', auth);
+        },
+        success: function (data) {
+            if (data["subsonic-response"].searchResult2 !== "") {
+                $("#AlbumRows").empty();
+                var header = generateSongHeaderHTML();
+                $("#AlbumHeader").html(header);
+                // There is a bug in the API that doesn't return a JSON array for one artist
+                var children = [];
+                if (data["subsonic-response"].searchResult2.song.length > 0) {
+                    children = data["subsonic-response"].searchResult2.song;
+                } else {
+                    children[0] = data["subsonic-response"].searchResult2.song;
+                }
+
+                var rowcolor;
+                var albumhtml;
+                $.each(children, function (i, child) {
+                    if (i % 2 === 0) {
+                        rowcolor = 'even';
+                    } else {
+                        rowcolor = 'odd';
+                    }
+
+                    var track;
+                    if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
+                    var time = secondsToTime(child.duration);
+                    albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+                    $(albumhtml).appendTo("#AlbumRows");
+                });
+            }
+        }
+    });
+}
+
+function loadPlaylists(refresh) {
+    if (refresh) {
+        $('#PlaylistContainer').empty();
+    }
+    var content = $('#PlaylistContainer').html();
+    if (content === "") {
+        // Load Playlists
+        $.ajax({
+            url: baseURL + '/getPlaylists.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp',
+            method: 'GET',
+            dataType: 'jsonp',
+            timeout: 10000,
+            beforeSend: function (req) {
+                req.setRequestHeader('Authorization', auth);
+            },
+            success: function (data) {
+                var playlists = [];
+                if (data["subsonic-response"].playlists.playlist.length > 0) {
+                    playlists = data["subsonic-response"].playlists.playlist;
+                } else {
+                    playlists[0] = data["subsonic-response"].playlists.playlist;
+                }
+                $.each(playlists, function (i, playlist) {
+                    var html = "";
+                    html += '<li id=\"' + playlist.id + '\" class=\"item\">';
+                    html += '<span>' + playlist.name + '</span>';
+                    html += '<div class=\"floatright\"><a class=\"play\" href=\"\" title=\"Play\"></a></div>';
+                    html += '<div class=\"floatright\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a></div>';
+                    html += '</li>';
+                    $(html).appendTo("#PlaylistContainer");
+                });
+            }
+        });
+    }
+}
+function loadPlaylistsForMenu(menu) {
+    $('#' + menu).empty();
+    $.ajax({
+        url: baseURL + '/getPlaylists.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp',
+        method: 'GET',
+        dataType: 'jsonp',
+        timeout: 10000,
+        beforeSend: function (req) {
+            req.setRequestHeader('Authorization', auth);
+        },
+        success: function (data) {
+            var playlists = [];
+            if (data["subsonic-response"].playlists.playlist.length > 0) {
+                playlists = data["subsonic-response"].playlists.playlist;
+            } else {
+                playlists[0] = data["subsonic-response"].playlists.playlist;
+            }
+            $.each(playlists, function (i, playlist) {
+                if (menu === 'submenu_AddCurrentToPlaylist') {
+                    $("<a href=\"#\" onclick=\"javascript:addToPlaylist('" + playlist.id + "', 'current'); return false;\">" + playlist.name + "</a><br />").appendTo("#" + menu);
+                } else {
+                    $("<a href=\"#\" onclick=\"javascript:addToPlaylist('" + playlist.id + "', ''); return false;\">" + playlist.name + "</a><br />").appendTo("#" + menu);
+                }
+            });
+            //$("<a href=\"#\" onclick=\"javascript:addToPlaylist('new'); return false;\">+ New Playlist</a><br />").appendTo("#submenu");
+        }
+    });
+}
+function newPlaylist() {
+    var reply = prompt("Choose a name for your new playlist.", "");
+    if (reply) {
+        $.ajax({
+            url: baseURL + '/createPlaylist.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&name=' + reply,
+            method: 'GET',
+            dataType: 'jsonp',
+            timeout: 10000,
+            beforeSend: function (req) {
+                req.setRequestHeader('Authorization', auth);
+            },
+            success: function (data) {
+                loadPlaylists(true);
+            }
+        });
+    }
+}
+function deletePlaylist(id) {
+    $.ajax({
+        url: baseURL + '/deletePlaylist.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + id,
+        method: 'GET',
+        dataType: 'jsonp',
+        timeout: 10000,
+        beforeSend: function (req) {
+            req.setRequestHeader('Authorization', auth);
+        },
+        success: function (data) {
+            loadPlaylists(true);
+            $('#TrackContainer tbody').empty();
+        }
+    });
+}
+function addToPlaylist(playlistid, from) {
+    var selected = [];
+    var el;
+    if (from === 'current') {
+        el = $('#CurrentPlaylist table.songlist tr.selected');
+    } else {
+        el = $('#Albums table.songlist tr.selected');
+    }
+    el.each(function (index) {
+        selected.push($(this).attr('childid'));
+    });
+    if (selected.length > 0) {
+        if (playlistid !== 'new') { // Create new playlist from here, will implement in UI later
+            // Get songs from playlist
+            var currentsongs = [];
+            $.ajax({
+                url: baseURL + '/getPlaylist.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + playlistid,
+                method: 'GET',
+                dataType: 'jsonp',
+                timeout: 10000,
+                beforeSend: function (req) {
+                    req.setRequestHeader('Authorization', auth);
+                },
+                success: function (data) {
+                    // There is a bug in the API that doesn't return a JSON array for one artist
+                    var children = [];
+                    if (data["subsonic-response"].playlist.entry !== undefined) {
+                        if (data["subsonic-response"].playlist.entry.length > 1) {
+                            children = data["subsonic-response"].playlist.entry;
+                        } else {
+                            children[0] = data["subsonic-response"].playlist.entry;
+                        }
+                        $.each(children, function (i, child) {
+                            currentsongs.push(child.id);
+                        });
+                    }
+                    var newsongs = [];
+                    var count = 0;
+                    $.each(selected, function (i, songid) {
+                        if (jQuery.inArray(songid, currentsongs) === -1) {
+                            currentsongs.push(songid);
+                            count++;
+                        }
+                    });
+                    if (count > 0) {
+                        $.ajax({
+                            type: 'GET',
+                            url: baseURL + '/createPlaylist.view',
+                            dataType: 'jsonp',
+                            timeout: 10000,
+                            data: { u: username, p: passwordenc, v: version, c: applicationName, f: "jsonp", playlistId: playlistid, songId: currentsongs },
+                            beforeSend: function (req) {
+                                req.setRequestHeader('Authorization', auth);
+                            },
+                            success: function () {
+                                $('table.songlist tr.song').each(function () {
+                                    $(this).removeClass('selected');
+                                });
+                                updateMessage('Playlist Updated!');
+                            },
+                            traditional: true // Fixes POST with an array in JQuery 1.4
+                        });
+                    }
+                }
+            });
+        } else {
+            $.ajax({
+                type: 'GET',
+                url: baseURL + '/createPlaylist.view',
+                dataType: 'jsonp',
+                timeout: 10000,
+                data: { u: username, p: passwordenc, v: version, c: applicationName, f: "jsonp", name: 'New Playlist', songId: selected },
+                beforeSend: function (req) {
+                    req.setRequestHeader('Authorization', auth);
+                },
+                success: function () {
+                    $('table.songlist tr.song').each(function () {
+                        $(this).removeClass('selected');
+                    });
+                    updateMessage('Playlist Created!');
+                },
+                traditional: true // Fixes POST with an array in JQuery 1.4
+            });
+        }
+        setTimeout(function () { $('div.submenu').fadeOut(); }, 100);
+    }
+}
+function addToCurrent(addAll) {
+    var count;
+    if (addAll) {
+        count = $('#AlbumContainer tr.song').length;
+    } else {
+        count = $('#AlbumContainer tr.selected').length;
+    }
+    if (count > 0) {
+        if (addAll) {
+            $('#AlbumContainer tr.song').each(function (index) {
+                $(this).clone().appendTo('#CurrentPlaylistContainer tbody');
+                updateMessage(count + ' Song(s) Added');
+            });
+        } else {
+            $('#AlbumContainer tr.selected').each(function (index) {
+                $(this).clone().appendTo('#CurrentPlaylistContainer tbody');
+                updateMessage(count + ' Song(s) Added');
+            });
+        }
+    }
+}
+function downloadItem(id) {
+    var url;
+    if (id) {
+        url = baseURL + '/download.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + id;
+        window.location = url;
+    }
+    /*
+    $('table.songlist tr.selected').each(function (index) {
+        id = $(this).attr('childid');
+        if (id) {
+            url = baseURL + '/download.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + id;
+            window.location = url;
+        }
+    });
+    */
+}
+function savePlaylist(playlistid) {
+    var songs = [];
+    $('#TrackContainer tr.song').each(function (index) {
+        songs.push($(this).attr('childid'));
+    });
+    if (songs.length > 0) {
+        $.ajax({
+            type: 'GET',
+            url: baseURL + '/createPlaylist.view',
+            dataType: 'jsonp',
+            timeout: 10000,
+            data: { u: username, p: passwordenc, v: version, c: applicationName, f: "jsonp", playlistId: playlistid, songId: songs },
+            beforeSend: function (req) {
+                req.setRequestHeader('Authorization', auth);
+            },
+            success: function () {
+                getPlaylist(playlistid);
+                updateMessage('Playlist Updated!');
+            },
+            traditional: true // Fixes POST with an array in JQuery 1.4
+        });
+    }
+}
+function getPlaylist(id, action, appendto) {
+    $.ajax({
+        url: baseURL + '/getPlaylist.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + id,
+        method: 'GET',
+        dataType: 'jsonp',
+        timeout: 10000,
+        beforeSend: function (req) {
+            req.setRequestHeader('Authorization', auth);
+        },
+        success: function (data) {
+            if (data["subsonic-response"].playlist.entry !== undefined) {
+                if (appendto === '#TrackContainer tbody') {
+                    $(appendto).empty();
+                    var header = generateSongHeaderHTML();
+                    $("#TrackContainer thead").html(header);
+                }
+                if (action === 'autoplay') {
+                    $(appendto).empty();
+                }
+                // There is a bug in the API that doesn't return a JSON array for one artist
+                var children = [];
+                if (data["subsonic-response"].playlist.entry.length > 0) {
+                    children = data["subsonic-response"].playlist.entry;
+                } else {
+                    children[0] = data["subsonic-response"].playlist.entry;
+                }
+
+                var rowcolor;
+                var html;
+                $.each(children, function (i, child) {
+                    if (i % 2 === 0) {
+                        rowcolor = 'even';
+                    } else {
+                        rowcolor = 'odd';
+                    }
+                    var track;
+                    if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
+                    var time = secondsToTime(child.duration);
+                    html = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+                    $(html).appendTo(appendto);
+                });
+                if (appendto === '#CurrentPlaylistContainer tbody') {
+                    updateMessage(children.length + ' Song(s) Added');
+                }
+                if (action === 'autoplay') {
+                    autoPlay();
+                }
+            } else {
+                if (appendto === '#TrackContainer tbody') {
+                    $(appendto).empty();
+                }
+            }
+        }
+    });
+}
