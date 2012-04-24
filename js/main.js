@@ -1,7 +1,7 @@
-require(["jquery", "sm/soundmanager2-jsmin", "jquery.scrollTo-1.4.2-min", "jquery.disable.text.select.pack",
-         "jquery.cookie", "jquery.base64", "jquery.dateFormat-1.0", "jquery.periodic", "jquery.shuffle",
+require(["jquery", "sm/soundmanager2-jsmin", "plugins/jquery.scrollTo-1.4.2-min", "plugins/jquery.disable.text.select.pack",
+         "plugins/jquery.cookie", "plugins/jquery.base64", "plugins/jquery.dateFormat-1.0", "plugins/jquery.periodic", "plugins/jquery.shuffle",
          "fancybox/jquery.fancybox-1.3.4.pack",
-         "jquery.linkify-1.0-min", "utils", "api", "generators", "chat", "player", "app", "ui-load", "ui-ready"
+         "plugins/jquery.linkify-1.0-min", "libs/utils", "libs/api", "libs/generators", "libs/chat", "libs/player", "app", "ui-load", "ui-ready"
         ], function($) {
 
         $(function() {
