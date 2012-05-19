@@ -8,27 +8,7 @@
     <link href="style/Style.css" rel="stylesheet" type="text/css" />
     <link href="js/fancybox/jquery.fancybox-1.3.4.css" rel="stylesheet" type="text/css" />
     <link href="js/contextMenu/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
-    <script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
-    <script src="js/sm/soundmanager2-jsmin.js" type="text/javascript"></script>
-    <script src="js/jquery.scrollTo-1.4.2-min.js" type="text/javascript"></script>
-    <script src="js/jquery.disable.text.select.pack.js" type="text/javascript"></script>
-    <script src="js/jquery.cookie.js" type="text/javascript"></script>
-    <script src="js/jquery.base64.js" type="text/javascript"></script>
-    <script src="js/jquery.dateFormat-1.0.js" type="text/javascript"></script>
-    <script src="js/jquery.periodic.js" type="text/javascript"></script>
-    <script src="js/jquery.shuffle.js" type="text/javascript"></script>
-    <script src="js/fancybox/jquery.fancybox-1.3.4.pack.js" type="text/javascript"></script>
-    <script src="js/jquery.linkify-1.0-min.js" type="text/javascript"></script>
-    <script src="js/app.js" type="text/javascript"></script>
-    <script src="js/ui-load.js" type="text/javascript"></script>
-    <script src="js/ui-ready.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        soundManager.url = 'js/sm/swf';
-        soundManager.preferFlash = false;
-        soundManager.debugMode = false; 
-        //soundManager.flashVersion = 9; // optional: shiny features (default = 8)
-        //soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
-	</script>
+    <script src="js/require-jquery.js" data-main="js/main"></script>
 </head>
 <body>
 
@@ -134,31 +114,6 @@
             </div>
         </div>
         <div id="tabPreferences" class="tabcontent">
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $('#Username').val($.cookie('username'));
-                $('#Password').val($.cookie('password'));
-                $('#AutoAlbumSize').val($.cookie('AutoAlbumSize'));
-                $('#AutoPlaylistSize').val($.cookie('AutoPlaylistSize'));
-                $('#Server').val($.cookie('Server'));
-                $('#ApplicationName').val($.cookie('ApplicationName'));
-                if ($.cookie('HideAZ')) {
-                    $('#HideAZ').attr('checked', true);
-                } else {
-                    $('#HideAZ').attr('checked', false);
-                }
-                if ($.cookie('EnableNotifications')) {
-                    $('#EnableNotifications').attr('checked', true);
-                } else {
-                    $('#EnableNotifications').attr('checked', false);
-                }
-                if ($.cookie('ScrollTitle')) {
-                    $('#ScrollTitle').attr('checked', true);
-                } else {
-                    $('#ScrollTitle').attr('checked', false);
-                }
-            });
-        </script>
             <div class="actions floatleft">
                 <a href="#" class="button" id="ResetPreferences" title="Reset Preferences">Reset</a>
                 <a href="#" class="button" id="SavePreferences" title="Save Preferences">Save</a>
