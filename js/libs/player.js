@@ -9,7 +9,7 @@ function playSong(el, songid, albumid) {
             req.setRequestHeader('Authorization', auth);
         },
         success: function (data) {
-            var title, artist, album;
+            var title, artist, album, rating;
             if (data["subsonic-response"].directory !== undefined) {
                 // There is a bug in the API that doesn't return a JSON array for one artist
                 var children = [];
@@ -19,20 +19,34 @@ function playSong(el, songid, albumid) {
                     children[0] = data["subsonic-response"].directory.child;
                 }
                 $.each(children, function (i, child) {
-                    if (child.id === songid) {
+                    if (child.id == songid) {
                         title = child.title;
                         artist = child.artist;
                         album = child.album;
                         coverart = child.coverArt;
+                        rating = child.userRating;
                     }
                 });
+            }
+            if (rating == 5) {
+                $('#songdetails_rate').attr('class', 'favorite');
+            } else {
+                $('#songdetails_rate').attr('class', 'rate');
             }
             $('#songdetails_song').html(title);
             $('#songdetails_song').attr('parentid', albumid);
             $('#songdetails_song').attr('childid', songid);
             $('#songdetails_artist').html(artist + ' - ' + album);
-            $('#coverartimage').attr('href', baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + coverart);
-            $('#coverartimage img').attr('src', baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart);
+            var coverartSrc, coverartFullSrc;
+            if (coverart == undefined) {
+                coverartSrc = 'images/albumdefault_50.jpg';
+                coverartFullSrc = '';
+            } else {
+                coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart;
+                coverartFullSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + coverart;
+            }
+            $('#coverartimage').attr('href', coverartFullSrc);
+            $('#coverartimage img').attr('src', coverartSrc);
             $('#playermiddle').css('visibility', 'visible');
             $('#songdetails').css('visibility', 'visible');
             // SoundManager Initialize
@@ -40,50 +54,66 @@ function playSong(el, songid, albumid) {
             if (audio) {
                 soundManager.destroySound('audio');
             }
-            audio = soundManager.createSound({
-                id: 'audio',
-                url: baseURL + '/stream.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
-                stream: true,
-                whileloading: function () {
-                    if (debug) {
-                        console.log('loaded:' + this.bytesLoaded + ' total:' + this.bytesTotal);
-                    }
-                    var percent = this.bytesLoaded / this.bytesTotal;
-                    var scrubber = $('#audio_wrapper0').find(".scrubber");
-                    var loaded = $('#audio_wrapper0').find(".loaded");
-                    loaded.css('width', (scrubber.get(0).offsetWidth * percent) + 'px');
-                },
-                whileplaying: function () {
-                    //console.log('position:' + this.position + ' duration:' + this.duration);
-                    var percent = this.position / this.duration;
-                    var scrubber = $('#audio_wrapper0').find(".scrubber");
-                    var progress = $('#audio_wrapper0').find(".progress");
-                    progress.css('width', (scrubber.get(0).offsetWidth * percent) + 'px');
-
-                    var played = $('#audio_wrapper0').find(".played");
-                    var p = (this.duration / 1000) * percent,
-                        m = Math.floor(p / 60),
-                        s = Math.floor(p % 60);
-                    played.html((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
-
-                    // Scrobble song once percentage is reached
-                    if (!scrobbled && p > 30 && (percent > 0.5 || p > 480)) {
-                        scrobbleSong(true);
-                    }
-                },
-                onload: function () {
-                    var duration = $('#audio_wrapper0').find(".duration");
-                    var dp = this.duration / 1000,
-                        dm = Math.floor(dp / 60),
-                        ds = Math.floor(dp % 60);
-                    duration.html((dm < 10 ? '0' : '') + dm + ':' + (ds < 10 ? '0' : '') + ds);
-                },
-                onfinish: function () {
-                    var next = $('#CurrentPlaylistContainer tr.playing').next();
-                    changeTrack(next);
+            soundManager.onready(function () {
+                if (debug) {
+                    console.log("SM HTML5 STATUS");
+                    $.each(soundManager.html5, function (key, value) {
+                        console.log(key + ': ' + value);
+                    });
                 }
+                audio = soundManager.createSound({
+                    id: 'audio',
+                    url: baseURL + '/stream.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
+                    stream: true,
+                    whileloading: function () {
+                        if (debug) { console.log('loaded:' + this.bytesLoaded + ' total:' + this.bytesTotal); }
+                        var percent = this.bytesLoaded / this.bytesTotal;
+                        var scrubber = $('#audio_wrapper0').find(".scrubber");
+                        var loaded = $('#audio_wrapper0').find(".loaded");
+                        loaded.css('width', (scrubber.get(0).offsetWidth * percent) + 'px');
+                    },
+                    whileplaying: function () {
+                        if (debug) { console.log('position:' + this.position + ' duration:' + this.duration); }
+                        var percent = this.position / this.duration;
+                        var scrubber = $('#audio_wrapper0').find(".scrubber");
+                        var progress = $('#audio_wrapper0').find(".progress");
+                        progress.css('width', (scrubber.get(0).offsetWidth * percent) + 'px');
+
+                        var played = $('#audio_wrapper0').find(".played");
+                        var p = (this.duration / 1000) * percent,
+                            m = Math.floor(p / 60),
+                            s = Math.floor(p % 60);
+                        played.html((m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s);
+
+                        // Scrobble song once percentage is reached
+                        if (!scrobbled && p > 30 && (percent > 0.5 || p > 480)) {
+                            if (debug) { console.log("LAST.FM SCROBBLE"); }
+                            scrobbleSong(true);
+                        }
+                    },
+                    onload: function () {
+                        var duration = $('#audio_wrapper0').find(".duration");
+                        var dp = this.duration / 1000,
+                            dm = Math.floor(dp / 60),
+                            ds = Math.floor(dp % 60);
+                        duration.html((dm < 10 ? '0' : '') + dm + ':' + (ds < 10 ? '0' : '') + ds);
+                        var scrubber = $('#audio_wrapper0').find(".scrubber");
+                        scrubber.unbind("click");
+                        scrubber.click(function (e) {
+                            var x = (e.pageX - this.offsetLeft) / scrubber.width();
+                            var position = Math.round(dp * 1000 * x);
+                            audio.play({
+                                position: position
+                            });
+                        });
+                    },
+                    onfinish: function () {
+                        var next = $('#CurrentPlaylistContainer tr.playing').next();
+                        changeTrack(next);
+                    }
+                });
+                audio.play('audio');
             });
-            audio.play('audio');
 
             $('table.songlist tr.song').removeClass('playing');
             $(el).addClass('playing');
@@ -93,7 +123,7 @@ function playSong(el, songid, albumid) {
             scrobbled = false;
 
             if ($.cookie('EnableNotifications')) {
-                showNotification(baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart, toHTML.un(title), toHTML.un(artist + ' - ' + album));
+                showNotification(coverartSrc, toHTML.un(title), toHTML.un(artist + ' - ' + album));
             }
             if ($.cookie('ScrollTitle')) {
                 scrollTitle(toHTML.un(artist) + ' - ' + toHTML.un(title));

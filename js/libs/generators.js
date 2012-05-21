@@ -15,7 +15,11 @@ function generateAlbumHTML(rowcolor, childid, parentid, coverart, title, artist,
         html += '<a class=\"rate\" href=\"\" title=\"Add To Favorites\"></a>';
     }
     html += '</td>';
-    html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart + '\" /></td>';
+    if (coverart == undefined) {
+        html += '<td class=\"albumart\"><img src=\"images/albumdefault_50.jpg\" /></td>';
+    } else {
+        html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart + '\" /></td>';
+    }
     html += '<td class=\"album\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
     html += '</tr>';
@@ -32,6 +36,7 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, artist, alb
     html += '<td class=\"itemactions\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a>';
     html += '<a class=\"remove\" href=\"\" title=\"Remove\"></a>';
     html += '<a class=\"play\" href=\"\" title=\"Play\"></a>';
+    html += '<a class=\"download\" href=\"\" title=\"Download\"></a>';
     if (rating === 5) {
         html += '<a class=\"favorite\" href=\"\" title=\"Favorite\"></a>';
     } else {
@@ -41,7 +46,13 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, artist, alb
     html += '<td class=\"track\">' + track + '</td>';
     html += '<td class=\"title\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
-    html += '<td class=\"album\">' + album + '<img src=\"' + baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart + '\" /></td>';
+    var coverartSrc;
+    if (coverart == undefined) {
+        coverartSrc = 'images/albumdefault_25.jpg';
+    } else {
+        coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart;
+    }
+    html += '<td class=\"album\"><a href="javascript:getAlbums(\'' + parentid + '\',\'\',\'#AlbumRows\')">' + album + '<img src=\"' + coverartSrc + '\" /></a></td>';
     html += '<td class=\"time\">' + m + ':' + s + '</td>';
     html += '</tr>';
     return html;

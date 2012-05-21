@@ -1,4 +1,35 @@
 ﻿$(document).ready(function () {
+    //User config staff
+    $('#Username').val($.cookie('username'));
+    $('#Password').val($.cookie('password'));
+    $('#AutoAlbumSize').val($.cookie('AutoAlbumSize'));
+    $('#AutoPlaylistSize').val($.cookie('AutoPlaylistSize'));
+    $('#Server').val($.cookie('Server'));
+    $('#ApplicationName').val($.cookie('ApplicationName'));
+
+    // Set Preferences defaults
+    if ($.cookie('HideAZ')) {
+        $('#HideAZ').attr('checked', true);
+    } else {
+        $('#HideAZ').attr('checked', false);
+    }
+    if ($.cookie('EnableNotifications')) {
+        $('#EnableNotifications').attr('checked', true);
+    } else {
+        $('#EnableNotifications').attr('checked', false);
+    }
+    if ($.cookie('ScrollTitle')) {
+        $('#ScrollTitle').attr('checked', true);
+    } else {
+        $('#ScrollTitle').attr('checked', false);
+    }
+    if ($.cookie('Debug')) {
+        $('#Debug').attr('checked', true);
+        debug = true;
+    } else {
+        $('#Debug').attr('checked', false);
+    }
+
     // Tabs
     $(".tabcontent").hide(); //Hide all content
     if (!$.cookie('username') && !$.cookie('password') && !$.cookie('Server')) {
@@ -113,7 +144,7 @@
     });
     $('tr.album a.download').live('click', function (event) {
         var itemid = $(this).parent().parent().attr('childid');
-        downloadItem(itemid);
+        downloadItem(itemid, 'item');
         return false;
     });
     $('tr.album a.rate').live('click', function (event) {
@@ -177,7 +208,36 @@
     $('table.songlist tr.song a.play').live('click', function (event) {
         var songid = $(this).parent().parent().attr('childid');
         var albumid = $(this).parent().parent().attr('parentid');
+        if (!$('#tabCurrent').is(':visible')) {
+            $('#CurrentPlaylistContainer tbody').empty();
+            var track = $(this).parent().parent();
+            $(track).clone().appendTo('#CurrentPlaylistContainer');
+            id = 0;
+            count = 0;
+            while (id !== undefined) {
+                track = track.next();
+                id = $(track).attr('childid');
+                $(track).clone().appendTo('#CurrentPlaylistContainer');
+                count++;
+            }
+            updateMessage(count + ' Song(s) Added');
+            var firstsong = $('#CurrentPlaylistContainer tr.song:first');
+            songid = $(firstsong).attr('childid');
+            albumid = $(firstsong).attr('parentid');
+            playSong(firstsong, songid, albumid);
+        } else {
+            playSong($(this).parent().parent(), songid, albumid);
+        }
+        /* 20120520 OwnCloud Merge
+        var songid = $(this).parent().parent().attr('childid');
+        var albumid = $(this).parent().parent().attr('parentid');
         playSong($(this).parent().parent(), songid, albumid);
+        */
+        return false;
+    });
+    $('table.songlist tr.song a.download').live('click', function (event) {
+        var itemid = $(this).parent().parent().attr('childid');
+        downloadItem(itemid, 'item');
         return false;
     });
     $('table.songlist tr.song a.add').live('click', function (event) {
@@ -282,7 +342,8 @@
     });
     $('#action_Search').click(function () {
         var query = $('#Search').val();
-        search('song', query);
+        var type = $('#SearchType').val();
+        search(type, query);
         $('#Search').val("");
         return false;
     });
@@ -347,8 +408,17 @@
         getPlaylist($(this).parent().parent().attr("id"), 'autoplay', '#CurrentPlaylistContainer tbody');
         return false;
     });
+    $('#PlaylistContainer li.item a.download').live('click', function (event) {
+        var itemid = $(this).parent().parent().attr('id');
+        downloadItem(itemid, 'playlist');
+        return false;
+    });
     $('#PlaylistContainer li.item a.add').live('click', function () {
         getPlaylist($(this).parent().parent().attr("id"), '', '#CurrentPlaylistContainer tbody');
+        return false;
+    });
+    $('#action_RefreshPlaylists').click(function () {
+        loadPlaylists(true);
         return false;
     });
     $('#action_DeletePlaylist').click(function () {
@@ -407,6 +477,20 @@
     $("a#coverartimage").fancybox({
         'hideOnContentClick': true,
         'type': 'image'
+    });
+    $('#songdetails a.rate').live('click', function (event) {
+        var itemid = $('#songdetails_song').attr('childid');
+        rateSong(itemid, 5);
+        $(this).removeClass('rate');
+        $(this).addClass('favorite');
+        return false;
+    });
+    $('#songdetails a.favorite').live('click', function (event) {
+        var itemid = $('#songdetails_song').attr('childid');
+        rateSong(itemid, 0);
+        $(this).removeClass('favorite');
+        $(this).addClass('rate');
+        return false;
     });
 
     // Side Bar Click Events
@@ -480,6 +564,12 @@
             $.cookie('ScrollTitle', '1', { expires: 365 });
         }
     });
+    $('#Debug').live('click', function () {
+        if ($('#Debug').is(':checked')) {
+            $.cookie('Debug', '1', { expires: 365 });
+            debug = true;
+        }
+    });
     $('input#Password').keydown(function (e) {
         var unicode = e.charCode ? e.charCode : e.keyCode;
         if (unicode == 13) {
@@ -503,4 +593,4 @@
         return false;
     });
 
-});                                 // End document.ready
+});      // End document.ready

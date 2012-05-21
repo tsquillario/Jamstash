@@ -274,6 +274,18 @@ ul.mainlist li.item a.play:hover
 {
     background: url('../images/play_6x8.png') no-repeat 6px center #DEECFB;
 }
+ul.mainlist li.item a.download
+{
+    float: left;
+    width: 20px;
+    height: 18px;
+    display: block;
+    background: url('../images/download_gl_9x12.png') no-repeat 5px center;
+}
+ul.mainlist li.item a.download:hover
+{
+    background: url('../images/download_gd_9x12.png') no-repeat 5px center #DEECFB;
+}
 ul.mainlist li.item a.add
 {
     width: 20px;
@@ -456,6 +468,15 @@ table.songlist tr.song td.album
     padding: 0;
     line-height: 31px;
 }
+table.songlist tr.song td.album a
+{
+    color: #829FC0;
+    text-decoration: none;    
+}
+table.songlist tr.song td.album a:hover
+{
+    text-decoration: underline;    
+}
 table.songlist tr.song td.album img
 {
     border: 1px solid #DEDEDE;
@@ -483,6 +504,18 @@ table.songlist tr.song a.play
 table.songlist tr.song a.play:hover
 {
     background: url('../images/play_6x8.png') no-repeat 7px center #DEECFB;
+}
+table.songlist tr.song a.download
+{
+    float: left;
+    width: 20px;
+    height: 20px;
+    display: block;
+    background: url('../images/download_gl_9x12.png') no-repeat 5px center;
+}
+table.songlist tr.song a.download:hover
+{
+    background: url('../images/download_gd_9x12.png') no-repeat 5px center #DEECFB;
 }
 table.songlist tr.song a.add
 {
@@ -536,6 +569,10 @@ table.songlist tr.selected
 table.songlist tr.selected td:first-child
 {
     background: url('../images/check_8x7.png') 10px 16px no-repeat;
+}
+table.songlist tr.selected td.album a
+{
+    color: #f2f2f2;
 }
 /* tablesorter style */
 table.tablesorter {
@@ -623,6 +660,11 @@ background-color: #8dbdd8;
     height: 29px;
     margin: 4px 0 0 0;
     padding: 0 0 0 5px;
+}
+#songactions
+{
+    display: none;
+    float: left;
 }
 .submenu 
 {
@@ -773,7 +815,7 @@ background-color: #8dbdd8;
 .audiojs .scrubber
 {
     height: 2px;
-    margin: 26px 5px 0px 5px;
+    margin: 28px 5px 0px 5px;
     float: none;
     width: auto;
     position: relative;
@@ -852,7 +894,7 @@ background-color: #8dbdd8;
 }
 #songdetails
 {
-    width: 250px;
+    width: 280px;
     margin: 0 8px;
     float: left;
     visibility: hidden;
@@ -890,6 +932,26 @@ background-color: #8dbdd8;
     margin: 0 4px 0 0;
     text-align: right;
     width: 37px;
+}
+#songdetails a.rate
+{
+    float: left;
+	height: 60px;
+    width: 30px;
+    display: block;
+	background: url('../images/star_wo_12x12.png') 10px center no-repeat;	
+}
+#songdetails a.rate:hover
+{
+    background: url('../images/star_lgo_12x12.png') 10px center no-repeat;
+}
+#songdetails a.favorite
+{
+    float: left;
+	height: 60px;
+    width: 30px;
+    display: block;
+	background: url('../images/star_yo_12x12.png') 10px center no-repeat;	
 }
 .vertshade {
     position: relative;
@@ -952,7 +1014,13 @@ span.code
     font-family:"Courier New",Courier,mono;
     font-size: 11px;
 }
-
+#donate
+{
+    text-align: center;
+    background: #f2f2f2;
+    border: 1px solid #E0E0E0;
+    padding: 10px;
+}
 
 
 /* Button Style */
@@ -998,12 +1066,6 @@ input
     font-size: 14px;
     padding: 5px;
 }
-input.medium
-{
-    border: 1px solid #DCDCDC;
-    width: 110px;
-    margin: 0 5px;
-}
 input.large
 {
     border: 1px solid #DCDCDC;
@@ -1022,12 +1084,22 @@ input.chat
     width: 150px;
     margin: 5px;
 }
+input#Search
+{
+    border: 1px solid #DCDCDC;
+    width: 110px;
+    margin: 0 0 0 5px;
+}
 select
 {
     font-family:   Calibri, Arial, Verdana;
     padding: 5px;
     margin: 5px;
     border: 1px solid #d6d6d6;
+}
+select#SearchType
+{
+    margin: 0;
 }
 select#MusicFolders
 {

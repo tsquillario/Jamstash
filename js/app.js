@@ -3,6 +3,13 @@ var debug = false;
 var audio;
 var hostURL = location.href;
 var baseURL;
+var version;
+
+//Sound manager
+soundManager.url = 'js/sm/swf';
+soundManager.preferFlash = false;
+soundManager.debugMode = false;
+//soundManager.useHTML5Audio = true;
 
 // Set auth cookies if specified in URL on launch
 var u = getParameterByName('u'); 
@@ -38,7 +45,7 @@ var version = '1.6.0';
 function loadTabContent(tab) {
     switch (tab) {
         case '#tabLibrary':
-            console.log("TAG LIBRARY");
+            if (debug) { console.log("TAG LIBRARY"); }
             if ($.cookie('MusicFolders')) {
                 loadArtists($.cookie('MusicFolders'), false);
             } else {
@@ -47,12 +54,12 @@ function loadTabContent(tab) {
             getMusicFolders();
             break;
         case '#tabCurrent':
-            console.log("TAG CURRENT");
+            if (debug) { console.log("TAG CURRENT"); }
             var header = generateSongHeaderHTML();
             $("#CurrentPlaylistContainer thead").html(header);
             break;
         case '#tabPlaylists':
-            console.log("TAG PLAYLIST");
+            if (debug) { console.log("TAG PLAYLIST"); }
             loadPlaylists();
             break;
         case '#tabPreferences':
