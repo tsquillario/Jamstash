@@ -248,7 +248,7 @@
     $('table.songlist tr.song a.remove').live('click', function (event) {
         var track = $(this).parent().parent();
         $(track).remove();
-        refreshRowColor();
+        refreshRowColor('table.songlist');
         return false;
     });
     $('table.songlist tr.song a.rate').live('click', function (event) {
@@ -349,8 +349,8 @@
     });
     // Current Playlist Click Events
     $('#action_Shuffle').live('click', function () {
-        $('#CurrentPlaylistContainer tr.song').shuffle();
-        refreshRowColor();
+        $('#CurrentPlaylistContainer tbody tr.song').shuffle();
+        refreshRowColor('#CurrentPlaylistContainer tbody');
         return false;
     });
     $('#action_Empty').live('click', function () {
@@ -448,8 +448,8 @@
         return false;
     });
     $('#action_ShufflePlaylist').live('click', function () {
-        $('#TrackContainer tr.song').shuffle();
-        refreshRowColor();
+        $('#TrackContainer tbody tr.song').shuffle();
+        refreshRowColor('#TrackContainer tbody');
         return false;
     });
 
@@ -592,5 +592,25 @@
         });
         return false;
     });
+
+    // JQuery UI Sortable - Drag and drop sorting
+    var fixHelper = function (e, ui) {
+        ui.children().each(function () {
+            $(this).width($(this).width());
+        });
+        return ui;
+    };
+    $("#CurrentPlaylistContainer tbody").sortable({
+        helper: fixHelper,
+        stop: function() {
+            refreshRowColor('#CurrentPlaylistContainer tbody');            
+        }
+    }).disableSelection();
+    $("#TrackContainer tbody").sortable({
+        helper: fixHelper,
+        stop: function () {
+            refreshRowColor('#TrackContainer tbody');
+        }
+    }).disableSelection();
 
 });      // End document.ready

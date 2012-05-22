@@ -58,8 +58,8 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, artist, alb
     return html;
 }
 
-function refreshRowColor() {
-    $.each($('table.songlist tr.song'), function (i) {
+function refreshRowColor(el) {
+    $.each($(el + ' tr.song'), function (i) {
         $(this).removeClass('even odd');
         var rowcolor;
         if (i % 2 === 0) {
