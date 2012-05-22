@@ -120,7 +120,7 @@
         getAlbums($(this).attr("id"), '', '#AlbumRows');
     });
     $('#BottomIndex li a').live('click', function () {
-        var el = '#index_' + $(this).text();
+        var el = 'a[name = "index_' + $(this).text() + '"]';
         $('#Artists').stop().scrollTo(el, 400);
         return false;
     });
@@ -602,8 +602,8 @@
     };
     $("#CurrentPlaylistContainer tbody").sortable({
         helper: fixHelper,
-        stop: function() {
-            refreshRowColor('#CurrentPlaylistContainer tbody');            
+        stop: function () {
+            refreshRowColor('#CurrentPlaylistContainer tbody');
         }
     }).disableSelection();
     $("#TrackContainer tbody").sortable({
@@ -613,4 +613,4 @@
         }
     }).disableSelection();
 
-});      // End document.ready
+});       // End document.ready

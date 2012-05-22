@@ -39,13 +39,9 @@ function loadArtists(id, refresh) {
                     }
 
                     $.each(indexes, function (i, index) {
-                        if (index.name === '#') {
-                            indexname = '0-9';
-                        } else {
-                            indexname = index.name;
-                        }
-                        $('<li class=\"index\" id=\"index_' + indexname + '\" title=\"Scroll to Top\">' + indexname + '<span class=\"floatright\">&uarr;</span></li>').appendTo("#ArtistContainer");
-                        indexlist += '<li><a href=\"#\">' + indexname + '</a></li>';
+                        indexname = index.name;
+                        $('<li class=\"index\" id=\"index_' + indexname + '\" title=\"Scroll to Top\"><a name=\"index_' + indexname + '\">' + indexname + '</a><span class=\"floatright\">&uarr;</span></li>').appendTo("#ArtistContainer");
+                        indexlist += '<li><a href=\"#' + indexname + '\">' + indexname + '</a></li>';
                         var artists = [];
                         if (index.artist.length > 0) {
                             artists = index.artist;
