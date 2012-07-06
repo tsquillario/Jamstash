@@ -7,7 +7,11 @@ var version;
 
 //Sound manager
 soundManager.url = 'js/sm/swf';
-soundManager.preferFlash = false;
+if ($.cookie('ForceFlash')) {
+    soundManager.preferFlash = true;
+} else {
+    soundManager.preferFlash = false;
+}
 soundManager.debugMode = false;
 //soundManager.useHTML5Audio = true;
 

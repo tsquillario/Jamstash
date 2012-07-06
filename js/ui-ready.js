@@ -29,6 +29,11 @@
     } else {
         $('#Debug').attr('checked', false);
     }
+    if ($.cookie('ForceFlash')) {
+        $('#ForceFlash').attr('checked', true);
+    } else {
+        $('#ForceFlash').attr('checked', false);
+    }
 
     // Tabs
     $(".tabcontent").hide(); //Hide all content
@@ -568,7 +573,18 @@
         if ($('#Debug').is(':checked')) {
             $.cookie('Debug', '1', { expires: 365 });
             debug = true;
+        } else {
+            $.cookie('Debug', null);
+            debug = false;
         }
+    });
+    $('#ForceFlash').live('click', function () {
+        if ($('#ForceFlash').is(':checked')) {
+            $.cookie('ForceFlash', '1', { expires: 365 });
+        } else {
+            $.cookie('ForceFlash', null);
+        }
+        location.reload(true);
     });
     $('input#Password').keydown(function (e) {
         var unicode = e.charCode ? e.charCode : e.keyCode;
@@ -613,4 +629,4 @@
         }
     }).disableSelection();
 
-});       // End document.ready
+});        // End document.ready
