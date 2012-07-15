@@ -1,16 +1,15 @@
 var scrobbled = false;
 function playSong(el, songid, albumid) {
+    ajaxUrl = baseURL + '/getMusicDirectory.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + albumid;
+    if (debug) { console.log(ajaxUrl) }   
     $.ajax({
-        url: baseURL + '/getMusicDirectory.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + albumid,
+        url: ajaxUrl,
         method: 'GET',
         dataType: 'jsonp',
         timeout: 10000,
-        beforeSend: function (req) {
-            req.setRequestHeader('Authorization', auth);
-        },
         success: function (data) {
             var title, artist, album, rating;
-            if (data["subsonic-response"].directory !== undefined) {
+            if (data["subsonic-response"].directory.child !== undefined) {
                 // There is a bug in the API that doesn't return a JSON array for one artist
                 var children = [];
                 if (data["subsonic-response"].directory.child.length > 0) {
@@ -63,7 +62,7 @@ function playSong(el, songid, albumid) {
                 }
                 audio = soundManager.createSound({
                     id: 'audio',
-                    url: baseURL + '/stream.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
+                    url: baseURL + '/stream.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
                     stream: true,
                     whileloading: function () {
                         if (debug) { console.log('loaded:' + this.bytesLoaded + ' total:' + this.bytesTotal); }
@@ -136,13 +135,10 @@ function playSong(el, songid, albumid) {
 function scrobbleSong(submission) {
     var songid = $('#songdetails_song').attr('childid');
     $.ajax({
-        url: baseURL + '/scrobble.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid + "&submission=" + submission,
+        url: baseURL + '/scrobble.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid + "&submission=" + submission,
         method: 'GET',
         dataType: 'jsonp',
         timeout: 10000,
-        beforeSend: function (req) {
-            req.setRequestHeader('Authorization', auth);
-        },
         success: function () {
             if (submission) {
                 scrobbled = true;
@@ -152,13 +148,10 @@ function scrobbleSong(submission) {
 }
 function rateSong(songid, rating) {
     $.ajax({
-        url: baseURL + '/setRating.view?u=' + username + '&p=' + passwordenc + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid + "&rating=" + rating,
+        url: baseURL + '/setRating.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + songid + "&rating=" + rating,
         method: 'GET',
         dataType: 'jsonp',
         timeout: 10000,
-        beforeSend: function (req) {
-            req.setRequestHeader('Authorization', auth);
-        },
         success: function () {
             updateMessage('Rating Updated!');
         }

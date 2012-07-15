@@ -4,6 +4,10 @@ var audio;
 var hostURL = location.href;
 var baseURL;
 var version;
+var username;
+var password;
+var passwordenc;
+var server;
 
 //Sound manager
 soundManager.url = 'js/sm/swf';
@@ -22,12 +26,15 @@ var s = getParameterByName('s');
 if (u && p && s) {
     if (!$.cookie('username')) {
         $.cookie('username', u, { expires: 365 });
+        username = u;
     }
     if (!$.cookie('password')) {
         $.cookie('password', p, { expires: 365 });
+        password = p;
     }
     if (!$.cookie('Server')) {
         $.cookie('Server', s, { expires: 365 });
+        baseURL = $.cookie('Server') + '/rest';
     }
     window.location.href = getPathFromUrl(window.location);
 }
@@ -40,36 +47,49 @@ if ($.cookie('ApplicationName')) {
 } else {
     applicationName = 'MiniSub';
 }
-var username = $.cookie('username');
-var password = $.cookie('password');
+if ($.cookie('username')) {
+    username = $.cookie('username');
+}
+if ($.cookie('passwordenc')) {
+    password = $.cookie('passwordenc');
+} else {
+    if ($.cookie('password')) {
+        password = 'enc:' + HexEncode($.cookie('password'));
+    }
+}
 var auth = makeBaseAuth(username, password);
-var passwordenc = 'enc:' + HexEncode($.cookie('password'));
+if ($.cookie('password')) {
+    $.cookie('passwordenc', 'enc:' + HexEncode($.cookie('password')), { expires: 365 });
+    $.cookie('password', null);
+}
 var version = '1.6.0';
 
 function loadTabContent(tab) {
-    switch (tab) {
-        case '#tabLibrary':
-            if (debug) { console.log("TAG LIBRARY"); }
-            if ($.cookie('MusicFolders')) {
-                loadArtists($.cookie('MusicFolders'), false);
-            } else {
-                loadArtists();
-            }
-            getMusicFolders();
-            break;
-        case '#tabCurrent':
-            if (debug) { console.log("TAG CURRENT"); }
-            var header = generateSongHeaderHTML();
-            $("#CurrentPlaylistContainer thead").html(header);
-            break;
-        case '#tabPlaylists':
-            if (debug) { console.log("TAG PLAYLIST"); }
-            loadPlaylists();
-            break;
-        case '#tabPreferences':
-            break;
-        default:
-            break;
+    if (username && password) {
+        switch (tab) {
+            case '#tabLibrary':
+                if (debug) { console.log("TAG LIBRARY"); }
+                if ($.cookie('MusicFolders')) {
+                    loadArtists($.cookie('MusicFolders'), false);
+                } else {
+                    loadArtists();
+                }
+                getMusicFolders();
+                break;
+            case '#tabCurrent':
+                if (debug) { console.log("TAG CURRENT"); }
+                var header = generateSongHeaderHTML();
+                $("#CurrentPlaylistContainer thead").html(header);
+                break;
+            case '#tabPlaylists':
+                if (debug) { console.log("TAG PLAYLIST"); }
+                loadPlaylists();
+                break;
+            case '#tabPreferences':
+                break;
+            default:
+                break;
+        }
     }
 }
 
