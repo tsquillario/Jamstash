@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
     //User config staff
     $('#Username').val($.cookie('username'));
-    $('#Password').val($.cookie('password'));
+    //$('#Password').val($.cookie('passwordenc'));
     $('#AutoAlbumSize').val($.cookie('AutoAlbumSize'));
     $('#AutoPlaylistSize').val($.cookie('AutoPlaylistSize'));
     $('#Server').val($.cookie('Server'));
@@ -13,10 +13,15 @@
     } else {
         $('#HideAZ').attr('checked', false);
     }
-    if ($.cookie('EnableNotifications')) {
-        $('#EnableNotifications').attr('checked', true);
+    if ($.cookie('Notification_Song')) {
+        $('#Notification_Song').attr('checked', true);
     } else {
-        $('#EnableNotifications').attr('checked', false);
+        $('#Notification_Song').attr('checked', false);
+    }
+    if ($.cookie('Notification_NowPlaying')) {
+        $('#Notification_NowPlaying').attr('checked', true);
+    } else {
+        $('#Notification_NowPlaying').attr('checked', false);
     }
     if ($.cookie('ScrollTitle')) {
         $('#ScrollTitle').attr('checked', true);
@@ -36,14 +41,14 @@
     }
 
     // Tabs
-    $(".tabcontent").hide(); //Hide all content
+    $('.tabcontent').hide(); //Hide all content
     if (!$.cookie('username') && !$.cookie('passwordenc') && !$.cookie('Server')) {
         $('ul.tabs li a').each(function () {
             if ($(this).attr("href") == '#tabPreferences') {
                 $(this).addClass("active"); //Add "active" class to selected tab
             }
         });
-        $("#tabPreferences").show(); //Show first tab content
+        $('#tabPreferences').show(); //Show first tab content
         loadTabContent('#tabPreferences');
     } else {
         if (window.location.hash) {
@@ -60,6 +65,11 @@
             $(".tabcontent:first").show(); //Show first tab content
             var firstTab = $("ul.tabs li:first a").attr("href");
             loadTabContent(firstTab);
+        }
+        $('a#logo').attr("href", $.cookie('Server'));
+        $('a#logo').attr("title", 'Launch Subsonic');
+        if ($.cookie('Notification_NowPlaying')) {
+            updateNowPlaying(true);
         }
     }
 
@@ -313,7 +323,12 @@
         return false;
     });
     $('#action_RefreshArtists').click(function () {
-        loadArtists("", true);
+        //loadArtists("", true);
+        if ($.cookie('MusicFolders')) {
+            loadArtists($.cookie('MusicFolders'), true);
+        } else {
+            loadArtists();
+        }
         return false;
     });
     $('#action_IncreaseWidth').click(function () {
@@ -506,7 +521,7 @@
             $.cookie('sidebar', true, { expires: 365 });
             $('#SideBar').show();
             updateChatMessages();
-            updateNowPlaying();
+            updateNowPlaying(false);
         }
         resizeContent();
         return false;
@@ -553,14 +568,24 @@
             $('#BottomContainer').show();
         }
     });
-    $('#EnableNotifications').live('click', function () {
-        if ($('#EnableNotifications').is(':checked')) {
+    $('#Notification_Song').live('click', function () {
+        if ($('#Notification_Song').is(':checked')) {
             requestPermissionIfRequired();
             if (hasNotificationPermission()) {
-                $.cookie('EnableNotifications', '1', { expires: 365 });
+                $.cookie('Notification_Song', '1', { expires: 365 });
             }
         } else {
-            $.cookie('EnableNotifications', null);
+            $.cookie('Notification_Song', null);
+        }
+    });
+    $('#Notification_NowPlaying').live('click', function () {
+        if ($('#Notification_NowPlaying').is(':checked')) {
+            requestPermissionIfRequired();
+            if (hasNotificationPermission()) {
+                $.cookie('Notification_NowPlaying', '1', { expires: 365 });
+            }
+        } else {
+            $.cookie('Notification_NowPlaying', null);
         }
     });
     $('#ScrollTitle').live('click', function () {
@@ -628,4 +653,4 @@
         }
     }).disableSelection();
 
-});          // End document.ready
+});           // End document.ready

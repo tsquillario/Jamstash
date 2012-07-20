@@ -44,12 +44,22 @@ h3.title
 #nav 
 {
     height: 127px;
-    padding: 44px 0 0 0;
-    background: url('../images/subsonic-36.png') no-repeat 6px 4px;
     position: absolute;
-    top: 0px;
+    top: 44px;
     left: 0px;
     z-index: 99;
+}
+a#logo
+{
+    position: absolute;
+    width: 54px;
+    height: 36px;
+    background: url('../images/subsonic_36.png') no-repeat 6px 4px;   
+    cursor:hand; 
+}
+a#logo:hover
+{
+    background: url('../images/subsonic_dn_36.png') no-repeat 6px 4px;    
 }
 #nav ul 
 {
@@ -1136,4 +1146,13 @@ label
 {
     float: left;
     margin: 5px 5px 0 5px;
+}
+fieldset
+{
+    border: 1px solid #EEE;
+    margin-bottom: 5px;
+}
+legend
+{
+    font-size: 12px;
 }

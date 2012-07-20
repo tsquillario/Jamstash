@@ -3,7 +3,7 @@
         var width = $.cookie('defaultsmwidth');
         resizeSMSection(width);
     }
-    if ($.cookie('sidebar') && $.cookie('username') && $.cookie('password')) {
+    if ($.cookie('sidebar') && $.cookie('username') && $.cookie('passwordenc')) {
         $('#SideBar').show();
         updateChatMessages();
         updateNowPlaying();

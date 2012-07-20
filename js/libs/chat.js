@@ -10,6 +10,7 @@ function updateChatMessages() {
             timeout: 10000,
             success: function (data) {
                 if (data["subsonic-response"].chatMessages.chatMessage === undefined) {
+                    if (debug) { console.log('ChatMessages Delay: ' + this.periodic.cur_period); }
                     this.periodic.increment();
                 } else {
                     var msgs = [];

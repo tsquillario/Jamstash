@@ -28,8 +28,8 @@ if (u && p && s) {
         $.cookie('username', u, { expires: 365 });
         username = u;
     }
-    if (!$.cookie('password')) {
-        $.cookie('password', p, { expires: 365 });
+    if (!$.cookie('passwordenc')) {
+        $.cookie('passwordenc', p, { expires: 365 });
         password = p;
     }
     if (!$.cookie('Server')) {

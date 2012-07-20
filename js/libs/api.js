@@ -32,35 +32,52 @@ function loadArtists(id, refresh) {
                     }
                     // There is a bug in the API that doesn't return a JSON array for one artist
                     var indexes = [];
-                    if (data["subsonic-response"].indexes.index.length > 0) {
-                        indexes = data["subsonic-response"].indexes.index;
-                    } else {
-                        indexes[0] = data["subsonic-response"].indexes.index;
-                    }
-
-                    $.each(indexes, function (i, index) {
-                        indexname = index.name;
-                        $('<li class=\"index\" id=\"index_' + indexname + '\" title=\"Scroll to Top\"><a name=\"index_' + indexname + '\">' + indexname + '</a><span class=\"floatright\">&uarr;</span></li>').appendTo("#ArtistContainer");
-                        indexlist += '<li><a href=\"#' + indexname + '\">' + indexname + '</a></li>';
-                        var artists = [];
-                        if (index.artist.length > 0) {
-                            artists = index.artist;
+                    if (data["subsonic-response"].indexes.index !== undefined) {
+                        if (data["subsonic-response"].indexes.index.length > 0) {
+                            indexes = data["subsonic-response"].indexes.index;
                         } else {
-                            artists[0] = index.artist;
+                            indexes[0] = data["subsonic-response"].indexes.index;
                         }
-                        $.each(artists, function (i, artist) {
-                            if (artist.name !== undefined) {
-                                var html = "";
-                                html += '<li id=\"' + artist.id + '\" class=\"item\">';
-                                html += '<span>' + artist.name + '</span>';
-                                html += '</li>';
-                                $(html).appendTo("#ArtistContainer");
+
+                        $.each(indexes, function (i, index) {
+                            indexname = index.name;
+                            $('<li class=\"index\" id=\"index_' + indexname + '\" title=\"Scroll to Top\"><a name=\"index_' + indexname + '\">' + indexname + '</a><span class=\"floatright\">&uarr;</span></li>').appendTo("#ArtistContainer");
+                            indexlist += '<li><a href=\"#' + indexname + '\">' + indexname + '</a></li>';
+                            var artists = [];
+                            if (index.artist.length > 0) {
+                                artists = index.artist;
+                            } else {
+                                artists[0] = index.artist;
                             }
+                            $.each(artists, function (i, artist) {
+                                if (artist.name !== undefined) {
+                                    var html = "";
+                                    html += '<li id=\"' + artist.id + '\" class=\"item\">';
+                                    html += '<span>' + artist.name + '</span>';
+                                    html += '</li>';
+                                    $(html).appendTo("#ArtistContainer");
+                                }
+                            });
                         });
-                    });
-                    //$(indexlist).appendTo("#IndexList");
-                    $("#BottomIndex").empty();
-                    $(indexlist).appendTo("#BottomIndex");
+                        //$(indexlist).appendTo("#IndexList");
+                        $("#BottomIndex").empty();
+                        $(indexlist).appendTo("#BottomIndex");
+                    } 
+                    if (data["subsonic-response"].indexes.child !== undefined) {
+                            if (data["subsonic-response"].indexes.child.length > 0) {
+                                indexes = data["subsonic-response"].indexes.child;
+                            } else {
+                                indexes[0] = data["subsonic-response"].indexes.child;
+                            }
+                            var appendto = '#AlbumRows';
+                            $(appendto).empty();
+                            $.each(indexes, function (i, child) {
+                                var html = generateRowHTML(child, appendto);
+                                $(html).appendTo(appendto);
+                                header = generateSongHeaderHTML();
+                                $('#songactions').show();
+                            });
+                    }
                 } else {
                     var error = data["subsonic-response"].status;
                     var errorcode = data["subsonic-response"].error.code;
@@ -128,26 +145,12 @@ function getAlbums(id, action, appendto) {
                     children[0] = data["subsonic-response"].directory.child;
                 }
 
-                var rowcolor;
-                var albumhtml;
                 var isDir;
                 var header;
                 $.each(children, function (i, child) {
-                    if (i % 2 === 0) {
-                        rowcolor = 'even';
-                    } else {
-                        rowcolor = 'odd';
-                    }
-                    isDir = child.isDir;
-                    if (isDir === true) {
-                        albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating);
-                    } else {
-                        var track;
-                        if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
-                        var time = secondsToTime(child.duration);
-                        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
-                    }
-                    $(albumhtml).appendTo(appendto);
+                    if (child.isDir === true) { isDir = true; }
+                    var html = generateRowHTML(child, appendto);
+                    $(html).appendTo(appendto);
                 });
                 if (appendto === '#CurrentPlaylistContainer') {
                     updateMessage(children.length + ' Song(s) Added');
@@ -166,6 +169,28 @@ function getAlbums(id, action, appendto) {
             }
         }
     });
+}
+function generateRowHTML(child, appendto) {
+    var rowcolor;
+    var albumhtml;
+    var isDir;
+    var i;
+    if (i % 2 === 0) {
+        rowcolor = 'even';
+    } else {
+        rowcolor = 'odd';
+    }
+    isDir = child.isDir;
+    if (isDir === true) {
+        albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating);
+    } else {
+        var track;
+        if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
+        var time = secondsToTime(child.duration);
+        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+    }
+    return albumhtml;
+    //$(albumhtml).appendTo(appendto);
 }
 function getAlbumListBy(id) {
     var size;
@@ -268,9 +293,9 @@ function getRandomSongList(action, appendto) {
     });
 }
 var updaterNowPlaying;
-var updaterNowPlayingData;
-function updateNowPlaying() {
-    updaterNowPlaying = $.periodic({ period: 4000, decay: 1.5, max_period: 1800000 }, function () {
+var updaterNowPlayingIdList = [];
+function updateNowPlaying(showPopup) {
+    updaterNowPlaying = $.periodic({ period: 4000, decay: 1.5, max_period: 30000 }, function () {
         $.ajax({
             periodic: this,
             url: baseURL + '/getNowPlaying.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp',
@@ -285,9 +310,9 @@ function updateNowPlaying() {
                     chathtml += '<span class=\"user\">Nothing :(</span></br>';
                     chathtml += '</div>';
                     $(chathtml).appendTo("#NowPlayingList");
-                } else if (updaterNowPlayingData === $.param(data)) {
-                    this.periodic.increment();
                 } else {
+                    this.periodic.increment();
+                    if (debug) { console.log('NowPlaying Delay: ' + this.periodic.cur_period); }
                     $("#NowPlayingList").empty();
                     var msgs = [];
                     if (data["subsonic-response"].nowPlaying.entry.length > 0) {
@@ -295,19 +320,31 @@ function updateNowPlaying() {
                     } else {
                         msgs[0] = data["subsonic-response"].nowPlaying.entry;
                     }
-                    this.periodic.reset();
                     var sorted = msgs.sort(function (a, b) {
                         return a.minutesAgo - b.minutesAgo;
                     });
                     $.each(sorted, function (i, msg) {
-                        var chathtml = '<div class=\"msg\">';
-                        chathtml += '<span class=\"user\">' + msg.username + '</span></br>';
-                        chathtml += '<span class=\"artist\">' + msg.artist + '</span> - ';
-                        chathtml += '<span class=\"title\">' + msg.title + '</span>';
-                        chathtml += '</div>';
-                        $(chathtml).appendTo("#NowPlayingList");
+                        if (!showPopup) {
+                            var chathtml = '<div class=\"msg\">';
+                            chathtml += '<span class=\"user\">' + msg.username + '</span></br>';
+                            chathtml += '<span class=\"artist\">' + msg.artist + '</span> - <span class=\"title\">' + msg.title + '</span>';
+                            chathtml += '</div>';
+                            $(chathtml).appendTo("#NowPlayingList");
+                        }
+                        var coverartSrc;
+                        if (msg.coverArt === undefined) {
+                            coverartSrc = 'images/albumdefault_50.jpg';
+                        } else {
+                            coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + msg.coverArt;
+                        }
+                        if ($.cookie('Notification_NowPlaying')) {
+                            var sid = msg.username + '-' + msg.id;
+                            if (jQuery.inArray(sid, updaterNowPlayingIdList) === -1 && username != msg.username) {
+                                showNotification(coverartSrc, toHTML.un(msg.username + ':' + msg.playerName), toHTML.un(msg.artist + ' - ' + msg.title), 'text');
+                                updaterNowPlayingIdList.push(sid);
+                            }
+                        }
                     });
-                    updaterNowPlayingData = $.param(data);
                 }
             }
         });

@@ -121,8 +121,8 @@ function playSong(el, songid, albumid) {
             scrobbleSong(false);
             scrobbled = false;
 
-            if ($.cookie('EnableNotifications')) {
-                showNotification(coverartSrc, toHTML.un(title), toHTML.un(artist + ' - ' + album));
+            if ($.cookie('Notification_Song')) {
+                showNotification(coverartSrc, toHTML.un(title), toHTML.un(artist + ' - ' + album), 'text');
             }
             if ($.cookie('ScrollTitle')) {
                 scrollTitle(toHTML.un(artist) + ' - ' + toHTML.un(title));

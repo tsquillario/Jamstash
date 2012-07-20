@@ -161,10 +161,15 @@ function hasNotificationPermission() {
     return !!(window.webkitNotifications) && (window.webkitNotifications.checkPermission() == 0);
 }
 var notifications = new Array();
-function showNotification(pic, title, text) {
+function showNotification(pic, title, text, type) {
     if (hasNotificationPermission()) {
-        closeAllNotifications()
-        var popup = window.webkitNotifications.createNotification(pic, title, text);
+        //closeAllNotifications()
+        var popup;
+        if (type == 'text') {
+            popup = window.webkitNotifications.createNotification(pic, title, text);
+        } else if (type == 'html') {
+            popup = window.webkitNotifications.createHTMLNotification(text);
+        } 
         notifications.push(popup);
         setTimeout(function (notWin) {
         notWin.cancel();
