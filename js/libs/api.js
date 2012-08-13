@@ -74,9 +74,8 @@ function loadArtists(id, refresh) {
                             $.each(indexes, function (i, child) {
                                 var html = generateRowHTML(child, appendto);
                                 $(html).appendTo(appendto);
-                                header = generateSongHeaderHTML();
-                                $('#songactions').show();
                             });
+                            header = generateSongHeaderHTML();
                     }
                 } else {
                     var error = data["subsonic-response"].status;
@@ -145,25 +144,24 @@ function getAlbums(id, action, appendto) {
                     children[0] = data["subsonic-response"].directory.child;
                 }
 
-                var isDir;
+                var isDir = false;
                 var header;
                 $.each(children, function (i, child) {
-                    if (child.isDir === true) { isDir = true; }
+                    if (child.isDir == true) { isDir = true; }
                     var html = generateRowHTML(child, appendto);
                     $(html).appendTo(appendto);
                 });
-                if (appendto === '#CurrentPlaylistContainer') {
+                if (appendto == '#CurrentPlaylistContainer') {
                     updateMessage(children.length + ' Song(s) Added');
                 }
-                if (appendto === '#AlbumRows' && isDir === true) {
+                if (appendto == '#AlbumRows' && isDir == true) {
                     header = generateAlbumHeaderHTML();
                 }
-                if (appendto === '#AlbumRows' && isDir === false) {
+                if (appendto == '#AlbumRows' && isDir == false) {
                     header = generateSongHeaderHTML();
-                    $('#songactions').show();
                 }
                 $("#AlbumHeader").html(header);
-                if (action === 'autoplay') {
+                if (action == 'autoplay') {
                     autoPlay();
                 }
             }
