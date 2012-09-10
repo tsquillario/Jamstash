@@ -495,6 +495,7 @@ table.songlist tr.song td.album img
     float: left;
     margin: 0 5px;
     padding: 2px;
+    height: 36px;
 }
 table.songlist tr.song td.artist
 {
