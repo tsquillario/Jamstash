@@ -236,15 +236,22 @@ function getAlbumListBy(id) {
         }
     });
 }
-function getRandomSongList(action, appendto) {
-    var size;
+function getRandomSongList(action, appendto, genre) {
+    var size,gstring;
+    gstring = '';
     if ($.cookie('AutoPlaylistSize') === null) {
         size = 25;
     } else {
         size = $.cookie('AutoPlaylistSize');
     }
+    if (genre !== undefined) {
+		gstring = '&genre=' + genre;
+	} 
+	if (genre === 'Random') {
+		gstring = '';
+	}
     $.ajax({
-        url: baseURL + '/getRandomSongs.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp&size=' + size,
+        url: baseURL + '/getRandomSongs.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp&size=' + size + gstring,
         method: 'GET',
         dataType: 'jsonp',
         timeout: 10000,

@@ -405,14 +405,17 @@
         $('#AutoPlaylistContainer li').removeClass('selected');
         $('#PlaylistContainer li').removeClass('selected');
         $(this).addClass('selected');
-        getRandomSongList('', '#TrackContainer');
+        var genre = $(this).data('genre');
+        getRandomSongList('', '#TrackContainer',genre);
     });
     $('#AutoPlaylistContainer li.item a.play').live('click', function () {
-        getRandomSongList('autoplay', '#CurrentPlaylistContainer');
+		var genre = $(this).data('genre');
+        getRandomSongList('autoplay', '#CurrentPlaylistContainer',genre);
         return false;
     });
     $('#AutoPlaylistContainer li.item a.add').live('click', function () {
-        getRandomSongList('', '#CurrentPlaylistContainer');
+		var genre = $(this).data('genre');
+        getRandomSongList('', '#CurrentPlaylistContainer',genre);
         return false;
     });
     $('#PlaylistContainer li.item').live('click', function () {
