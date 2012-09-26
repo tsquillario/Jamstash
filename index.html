@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -129,9 +129,14 @@
                 <div id="Playlists" class="smsection floatleft noselect">
                     <div class="padder">
                     <ul id="AutoPlaylistContainer" class="simplelist mainlist">
-                    <li class="index" id="autoplaylist">Auto Playlists</li>
-                    <li class="item"><span>Random</span><div class="floatright"><a class="play" title="Play" href=""></a></div><div class="floatright"><a class="add" title="Add To Current Playlist" href=""></a></div></li>
-                    </ul>
+                    <li class="index" id="autoplaylist">Genre Playlists</li>
+                    <li class="item" data-genre="Random"><span>Random</span><div class="floatright"><a class="play" title="Play" href="" data-genre="Random"></a></div><div class="floatright"><a class="add" title="Add To Current Playlist" href="" data-genre="Random"></a></div></li>                   
+    				<li class="item" data-genre="Alternative"><span>Alternative</span><div class="floatright"><a class="play" title="Play" href="" data-genre="Alternative"></a></div><div class="floatright"><a class="add" title="Add To Current Playlist" href="" data-genre="Alternative"></a></div></li>
+                    <li class="item" data-genre="Electronic"><span>Electronic</span><div class="floatright"><a class="play" title="Play" href="" data-genre="Electronic"></a></div><div class="floatright"><a class="add" title="Add To Current Playlist" href="" data-genre="Electronic"></a></div></li>
+					<li class="item" data-genre="Hip-Hop"><span>Hip-Hop</span><div class="floatright"><a class="play" title="Play" href="" data-genre="Hip-Hop"></a></div><div class="floatright"><a class="add" title="Add To Current Playlist" href="" data-genre="Hip-Hop"></a></div></li>
+					</ul>
+					<ul class="simplelist"><li class="index">Folder Playlists</li></ul>
+                    <ul id="FolderContainer" class="simplelist mainlist"></ul>
                     <ul class="simplelist"><li class="index">Saved Playlists</li></ul>
                     <ul id="PlaylistContainer" class="simplelist mainlist"></ul>
                     </div>
