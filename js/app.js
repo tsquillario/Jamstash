@@ -1,4 +1,4 @@
-﻿// Global Variables
+// Global Variables
 var debug = false;
 var audio;
 var hostURL = location.href;
@@ -84,6 +84,7 @@ function loadTabContent(tab) {
             case '#tabPlaylists':
                 if (debug) { console.log("TAG PLAYLIST"); }
                 loadPlaylists();
+    			loadFolders();
                 break;
             case '#tabPreferences':
                 break;
