@@ -688,3 +688,117 @@ function getPlaylist(id, action, appendto) {
         }
     });
 }
+
+function loadPodcasts(refresh) {
+    if (debug) { console.log("LOAD PODCASTS"); }
+    if (refresh) {
+        $('#ChannelsContainer').empty();
+    }
+    var content = $('#ChannelsContainer').html();
+    if (content === "") {
+        // Load Podcasts
+        $.ajax({
+            url: baseURL + '/getPodcasts.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp',
+            method: 'GET',
+            dataType: 'jsonp',
+            timeout: 10000,
+            success: function (data) {
+                var playlists = [];
+                if (data["subsonic-response"].podcasts.channel.length > 0) {
+                    podcasts = data["subsonic-response"].podcasts.channel;
+                } else {
+                    podcasts[0] = data["subsonic-response"].podcasts.channel;
+                }
+                $.each(podcasts, function (i, podcast) {
+                    var albumId = (podcast.episode === undefined || podcast.episode.length <= 0) ? "0" : podcast.episode[0].parent;
+
+                    var html = "";
+                    html += '<li id=\"' + podcast.id + '\" albumid=\"' + albumId + '\" class=\"item\">';
+                    html += '<span>' + podcast.title + '</span>';
+                    html += '<div class=\"floatright\"><a class=\"play\" href=\"\" title=\"Play\"></a></div>';
+                    html += '<div class=\"floatright\"><a class=\"download\" href=\"\" title=\"Download\"></a></div>';
+                    html += '<div class=\"floatright\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a></div>';
+                    html += '</li>';
+                    $(html).appendTo("#ChannelsContainer");
+                });
+            }
+        });
+    }
+}
+function getPodcast(id, action, appendto) {
+    $.ajax({
+        url: baseURL + '/getPodcasts.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp',
+        method: 'GET',
+        dataType: 'jsonp',
+        timeout: 10000,
+        success: function (data) {
+            var channels = data["subsonic-response"].podcasts.channel;
+
+            // we hope that the result is ordered by id
+            var channel = channels[id - 1];
+
+            if(channel === undefined || channel.id != id){
+                // sometimes we have to do some extra work.
+                for (var i = 0; i < channels.length; i++) {
+                    if(podcasts[i].id == id)
+                    {
+                        channel = channels[i];
+                        break;
+                    }
+                }
+            }
+
+            if (channel.episode !== undefined) {
+                if (appendto === '#PodcastContainer tbody') {
+                    $(appendto).empty();
+                    var header = generatePodcastHeaderHTML();
+                    $("#PodcastContainer thead").html(header);
+                }
+                if (action === 'autoplay') {
+                    $(appendto).empty();
+                }
+
+                var children = channel.episode;
+
+                var rowcolor;
+                var html;
+                var count = children.length;
+                $.each(children, function (i, child) {
+
+                    if(child.status == "skipped") return; // Skip podcasts that are not yet downloaded
+
+                    if (i % 2 === 0) {
+                        rowcolor = 'even';
+                    } else {
+                        rowcolor = 'odd';
+                    }
+                    var date = parseDate(child.publishDate);
+
+                    var time = secondsToTime(child.duration);
+                    html = generatePodcastHTML(rowcolor, child.streamId, child.parent, date, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+                    $(html).appendTo(appendto);
+                });
+                updateMessage(count + ' Songs');
+                if (appendto === '#CurrentPlaylistContainer tbody') {
+                    updateMessage(children.length + ' Song(s) Added');
+                }
+                if (action === 'autoplay') {
+                    autoPlay();
+                }
+            } else {
+                if (appendto === '#PodcastContainer tbody') {
+                    $(appendto).empty();
+                }
+            }
+        }
+    });
+}
+function parseDate(date) {
+    // input: "2012-09-23 20:00:00.0"
+    var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+    var parts = date.split(" ");
+    var dateParts = parts[0].split("-");
+    var month = parseInt(dateParts[1], 10) - 1;
+    var date = months[month] + " " + dateParts[2] + ", " + dateParts[0];
+    return date;
+}
