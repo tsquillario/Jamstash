@@ -339,6 +339,14 @@
         resizeSMSection(-50);
         return false;
     });
+    $('#action_IncreaseWidthPodcasts').click(function () {
+        resizeSMSection(50);
+        return false;
+    });
+    $('#action_DecreaseWidthPodcasts').click(function () {
+        resizeSMSection(-50);
+        return false;
+    });
     $('#action_SelectAll').click(function () {
         $('#Albums tr.song').each(function () {
             $(this).addClass('selected');
@@ -432,6 +440,29 @@
     });
     $('#PlaylistContainer li.item a.add').live('click', function () {
         getPlaylist($(this).parent().parent().attr("id"), '', '#CurrentPlaylistContainer tbody');
+        return false;
+    });
+    $('#ChannelsContainer li.item').live('click', function () {
+        $('#AutoChannelsContainer li').removeClass('selected');
+        $('#ChannelsContainer li').removeClass('selected');
+        $(this).addClass('selected');
+        getPodcast($(this).attr("id"), '', '#PodcastContainer tbody');
+    });
+    $('#ChannelsContainer li.item a.play').live('click', function () {
+        getPodcast($(this).parent().parent().attr("id"), 'autoplay', '#CurrentPlaylistContainer tbody');
+        return false;
+    });
+    $('#ChannelsContainer li.item a.download').live('click', function (event) {
+        var itemid = $(this).parent().parent().attr('albumid');
+        downloadItem(itemid, 'item');
+        return false;
+    });
+    $('#ChannelsContainer li.item a.add').live('click', function () {
+        getPodcast($(this).parent().parent().attr("id"), '', '#CurrentPlaylistContainer tbody');
+        return false;
+    });
+    $('#action_RefreshPodcasts').click(function () {
+        loadPodcasts(true);
         return false;
     });
     $('#action_RefreshPlaylists').click(function () {

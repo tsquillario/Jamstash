@@ -313,7 +313,7 @@ ul.mainlist li.item a.add:hover
 {
     margin: 5px 5px 5px 206px;
 }
-#TrackContainer 
+#TrackContainer, #PodcastContainer
 {
     margin: 5px 5px 5px 206px;
 }
@@ -470,6 +470,10 @@ table.songlist tr.song td.track
 {
     width: 40px;
     text-align: right;
+}
+table.songlist tr.song td.published
+{
+    width: 80px;
 }
 table.songlist tr.song td.title
 {
