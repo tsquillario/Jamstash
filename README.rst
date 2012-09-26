@@ -1,10 +1,7 @@
 =======
 MiniSub
 =======
-
-------------------------------
-HTML5 Mini Player for Subsonic
-------------------------------
+**HTML5 Mini Player for Subsonic**
 
 Imagine you can stream all your music from home, to any device, where ever you
 are. That is Subsonic! Now imagine having a Web App to stream your music that
