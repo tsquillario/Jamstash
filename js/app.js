@@ -85,6 +85,10 @@ function loadTabContent(tab) {
                 if (debug) { console.log("TAG PLAYLIST"); }
                 loadPlaylists();
                 break;
+            case '#tabPodcasts':
+                if (debug) { console.log("TAG PODCAST"); }
+                loadPodcasts();
+                break;
             case '#tabPreferences':
                 break;
             default:

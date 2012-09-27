@@ -46,7 +46,7 @@ function resizeContent() {
         }
     }
     var tabwidth = $('.tabcontent').width();
-    $('#AlbumContainer, #TrackContainer, #CurrentPlaylistContainer').css({ 'width': (tabwidth - smwidth - 30) + 'px' });
+    $('#AlbumContainer, #TrackContainer, #PodcastContainer, #CurrentPlaylistContainer').css({ 'width': (tabwidth - smwidth - 30) + 'px' });
     $('#CurrentPlaylistContainer').css({ 'width': (tabwidth - 30) + 'px' });
     $('#player').css({ 'width': tabwidth + 'px' });
 }
@@ -63,5 +63,6 @@ function resizeSMSection(x) {
         var ulwidth = newsmwidth + 6;
         $('#AlbumContainer').css({ 'margin-left': ulwidth + 'px' });
         $('#TrackContainer').css({ 'margin-left': ulwidth + 'px' });
+        $('#PodcastContainer').css({ 'margin-left': ulwidth + 'px' });
     }
 }

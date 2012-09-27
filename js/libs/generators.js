@@ -57,7 +57,33 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, artist, alb
     html += '</tr>';
     return html;
 }
-
+function generatePodcastHeaderHTML() {
+    var html;
+    html = '<tr><th></th><th>Published</th><th>Title</th><th>Artist</th><th>Album</th><th class=\"alignright\">Time</th></tr>';
+    return html;
+}
+function generatePodcastHTML(rowcolor, childid, parentid, published, title, artist, album, coverart, rating, m, s) {
+    var html;
+    html = '<tr class=\"song ' + rowcolor + '\" childid=\"' + childid + '\" parentid=\"' + parentid + '\" userrating=\"' + rating + '\">';
+    html += '<td class=\"itemactions\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a>';
+    html += '<a class=\"remove\" href=\"\" title=\"Remove\"></a>';
+    html += '<a class=\"play\" href=\"\" title=\"Play\"></a>';
+    html += '<a class=\"download\" href=\"\" title=\"Download\"></a>';
+    html += '</td>';
+    html += '<td class=\"published\">' + published + '</td>';
+    html += '<td class=\"title\">' + title + '</td>';
+    html += '<td class=\"artist\">' + artist + '</td>';
+    var coverartSrc;
+    if (coverart == undefined) {
+        coverartSrc = 'images/albumdefault_25.jpg';
+    } else {
+        coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart;
+    }
+    html += '<td class=\"album\"><a href="javascript:getAlbums(\'' + parentid + '\',\'\',\'#AlbumRows\')">' + album + '<img src=\"' + coverartSrc + '\" /></a></td>';
+    html += '<td class=\"time\">' + m + ':' + s + '</td>';
+    html += '</tr>';
+    return html;
+}
 function refreshRowColor(el) {
     $.each($(el + ' tr.song'), function (i) {
         $(this).removeClass('even odd');
