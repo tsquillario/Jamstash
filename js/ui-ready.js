@@ -31,6 +31,7 @@
     if ($.cookie('Debug')) {
         $('#Debug').attr('checked', true);
         debug = true;
+        soundManager.debugMode = true;
     } else {
         $('#Debug').attr('checked', false);
     }

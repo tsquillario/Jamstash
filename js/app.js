@@ -1,6 +1,6 @@
 ﻿// Global Variables
 var debug = false;
-var audio;
+var audio = null;
 var hostURL = location.href;
 var baseURL;
 var version;
@@ -17,7 +17,7 @@ if ($.cookie('ForceFlash')) {
     soundManager.preferFlash = false;
 }
 soundManager.debugMode = false;
-//soundManager.useHTML5Audio = true;
+soundManager.useHTML5Audio = true;
 
 // Set auth cookies if specified in URL on launch
 var u = getParameterByName('u'); 
