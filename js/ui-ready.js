@@ -340,14 +340,6 @@
         resizeSMSection(-50);
         return false;
     });
-    $('#action_IncreaseWidthPodcasts').click(function () {
-        resizeSMSection(50);
-        return false;
-    });
-    $('#action_DecreaseWidthPodcasts').click(function () {
-        resizeSMSection(-50);
-        return false;
-    });
     $('#action_SelectAll').click(function () {
         $('#Albums tr.song').each(function () {
             $(this).addClass('selected');
@@ -443,6 +435,29 @@
         getPlaylist($(this).parent().parent().attr("id"), '', '#CurrentPlaylistContainer tbody');
         return false;
     });
+    $('#action_RefreshPlaylists').click(function () {
+        loadPlaylists(true);
+        return false;
+    });
+    $('#action_DeletePlaylist').click(function () {
+        if ($('#PlaylistContainer li.selected').length > 0) {
+            if (confirmDelete()) {
+                $('#PlaylistContainer li.selected').each(function () {
+                    deletePlaylist($(this).attr("id"));
+                });
+            }
+        }
+        return false;
+    });
+    $('#action_SavePlaylist').click(function () {
+        if ($('#PlaylistContainer li.selected').length > 0) {
+            $('#PlaylistContainer li.selected').each(function () {
+                savePlaylist($(this).attr("id"));
+            });
+        }
+        return false;
+    });
+    // Podcast Click Events
     $('#ChannelsContainer li.item').live('click', function () {
         $('#AutoChannelsContainer li').removeClass('selected');
         $('#ChannelsContainer li').removeClass('selected');
@@ -466,28 +481,7 @@
         loadPodcasts(true);
         return false;
     });
-    $('#action_RefreshPlaylists').click(function () {
-        loadPlaylists(true);
-        return false;
-    });
-    $('#action_DeletePlaylist').click(function () {
-        if ($('#PlaylistContainer li.selected').length > 0) {
-            if (confirmDelete()) {
-                $('#PlaylistContainer li.selected').each(function () {
-                    deletePlaylist($(this).attr("id"));
-                });
-            }
-        }
-        return false;
-    });
-    $('#action_SavePlaylist').click(function () {
-        if ($('#PlaylistContainer li.selected').length > 0) {
-            $('#PlaylistContainer li.selected').each(function () {
-                savePlaylist($(this).attr("id"));
-            });
-        }
-        return false;
-    });
+    // Current Playlist Click Events
     $('#action_RemoveSongs').click(function () {
         if ($('#TrackContainer tr.selected').length > 0) {
             $('#TrackContainer tr.selected').each(function () {
@@ -685,4 +679,4 @@
         }
     }).disableSelection();
 
-});           // End document.ready
+});              // End document.ready

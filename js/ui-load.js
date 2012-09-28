@@ -1,6 +1,7 @@
 ﻿$(window).load(function () {
     if ($.cookie('defaultsmwidth')) {
         var width = $.cookie('defaultsmwidth');
+        smwidth = width;
         resizeSMSection(width);
     }
     if ($.cookie('sidebar') && $.cookie('username') && $.cookie('passwordenc')) {

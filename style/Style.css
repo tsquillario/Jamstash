@@ -245,6 +245,9 @@ ul.simplelist li
     padding: 8px;
     border-bottom: 1px solid #f2f2f2;
 }
+ul.simplelist li .name
+{
+}
 ul.simplelist li a
 {
     text-decoration: none;
@@ -278,7 +281,6 @@ ul.mainlist li.item a.play
     width: 20px;
     height: 18px;
     display: block;
-    margin: 0 5px 0 0;
     background: url('../images/play_gl_6x8.png') no-repeat 6px center;
 }
 ul.mainlist li.item a.play:hover
@@ -302,7 +304,6 @@ ul.mainlist li.item a.add
     width: 20px;
     height: 18px;
     display: block;
-    margin: 0 5px 0 0;
     background: url('../images/plus_gl_8x8.png') no-repeat 6px center;
 }
 ul.mainlist li.item a.add:hover

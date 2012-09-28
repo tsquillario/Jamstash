@@ -1,0 +1,18 @@
+MiniSub - HTML5 Mini Player for Subsonic
+
+Imagine you can stream all your music from home, to any device, where ever you are. That is Subsonic! Now imagine having a Web App to stream your music that is as beautiful and well designed as it is functional, that is MiniSub!
+
+MiniSub is an HTML5 Mini Player for the Subsonic streaming server. 
+
+Features
+- Flexible Layout (will scale to whatever size your browser window is)
+- Customizable (features can be turned on/off and settings are saved)
+- Keyboard shortcuts (back, forward, play/pause, skip to artist)
+- Playlists (create new, add to existing, delete)
+- Artist/Album Ratings
+- Chat and Now Playing
+- Last.fm
+
+You will need a Subsonic server to be able to play your own music. Subsonic is a free, web-based media streamer, providing ubiquitous access to your music. Use it to share your music with friends, or to listen to your own music while at work. Please see http://www.subsonic.org
+
+Change Log inside...

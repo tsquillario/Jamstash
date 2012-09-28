@@ -8,6 +8,7 @@ var username;
 var password;
 var passwordenc;
 var server;
+var smwidth;
 
 //Sound manager
 soundManager.url = 'js/sm/swf';

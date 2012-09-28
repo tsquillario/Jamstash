@@ -1,3 +1,19 @@
+function generateRowHTML(child, appendto, rowcolor) {
+    var albumhtml;
+    var isDir;
+    var i;
+    isDir = child.isDir;
+    if (isDir === true) {
+        albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating);
+    } else {
+        var track;
+        if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
+        var time = secondsToTime(child.duration);
+        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+    }
+    return albumhtml;
+    //$(albumhtml).appendTo(appendto);
+}
 function generateAlbumHeaderHTML() {
     var html;
     html = '<tr><th></th><th></th><th>Album</th><th>Artist</th></tr>';
@@ -57,21 +73,21 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, artist, alb
     html += '</tr>';
     return html;
 }
-function generatePodcastHeaderHTML() {
-    var html;
-    html = '<tr><th></th><th>Published</th><th>Title</th><th>Artist</th><th>Album</th><th class=\"alignright\">Time</th></tr>';
-    return html;
-}
-function generatePodcastHTML(rowcolor, childid, parentid, published, title, artist, album, coverart, rating, m, s) {
+function generatePodcastHTML(rowcolor, childid, parentid, track, title, description, artist, album, coverart, rating, m, s) {
     var html;
     html = '<tr class=\"song ' + rowcolor + '\" childid=\"' + childid + '\" parentid=\"' + parentid + '\" userrating=\"' + rating + '\">';
     html += '<td class=\"itemactions\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a>';
     html += '<a class=\"remove\" href=\"\" title=\"Remove\"></a>';
     html += '<a class=\"play\" href=\"\" title=\"Play\"></a>';
     html += '<a class=\"download\" href=\"\" title=\"Download\"></a>';
+    if (rating === 5) {
+        html += '<a class=\"favorite\" href=\"\" title=\"Favorite\"></a>';
+    } else {
+        html += '<a class=\"rate\" href=\"\" title=\"Add To Favorites\"></a>';
+    }
     html += '</td>';
-    html += '<td class=\"published\">' + published + '</td>';
-    html += '<td class=\"title\">' + title + '</td>';
+    html += '<td class=\"track\">' + track + '</td>';
+    html += '<td class=\"title\" title=\"' + description + '\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
     var coverartSrc;
     if (coverart == undefined) {

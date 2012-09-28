@@ -105,6 +105,15 @@ function playSong(el, songid, albumid) {
                             });
                         });
                     },
+                    onpause: function () {
+                        if (debug) { console.log('Pause Event: ' + ' playState:' + this.playState + ', readyState:' + this.readyState + ', position:' + this.position + ', duration:' + this.duration + ', durationEstimate:' + this.durationEstimate + ', isBuffering:' + this.isBuffering); }
+                    },
+                    onresume: function () {
+                        if (debug) { console.log('Resume Event: ' + ' playState:' + this.playState + ', readyState:' + this.readyState + ', position:' + this.position + ', duration:' + this.duration + ', durationEstimate:' + this.durationEstimate + ', isBuffering:' + this.isBuffering); }
+                    },
+                    onsuspend: function () {
+                        if (debug) { console.log('Suspend Event: ' + ' playState:' + this.playState + ', readyState:' + this.readyState + ', position:' + this.position + ', duration:' + this.duration + ', durationEstimate:' + this.durationEstimate + ', isBuffering:' + this.isBuffering); }
+                    },
                     onfinish: function () {
                         var next = $('#CurrentPlaylistContainer tr.playing').next();
                         changeTrack(next);

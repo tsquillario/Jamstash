@@ -62,20 +62,29 @@ function loadArtists(id, refresh) {
                         //$(indexlist).appendTo("#IndexList");
                         $("#BottomIndex").empty();
                         $(indexlist).appendTo("#BottomIndex");
-                    } 
+                    }
                     if (data["subsonic-response"].indexes.child !== undefined) {
-                            if (data["subsonic-response"].indexes.child.length > 0) {
-                                indexes = data["subsonic-response"].indexes.child;
+                        var rowcolor;
+                        if (data["subsonic-response"].indexes.child.length > 0) {
+                            indexes = data["subsonic-response"].indexes.child;
+                        } else {
+                            indexes[0] = data["subsonic-response"].indexes.child;
+                        }
+                        var appendto = '#AlbumRows';
+                        $(appendto).empty();
+                        $.each(indexes, function (i, child) {
+                            if (i % 2 === 0) {
+                                rowcolor = 'even';
                             } else {
-                                indexes[0] = data["subsonic-response"].indexes.child;
+                                rowcolor = 'odd';
                             }
-                            var appendto = '#AlbumRows';
-                            $(appendto).empty();
-                            $.each(indexes, function (i, child) {
-                                var html = generateRowHTML(child, appendto);
-                                $(html).appendTo(appendto);
-                            });
-                            header = generateSongHeaderHTML();
+                            var html = generateRowHTML(child, appendto, rowcolor);
+                            $(html).appendTo(appendto);
+                        });
+                        header = generateSongHeaderHTML();
+                    }
+                    if (smwidth) {
+                        resizeSMSection(0);
                     }
                 } else {
                     var error = data["subsonic-response"].status;
@@ -145,10 +154,16 @@ function getAlbums(id, action, appendto) {
                 }
 
                 var isDir = false;
+                var rowcolor;
                 var header;
                 $.each(children, function (i, child) {
+                    if (i % 2 === 0) {
+                        rowcolor = 'even';
+                    } else {
+                        rowcolor = 'odd';
+                    }
                     if (child.isDir == true) { isDir = true; }
-                    var html = generateRowHTML(child, appendto);
+                    var html = generateRowHTML(child, appendto, rowcolor);
                     $(html).appendTo(appendto);
                 });
                 if (appendto == '#CurrentPlaylistContainer') {
@@ -167,28 +182,6 @@ function getAlbums(id, action, appendto) {
             }
         }
     });
-}
-function generateRowHTML(child, appendto) {
-    var rowcolor;
-    var albumhtml;
-    var isDir;
-    var i;
-    if (i % 2 === 0) {
-        rowcolor = 'even';
-    } else {
-        rowcolor = 'odd';
-    }
-    isDir = child.isDir;
-    if (isDir === true) {
-        albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating);
-    } else {
-        var track;
-        if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
-        var time = secondsToTime(child.duration);
-        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
-    }
-    return albumhtml;
-    //$(albumhtml).appendTo(appendto);
 }
 function getAlbumListBy(id) {
     var size;
@@ -429,13 +422,16 @@ function loadPlaylists(refresh) {
                 $.each(playlists, function (i, playlist) {
                     var html = "";
                     html += '<li id=\"' + playlist.id + '\" class=\"item\">';
-                    html += '<span>' + playlist.name + '</span>';
                     html += '<div class=\"floatright\"><a class=\"play\" href=\"\" title=\"Play\"></a></div>';
                     html += '<div class=\"floatright\"><a class=\"download\" href=\"\" title=\"Download\"></a></div>';
                     html += '<div class=\"floatright\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a></div>';
+                    html += '<div class="name"><span>' + playlist.name + '</span></div>';
                     html += '</li>';
                     $(html).appendTo("#PlaylistContainer");
                 });
+                if (smwidth) {
+                    resizeSMSection(0);
+                }
             }
         });
     }
@@ -652,10 +648,11 @@ function getPlaylist(id, action, appendto) {
                 }
                 // There is a bug in the API that doesn't return a JSON array for one artist
                 var children = [];
-                if (data["subsonic-response"].playlist.entry.length > 0) {
-                    children = data["subsonic-response"].playlist.entry;
+                var playlist = data["subsonic-response"].playlist;
+                if (playlist.entry.length > 0) {
+                    children = playlist.entry;
                 } else {
-                    children[0] = data["subsonic-response"].playlist.entry;
+                    children[0] = playlist.entry;
                 }
 
                 var rowcolor;
@@ -673,7 +670,9 @@ function getPlaylist(id, action, appendto) {
                     html = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
                     $(html).appendTo(appendto);
                 });
-                updateMessage(count + ' Songs');
+                if (appendto === '#TrackContainer tbody') {
+                    updateMessage(playlist.name + ': ' + count + ' Songs');
+                }
                 if (appendto === '#CurrentPlaylistContainer tbody') {
                     updateMessage(children.length + ' Song(s) Added');
                 }
@@ -703,7 +702,7 @@ function loadPodcasts(refresh) {
             dataType: 'jsonp',
             timeout: 10000,
             success: function (data) {
-                var playlists = [];
+                var podcasts = [];
                 if (data["subsonic-response"].podcasts.channel.length > 0) {
                     podcasts = data["subsonic-response"].podcasts.channel;
                 } else {
@@ -714,13 +713,16 @@ function loadPodcasts(refresh) {
 
                     var html = "";
                     html += '<li id=\"' + podcast.id + '\" albumid=\"' + albumId + '\" class=\"item\">';
-                    html += '<span>' + podcast.title + '</span>';
                     html += '<div class=\"floatright\"><a class=\"play\" href=\"\" title=\"Play\"></a></div>';
                     html += '<div class=\"floatright\"><a class=\"download\" href=\"\" title=\"Download\"></a></div>';
                     html += '<div class=\"floatright\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a></div>';
+                    html += '<div class=\"name\"><span>' + podcast.title + '</span></div>';
                     html += '</li>';
                     $(html).appendTo("#ChannelsContainer");
                 });
+                if (smwidth) {
+                    resizeSMSection(0);
+                }
             }
         });
     }
@@ -732,26 +734,23 @@ function getPodcast(id, action, appendto) {
         dataType: 'jsonp',
         timeout: 10000,
         success: function (data) {
-            var channels = data["subsonic-response"].podcasts.channel;
-
-            // we hope that the result is ordered by id
-            var channel = channels[id - 1];
-
-            if(channel === undefined || channel.id != id){
-                // sometimes we have to do some extra work.
-                for (var i = 0; i < channels.length; i++) {
-                    if(podcasts[i].id == id)
-                    {
-                        channel = channels[i];
-                        break;
-                    }
-                }
+            var podcasts = [];
+            if (data["subsonic-response"].podcasts.channel.length > 0) {
+                podcasts = data["subsonic-response"].podcasts.channel;
+            } else {
+                podcasts[0] = data["subsonic-response"].podcasts.channel;
             }
+            var channel = [];
+            $.each(podcasts, function (i, podcast) {
+                if (podcast.id == id) {
+                    channel = podcast;
+                }
+            });
 
             if (channel.episode !== undefined) {
                 if (appendto === '#PodcastContainer tbody') {
                     $(appendto).empty();
-                    var header = generatePodcastHeaderHTML();
+                    var header = generateSongHeaderHTML;
                     $("#PodcastContainer thead").html(header);
                 }
                 if (action === 'autoplay') {
@@ -762,10 +761,9 @@ function getPodcast(id, action, appendto) {
 
                 var rowcolor;
                 var html;
-                var count = children.length;
+                var count = 0;
                 $.each(children, function (i, child) {
-
-                    if(child.status == "skipped") return; // Skip podcasts that are not yet downloaded
+                    if (child.status == "skipped") return; // Skip podcasts that are not yet downloaded
 
                     if (i % 2 === 0) {
                         rowcolor = 'even';
@@ -773,14 +771,19 @@ function getPodcast(id, action, appendto) {
                         rowcolor = 'odd';
                     }
                     var date = parseDate(child.publishDate);
+                    var description = 'Published: ' + date + '\n\n';
+                    description += child.description;
 
                     var time = secondsToTime(child.duration);
-                    html = generatePodcastHTML(rowcolor, child.streamId, child.parent, date, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+                    html = generatePodcastHTML(rowcolor, child.streamId, child.parent, child.track, child.title, description, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
                     $(html).appendTo(appendto);
+                    count++;
                 });
-                updateMessage(count + ' Songs');
+                if (appendto === '#PodcastContainer tbody') {
+                    updateMessage(channel.title + ': ' + count + ' Songs');
+                }
                 if (appendto === '#CurrentPlaylistContainer tbody') {
-                    updateMessage(children.length + ' Song(s) Added');
+                    updateMessage(count + ' Song(s) Added');
                 }
                 if (action === 'autoplay') {
                     autoPlay();
