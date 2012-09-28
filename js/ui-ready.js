@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+$(document).ready(function () {
     //User config staff
     $('#Username').val($.cookie('username'));
     //$('#Password').val($.cookie('passwordenc'));
@@ -402,18 +402,24 @@
         return false;
     });
     // Playlist Click Events
-    $('#AutoPlaylistContainer li.item').live('click', function () {
+    $('#AutoPlaylistContainer li.item, #FolderContainer li.item').live('click', function () {
         $('#AutoPlaylistContainer li').removeClass('selected');
         $('#PlaylistContainer li').removeClass('selected');
         $(this).addClass('selected');
-        getRandomSongList('', '#TrackContainer');
+        var genre = $(this).data('genre');
+    	var folder = $(this).data('folder');
+        getRandomSongList('', '#TrackContainer', genre, folder);
     });
-    $('#AutoPlaylistContainer li.item a.play').live('click', function () {
-        getRandomSongList('autoplay', '#CurrentPlaylistContainer');
+    $('#AutoPlaylistContainer li.item a.play, #FolderContainer li.item a.play').live('click', function () {
+		var genre = $(this).data('genre');
+		var folder = $(this).data('folder');
+        getRandomSongList('autoplay', '#CurrentPlaylistContainer', genre, folder);
         return false;
     });
-    $('#AutoPlaylistContainer li.item a.add').live('click', function () {
-        getRandomSongList('', '#CurrentPlaylistContainer');
+    $('#AutoPlaylistContainer li.item a.add, #FolderContainer li.item a.add').live('click', function () {
+		var genre = $(this).data('genre');
+		var folder = $(this).data('folder');
+        getRandomSongList('', '#CurrentPlaylistContainer', genre, folder);
         return false;
     });
     $('#PlaylistContainer li.item').live('click', function () {
@@ -437,6 +443,7 @@
     });
     $('#action_RefreshPlaylists').click(function () {
         loadPlaylists(true);
+		loadFolders(true);
         return false;
     });
     $('#action_DeletePlaylist').click(function () {
@@ -679,4 +686,5 @@
         }
     }).disableSelection();
 
-});              // End document.ready
+}); // End document.ready
+

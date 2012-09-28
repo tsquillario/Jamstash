@@ -229,15 +229,25 @@ function getAlbumListBy(id) {
         }
     });
 }
-function getRandomSongList(action, appendto) {
-    var size;
+function getRandomSongList(action, appendto, genre, folder) {
+    var size,gstring;
+    gstring = '';
     if ($.cookie('AutoPlaylistSize') === null) {
         size = 25;
     } else {
         size = $.cookie('AutoPlaylistSize');
     }
+    if (genre !== undefined) {
+    	gstring = '&genre=' + genre;
+	} 
+	if (genre === 'Random') {
+		gstring = '';
+	}
+	if (folder !== undefined) {
+		gstring = '&musicFolderId=' + folder;
+	} 
     $.ajax({
-        url: baseURL + '/getRandomSongs.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp&size=' + size,
+        url: baseURL + '/getRandomSongs.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp&size=' + size + gstring,
         method: 'GET',
         dataType: 'jsonp',
         timeout: 10000,
@@ -397,6 +407,40 @@ function search(type, query) {
             }
         }
     });
+}
+
+function loadFolders(refresh) {
+    if (debug) { console.log("LOAD FOLDERS"); }
+    if (refresh) {
+        $('#FolderContainer').empty();
+    }
+    var content = $('#FolderContainer').html();
+    if (content === "") {
+        // Load Folders
+        $.ajax({
+            url: baseURL + '/getMusicFolders.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp',
+            method: 'GET',
+            dataType: 'jsonp',
+            timeout: 10000,
+            success: function (data) {
+                var musicFolders = [];
+                if (data["subsonic-response"].musicFolders.musicFolder.length > 0) {
+                    musicFolders = data["subsonic-response"].musicFolders.musicFolder;
+                } else {
+                    musicFolders[0] = data["subsonic-response"].musicFolders.musicFolder;
+                }
+                $.each(musicFolders, function (i, musicFolder) {
+                    var html = "";
+                    html += '<li id=\"' + musicFolder.id + '\" class=\"item\" data-folder=\"' + musicFolder.id + '\">';
+                    html += '<span>' + musicFolder.name + '</span>';
+                    html += '<div class=\"floatright\"><a class=\"play\" href=\"\" data-folder=\"' + musicFolder.id + '\" title=\"Play\"></a></div>';
+                    html += '<div class=\"floatright\"><a class=\"add\" href=\"\" data-folder=\"' + musicFolder.id + '\" title=\"Add To Current Playlist\"></a></div>';
+                    html += '</li>';
+                    $(html).appendTo("#FolderContainer");
+                });
+            }
+        });
+    }
 }
 
 function loadPlaylists(refresh) {
