@@ -333,7 +333,7 @@ function updateNowPlaying(showPopup) {
                         if (msg.coverArt === undefined) {
                             coverartSrc = 'images/albumdefault_50.jpg';
                         } else {
-                            coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + msg.coverArt;
+                            coverartSrc = baseURL + '/getCoverArt.view?u=' + username + '&p=' + password +'&v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + msg.coverArt;
                         }
                         if ($.cookie('Notification_NowPlaying')) {
                             var sid = msg.username + '-' + msg.id;

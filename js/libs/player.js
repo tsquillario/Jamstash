@@ -41,8 +41,8 @@ function playSong(el, songid, albumid) {
                 coverartSrc = 'images/albumdefault_50.jpg';
                 coverartFullSrc = '';
             } else {
-                coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart;
-                coverartFullSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + coverart;
+                coverartSrc = baseURL + '/getCoverArt.view?u=' + username + '&p=' + password +'&v=' + version + '&c=' + applicationName + '&f=jsonp&size=50&id=' + coverart;
+                coverartFullSrc = baseURL + '/getCoverArt.view?u=' + username + '&p=' + password +'&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + coverart;
             }
             $('#coverartimage').attr('href', coverartFullSrc);
             $('#coverartimage img').attr('src', coverartSrc);
