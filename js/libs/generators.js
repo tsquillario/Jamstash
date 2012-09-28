@@ -50,7 +50,7 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, artist, alb
     if (coverart == undefined) {
         coverartSrc = 'images/albumdefault_25.jpg';
     } else {
-        coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart;
+        coverartSrc = baseURL + '/getCoverArt.view?u=' + username + '&p=' + password +'&v=' + version + '&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart;
     }
     html += '<td class=\"album\"><a href="javascript:getAlbums(\'' + parentid + '\',\'\',\'#AlbumRows\')">' + album + '<img src=\"' + coverartSrc + '\" /></a></td>';
     html += '<td class=\"time\">' + m + ':' + s + '</td>';
