@@ -38,7 +38,7 @@ h3.title
 
 #container {
 	text-align: left;
-	min-height: 600px;
+	/*min-height: 600px;*/
     min-width: 810px;
 }
 #nav 
@@ -174,7 +174,7 @@ a#logo:hover
     overflow: auto;
     background: #fff;
     border: 1px solid #cbcbcb;
-    margin-top: 5px;
+    margin-top: 4px;
 }
 .fullsection
 {
@@ -245,6 +245,9 @@ ul.simplelist li
     padding: 8px;
     border-bottom: 1px solid #f2f2f2;
 }
+ul.simplelist li .name
+{
+}
 ul.simplelist li a
 {
     text-decoration: none;
@@ -278,7 +281,6 @@ ul.mainlist li.item a.play
     width: 20px;
     height: 18px;
     display: block;
-    margin: 0 5px 0 0;
     background: url('../images/play_gl_6x8.png') no-repeat 6px center;
 }
 ul.mainlist li.item a.play:hover
@@ -302,7 +304,6 @@ ul.mainlist li.item a.add
     width: 20px;
     height: 18px;
     display: block;
-    margin: 0 5px 0 0;
     background: url('../images/plus_gl_8x8.png') no-repeat 6px center;
 }
 ul.mainlist li.item a.add:hover
@@ -313,7 +314,7 @@ ul.mainlist li.item a.add:hover
 {
     margin: 5px 5px 5px 206px;
 }
-#TrackContainer 
+#TrackContainer, #PodcastContainer
 {
     margin: 5px 5px 5px 206px;
 }
@@ -471,6 +472,10 @@ table.songlist tr.song td.track
     width: 40px;
     text-align: right;
 }
+table.songlist tr.song td.published
+{
+    width: 80px;
+}
 table.songlist tr.song td.title
 {
 }
@@ -482,7 +487,11 @@ table.songlist tr.song td.album
 table.songlist tr.song td.album a
 {
     color: #829FC0;
-    text-decoration: none;    
+    text-decoration: none;  
+    float: left;
+    overflow: hidden;
+	white-space: nowrap;
+    font-size: 12px;  
 }
 table.songlist tr.song td.album a:hover
 {
@@ -495,7 +504,7 @@ table.songlist tr.song td.album img
     float: left;
     margin: 0 5px;
     padding: 2px;
-    height: 36px;
+    height: 25px;
 }
 table.songlist tr.song td.artist
 {
@@ -670,6 +679,7 @@ background-color: #8dbdd8;
 .subactions
 {
     height: 29px;
+    width: 620px;
     margin: 4px 0 0 0;
     padding: 0 0 0 5px;
 }
@@ -1108,6 +1118,10 @@ select
     padding: 5px;
     margin: 5px;
     border: 1px solid #d6d6d6;
+}
+select.large
+{
+    width: 192px;
 }
 select#SearchType
 {

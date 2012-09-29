@@ -1,6 +1,7 @@
 ﻿$(window).load(function () {
     if ($.cookie('defaultsmwidth')) {
         var width = $.cookie('defaultsmwidth');
+        smwidth = width;
         resizeSMSection(width);
     }
     if ($.cookie('sidebar') && $.cookie('username') && $.cookie('passwordenc')) {
@@ -46,7 +47,7 @@ function resizeContent() {
         }
     }
     var tabwidth = $('.tabcontent').width();
-    $('#AlbumContainer, #TrackContainer, #CurrentPlaylistContainer').css({ 'width': (tabwidth - smwidth - 30) + 'px' });
+    $('#AlbumContainer, #TrackContainer, #PodcastContainer, #CurrentPlaylistContainer').css({ 'width': (tabwidth - smwidth - 30) + 'px' });
     $('#CurrentPlaylistContainer').css({ 'width': (tabwidth - 30) + 'px' });
     $('#player').css({ 'width': tabwidth + 'px' });
 }
@@ -61,7 +62,6 @@ function resizeSMSection(x) {
         $('#BottomContainer').css({ 'width': (newsmwidth - 16) + 'px' });
         $.cookie('defaultsmwidth', newwidth, { expires: 365, path: '/' });
         var ulwidth = newsmwidth + 6;
-        $('#AlbumContainer').css({ 'margin-left': ulwidth + 'px' });
-        $('#TrackContainer').css({ 'margin-left': ulwidth + 'px' });
+        $('#AlbumContainer, #TrackContainer, #PodcastContainer').css({ 'margin-left': ulwidth + 'px' });
     }
 }

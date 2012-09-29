@@ -40,6 +40,7 @@
         <li><a href="#tabLibrary" class="first" title="Library"><img src="images/headphones_gd_16x14.png" /></a></li>
         <li><a href="#tabCurrent" title="Current Playlist"><img src="images/play_alt_gd_16x16.png" /></a></li>
         <li><a href="#tabPlaylists" title="Playlists"><img src="images/list_gd_16x14.png" /></a></li>
+        <li><a href="#tabPodcasts" title="Podcasts"><img src="images/rss_16x16.png" /></a></li>
         <li><a href="#tabPreferences" class="last" title="Preferences"><img src="images/cog_16x16.png" /></a></li>
         </ul>
         <div class="toploading"></div>
@@ -128,15 +129,36 @@
                 <div class="loading"></div>
                 <div id="Playlists" class="smsection floatleft noselect">
                     <div class="padder">
-                    <ul id="AutoPlaylistContainer" class="simplelist mainlist">
-                    <li class="index" id="autoplaylist">Auto Playlists</li>
-                    <li class="item"><span>Random</span><div class="floatright"><a class="play" title="Play" href=""></a></div><div class="floatright"><a class="add" title="Add To Current Playlist" href=""></a></div></li>
-                    </ul>
+                    <ul class="simplelist"><li class="index">Auto Playlists</li></ul>
+                    <ul id="AutoPlaylistContainer" class="simplelist mainlist"></ul>
+					<ul class="simplelist"><li class="index">Folder Playlists</li></ul>
+                    <ul id="FolderContainer" class="simplelist mainlist"></ul>
                     <ul class="simplelist"><li class="index">Saved Playlists</li></ul>
                     <ul id="PlaylistContainer" class="simplelist mainlist"></ul>
                     </div>
                 </div>
                 <table id="TrackContainer" class="simplelist songlist">
+                <thead></thead>
+                <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="tabPodcasts" class="tabcontent">
+            <div class="actions floatleft">
+                <a href="#" class="button" id="action_RefreshPodcasts" title="Refresh Podcasts"><img src="images/reload_9x11.png" /></a>
+            </div>
+            <div class="subactions floatleft">
+            </div>
+            <div class="clear"></div>
+            <div id="Podcasts" class="lgsection floatleft noselect">
+                <div class="loading"></div>
+                <div id="PodcastList" class="smsection floatleft noselect">
+                    <div class="padder">
+                    <ul class="simplelist"><li class="index">Podcasts</li></ul>
+                    <ul id="ChannelsContainer" class="simplelist mainlist"></ul>
+                    </div>
+                </div>
+                <table id="PodcastContainer" class="simplelist songlist">
                 <thead></thead>
                 <tbody></tbody>
                 </table>
@@ -157,6 +179,7 @@
                     <input type="password" id="Password" name="Password" class="large"/><br />
                     <label for="Server">Server <span class="red">*</span></label><br />
                     <input type="text" id="Server" name="Server" class="xlarge" title="Subsonic Server URL Ex: http://host:port/subsonic"/><br />
+                    <label for="SubsonicVersion">Subsonic API: <span id="SubsonicVersion"></span></label><br />
                 </div>
                 <div class="subsection floatleft">
                     <h3 class="title">Keyboard Shortcuts</h3>
@@ -172,6 +195,9 @@
                 <div class="clear"></div>
                 <div class="subsection floatleft">
                     <h3 class="title">Options</h3>
+                    <label for="AutoPlaylists">Genres</label><br />
+                    <select id="Genres" name="Genres" class="large"></select><br />
+                    <input type="text" id="AutoPlaylists" name="AutoPlaylists" class="large" title="Comma separated list of genres for Auto Playlists"/><br />
                     <label for="AutoAlbumSize">Auto Album Size (Default 15)</label><br />
                     <input type="text" id="AutoAlbumSize" name="AutoAlbumSize" class="large" title="Number of Albums to Get on the Music Library tab"/><br />
                     <label for="AutoPlaylistSize">Auto Playlist Size (Default 25)</label><br />
@@ -229,6 +255,15 @@
                         <span class="changes"></span>
                     </li>
                     -->
+                    <li class="log"><span class="version">9/29/2012 - 2.0.7</span>
+                        <span class="changes">Updated to SoundManager2 v297a-20120916</span>
+                        <span class="changes">Implemented <i>updatePlaylist</i> API method. Allows for larger playlists.</span>
+                        <span class="changes">Added support for Podcasts (Thanks to <a href="https://github.com/nithinphilips/MiniSub" target="_blank">nithinphilips</a>)</span>
+                        <span class="changes">Added Genre support for Auto Playlists (Thanks to <a href="https://github.com/Concept211/MiniSub" target="_blank">Concept211</a> & <a href="https://github.com/orangepeelbeef/MiniSub" target="_blank">orangepeelbeef</a>)</span>
+                    </li>
+                    <li class="log"><span class="version">8/13/2012 - 2.0.6</span>
+                        <span class="changes">Minor bugfix</span>
+                    </li>
                     <li class="log"><span class="version">7/20/2012 - 2.0.5</span>
                         <span class="changes">Fixed Mp3 only folder issue</span>
                         <span class="changes">Launch server URL from the Subsonic icon!</span>
@@ -344,8 +379,8 @@
                 <div id="songdetails">
                     <div id="coverart"><a id="coverartimage" href="images/albumdefault_120.jpg"><img src="images/albumdefault_56.jpg" alt=""/></a></div>
                     <ul>
-                    <li id="songdetails_song" class="song"></li>
-                    <li id="songdetails_artist" class="album"></li>
+                    <li id="songdetails_song" class="song" title=""></li>
+                    <li id="songdetails_artist" class="album" title=""></li>
                     </ul>
                     <div class="rate"><a id="songdetails_rate" class="rate" href="" title="Add To Favorites"></a></div>
                     <div class="vertshade"></div>

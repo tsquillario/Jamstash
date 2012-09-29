@@ -1,3 +1,19 @@
+function generateRowHTML(child, appendto, rowcolor) {
+    var albumhtml;
+    var isDir;
+    var i;
+    isDir = child.isDir;
+    if (isDir === true) {
+        albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating);
+    } else {
+        var track;
+        if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
+        var time = secondsToTime(child.duration);
+        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+    }
+    return albumhtml;
+    //$(albumhtml).appendTo(appendto);
+}
 function generateAlbumHeaderHTML() {
     var html;
     html = '<tr><th></th><th></th><th>Album</th><th>Artist</th></tr>';
@@ -52,12 +68,38 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, artist, alb
     } else {
         coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart;
     }
-    html += '<td class=\"album\"><a href="javascript:getAlbums(\'' + parentid + '\',\'\',\'#AlbumRows\')">' + album + '<img src=\"' + coverartSrc + '\" /></a></td>';
+    html += '<td class=\"album\"><a href="javascript:getAlbums(\'' + parentid + '\',\'\',\'#AlbumRows\')"><img src=\"' + coverartSrc + '\" />' + album + '</a></td>';
     html += '<td class=\"time\">' + m + ':' + s + '</td>';
     html += '</tr>';
     return html;
 }
-
+function generatePodcastHTML(rowcolor, childid, parentid, track, title, description, artist, album, coverart, rating, m, s) {
+    var html;
+    html = '<tr class=\"song ' + rowcolor + '\" childid=\"' + childid + '\" parentid=\"' + parentid + '\" userrating=\"' + rating + '\">';
+    html += '<td class=\"itemactions\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a>';
+    html += '<a class=\"remove\" href=\"\" title=\"Remove\"></a>';
+    html += '<a class=\"play\" href=\"\" title=\"Play\"></a>';
+    html += '<a class=\"download\" href=\"\" title=\"Download\"></a>';
+    if (rating === 5) {
+        html += '<a class=\"favorite\" href=\"\" title=\"Favorite\"></a>';
+    } else {
+        html += '<a class=\"rate\" href=\"\" title=\"Add To Favorites\"></a>';
+    }
+    html += '</td>';
+    html += '<td class=\"track\">' + track + '</td>';
+    html += '<td class=\"title\" title=\"' + description + '\">' + title + '</td>';
+    html += '<td class=\"artist\">' + artist + '</td>';
+    var coverartSrc;
+    if (coverart == undefined) {
+        coverartSrc = 'images/albumdefault_25.jpg';
+    } else {
+        coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart;
+    }
+    html += '<td class=\"album\"><a href="javascript:getAlbums(\'' + parentid + '\',\'\',\'#AlbumRows\')"><img src=\"' + coverartSrc + '\" />' + album + '</a></td>';
+    html += '<td class=\"time\">' + m + ':' + s + '</td>';
+    html += '</tr>';
+    return html;
+}
 function refreshRowColor(el) {
     $.each($(el + ' tr.song'), function (i) {
         $(this).removeClass('even odd');
