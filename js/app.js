@@ -1,4 +1,4 @@
-// Global Variables
+﻿// Global Variables
 var debug = false;
 var audio = null;
 var hostURL = location.href;
@@ -85,13 +85,15 @@ function loadTabContent(tab) {
             case '#tabPlaylists':
                 if (debug) { console.log("TAG PLAYLIST"); }
                 loadPlaylists();
-    			loadFolders();
+                loadFolders();
+                loadGenres();
                 break;
             case '#tabPodcasts':
                 if (debug) { console.log("TAG PODCAST"); }
                 loadPodcasts();
                 break;
             case '#tabPreferences':
+                getGenres();
                 break;
             default:
                 break;

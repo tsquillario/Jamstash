@@ -1114,6 +1114,10 @@ select
     margin: 5px;
     border: 1px solid #d6d6d6;
 }
+select.large
+{
+    width: 192px;
+}
 select#SearchType
 {
     margin: 0;

@@ -130,6 +130,39 @@ function getMusicFolders() {
         }
     });
 }
+function getGenres() {
+    var genres = 'Acid Rock,Acoustic,Alt Country,Alt/Indie,Alternative & Punk,Alternative Metal,Alternative,AlternRock,Awesome,Bluegrass,Blues,Blues-Rock,Classic Hard Rock,Classic Rock,Comedy,Country,Country-Rock,Dance,Dance-Rock,Deep Funk,Easy Listening,Electronic,Electronica,Electronica/Dance,Folk,Folk/Rock,Funk,Grunge,Hard Rock,Heavy Metal,Holiday,House,Improg,Indie Rock,Indie,International,Irish,Jam Band,Jam,Jazz Fusion,Jazz,Latin,Live Albums,Metal,Music,Oldies,Other,Pop,Pop/Rock,Post Rock,Progressive Rock,Psychedelic Rock,Psychedelic,Punk,R&B,Rap & Hip-Hop,Reggae,Rock & Roll,Rock,Rock/Pop,Roots,Ska,Soft Rock,Soul,Southern Rock,Thrash Metal,Unknown,Vocal,World';
+    var genresArr = genres.split(',');
+    var options = [];
+    options.push('<option value="">[Select Genre]</option>');
+    $.each(genresArr, function (i, genre) {
+        options.push('<option value="' + genre + '">' + genre + '</option>');
+    });
+    $('#Genres').html(options.join(''));
+}
+function loadGenres(refresh) {
+    if (debug) { console.log("LOAD GENRES"); }
+    if (refresh) {
+        $('#AutoPlaylistContainer').empty();
+    }
+    var content = $('#AutoPlaylistContainer').html();
+    if (content === "") {
+        var genres = $.cookie('GenrePlaylists');
+        if (genres) {
+            var genresArr = genres.split(',');
+    	    //<li class="item" data-genre="Alternative"><span>Alternative</span><div class="floatright"><a class="play" title="Play" href="" data-genre="Alternative"></a></div><div class="floatright"><a class="add" title="Add To Current Playlist" href="" data-genre="Alternative"></a></div></li>
+            $.each(genresArr, function (i, genre) {
+                var html = "";
+                html += '<li class=\"item\" data-genre=\"' + genre + '\">';
+                html += '<span>' + genre + '</span>';
+                html += '<div class=\"floatright\"><a class=\"play\" href=\"\" data-genre=\"' + genre + '\" title=\"Play\"></a></div>';
+                html += '<div class=\"floatright\"><a class=\"add\" href=\"\" data-genre=\"' + genre + '\" title=\"Add To Current Playlist\"></a></div>';
+                html += '</li>';
+                $(html).appendTo("#AutoPlaylistContainer");
+            });
+        }
+    }
+}
 function getAlbums(id, action, appendto) {
     $('.first').trigger('click');
     $.ajax({
@@ -442,7 +475,6 @@ function loadFolders(refresh) {
         });
     }
 }
-
 function loadPlaylists(refresh) {
     if (debug) { console.log("LOAD PLAYLISTS"); }
     if (refresh) {
