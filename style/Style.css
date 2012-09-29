@@ -38,7 +38,7 @@ h3.title
 
 #container {
 	text-align: left;
-	min-height: 600px;
+	/*min-height: 600px;*/
     min-width: 810px;
 }
 #nav 
@@ -174,7 +174,7 @@ a#logo:hover
     overflow: auto;
     background: #fff;
     border: 1px solid #cbcbcb;
-    margin-top: 5px;
+    margin-top: 4px;
 }
 .fullsection
 {
@@ -487,7 +487,11 @@ table.songlist tr.song td.album
 table.songlist tr.song td.album a
 {
     color: #829FC0;
-    text-decoration: none;    
+    text-decoration: none;  
+    float: left;
+    overflow: hidden;
+	white-space: nowrap;
+    font-size: 12px;  
 }
 table.songlist tr.song td.album a:hover
 {
@@ -675,6 +679,7 @@ background-color: #8dbdd8;
 .subactions
 {
     height: 29px;
+    width: 620px;
     margin: 4px 0 0 0;
     padding: 0 0 0 5px;
 }

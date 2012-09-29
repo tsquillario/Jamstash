@@ -129,7 +129,7 @@
                 <div class="loading"></div>
                 <div id="Playlists" class="smsection floatleft noselect">
                     <div class="padder">
-                    <ul class="simplelist"><li class="index">Genre Playlists</li></ul>
+                    <ul class="simplelist"><li class="index">Auto Playlists</li></ul>
                     <ul id="AutoPlaylistContainer" class="simplelist mainlist"></ul>
 					<ul class="simplelist"><li class="index">Folder Playlists</li></ul>
                     <ul id="FolderContainer" class="simplelist mainlist"></ul>
@@ -179,6 +179,7 @@
                     <input type="password" id="Password" name="Password" class="large"/><br />
                     <label for="Server">Server <span class="red">*</span></label><br />
                     <input type="text" id="Server" name="Server" class="xlarge" title="Subsonic Server URL Ex: http://host:port/subsonic"/><br />
+                    <label for="SubsonicVersion">Subsonic API: <span id="SubsonicVersion"></span></label><br />
                 </div>
                 <div class="subsection floatleft">
                     <h3 class="title">Keyboard Shortcuts</h3>
@@ -194,9 +195,9 @@
                 <div class="clear"></div>
                 <div class="subsection floatleft">
                     <h3 class="title">Options</h3>
-                    <label for="GenrePlaylists">Genres</label><br />
+                    <label for="AutoPlaylists">Genres</label><br />
                     <select id="Genres" name="Genres" class="large"></select><br />
-                    <input type="text" id="GenrePlaylists" name="GenrePlaylists" class="large" title="Comma separated list of genres for Auto Playlists"/><br />
+                    <input type="text" id="AutoPlaylists" name="AutoPlaylists" class="large" title="Comma separated list of genres for Auto Playlists"/><br />
                     <label for="AutoAlbumSize">Auto Album Size (Default 15)</label><br />
                     <input type="text" id="AutoAlbumSize" name="AutoAlbumSize" class="large" title="Number of Albums to Get on the Music Library tab"/><br />
                     <label for="AutoPlaylistSize">Auto Playlist Size (Default 25)</label><br />
@@ -254,8 +255,11 @@
                         <span class="changes"></span>
                     </li>
                     -->
-                    <li class="log"><span class="version">9/25/2012 - 2.0.7</span>
+                    <li class="log"><span class="version">9/29/2012 - 2.0.7</span>
+                        <span class="changes">Updated to SoundManager2 v297a-20120916</span>
+                        <span class="changes">Implemented <i>updatePlaylist</i> API method. Allows for larger playlists.</span>
                         <span class="changes">Added support for Podcasts (Thanks to <a href="https://github.com/nithinphilips/MiniSub" target="_blank">nithinphilips</a>)</span>
+                        <span class="changes">Added Genre support for Auto Playlists (Thanks to <a href="https://github.com/Concept211/MiniSub" target="_blank">Concept211</a> & <a href="https://github.com/orangepeelbeef/MiniSub" target="_blank">orangepeelbeef</a>)</span>
                     </li>
                     <li class="log"><span class="version">8/13/2012 - 2.0.6</span>
                         <span class="changes">Minor bugfix</span>
@@ -375,8 +379,8 @@
                 <div id="songdetails">
                     <div id="coverart"><a id="coverartimage" href="images/albumdefault_120.jpg"><img src="images/albumdefault_56.jpg" alt=""/></a></div>
                     <ul>
-                    <li id="songdetails_song" class="song"></li>
-                    <li id="songdetails_artist" class="album"></li>
+                    <li id="songdetails_song" class="song" title=""></li>
+                    <li id="songdetails_artist" class="album" title=""></li>
                     </ul>
                     <div class="rate"><a id="songdetails_rate" class="rate" href="" title="Add To Favorites"></a></div>
                     <div class="vertshade"></div>

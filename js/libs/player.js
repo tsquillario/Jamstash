@@ -33,9 +33,11 @@ function playSong(el, songid, albumid) {
                 $('#songdetails_rate').attr('class', 'rate');
             }
             $('#songdetails_song').html(title);
+            $('#songdetails_song').attr('title', title);
             $('#songdetails_song').attr('parentid', albumid);
             $('#songdetails_song').attr('childid', songid);
             $('#songdetails_artist').html(artist + ' - ' + album);
+            $('#songdetails_artist').attr('title', artist + ' - ' + album);
             var coverartSrc, coverartFullSrc;
             if (coverart == undefined) {
                 coverartSrc = 'images/albumdefault_50.jpg';
