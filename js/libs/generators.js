@@ -9,10 +9,9 @@ function generateRowHTML(child, appendto, rowcolor) {
         var track;
         if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
         var time = secondsToTime(child.duration);
-        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time);
     }
     return albumhtml;
-    //$(albumhtml).appendTo(appendto);
 }
 function generateAlbumHeaderHTML() {
     var html;
@@ -46,7 +45,7 @@ function generateSongHeaderHTML() {
     html = '<tr><th></th><th>Track</th><th>Title</th><th>Artist</th><th>Album</th><th class=\"alignright\">Time</th></tr>';
     return html;
 }
-function generateSongHTML(rowcolor, childid, parentid, track, title, artist, album, coverart, rating, m, s) {
+function generateSongHTML(rowcolor, childid, parentid, track, title, artist, album, coverart, rating, time) {
     var html;
     html = '<tr class=\"song ' + rowcolor + '\" childid=\"' + childid + '\" parentid=\"' + parentid + '\" userrating=\"' + rating + '\">';
     html += '<td class=\"itemactions\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a>';
@@ -69,11 +68,11 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, artist, alb
         coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart;
     }
     html += '<td class=\"album\"><a href="javascript:getAlbums(\'' + parentid + '\',\'\',\'#AlbumRows\')"><img src=\"' + coverartSrc + '\" />' + album + '</a></td>';
-    html += '<td class=\"time\">' + m + ':' + s + '</td>';
+    html += '<td class=\"time\">' + time + '</td>';
     html += '</tr>';
     return html;
 }
-function generatePodcastHTML(rowcolor, childid, parentid, track, title, description, artist, album, coverart, rating, m, s) {
+function generatePodcastHTML(rowcolor, childid, parentid, track, title, description, artist, album, coverart, rating, time) {
     var html;
     html = '<tr class=\"song ' + rowcolor + '\" childid=\"' + childid + '\" parentid=\"' + parentid + '\" userrating=\"' + rating + '\">';
     html += '<td class=\"itemactions\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a>';
@@ -96,7 +95,7 @@ function generatePodcastHTML(rowcolor, childid, parentid, track, title, descript
         coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=jsonp&size=25&id=' + coverart;
     }
     html += '<td class=\"album\"><a href="javascript:getAlbums(\'' + parentid + '\',\'\',\'#AlbumRows\')"><img src=\"' + coverartSrc + '\" />' + album + '</a></td>';
-    html += '<td class=\"time\">' + m + ':' + s + '</td>';
+    html += '<td class=\"time\">' + time + '</td>';
     html += '</tr>';
     return html;
 }

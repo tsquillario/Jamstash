@@ -9,6 +9,11 @@
     $('#ApplicationName').val($.cookie('ApplicationName'));
 
     // Set Preferences defaults
+    if ($.cookie('Theme')) {
+        $('#Theme').val($.cookie('Theme'));
+        var theme = $.cookie('Theme');
+        switchTheme(theme);
+    }
     if ($.cookie('HideAZ')) {
         $('#HideAZ').attr('checked', true);
     } else {
@@ -601,7 +606,7 @@
     $('#Theme').live('change', function () {
         var theme = $(this).val();
         switchTheme(theme);
-        //$.cookie('Theme', theme, { expires: 365 });
+        $.cookie('Theme', theme, { expires: 365 });
     });
     $('#Genres').live('change', function () {
         var genre = $(this).val();

@@ -62,7 +62,8 @@ function popOut()
 {
     window.open(hostURL, "External Player", "status = 1, height = 735, width = 840, resizable = 0");
 }
-function secondsToTime(secs) {
+function secondsToTime(d) {
+    /* Old way, does not calculate hours correctly
     var hours = Math.floor(secs / (60 * 60));
 
     var divisor_for_minutes = secs % (60 * 60);
@@ -80,6 +81,12 @@ function secondsToTime(secs) {
         "s": seconds
     };
     return obj;
+    */
+    d = Number(d);
+    var h = Math.floor(d / 3600);
+    var m = Math.floor(d % 3600 / 60);
+    var s = Math.floor(d % 3600 % 60);
+    return ((h > 0 ? h + ":" : "") + (m > 0 ? (h > 0 && m < 10 ? "0" : "") + m + ":" : "0:") + (s < 10 ? "0" : "") + s);
 }
 function updateMessage(msg) {
     $('#messages').text(msg);
@@ -213,10 +220,14 @@ function checkVersion(runningVersion, minimumVersion) {
     }
 }
 function switchTheme(theme) {
-    //var theme = $(this).data('genre');
-    //$("link").attr("href", $(this).attr('rel'));
-    //$('link[data-name=main]').data('name');
-    if (theme == 'dark') {
-        $('link[data-name=main]').attr('href', 'style/Dark.css');
+    switch (theme) {
+        case 'dark':
+            $('link[data-name=theme]').attr('href', 'style/Dark.css');
+            break;
+        case 'default':
+            $('link[data-name=theme]').attr('href', '');
+            break;
+        default:
+            break;
     }
 }

@@ -59,7 +59,7 @@ function resizeSMSection(x) {
     if (smwidth != newsmwidth && newsmwidth > 150 && newsmwidth < 500) {
         $('.smsection').css({ 'width': (newsmwidth) + 'px' });
         $('.actions').css({ 'width': (newsmwidth - 5) + 'px' });
-        $('#BottomContainer').css({ 'width': (newsmwidth - 16) + 'px' });
+        $('#BottomContainer').css({ 'width': (newsmwidth - 23) + 'px' });
         $.cookie('defaultsmwidth', newwidth, { expires: 365, path: '/' });
         var ulwidth = newsmwidth + 6;
         $('#AlbumContainer, #TrackContainer, #PodcastContainer').css({ 'margin-left': ulwidth + 'px' });

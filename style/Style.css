@@ -645,7 +645,7 @@ background-color: #8dbdd8;
     background: #fff;
     position: fixed;
     height: 43px;
-    width: 184px;
+    width: 182px;
 }
 #BottomContainer ul 
 {
@@ -876,14 +876,12 @@ background-color: #8dbdd8;
     line-height: 17px;
     padding: 0 5px;
     font-size: 11px;
-    color: #333333;
     text-shadow: none;
     height: 36px;
     margin: 0px 0px 0px 6px;
 }
 .audiojs .time em
 {
-    color: #333333;
     padding: 0px 2px 0px 0px;
     font-style: normal;
 }
@@ -990,7 +988,6 @@ ul.preferences
 }
 ul.preferences li
 {
-    color: #646464;
     font-size: 11px;
     padding: 8px 0;
 }
@@ -1017,7 +1014,6 @@ ul.preferences li.log
 }
 ul.preferences li span.version
 {
-    color: #646464;
     font-weight: bold;
     font-size: 11px;
     padding: 0;
@@ -1025,7 +1021,6 @@ ul.preferences li span.version
 }
 ul.preferences li.log span.changes
 {
-    color: #646464;
     font-size: 11px;
     padding: 0 0 0 5px;
     display: block;
@@ -1053,7 +1048,6 @@ a.button {
     padding: 6px 12px;
     position: relative;
     display: inline-block;
-    text-shadow: 0 1px 0 #fff;
     -webkit-transition: border-color .218s;
     -moz-transition: border .218s;
     -o-transition: border-color .218s;

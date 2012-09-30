@@ -326,7 +326,7 @@ function getRandomSongList(action, appendto, genre, folder) {
                     var track;
                     if (item.track === undefined) { track = "&nbsp;"; } else { track = item.track; }
                     var time = secondsToTime(item.duration);
-                    html = generateSongHTML(rowcolor, item.id, item.parent, track, item.title, item.artist, item.album, item.coverArt, item.userRating, time['m'], time['s']);
+                    html = generateSongHTML(rowcolor, item.id, item.parent, track, item.title, item.artist, item.album, item.coverArt, item.userRating, time);
                     $(html).appendTo(appendto);
                 });
                 if (appendto === '#TrackContainer') {
@@ -451,7 +451,7 @@ function search(type, query) {
                         var track;
                         if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
                         var time = secondsToTime(child.duration);
-                        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+                        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time);
                     }
                     $(albumhtml).appendTo("#AlbumRows");
                 });
@@ -780,7 +780,7 @@ function getPlaylist(id, action, appendto) {
                     var track;
                     if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
                     var time = secondsToTime(child.duration);
-                    html = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+                    html = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, child.artist, child.album, child.coverArt, child.userRating, time);
                     $(html).appendTo(appendto);
                 });
                 if (appendto === '#TrackContainer tbody') {
@@ -888,7 +888,7 @@ function getPodcast(id, action, appendto) {
                     description += child.description;
 
                     var time = secondsToTime(child.duration);
-                    html = generatePodcastHTML(rowcolor, child.streamId, child.parent, child.track, child.title, description, child.artist, child.album, child.coverArt, child.userRating, time['m'], time['s']);
+                    html = generatePodcastHTML(rowcolor, child.streamId, child.parent, child.track, child.title, description, child.artist, child.album, child.coverArt, child.userRating, time);
                     $(html).appendTo(appendto);
                     count++;
                 });
