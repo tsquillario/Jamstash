@@ -1,0 +1,64 @@
+body 
+{
+	background: #222222;
+	color: #b2ae8b;
+}
+#content 
+{
+    background: #222222;
+}
+.lgsection
+{
+    background: #313131;
+    border: 1px solid #4D4D4D;
+}
+.fullsection
+{
+    background: #313131;
+}
+#nav a 
+{
+    color: #7C7C7C;
+	background: #313131;
+    border: 1px solid #2E2E2E;
+    border-right: 1px solid #4D4D4D;
+    border-bottom: none;
+}
+#nav a:hover  
+{
+    color: #545454; 
+    border: 1px solid #1A1A1A;
+    border-bottom: none;
+}
+#nav a.first
+{
+    border-top: 1px solid #4D4D4D;
+}
+#nav a.first:hover  
+{
+    color: #545454; 
+    border: 1px solid #1A1A1A;
+    border-bottom: none;
+}
+#nav a.last
+{
+    border-bottom: 1px solid #4D4D4D;
+}
+#nav a.last:hover  
+{
+    color: #545454; 
+    border: 1px solid #1A1A1A;
+}
+#nav a.active  
+{
+    color: #545454; 
+    background: #1D1D1D; 
+	border: 1px solid #1A1A1A;
+	border-right: none;
+}
+#nav a.active:hover  
+{
+    color: #545454; 
+    border: 1px solid #CBCBCB;
+	border-right: none;
+}

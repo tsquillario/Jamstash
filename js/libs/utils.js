@@ -212,3 +212,11 @@ function checkVersion(runningVersion, minimumVersion) {
         return false;
     }
 }
+function switchTheme(theme) {
+    //var theme = $(this).data('genre');
+    //$("link").attr("href", $(this).attr('rel'));
+    //$('link[data-name=main]').data('name');
+    if (theme == 'dark') {
+        $('link[data-name=main]').attr('href', 'style/Dark.css');
+    }
+}

@@ -598,6 +598,11 @@
         }
         location.reload(true);
     });
+    $('#Theme').live('change', function () {
+        var theme = $(this).val();
+        switchTheme(theme);
+        //$.cookie('Theme', theme, { expires: 365 });
+    });
     $('#Genres').live('change', function () {
         var genre = $(this).val();
         var currentGenres = $('#AutoPlaylists').val();
@@ -703,5 +708,5 @@
         }
     }).disableSelection();
 
-});           // End document.ready
+});            // End document.ready
 
