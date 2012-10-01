@@ -167,6 +167,23 @@ function rateSong(songid, rating) {
         }
     });
 }
+function starItem(itemid, starred) {
+    var url;
+    if (starred) {
+        url = baseURL + '/star.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + itemid;
+    } else {
+        url = baseURL + '/unstar.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=jsonp&id=' + itemid;
+    }
+    $.ajax({
+        url: url,
+        method: 'GET',
+        dataType: 'jsonp',
+        timeout: 10000,
+        success: function () {
+            updateMessage('Favorite Updated!');
+        }
+    });
+}
 function playPauseSong() {
     var el = '#PlayTrack';
     if ($(el).hasClass('playing')) {

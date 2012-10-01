@@ -86,7 +86,7 @@ function loadTabContent(tab) {
                 if (debug) { console.log("TAG PLAYLIST"); }
                 loadPlaylists();
                 loadFolders();
-                loadGenres();
+                loadAutoPlaylists();
                 break;
             case '#tabPodcasts':
                 if (debug) { console.log("TAG PODCAST"); }

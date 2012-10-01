@@ -79,11 +79,12 @@
                     </select>
                     <ul id="AutoAlbumContainer" class="simplelist mainlist noselect">
                     <li class="index" id="auto">Auto Albums</li>
-                    <li class="item" id="newest"><span>Recently Added</span></li>
                     <li class="item" id="random"><span>Random</span></li>
+                    <li class="item" id="newest"><span>Recently Added</span></li>
+                    <li class="item" id="starred"><span>Starred</span></li>
                     <li class="item" id="highest"><span>Top Rated</span></li>
-                    <li class="item" id="recent"><span>Recently Played</span></li>
                     <li class="item" id="frequent"><span>Most Played</span></li>
+                    <li class="item" id="recent"><span>Recently Played</span></li>
                     </ul>
                     <ul id="ArtistContainer" class="simplelist mainlist noselect"></ul>
                     </div>
@@ -261,12 +262,15 @@
                         <span class="changes"></span>
                     </li>
                     -->
+                    <li class="log"><span class="version">9/30/2012 - 2.1</span>
+                        <span class="changes">Moved ratings to stars (5 star ratings will reappear eventually)</span>
+                    </li>
                     <li class="log"><span class="version">9/30/2012 - 2.0.9</span>
                         <span class="changes">Added Dark Theme</span>
                         <span class="changes">Fixed issue with track duration display</span>
                     </li>
                     <li class="log"><span class="version">9/30/2012 - 2.0.8</span>
-                        <span class="changes">Removed "http://*/" from manifest.json</span>
+                        <span class="changes">Removed "http://*/" permission from manifest.json (This was what caused the permissions alert, more info <a href="http://developer.chrome.com/extensions/permission_warnings.html" target="_blank">here</a>)</span>
                     </li>
                     <li class="log"><span class="version">9/29/2012 - 2.0.7</span>
                         <span class="changes">Updated to SoundManager2 v297a-20120916</span>

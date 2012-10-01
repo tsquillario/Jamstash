@@ -174,14 +174,16 @@
     });
     $('tr.album a.rate').live('click', function (event) {
         var itemid = $(this).parent().parent().attr('childid');
-        rateSong(itemid, 5);
+        //rateSong(itemid, 5);
+        starItem(itemid, true);
         $(this).removeClass('rate');
         $(this).addClass('favorite');
         return false;
     });
     $('tr.album a.favorite').live('click', function (event) {
         var itemid = $(this).parent().parent().attr('childid');
-        rateSong(itemid, 0);
+        //rateSong(itemid, 0);
+        starItem(itemid, false);
         $(this).removeClass('favorite');
         $(this).addClass('rate');
         return false;
@@ -273,14 +275,16 @@
     });
     $('table.songlist tr.song a.rate').live('click', function (event) {
         var songid = $(this).parent().parent().attr('childid');
-        rateSong(songid, 5);
+        //rateSong(songid, 5);
+        starItem(songid, true);
         $(this).removeClass('rate');
         $(this).addClass('favorite');
         return false;
     });
     $('table.songlist tr.song a.favorite').live('click', function (event) {
         var songid = $(this).parent().parent().attr('childid');
-        rateSong(songid, 0);
+        //rateSong(songid, 0);
+        starItem(songid, false);
         $(this).removeClass('favorite');
         $(this).addClass('rate');
         return false;
@@ -539,14 +543,16 @@
     });
     $('#songdetails a.rate').live('click', function (event) {
         var itemid = $('#songdetails_song').attr('childid');
-        rateSong(itemid, 5);
+        //rateSong(itemid, 5);
+        starItem(itemid, true);
         $(this).removeClass('rate');
         $(this).addClass('favorite');
         return false;
     });
     $('#songdetails a.favorite').live('click', function (event) {
         var itemid = $('#songdetails_song').attr('childid');
-        rateSong(itemid, 0);
+        //rateSong(itemid, 0);
+        starItem(itemid, false);
         $(this).removeClass('favorite');
         $(this).addClass('rate');
         return false;
@@ -713,5 +719,5 @@
         }
     }).disableSelection();
 
-});            // End document.ready
+});             // End document.ready
 
