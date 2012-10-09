@@ -62,36 +62,63 @@ function popOut()
 {
     window.open(hostURL, "External Player", "status = 1, height = 735, width = 840, resizable = 0");
 }
-function secondsToTime(d) {
-    /* Old way, does not calculate hours correctly
-    var hours = Math.floor(secs / (60 * 60));
-
-    var divisor_for_minutes = secs % (60 * 60);
-    var minutes = Math.floor(divisor_for_minutes / 60);
-
-    var divisor_for_seconds = divisor_for_minutes % 60;
-    var seconds = Math.ceil(divisor_for_seconds);
-    if (seconds < 10) {
-        seconds = '0' + seconds;
-    }
-
-    var obj = {
-        "h": hours,
-        "m": minutes,
-        "s": seconds
-    };
-    return obj;
-    */
+function secondsToTime(secs) {
+    /*
+    Version 1
     d = Number(d);
     var h = Math.floor(d / 3600);
     var m = Math.floor(d % 3600 / 60);
     var s = Math.floor(d % 3600 % 60);
     return ((h > 0 ? h + ":" : "") + (m > 0 ? (h > 0 && m < 10 ? "0" : "") + m + ":" : "0:") + (s < 10 ? "0" : "") + s);
+    */
+
+    // secs = 4729
+    var times = new Array(3600, 60, 1);
+    var time = '';
+    var tmp;
+    for (var i = 0; i < times.length; i++) {
+        tmp = Math.floor(secs / times[i]);
+        // 0: 4729/3600 = 1
+        // 1: 1129/60 = 18
+        // 2: 49/1 = 49
+        if (tmp < 1) {
+            tmp = '00';
+        }
+        else if (tmp < 10) {
+            tmp = '0' + tmp;
+        }
+        if (i == 0 && tmp == '00') {
+        } else {
+            time += tmp;
+            if (i < 2) {
+                time += ':';
+            }
+        }
+        secs = secs % times[i];
+    }
+    return time;
 }
+var msgIndex = 1;
 function updateMessage(msg) {
-    $('#messages').text(msg);
-    $('#messages').fadeIn();
-    setTimeout(function () { $('#messages').fadeOut(); }, 5000);
+    if (msg != '') {
+        var id = msgIndex;
+        $('#messages').append('<span id=\"msg_' + id + '\" class="message">' + msg + '</span>');
+        $('#messages').fadeIn();
+        setTimeout(function () {
+            var el = '#msg_' + id;
+            $(el).fadeOut( function() { $(this).remove(); });
+        },
+        5000);
+        msgIndex++;
+    }
+}
+function updateStatus(msg) {
+    $('#status').html(msg);
+    if ($('#tabLibrary').not(':visible')) {
+        if ($('#status').html() != '') {
+            $('#status').fadeIn();
+        }
+    }
 }
 // Convert to unicode support
 var toHTML = {
@@ -159,6 +186,7 @@ function scrollTitle(text) {
     }
     // To stop timer, clearTimeout(timer);
 }
+// HTML5
 function requestPermissionIfRequired() {
     if (!hasNotificationPermission() && (window.webkitNotifications)) {
         window.webkitNotifications.requestPermission();
@@ -189,6 +217,13 @@ function showNotification(pic, title, text, type) {
 function closeAllNotifications() {
     for (notification in notifications) {
         notifications[notification].cancel();
+    }
+}
+function browserStorageCheck() {
+    if (typeof (localStorage) == 'undefined') {
+        return false;
+    } else {
+        return true;
     }
 }
 function parseVersionString(str) {
@@ -230,4 +265,13 @@ function switchTheme(theme) {
         default:
             break;
     }
+}
+function parseDate(date) {
+    // input: "2012-09-23 20:00:00.0"
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var parts = date.split(" ");
+    var dateParts = parts[0].split("-");
+    var month = parseInt(dateParts[1], 10) - 1;
+    var date = months[month] + " " + dateParts[2] + ", " + dateParts[0];
+    return date;
 }

@@ -9,6 +9,7 @@ var password;
 var passwordenc;
 var server;
 var smwidth;
+var volume = 50;
 
 //Sound manager
 soundManager.url = 'js/sm/swf';
@@ -81,6 +82,8 @@ function loadTabContent(tab) {
                 if (debug) { console.log("TAG CURRENT"); }
                 var header = generateSongHeaderHTML();
                 $("#CurrentPlaylistContainer thead").html(header);
+                window.location.hash = '#tabCurrent';
+                updateStatus(countCurrentPlaylist('#CurrentPlaylistContainer'));
                 break;
             case '#tabPlaylists':
                 if (debug) { console.log("TAG PLAYLIST"); }
@@ -91,6 +94,10 @@ function loadTabContent(tab) {
             case '#tabPodcasts':
                 if (debug) { console.log("TAG PODCAST"); }
                 loadPodcasts();
+                break;
+            case '#tabVideos':
+                if (debug) { console.log("TAG VIDEOS"); }
+                loadVideos(true);
                 break;
             case '#tabPreferences':
                 getGenres();

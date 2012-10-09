@@ -1,4 +1,5 @@
 ﻿$(window).load(function () {
+
     if ($.cookie('defaultsmwidth')) {
         var width = $.cookie('defaultsmwidth');
         smwidth = width;
@@ -17,6 +18,21 @@
             $(el).hide();
         }
     });
+    if ($.cookie('SaveTrackPosition')) {
+        window.setInterval(function () {
+            if ($.cookie('SaveTrackPosition')) {
+                var sm = soundManager.getSoundById('audio');
+                if (sm !== undefined) {
+                    saveTrackPosition();
+                }
+            }
+        }, 5000);
+    }
+    if ($.cookie('CurrentSong')) {
+        var currentSong = JSON.parse($.cookie("CurrentSong"));
+        playSong(null, currentSong.songid, currentSong.albumid, currentSong.position, true);
+        loadCurrentPlaylist();
+    }
     resizeContent();
 });
 window.onbeforeunload = function () {
@@ -27,8 +43,8 @@ $(window).resize(function () {
 });
 function resizeContent() {
     var screenwidth = $(window).width();
-    $('.tabcontent').css({ 'height': (($(window).height() - 109)) + 'px' });
-    $('.smsection').css({ 'height': (($(window).height() - 152)) + 'px' });
+    $('.tabcontent').css({ 'height': (($(window).height() - 125)) + 'px' });
+    $('.smsection').css({ 'height': (($(window).height() - 168)) + 'px' });
     var smheight = $('.smsection').height();
     var smwidth = $('.smsection').width();
     $('#BottomContainer').css({ 'top': smheight + 35 + 'px' });
@@ -38,16 +54,16 @@ function resizeContent() {
             $('.tabcontent').css({ 'width': tabwidth + 'px' });
         }
         var sbheight = $(window).height() - 152;
-        $('#SideBar').css({ 'height': (sbheight + 108) + 'px' });
+        $('#SideBar').css({ 'height': (sbheight + 107) + 'px' });
         $('#ChatMsgs').css({ 'height': (sbheight - 166) + 'px' });
     } else {
         var tabwidth = $(window).width() - 58;
-        if (tabwidth >= 700) {
+        if (tabwidth >= 300) {
             $('.tabcontent').css({ 'width': tabwidth + 'px' });
         }
     }
     var tabwidth = $('.tabcontent').width();
-    $('#AlbumContainer, #TrackContainer, #PodcastContainer, #CurrentPlaylistContainer').css({ 'width': (tabwidth - smwidth - 30) + 'px' });
+    $('#AlbumContainer, #TrackContainer, #PodcastContainer, #CurrentPlaylistContainer').css({ 'width': (tabwidth - smwidth - 40) + 'px' });
     $('#CurrentPlaylistContainer').css({ 'width': (tabwidth - 30) + 'px' });
     $('#player').css({ 'width': tabwidth + 'px' });
 }

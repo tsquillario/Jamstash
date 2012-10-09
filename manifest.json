@@ -1,8 +1,8 @@
 {
-	"manifest_version": 1,
-	"name": "MiniSub",
+	"manifest_version": 2,
+	"name": "MiniSub (Beta)",
 	"description": "MiniSub - HTML5 Mini Player for Subsonic",
-	"version": "2.1",
+	"version": "2.1.6",
 	"app": {
 		"launch": {
 			"local_path": "index.html"
@@ -14,6 +14,8 @@
 	},
 	"permissions": [
 		"unlimited_storage",
-		"notifications"
+		"notifications",
+		"http://*/*",
+		"https://*/*"
 	]
 }

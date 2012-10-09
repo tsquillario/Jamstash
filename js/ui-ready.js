@@ -46,6 +46,14 @@
     } else {
         $('#ForceFlash').attr('checked', false);
     }
+    if ($.cookie('SaveTrackPosition')) {
+        $('#SaveTrackPosition').attr('checked', true);
+    } else {
+        $('#SaveTrackPosition').attr('checked', false);
+    }
+    if ($.cookie('AutoPilot')) {
+        $.cookie('AutoPilot', null)
+    }
 
     // Tabs
     $('.tabcontent').hide(); //Hide all content
@@ -88,15 +96,15 @@
         $(".tabcontent").hide(); //Hide all tab content
 
         var activeTab = $(this).attr("href"); //Find the href attribute value to identify the active tab + content
-        $(activeTab).show(); //Fade in the active ID content
+        $(activeTab).fadeIn('fast'); //Fade in the active ID content
         loadTabContent(activeTab);
     });
 
     // Ajax Loading Screen
-    $(".toploading").ajaxStart(function () {
+    $("#toploading").ajaxStart(function () {
         $(this).show();
     });
-    $(".toploading").ajaxStop(function () {
+    $("#toploading").ajaxStop(function () {
         $(this).hide();
     });
 
@@ -127,6 +135,20 @@
                 playPauseSong();
             } else if (unicode == 36 && $('#tabLibrary').is(':visible')) {
                 $('#Artists').stop().scrollTo('#auto', 400);
+            }
+            if (unicode == 189) { // dash
+                if (volume <= 100 && volume > 0 && source == '') {
+                    volume += -10;
+                    soundManager.setVolume('audio', volume);
+                    updateMessage('Volume: ' + volume + '%');
+                }
+            }
+            if (unicode == 187) { // equals
+                if (volume < 100 && volume >= 0 && source == '') {
+                    volume += 10;
+                    soundManager.setVolume('audio', volume);
+                    updateMessage('Volume: ' + volume + '%');
+                }
             }
         }
     });
@@ -230,7 +252,7 @@
         //$(this).addClass('playing').siblings().removeClass('playing');
         var songid = $(this).attr('childid');
         var albumid = $(this).attr('parentid');
-        playSong(this, songid, albumid);
+        playSong(this, songid, albumid, 0, false);
     });
     $('table.songlist tr.song a.play').live('click', function (event) {
         var songid = $(this).parent().parent().attr('childid');
@@ -251,9 +273,9 @@
             var firstsong = $('#CurrentPlaylistContainer tr.song:first');
             songid = $(firstsong).attr('childid');
             albumid = $(firstsong).attr('parentid');
-            playSong(firstsong, songid, albumid);
+            playSong(firstsong, songid, albumid, 0, false);
         } else {
-            playSong($(this).parent().parent(), songid, albumid);
+            playSong($(this).parent().parent(), songid, albumid, 0, false);
         }
         return false;
     });
@@ -289,6 +311,13 @@
         $(this).addClass('rate');
         return false;
     });
+    $('table.songlist tr.song a.albumlink').live('click', function (event) {
+        var parentid = $(this).parent().parent().attr('parentid');
+        if (parentid != '' && parentid !== undefined) {
+            getAlbums(parentid, 'link', '#AlbumRows');
+        }
+        return false;
+    });
     $('li.index').live('click', function (e) {
         $('#Artists').stop().scrollTo('#auto', 400);
         return false;
@@ -310,13 +339,23 @@
         }
         return false;
     });
+    $("#submenu_AddToPlaylist a").live("click", function (event) {
+        var id = $(this).attr('childid');
+        if (id == 'new') {
+            addToPlaylist('new', '');
+        } else if (id != '' && id !== undefined) {
+            addToPlaylist(id, '');
+        }
+        return false;
+    });
     var submenu_active = false;
     $('div.submenu').mouseenter(function () {
         submenu_active = true;
     });
     $('div.submenu').mouseleave(function () {
         submenu_active = false;
-        setTimeout(function () { if (submenu_active == false) $('div.submenu').fadeOut(); }, 400);
+        $('div.submenu').hide();
+        //setTimeout(function () { if (submenu_active == false) $('div.submenu').stop().fadeOut(); }, 400);
     });
     $('a#action_AddToCurrent').click(function () {
         addToCurrent(false);
@@ -339,7 +378,7 @@
         if ($.cookie('MusicFolders')) {
             loadArtists($.cookie('MusicFolders'), true);
         } else {
-            loadArtists();
+            loadArtists(null, true);
         }
         return false;
     });
@@ -378,12 +417,18 @@
     });
     // Current Playlist Click Events
     $('#action_Shuffle').live('click', function () {
-        $('#CurrentPlaylistContainer tbody tr.song').shuffle();
+        //$('#CurrentPlaylistContainer tbody tr.song').shuffle();
+        $('#CurrentPlaylistContainer tbody tr.song:not(#CurrentPlaylistContainer tbody tr.playing)').shuffle();
         refreshRowColor('#CurrentPlaylistContainer tbody');
+        var songid = $('#CurrentPlaylistContainer tbody tr.playing').attr('childid');
+        if (songid !== undefined) {
+            $('#CurrentPlaylist').scrollTo($('#' + songid), 400);
+        }
         return false;
     });
     $('#action_Empty').live('click', function () {
         $('#CurrentPlaylistContainer tbody').empty();
+        deleteCurrentPlaylist();
         return false;
     });
     $('a#action_AddCurrentToPlaylist').click(function () {
@@ -400,6 +445,79 @@
             submenu.css({ "left": (pos.left) + "px", "top": (pos.top + height + 14) + "px" }).fadeIn(400);
         }
     });
+    $("#submenu_AddCurrentToPlaylist a").live("click", function (event) {
+        var id = $(this).attr('childid');
+        if (id == 'new') {
+            addToPlaylist('new', 'current');
+        } else if (id != '' && id !== undefined) {
+            addToPlaylist(id, 'current');
+        }
+        return false;
+    });
+    $('#songdetails').click(function (e) {
+        var source = e.target.nodeName;
+        var hash = window.location.hash;
+        if (source != 'IMG' && hash != '#tabCurrent') {
+            $('#action_tabCurrent').click();
+        }
+    });
+    $('#songdetails').mouseover(function () {
+        $(this).addClass('hover');
+        /*
+        var total = $("#CurrentPlaylistContainer tr.song").size();
+        if (total > 0) {
+        var submenu = $('div#submenu_CurrentPlaylist');
+        //get the position of the placeholder element
+        pos = $(this).offset();
+        width = $(this).width();
+        height = $(this).height();
+        //show the menu directly over the placeholder
+        submenu.css({ "left": (pos.left - 1) + "px", "top": (pos.top - height - 152) + "px" }).show();
+
+        var html = '';
+        var rowcolor;
+        var i = 0;
+        var playing = false;
+        $("#CurrentPlaylistContainer tr.song").each(function (e) {
+        if (i < 10) {
+        if (i % 2 === 0) {
+        rowcolor = 'even';
+        } else {
+        rowcolor = 'odd';
+        }
+        var value = $(this).find("td.title").html();
+        if ($(this).hasClass('playing')) {
+        html += '<tr class=\"song playing ' + rowcolor + '\"><td></td><td>' + value + '</td></tr>';
+        playing = true;
+        } else {
+        html += '<tr class=\"song ' + rowcolor + '\"><td></td><td>' + value + '</td></tr>';
+        }
+        } else {
+        return false;
+        }
+        i++;
+        });
+        $('#CurrentPlaylistPreviewContainer tbody').html(html);
+        if (playing) {
+        $('#submenu_CurrentPlaylist').scrollTo($('#CurrentPlaylistPreviewContainer tr.playing'), 400);
+        }
+        }
+        */
+    });
+    $('#songdetails').mouseout(function () {
+        $(this).removeClass('hover')
+        //$('div.submenu').hide();
+    });
+    $('#CurrentPlaylist').mouseenter(function () {
+        var html = $('#status').html();
+        if (html != '') {
+            $('#status').fadeIn();
+        }
+    });
+    $('#CurrentPlaylist').mouseleave(function () {
+        $('#status').stop().fadeOut();
+    });
+
     $('#action_CurrentSelectAll').click(function () {
         var count = 0;
         $('#CurrentPlaylist tr.song').each(function () {
@@ -415,6 +533,23 @@
         });
         return false;
     });
+    $('#action_AutoPilot').click(function () {
+        var msg;
+        if ($.cookie('AutoPilot')) {
+            $.cookie('AutoPilot', null);
+            msg = 'Autopilot Off';
+            $('#action_AutoPilot').removeClass('selected');
+        } else {
+            $('#CurrentPlaylistContainer tbody').empty();
+            getRandomSongList('', '#CurrentPlaylistContainer tbody', '', '');
+            $.cookie('AutoPilot', true, { expires: 365 });
+            $('#action_AutoPilot').addClass('selected');
+            msg = 'Autopilot On';
+        }
+        $(this).attr("title", msg);
+        updateMessage(msg);
+        return false;
+    });
 
     // Playlist Click Events
     $('#AutoPlaylistContainer li.item, #FolderContainer li.item').live('click', function () {
@@ -422,18 +557,18 @@
         $(this).addClass('selected');
         var genre = $(this).data('genre');
         var folder = $(this).data('folder');
-        getRandomSongList('', '#TrackContainer', genre, folder);
+        getRandomSongList('', '#TrackContainer tbody', genre, folder);
     });
     $('#AutoPlaylistContainer li.item a.play, #FolderContainer li.item a.play').live('click', function () {
         var genre = $(this).data('genre');
         var folder = $(this).data('folder');
-        getRandomSongList('autoplay', '#CurrentPlaylistContainer', genre, folder);
+        getRandomSongList('autoplay', '#CurrentPlaylistContainer tbody', genre, folder);
         return false;
     });
     $('#AutoPlaylistContainer li.item a.add, #FolderContainer li.item a.add').live('click', function () {
         var genre = $(this).data('genre');
         var folder = $(this).data('folder');
-        getRandomSongList('', '#CurrentPlaylistContainer', genre, folder);
+        getRandomSongList('', '#CurrentPlaylistContainer tbody', genre, folder);
         return false;
     });
     $('#PlaylistContainer li.item').live('click', function () {
@@ -543,10 +678,11 @@
     });
     $('#songdetails a.rate').live('click', function (event) {
         var itemid = $('#songdetails_song').attr('childid');
-        //rateSong(itemid, 5);
-        starItem(itemid, true);
-        $(this).removeClass('rate');
-        $(this).addClass('favorite');
+        if (itemid !== undefined) {
+            starItem(itemid, true);
+            $(this).removeClass('rate');
+            $(this).addClass('favorite');
+        }
         return false;
     });
     $('#songdetails a.favorite').live('click', function (event) {
@@ -676,6 +812,20 @@
         }
         location.reload(true);
     });
+    $('#SaveTrackPosition').live('click', function () {
+        if ($('#SaveTrackPosition').is(':checked')) {
+            $.cookie('SaveTrackPosition', '1', { expires: 365 });
+            var sm = soundManager.getSoundById('audio');
+            if (sm !== undefined) {
+                saveTrackPosition();
+            }
+        } else {
+            $.cookie('SaveTrackPosition', null);
+            $.cookie('CurrentSong', null);
+            deleteCurrentPlaylist();
+        }
+        //location.reload(true);
+    });
     $('input#Password').keydown(function (e) {
         var unicode = e.charCode ? e.charCode : e.keyCode;
         if (unicode == 13) {
@@ -719,5 +869,5 @@
         }
     }).disableSelection();
 
-});             // End document.ready
+});                                                                                       // End document.ready
 

@@ -94,12 +94,11 @@ h3.title {
 {
     border-bottom: 1px solid #232323;
 }
-#messages
+#messages .message
 {
     color: #d6d469;
     background: #2e2e2e;
-    border: solid 1px #5a5a5a;
-    border-top: none;
+    border: 1px solid #5a5a5a;
 }
 #player
 {
@@ -112,6 +111,14 @@ h3.title {
 }
 .vertshade {
     background-image: -webkit-gradient( linear, left top, right top, from(rgba(46, 46, 46, 0)), to(rgba(46, 46, 46, 1)));
+}
+#songdetails 
+{
+    border: solid 1px #2E2E2E;   
+}
+#songdetails.hover 
+{
+    border: solid 1px #212121;
 }
 #songdetails ul {
     color: #F2F2F2;
@@ -138,6 +145,12 @@ a.button:hover {
 a.button:active {
     color: #000;
     border-color: #444;
+}
+a.selected {
+    color: #939393;
+    border-color: #5a5a5a;
+    -moz-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2) -webkit-box-shadow:0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 ul.simplelist li
 {
@@ -170,6 +183,10 @@ ul.simplelist li.selected
 {
     border-top: 1px solid #F2F2F2;
     background: #2a2a2a;
+}
+#BottomContainer #BottomIndex li a
+{
+    color: #f2f2f2;
 }
 table.songlist th {
     color: #F2F2F2;
@@ -207,8 +224,13 @@ table.songlist tr.selected
     background: #3a3a3a;
 }
 table.songlist tr.playing {
-    background: #1d1d1d;
+    background: #161616;
 }
+#submenu_CurrentPlaylist 
+{
+    background: #2E2E2E;
+    border: solid 1px #212121;
+}    
 ul.preferences li em 
 {
     background: none repeat scroll 0 0 #1d1d1d;
