@@ -494,7 +494,8 @@ table.songlist tr.song td.itemactions
 {
     width: 85px;
     padding-left: 26px;
-    display: block;
+    /*display: block;*/
+    margin: auto 0;
     height: 18px;
 }
 table.songlist tr.song td.track
@@ -609,7 +610,7 @@ table.songlist tr.playing
 }
 table.songlist tr.playing td:first-child
 {
-    background: url('../images/play_alt_gd_16x16.png') 8px 11px no-repeat;
+    background: url('../images/play_alt_gd_16x16.png') 8px center no-repeat;
 }
 table.songlist tr.selected
 {

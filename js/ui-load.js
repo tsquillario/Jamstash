@@ -1,16 +1,16 @@
 ﻿$(window).load(function () {
 
-    if ($.cookie('defaultsmwidth')) {
-        var width = $.cookie('defaultsmwidth');
+    if (getCookie('defaultsmwidth')) {
+        var width = getCookie('defaultsmwidth');
         smwidth = width;
         resizeSMSection(width);
     }
-    if ($.cookie('sidebar') && $.cookie('username') && $.cookie('passwordenc')) {
+    if (getCookie('sidebar') && getCookie('username') && getCookie('passwordenc')) {
         $('#SideBar').show();
         updateChatMessages();
         updateNowPlaying();
     }
-    if ($.cookie('HideAZ')) {
+    if (getCookie('HideAZ')) {
         $('#BottomContainer').hide();
     }
     $('ul#ChangeLog li.log').each(function (i, el) {
@@ -18,9 +18,9 @@
             $(el).hide();
         }
     });
-    if ($.cookie('SaveTrackPosition')) {
+    if (getCookie('SaveTrackPosition')) {
         window.setInterval(function () {
-            if ($.cookie('SaveTrackPosition')) {
+            if (getCookie('SaveTrackPosition')) {
                 var sm = soundManager.getSoundById('audio');
                 if (sm !== undefined) {
                     saveTrackPosition();
@@ -28,8 +28,8 @@
             }
         }, 5000);
     }
-    if ($.cookie('CurrentSong')) {
-        var currentSong = JSON.parse($.cookie("CurrentSong"));
+    if (getCookie('CurrentSong')) {
+        var currentSong = JSON.parse(getCookie("CurrentSong"));
         playSong(null, currentSong.songid, currentSong.albumid, currentSong.position, true);
         loadCurrentPlaylist();
     }
@@ -48,7 +48,7 @@ function resizeContent() {
     var smheight = $('.smsection').height();
     var smwidth = $('.smsection').width();
     $('#BottomContainer').css({ 'top': smheight + 35 + 'px' });
-    if ($.cookie('sidebar')) {
+    if (getCookie('sidebar')) {
         var tabwidth = $(window).width() - 264;
         if (tabwidth >= 700) {
             $('.tabcontent').css({ 'width': tabwidth + 'px' });
@@ -76,7 +76,7 @@ function resizeSMSection(x) {
         $('.smsection').css({ 'width': (newsmwidth) + 'px' });
         $('.actions').css({ 'width': (newsmwidth - 5) + 'px' });
         $('#BottomContainer').css({ 'width': (newsmwidth - 23) + 'px' });
-        $.cookie('defaultsmwidth', newwidth, { expires: 365, path: '/' });
+        setCookie('defaultsmwidth', newwidth);
         var ulwidth = newsmwidth + 6;
         $('#AlbumContainer, #TrackContainer, #PodcastContainer').css({ 'margin-left': ulwidth + 'px' });
     }

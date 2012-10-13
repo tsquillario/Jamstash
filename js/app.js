@@ -11,14 +11,46 @@ var server;
 var smwidth;
 var volume = 50;
 
+function getCookie(value) {
+    if ($.cookie(value)) {
+        return $.cookie(value);
+    } else {
+        return false;
+    }
+    /* jQuery.cookies.js
+    if (browserStorageCheck) {
+        var item = localStorage.getItem(value);
+        if (item != '' && item != undefined) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        if (debug) { console.log('HTML5::loadStorage not supported on your browser' + html.length + ' characters'); }
+    }
+    */
+}
+function setCookie(key, value) {
+    $.cookie(key, value, { expires: 365 });
+    /* jQuery.cookies.js
+    try {
+        if (debug) { console.log('Saving : ' + key + ':' + value); }
+        localStorage.setItem(key, value);
+    } catch (e) {
+        if (e == QUOTA_EXCEEDED_ERR) {
+            alert('Quota exceeded!');
+        }
+    }
+    */
+}
+
 //Sound manager
 soundManager.url = 'js/sm/swf';
-if ($.cookie('ForceFlash')) {
+if (getCookie('ForceFlash')) {
     soundManager.preferFlash = true;
 } else {
     soundManager.preferFlash = false;
 }
-soundManager.debugMode = false;
 soundManager.useHTML5Audio = true;
 
 // Set auth cookies if specified in URL on launch
@@ -26,43 +58,43 @@ var u = getParameterByName('u');
 var p = getParameterByName('p');
 var s = getParameterByName('s');
 if (u && p && s) {
-    if (!$.cookie('username')) {
-        $.cookie('username', u, { expires: 365 });
+    if (!getCookie('username')) {
+        setCookie('username', u);
         username = u;
     }
-    if (!$.cookie('passwordenc')) {
-        $.cookie('passwordenc', p, { expires: 365 });
+    if (!getCookie('passwordenc')) {
+        setCookie('passwordenc', p);
         password = p;
     }
-    if (!$.cookie('Server')) {
-        $.cookie('Server', s, { expires: 365 });
-        baseURL = $.cookie('Server') + '/rest';
+    if (!getCookie('Server')) {
+        setCookie('Server', s, { expires: 365 });
+        baseURL = getCookie('Server') + '/rest';
     }
     window.location.href = getPathFromUrl(window.location);
 }
-if ($.cookie('Server')) {
-    baseURL = $.cookie('Server') + '/rest';
+if (getCookie('Server')) {
+    baseURL = getCookie('Server') + '/rest';
 }
 var applicationName;
-if ($.cookie('ApplicationName')) {
-    applicationName = $.cookie('ApplicationName');
+if (getCookie('ApplicationName')) {
+    applicationName = getCookie('ApplicationName');
 } else {
     applicationName = 'MiniSub';
 }
-if ($.cookie('username')) {
-    username = $.cookie('username');
+if (getCookie('username')) {
+    username = getCookie('username');
 }
-if ($.cookie('passwordenc')) {
-    password = $.cookie('passwordenc');
+if (getCookie('passwordenc')) {
+    password = getCookie('passwordenc');
 } else {
-    if ($.cookie('password')) {
-        password = 'enc:' + HexEncode($.cookie('password'));
+    if (getCookie('password')) {
+        password = 'enc:' + HexEncode(getCookie('password'));
     }
 }
 var auth = makeBaseAuth(username, password);
-if ($.cookie('password')) {
-    $.cookie('passwordenc', 'enc:' + HexEncode($.cookie('password')), { expires: 365 });
-    $.cookie('password', null);
+if (getCookie('password')) {
+    setCookie('passwordenc', 'enc:' + HexEncode(getCookie('password')));
+    setCookie('password', null);
 }
 var version = '1.6.0';
 
@@ -71,8 +103,8 @@ function loadTabContent(tab) {
         switch (tab) {
             case '#tabLibrary':
                 if (debug) { console.log("TAG LIBRARY"); }
-                if ($.cookie('MusicFolders')) {
-                    loadArtists($.cookie('MusicFolders'), false);
+                if (getCookie('MusicFolders')) {
+                    loadArtists(getCookie('MusicFolders'), false);
                 } else {
                     loadArtists();
                 }
@@ -107,6 +139,8 @@ function loadTabContent(tab) {
         }
     }
 }
+
+
 
 
 

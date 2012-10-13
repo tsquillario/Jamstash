@@ -1,13 +1,14 @@
 function generateRowHTML(child, appendto, rowcolor) {
-    var albumhtml, isDir, starred, i;
+    var albumhtml, isDir, starred, duration, i;
     isDir = child.isDir;
     if (child.starred !== undefined) { starred = true; } else { starred = false; }
+    if (child.duration !== undefined) { duration = child.duration; } else { duration = ''; }
     if (isDir === true) {
         albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating, starred);
     } else {
         var track;
         if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
-        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, '', child.artist, child.album, child.coverArt, child.userRating, starred, child.duration);
+        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, '', child.artist, child.album, child.coverArt, child.userRating, starred, duration);
     }
     return albumhtml;
 }
@@ -44,7 +45,12 @@ function generateSongHeaderHTML() {
     return html;
 }
 function generateSongHTML(rowcolor, childid, parentid, track, title, description, artist, album, coverart, rating, starred, duration) {
-    var time = secondsToTime(duration);    
+    var time;
+    if (duration == '') {
+        time = '00:00'
+    } else {
+        time = secondsToTime(duration);    
+    }
     var html;
     html = '<tr class=\"song ' + rowcolor + '\" id=\"' + childid + '\" childid=\"' + childid + '\" parentid=\"' + parentid + '\" duration=\"' + duration + '\" userrating=\"' + rating + '\">';
     html += '<td class=\"itemactions\"><a class=\"add\" href=\"\" title=\"Add To Current Playlist\"></a>';

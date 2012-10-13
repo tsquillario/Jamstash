@@ -125,7 +125,7 @@ function getMusicFolders() {
                     folders[0] = data["subsonic-response"].musicFolders.musicFolder;
                 }
 
-                var savedMusicFolder = $.cookie('MusicFolders');
+                var savedMusicFolder = getCookie('MusicFolders');
                 var options = [];
                 options.push('<option value="all">All Folders</option>');
                 $.each(folders, function (i, folder) {
@@ -158,7 +158,7 @@ function loadAutoPlaylists(refresh) {
     }
     var content = $('#AutoPlaylistContainer').html();
     if (content === "") {
-        var genres = $.cookie('AutoPlaylists');
+        var genres = getCookie('AutoPlaylists');
         var genresArr = [];
         if (genres) {
             genresArr = genres.split(',');
@@ -237,10 +237,10 @@ function getAlbums(id, action, appendto) {
 }
 function getAlbumListBy(id) {
     var size;
-    if ($.cookie('AutoAlbumSize') === null) {
+    if (getCookie('AutoAlbumSize') === null) {
         size = 15;
     } else {
-        size = $.cookie('AutoAlbumSize');
+        size = getCookie('AutoAlbumSize');
     }
     $.ajax({
         url: baseURL + '/getAlbumList.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=json&size=' + size + '&type=' + id,
@@ -285,8 +285,8 @@ function getAlbumListBy(id) {
 function getRandomSongList(action, appendto, genre, folder) {
     var size, gstring;
     gstring = '';
-    if ($.cookie('AutoPlaylistSize')) {
-        size = $.cookie('AutoPlaylistSize');
+    if (getCookie('AutoPlaylistSize')) {
+        size = getCookie('AutoPlaylistSize');
     } else {
         size = 25;
     }
@@ -296,7 +296,7 @@ function getRandomSongList(action, appendto, genre, folder) {
 	if (genre == 'Random') {
 		gstring = '';
 	}
-    if (folder !== undefined) {
+    if (folder !== undefined && folder != '') {
 		gstring = '&musicFolderId=' + folder;
     }
     if (genre == 'Starred') {
@@ -334,10 +334,11 @@ function getRandomSongList(action, appendto, genre, folder) {
                     } else {
                         rowcolor = 'odd';
                     }
-                    var track, starred;
+                    var track, starred, duration;
                     if (item.starred !== undefined) { starred = true; } else { starred = false; }
                     if (item.track === undefined) { track = "&nbsp;"; } else { track = item.track; }
-                    html = generateSongHTML(rowcolor, item.id, item.parent, track, item.title, '', item.artist, item.album, item.coverArt, item.userRating, starred, item.duration);
+                    if (item.duration !== undefined) { duration = item.duration; } else { duration = ''; }
+                    html = generateSongHTML(rowcolor, item.id, item.parent, track, item.title, '', item.artist, item.album, item.coverArt, item.userRating, starred, duration);
                     $(html).appendTo(appendto);
                 });
                 if (appendto === '#TrackContainer tbody') {
@@ -360,8 +361,8 @@ function getRandomSongList(action, appendto, genre, folder) {
 }
 function getStarred(action, appendto, type) {
     var size;
-    if ($.cookie('AutoPlaylistSize')) {
-        size = $.cookie('AutoPlaylistSize');
+    if (getCookie('AutoPlaylistSize')) {
+        size = getCookie('AutoPlaylistSize');
     } else {
         size = 25;
     }
@@ -501,7 +502,7 @@ function updateNowPlaying(showPopup) {
                         } else {
                             coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=json&size=50&id=' + msg.coverArt;
                         }
-                        if ($.cookie('Notification_NowPlaying')) {
+                        if (getCookie('Notification_NowPlaying')) {
                             var sid = msg.username + '-' + msg.id;
                             if (jQuery.inArray(sid, updaterNowPlayingIdList) === -1 && username != msg.username) {
                                 showNotification(coverartSrc, toHTML.un(msg.username + ':' + msg.playerName), toHTML.un(msg.artist + ' - ' + msg.title), 'text');
@@ -562,10 +563,11 @@ function search(type, query) {
                     if (isDir === true) {
                         albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating, starred);
                     } else {
-                        var track, starred;
+                        var track, starred, duration;
                         if (child.starred !== undefined) { starred = true; } else { starred = false; }
                         if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
-                        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, '', child.artist, child.album, child.coverArt, child.userRating, starred, child.duration);
+                        if (child.duration !== undefined) { duration = child.duration; } else { duration = ''; }
+                        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, '', child.artist, child.album, child.coverArt, child.userRating, starred, duration);
                     }
                     $(albumhtml).appendTo("#AlbumRows");
                 });
@@ -821,7 +823,7 @@ function countCurrentPlaylist(container) {
         var time = 0;
         $(container + ' tr.song').each(function (index) {
             var duration = $(this).attr('duration');
-            if (duration !== undefined && duration != '') {
+            if (duration != '') {
                 time += parseInt(duration);
             }
         });
@@ -851,7 +853,7 @@ function saveCurrentPlaylist() {
 function deleteCurrentPlaylist() {
     if (browserStorageCheck) {
         localStorage.removeItem('CurrentPlaylist');
-        $.cookie('CurrentSong', null);
+        setCookie('CurrentSong', null);
         if (debug) { console.log('Removing Current Playlist'); }
     } else {
         if (debug) { console.log('HTML5::loadStorage not supported on your browser' + html.length + ' characters'); }
@@ -935,10 +937,11 @@ function getPlaylist(id, action, appendto) {
                     } else {
                         rowcolor = 'odd';
                     }
-                    var track, starred;
+                    var track, starred, duration;
                     if (child.starred !== undefined) { starred = true; } else { starred = false; }
                     if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
-                    html = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, '', child.artist, child.album, child.coverArt, child.userRating, starred, child.duration);
+                    if (child.duration !== undefined) { duration = child.duration; } else { duration = ''; }
+                    html = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, '', child.artist, child.album, child.coverArt, child.userRating, starred, duration);
                     $(html).appendTo(appendto);
                 });
                 if (appendto === '#TrackContainer tbody') {
@@ -1047,10 +1050,11 @@ function getPodcast(id, action, appendto) {
                     var description = 'Published: ' + date + '\n\n';
                     description += child.description;
 
-                    var starred;
+                    var starred, duration;
                     if (child.starred !== undefined) { starred = true; } else { starred = false; }
+                    if (child.duration !== undefined) { duration = child.duration; } else { duration = ''; }
                     var time = secondsToTime(child.duration);
-                    html = generateSongHTML(rowcolor, child.streamId, child.parent, child.track, child.title, description, child.artist, child.album, child.coverArt, child.userRating, starred, child.duration);
+                    html = generateSongHTML(rowcolor, child.streamId, child.parent, child.track, child.title, description, child.artist, child.album, child.coverArt, child.userRating, starred, duration);
                     $(html).appendTo(appendto);
                     count++;
                 });

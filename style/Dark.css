@@ -100,6 +100,12 @@ h3.title {
     background: #2e2e2e;
     border: 1px solid #5a5a5a;
 }
+#status
+{
+    background: #222;
+    border-top: 1px solid #1D1D1D;
+    border-left: 1px solid #1D1D1D;
+}
 #player
 {
     background: #2E2E2E;
@@ -130,7 +136,7 @@ a.button {
     -moz-transition: border .218s;
     -o-transition: border-color .218s;
     transition: border-color .218s;
-    background: #f3f3f3;
+    background: #2E2E2E;
     background: -webkit-gradient(linear,0% 40%,0% 70%,from(#323232),to(#2e2e2e));
     background: -moz-linear-gradient(linear,0% 40%,0% 70%,from(#323232),to(#2e2e2e));
     border: solid 1px #1d1d1d;

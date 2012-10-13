@@ -1,63 +1,63 @@
 ﻿$(document).ready(function () {
     //User config staff
-    $('#Username').val($.cookie('username'));
-    //$('#Password').val($.cookie('passwordenc'));
-    $('#AutoPlaylists').val($.cookie('AutoPlaylists'));
-    $('#AutoAlbumSize').val($.cookie('AutoAlbumSize'));
-    $('#AutoPlaylistSize').val($.cookie('AutoPlaylistSize'));
-    $('#Server').val($.cookie('Server'));
-    $('#ApplicationName').val($.cookie('ApplicationName'));
+    if (getCookie('username')) { $('#Username').val(getCookie('username')); }
+    //$('#Password').val(getCookie('passwordenc'));
+    if (getCookie('AutoPlaylists')) { $('#AutoPlaylists').val(getCookie('AutoPlaylists')); }
+    if (getCookie('AutoAlbumSize')) { $('#AutoAlbumSize').val(getCookie('AutoAlbumSize')); }
+    if (getCookie('AutoPlaylistSize')) { $('#AutoPlaylistSize').val(getCookie('AutoPlaylistSize')); }
+    if (getCookie('Server')) { $('#Server').val(getCookie('Server')); }
+    if (getCookie('ApplicationName')) { $('#ApplicationName').val(getCookie('ApplicationName')); }
 
     // Set Preferences defaults
-    if ($.cookie('Theme')) {
-        $('#Theme').val($.cookie('Theme'));
-        var theme = $.cookie('Theme');
+    if (getCookie('Theme')) {
+        $('#Theme').val(getCookie('Theme'));
+        var theme = getCookie('Theme');
         switchTheme(theme);
     }
-    if ($.cookie('HideAZ')) {
+    if (getCookie('HideAZ')) {
         $('#HideAZ').attr('checked', true);
     } else {
         $('#HideAZ').attr('checked', false);
     }
-    if ($.cookie('Notification_Song')) {
+    if (getCookie('Notification_Song')) {
         $('#Notification_Song').attr('checked', true);
     } else {
         $('#Notification_Song').attr('checked', false);
     }
-    if ($.cookie('Notification_NowPlaying')) {
+    if (getCookie('Notification_NowPlaying')) {
         $('#Notification_NowPlaying').attr('checked', true);
     } else {
         $('#Notification_NowPlaying').attr('checked', false);
     }
-    if ($.cookie('ScrollTitle')) {
+    if (getCookie('ScrollTitle')) {
         $('#ScrollTitle').attr('checked', true);
     } else {
         $('#ScrollTitle').attr('checked', false);
     }
-    if ($.cookie('Debug')) {
+    if (getCookie('Debug')) {
         $('#Debug').attr('checked', true);
         debug = true;
         soundManager.debugMode = true;
     } else {
         $('#Debug').attr('checked', false);
     }
-    if ($.cookie('ForceFlash')) {
+    if (getCookie('ForceFlash')) {
         $('#ForceFlash').attr('checked', true);
     } else {
         $('#ForceFlash').attr('checked', false);
     }
-    if ($.cookie('SaveTrackPosition')) {
+    if (getCookie('SaveTrackPosition')) {
         $('#SaveTrackPosition').attr('checked', true);
     } else {
         $('#SaveTrackPosition').attr('checked', false);
     }
-    if ($.cookie('AutoPilot')) {
-        $.cookie('AutoPilot', null)
+    if (getCookie('AutoPilot')) {
+        setCookie('AutoPilot', null)
     }
 
     // Tabs
     $('.tabcontent').hide(); //Hide all content
-    if (!$.cookie('username') && !$.cookie('passwordenc') && !$.cookie('Server')) {
+    if (!getCookie('username') && !getCookie('passwordenc') && !getCookie('Server')) {
         $('ul.tabs li a').each(function () {
             if ($(this).attr("href") == '#tabPreferences') {
                 $(this).addClass("active"); //Add "active" class to selected tab
@@ -81,9 +81,9 @@
             var firstTab = $("ul.tabs li:first a").attr("href");
             loadTabContent(firstTab);
         }
-        $('a#logo').attr("href", $.cookie('Server'));
+        $('a#logo').attr("href", getCookie('Server'));
         $('a#logo').attr("title", 'Launch Subsonic');
-        if ($.cookie('Notification_NowPlaying')) {
+        if (getCookie('Notification_NowPlaying')) {
             updateNowPlaying(true);
         }
         ping();
@@ -158,7 +158,7 @@
     $('#MusicFolders').live('change', function () {
         var folder = $(this).val();
         loadArtists(folder, true);
-        $.cookie('MusicFolders', folder, { expires: 365 });
+        setCookie('MusicFolders', folder);
     });
     $('#ArtistContainer li.item').live('click', function () {
         $('#AutoAlbumContainer li').removeClass('selected');
@@ -375,8 +375,8 @@
     });
     $('#action_RefreshArtists').click(function () {
         //loadArtists("", true);
-        if ($.cookie('MusicFolders')) {
-            loadArtists($.cookie('MusicFolders'), true);
+        if (getCookie('MusicFolders')) {
+            loadArtists(getCookie('MusicFolders'), true);
         } else {
             loadArtists(null, true);
         }
@@ -535,16 +535,18 @@
     });
     $('#action_AutoPilot').click(function () {
         var msg;
-        if ($.cookie('AutoPilot')) {
-            $.cookie('AutoPilot', null);
+        if (getCookie('AutoPilot')) {
+            setCookie('AutoPilot', null);
             msg = 'Autopilot Off';
             $('#action_AutoPilot').removeClass('selected');
         } else {
-            $('#CurrentPlaylistContainer tbody').empty();
-            getRandomSongList('', '#CurrentPlaylistContainer tbody', '', '');
-            $.cookie('AutoPilot', true, { expires: 365 });
+            setCookie('AutoPilot', true);
             $('#action_AutoPilot').addClass('selected');
             msg = 'Autopilot On';
+            if ($('#CurrentPlaylistContainer tbody').html() == '') {
+                $('#CurrentPlaylistContainer tbody').empty();
+                getRandomSongList('', '#CurrentPlaylistContainer tbody', '', '');
+            }
         }
         $(this).attr("title", msg);
         updateMessage(msg);
@@ -696,13 +698,13 @@
 
     // Side Bar Click Events
     $('#action_ToggleSideBar').live('click', function () {
-        if ($.cookie('sidebar')) {
-            $.cookie('sidebar', null);
+        if (getCookie('sidebar')) {
+            setCookie('sidebar', null);
             $('#SideBar').hide();
             stopUpdateChatMessages();
             stopUpdateNowPlaying();
         } else {
-            $.cookie('sidebar', true, { expires: 365 });
+            setCookie('sidebar', true);
             $('#SideBar').show();
             updateChatMessages();
             updateNowPlaying(false);
@@ -725,30 +727,30 @@
     $('#SavePreferences').live('click', function () {
         var username = $('#Username').val();
         var password = $('#Password').val();
-        $.cookie('username', username, { expires: 365 });
+        setCookie('username', username);
         if (password != "") {
-            $.cookie('passwordenc', 'enc:' + HexEncode(password), { expires: 365 });
+            setCookie('passwordenc', 'enc:' + HexEncode(password));
         }
         var AutoPlaylists = $('#AutoPlaylists').val();
-        $.cookie('AutoPlaylists', AutoPlaylists, { expires: 365 });
+        setCookie('AutoPlaylists', AutoPlaylists);
         var AutoAlbumSize = $('#AutoAlbumSize').val();
-        $.cookie('AutoAlbumSize', AutoAlbumSize, { expires: 365 });
+        setCookie('AutoAlbumSize', AutoAlbumSize);
         var AutoPlaylistSize = $('#AutoPlaylistSize').val();
-        $.cookie('AutoPlaylistSize', AutoPlaylistSize, { expires: 365 });
+        setCookie('AutoPlaylistSize', AutoPlaylistSize);
         var server = $('#Server').val();
         if (server != "") {
-            $.cookie('Server', server, { expires: 365 });
+            setCookie('Server', server);
         }
         var applicationname = $('#ApplicationName').val();
         if (applicationname != "") {
-            $.cookie('ApplicationName', applicationname, { expires: 365 });
+            setCookie('ApplicationName', applicationname);
         }
         location.reload(true);
     });
     $('#Theme').live('change', function () {
         var theme = $(this).val();
         switchTheme(theme);
-        $.cookie('Theme', theme, { expires: 365 });
+        setCookie('Theme', theme);
     });
     $('#Genres').live('change', function () {
         var genre = $(this).val();
@@ -763,10 +765,10 @@
     });
     $('#HideAZ').live('click', function () {
         if ($('#HideAZ').is(':checked')) {
-            $.cookie('HideAZ', '1', { expires: 365 });
+            setCookie('HideAZ', '1');
             $('#BottomContainer').hide();
         } else {
-            $.cookie('HideAZ', null);
+            setCookie('HideAZ', null);
             $('#BottomContainer').show();
         }
     });
@@ -774,54 +776,60 @@
         if ($('#Notification_Song').is(':checked')) {
             requestPermissionIfRequired();
             if (hasNotificationPermission()) {
-                $.cookie('Notification_Song', '1', { expires: 365 });
+                setCookie('Notification_Song', '1');
+            } else {
+                alert('HTML5 Notifications are not available for your current browser, Sorry :(');
+                return false;
             }
         } else {
-            $.cookie('Notification_Song', null);
+            setCookie('Notification_Song', null);
         }
     });
     $('#Notification_NowPlaying').live('click', function () {
         if ($('#Notification_NowPlaying').is(':checked')) {
             requestPermissionIfRequired();
             if (hasNotificationPermission()) {
-                $.cookie('Notification_NowPlaying', '1', { expires: 365 });
+                setCookie('Notification_NowPlaying', '1');
+            } else {
+                alert('HTML5 Notifications are not available for your current browser, Sorry :(');
+                return false;
             }
         } else {
-            $.cookie('Notification_NowPlaying', null);
+            setCookie('Notification_NowPlaying', null);
         }
     });
     $('#ScrollTitle').live('click', function () {
         if ($('#ScrollTitle').is(':checked')) {
-            $.cookie('ScrollTitle', '1', { expires: 365 });
+            setCookie('ScrollTitle', '1');
         }
     });
     $('#Debug').live('click', function () {
         if ($('#Debug').is(':checked')) {
-            $.cookie('Debug', '1', { expires: 365 });
+            setCookie('Debug', '1');
             debug = true;
         } else {
-            $.cookie('Debug', null);
+            setCookie('Debug', null);
             debug = false;
         }
     });
     $('#ForceFlash').live('click', function () {
         if ($('#ForceFlash').is(':checked')) {
-            $.cookie('ForceFlash', '1', { expires: 365 });
+            setCookie('ForceFlash', '1');
         } else {
-            $.cookie('ForceFlash', null);
+            setCookie('ForceFlash', null);
         }
         location.reload(true);
     });
     $('#SaveTrackPosition').live('click', function () {
         if ($('#SaveTrackPosition').is(':checked')) {
-            $.cookie('SaveTrackPosition', '1', { expires: 365 });
+            setCookie('SaveTrackPosition', '1');
             var sm = soundManager.getSoundById('audio');
             if (sm !== undefined) {
                 saveTrackPosition();
             }
         } else {
-            $.cookie('SaveTrackPosition', null);
-            $.cookie('CurrentSong', null);
+            setCookie('SaveTrackPosition', null);
+            setCookie('CurrentSong', null);
             deleteCurrentPlaylist();
         }
         //location.reload(true);
@@ -833,13 +841,13 @@
         }
     });
     $('#ResetPreferences').live('click', function () {
-        $.cookie('username', null);
-        $.cookie('password', null);
-        $.cookie('AutoAlbumSize', null);
-        $.cookie('AutoPlaylistSize', null);
-        $.cookie('Server', null);
-        $.cookie('ApplicationName', null);
-        $.cookie('HideAZ', null);
+        setCookie('username', null);
+        setCookie('password', null);
+        setCookie('AutoAlbumSize', null);
+        setCookie('AutoPlaylistSize', null);
+        setCookie('Server', null);
+        setCookie('ApplicationName', null);
+        setCookie('HideAZ', null);
         location.reload(true);
     });
     $('#ChangeLogShowMore').live('click', function () {
@@ -869,5 +877,5 @@
         }
     }).disableSelection();
 
-});                                                                                       // End document.ready
+});                                                                                             // End document.ready
 

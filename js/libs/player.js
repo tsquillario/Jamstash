@@ -128,7 +128,7 @@ function playSong(el, songid, albumid, position, loadonly) {
                         onfinish: function () {
                             var next = $('#CurrentPlaylistContainer tr.playing').next();
                             if (!changeTrack(next)) {
-                                if ($.cookie('AutoPilot')) {
+                                if (getCookie('AutoPilot')) {
                                     //var genre = $(this).data('genre');
                                     //var folder = $(this).data('folder');
                                     getRandomSongList('', '#CurrentPlaylistContainer tbody', '', '');
@@ -161,10 +161,10 @@ function playSong(el, songid, albumid, position, loadonly) {
                 scrobbleSong(false);
                 scrobbled = false;
 
-                if ($.cookie('Notification_Song')) {
+                if (getCookie('Notification_Song')) {
                     showNotification(coverartSrc, toHTML.un(title), toHTML.un(artist + ' - ' + album), 'text');
                 }
-                if ($.cookie('ScrollTitle')) {
+                if (getCookie('ScrollTitle')) {
                     scrollTitle(toHTML.un(artist) + ' - ' + toHTML.un(title));
                 } else {
                     setTitle(toHTML.un(artist) + ' - ' + toHTML.un(title));
@@ -254,8 +254,8 @@ function playPauseSong() {
         var el = $('#songdetails_song');
         var songid = el.attr('childid');
         if (songid != '') {
-            if ($.cookie("CurrentSong")) {
-                var currentSong = JSON.parse($.cookie("CurrentSong"));
+            if (getCookie("CurrentSong")) {
+                var currentSong = JSON.parse(getCookie("CurrentSong"));
                 playSong($('#' + songid), currentSong.songid, currentSong.albumid, currentSong.position, false);
                 var playing = $('#' + songid);
                 if (playing != undefined) {
@@ -333,7 +333,7 @@ function saveTrackPosition() {
                 albumid: albumid,
                 position: position
             };
-            $.cookie('CurrentSong', JSON.stringify(currentSong));
+            setCookie('CurrentSong', JSON.stringify(currentSong));
             saveCurrentPlaylist();
         }
     }
