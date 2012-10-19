@@ -30,7 +30,7 @@ You will need a Subsonic server to be able to play your own music. Subsonic is a
 Change Log inside...
 
 **Permissions**
-*You will have to allow MiniSub to "Access your data on all websites". This is required because your Subsonic server could be at any URL `http://*/*` or `https://*/*` 
-*I NEVER access, read, modify, store, or transmit your personal data.
+* You will have to allow MiniSub to "Access your data on all websites". This is required because your Subsonic server could be at any URL `http://*/*` or `https://*/*` 
+* I NEVER access, read, modify, store, or transmit your personal data.
 * https://github.com/tsquillario/MiniSub/blob/master/manifest.json
 * http://developer.chrome.com/extensions/xhr.html
