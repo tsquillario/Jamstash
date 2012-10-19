@@ -30,7 +30,7 @@ Donations: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=
 Change Log inside...
 
 **Permissions**
-* You will have to allow MiniSub to "Access your data on all websites". This is required because your Subsonic server could be at any URL `http://*/*` or `https://*/*` 
-* I NEVER access, read, modify, store, or transmit your personal data.
-* [https://github.com/tsquillario/MiniSub/blob/master/manifest.json](https://github.com/tsquillario/MiniSub/blob/master/manifest.json)
-* [http://developer.chrome.com/extensions/xhr.html](http://developer.chrome.com/extensions/xhr.html)
+You will have to allow MiniSub to "Access your data on all websites". This is required because your Subsonic server could be at any URL `http://*/*` or `https://*/*` 
+I NEVER access, read, modify, store, or transmit your personal data.
+https://github.com/tsquillario/MiniSub/blob/master/manifest.json
+http://developer.chrome.com/extensions/xhr.html
