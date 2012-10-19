@@ -112,12 +112,15 @@ function updateMessage(msg) {
         msgIndex++;
     }
 }
-function updateStatus(msg) {
-    $('#status').html(msg);
-    if ($('#tabLibrary').not(':visible')) {
-        if ($('#status').html() != '') {
-            $('#status').fadeIn();
-        }
+function updateStatus(el, msg) {
+    if (msg == '') {
+        $(el).html('0 song(s), 00:00:00 total time');
+    } else {
+        $(el).html(msg);
+    }
+    if ($(el).html() != '') {
+        $(el).addClass('on');
+        $(el).fadeIn();
     }
 }
 // Convert to unicode support
@@ -252,6 +255,21 @@ function checkVersion(runningVersion, minimumVersion) {
         }
     } else {
         return false;
+    }
+}
+function checkVersionNewer(runningVersion, newVersion) {
+    if (runningVersion.major < newVersion.major) {
+        return true;
+    } else {
+        if (runningVersion.minor < newVersion.minor) {
+            return true;
+        } else {
+            if (runningVersion.patch < newVersion.patch) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }
 function switchTheme(theme) {

@@ -19,7 +19,7 @@ function playSong(el, songid, albumid, position, loadonly) {
                 }
                 $.each(children, function (i, child) {
                     if (child.id == songid) {
-                        title = child.title;
+                        title = child.title.toString();
                         artist = child.artist;
                         album = child.album;
                         coverart = child.coverArt;
@@ -67,6 +67,7 @@ function playSong(el, songid, albumid, position, loadonly) {
                         url: baseURL + '/stream.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
                         stream: true,
                         type: 'audio/mp3',
+                        multiShot: false,
                         whileloading: function () {
                             //if (debug) { console.log('loaded:' + this.bytesLoaded + ' total:' + this.bytesTotal); }
                             var percent = this.bytesLoaded / this.bytesTotal;
@@ -105,9 +106,8 @@ function playSong(el, songid, albumid, position, loadonly) {
                             scrubber.click(function (e) {
                                 var x = (e.pageX - this.offsetLeft) / scrubber.width();
                                 var position = Math.round(dp * 1000 * x);
-                                soundManager.play('audio', {
-                                    position: position
-                                });
+                                var s = soundManager.getSoundById('audio');
+                                s.setPosition(position);
                             });
                             scrubber.mouseover(function (e) {
                                 $('.audiojs .scrubber').stop().animate({ height: '8px' });
@@ -141,10 +141,11 @@ function playSong(el, songid, albumid, position, loadonly) {
                     });
                     if (position == 0) {
                         soundManager.play('audio');
+                        soundManager.setVolume('audio', volume);
                     } else {
                         var p = position;
-                        //soundManager.play('audio', { position: p });
                         seekAndPlay('audio', p);
+                        soundManager.setVolume('audio', volume);
                     }
                     var submenu = $('div#submenu_CurrentPlaylist');
                     if (submenu.is(":visible")) {
@@ -175,23 +176,23 @@ function playSong(el, songid, albumid, position, loadonly) {
 }
 function seekAndPlay(soundID, soundPosition) {
     var s = soundManager.getSoundById(soundID);
-    if (!s) {
-        return false;
-    }
-    if (s.readyState === 0) { // hasn't started loading yet...
-        // load the whole sound, and play when it's done
-        s.load({
-            onload: function () {
-                this.play({
-                    position: soundPosition
-                });
-            }
-        });
-    } else if (s.readyState === 3) {
-        // sound has already loaded, ready to go
-        s.play({
-            position: soundPosition
-        });
+    if (s) {
+        s.unload();
+        if (s.readyState === 0) { // hasn't started loading yet...
+            // load the whole sound, and play when it's done
+            s.load({
+                onload: function () {
+                    this.play({
+                        position: soundPosition
+                    });
+                }
+            });
+        } else if (s.readyState === 3) {
+            // sound has already loaded, ready to go
+            s.play({
+                position: soundPosition
+            });
+        }
     }
 }
 function scrobbleSong(submission) {
@@ -319,23 +320,4 @@ function nextPlay() {
         } else {
             //song = $('#CurrentPlaylistContainer tr.playing').next();
         }
-}
-function saveTrackPosition() {
-    var el = $('#songdetails_song');
-    var songid = el.attr('childid');
-    if (songid !== undefined) {
-        var albumid = el.attr('parentid');
-        var sm = soundManager.getSoundById('audio');
-        var position = sm.position;
-        if (position != null && position >= 5000) {
-            var currentSong = {
-                songid: songid,
-                albumid: albumid,
-                position: position
-            };
-            setCookie('CurrentSong', JSON.stringify(currentSong));
-            saveCurrentPlaylist();
-        }
-    }
-    if (debug) { console.log('Saving Track Position: songid:' + songid + ', albumid:' + albumid + ', position:' + position); }
 }

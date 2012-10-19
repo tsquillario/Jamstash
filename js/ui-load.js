@@ -63,7 +63,7 @@ function resizeContent() {
         }
     }
     var tabwidth = $('.tabcontent').width();
-    $('#AlbumContainer, #TrackContainer, #PodcastContainer, #CurrentPlaylistContainer').css({ 'width': (tabwidth - smwidth - 40) + 'px' });
+    $('#AlbumContainer, #TrackContainer, #PodcastContainer, #CurrentPlaylistContainer').css({ 'width': (tabwidth - smwidth - 45) + 'px' });
     $('#CurrentPlaylistContainer').css({ 'width': (tabwidth - 30) + 'px' });
     $('#player').css({ 'width': tabwidth + 'px' });
 }
@@ -78,6 +78,6 @@ function resizeSMSection(x) {
         $('#BottomContainer').css({ 'width': (newsmwidth - 23) + 'px' });
         setCookie('defaultsmwidth', newwidth);
         var ulwidth = newsmwidth + 6;
-        $('#AlbumContainer, #TrackContainer, #PodcastContainer').css({ 'margin-left': ulwidth + 'px' });
+        $('#AlbumContainer, #TrackContainer, #PodcastContainer').css({ 'margin-left': (ulwidth + 15) + 'px' });
     }
 }

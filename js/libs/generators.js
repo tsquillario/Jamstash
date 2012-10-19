@@ -14,7 +14,7 @@ function generateRowHTML(child, appendto, rowcolor) {
 }
 function generateAlbumHeaderHTML() {
     var html;
-    html = '<tr><th></th><th></th><th>Album</th><th>Artist</th></tr>';
+    html = '<tr><th></th><th></th><th class=\"type-string\">Album</th><th class=\"type-string\">Artist</th></tr>';
     return html;
 }
 function generateAlbumHTML(rowcolor, childid, parentid, coverart, title, artist, rating, starred) {
@@ -41,7 +41,7 @@ function generateAlbumHTML(rowcolor, childid, parentid, coverart, title, artist,
 }
 function generateSongHeaderHTML() {
     var html;
-    html = '<tr><th></th><th>Track</th><th>Title</th><th>Artist</th><th>Album</th><th class=\"alignright\">Time</th></tr>';
+    html = '<tr><th></th><th class=\"type-int\">Track</th><th class=\"type-string\">Title</th><th class=\"type-string\">Artist</th><th class=\"type-string\">Album</th><th class=\"alignright\">Time</th></tr>';
     return html;
 }
 function generateSongHTML(rowcolor, childid, parentid, track, title, description, artist, album, coverart, rating, starred, duration) {
@@ -76,11 +76,12 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, description
     } else {
         coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=json&size=25&id=' + coverart;
     }
-    html += '<td class=\"album\"><a href="#" class=\"albumlink\"><img src=\"' + coverartSrc + '\" />' + album + '</a></td>';
+    html += '<td class=\"album\" data-order-by=\"' + album + '\"><a href="#" class=\"albumlink\"><img src=\"' + coverartSrc + '\" />' + album + '</a></td>';
     html += '<td class=\"time\">' + time + '</td>';
     html += '</tr>';
     return html;
 }
+// Depreciated: 10/17/2012
 function refreshRowColor(el) {
     $.each($(el + ' tr.song'), function (i) {
         $(this).removeClass('even odd');

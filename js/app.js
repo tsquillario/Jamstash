@@ -10,6 +10,7 @@ var passwordenc;
 var server;
 var smwidth;
 var volume = 50;
+var currentVersion = '2.2.0';
 
 function getCookie(value) {
     if ($.cookie(value)) {
@@ -96,6 +97,9 @@ if (getCookie('password')) {
     setCookie('passwordenc', 'enc:' + HexEncode(getCookie('password')));
     setCookie('password', null);
 }
+if (getCookie('Volume')) {
+    volume = parseInt(getCookie('Volume'));
+}
 var version = '1.6.0';
 
 function loadTabContent(tab) {
@@ -113,19 +117,28 @@ function loadTabContent(tab) {
             case '#tabCurrent':
                 if (debug) { console.log("TAG CURRENT"); }
                 var header = generateSongHeaderHTML();
-                $("#CurrentPlaylistContainer thead").html(header);
-                window.location.hash = '#tabCurrent';
-                updateStatus(countCurrentPlaylist('#CurrentPlaylistContainer'));
+                $('#CurrentPlaylistContainer thead').html(header);
+                var count = $('#CurrentPlaylistContainer tbody tr.song').size();
+                updateStatus('#status_Current', countCurrentPlaylist('#CurrentPlaylistContainer'));
+                if (count > 0) {
+                    $('#currentActions a.button').removeClass('disabled');
+                }
+                var songid = $('#CurrentPlaylistContainer tbody tr.playing').attr('childid');
+                if (songid !== undefined) {
+                    $('#CurrentPlaylist').scrollTo($('#' + songid), 400);
+                }
                 break;
             case '#tabPlaylists':
                 if (debug) { console.log("TAG PLAYLIST"); }
                 loadPlaylists();
                 loadFolders();
                 loadAutoPlaylists();
+                updateStatus('#status_Playlists', countCurrentPlaylist('#TrackContainer'));
                 break;
             case '#tabPodcasts':
                 if (debug) { console.log("TAG PODCAST"); }
                 loadPodcasts();
+                updateStatus('#status_Podcasts', countCurrentPlaylist('#PodcastContainer'));
                 break;
             case '#tabVideos':
                 if (debug) { console.log("TAG VIDEOS"); }

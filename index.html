@@ -17,6 +17,7 @@
     <script src="js/plugins/jquery.dateFormat-1.0.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.disable.text.select.pack.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.hotkeys.js" type="text/javascript"></script>
+    <script src="js/plugins/jquery.stupidtable.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.linkify-1.0-min.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.periodic.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.scrollTo-1.4.2-min.js" type="text/javascript"></script>
@@ -54,23 +55,23 @@
                 <a href="#" class="button" id="action_IncreaseWidth" title="Increase Width"><img src="images/plus_8x8.png" /></a>
             </div>
             <div class="subactions floatleft">
-                <div id="songactions">
-                <a href="#" class="button" id="action_SelectAll" title="Select All">All</a>
-                <a href="#" class="button" id="action_SelectNone" title="Select None">None</a>
-                <a href="#" class="button" id="action_AddToPlaylist" title="Add Selected To Playlist">+ Playlist</a>
+                <div id="songActions">
+                <a href="#" class="button disabled" id="action_SelectAll" title="Select All">All</a>
+                <a href="#" class="button disabled" id="action_SelectNone" title="Select None">None</a>
+                <a href="#" class="button disabled" id="action_AddToPlaylist" title="Add Selected To Playlist">+ Playlist</a>
                 <div id="submenu_AddToPlaylist" class="submenu shadow" style="display: none;"></div>
-                <a href="#" class="button" id="action_AddToCurrent" title="Add Selected To Current Playlist">+ Current</a>
-                <a href="#" class="button" id="action_AddAllToCurrent" title="Add All to Current Playlist">+All</a>
-                <a href="#" class="button" id="action_PlayAlbum" title="Play Album"><img src="images/play_gl_6x8.png" /></a>
+                <a href="#" class="button disabled" id="action_AddToCurrent" title="Add Selected To Current Playlist">+ Current</a>
+                <a href="#" class="button disabled" id="action_AddAllToCurrent" title="Add All to Current Playlist">+All</a>
+                <a href="#" class="button disabled" id="action_PlayAlbum" title="Play Album"><img src="images/play_gl_6x8.png" /></a>
                 </div>
-                <input type="text" id="Search" class="medium" />
+                <input type="text" id="Search" class="medium" title="Wildcards (*) supported"/>
                 <select id="SearchType" name="SearchType">
                     <option value="song">Song</option>
                     <option value="album">Album</option>
                 </select>
                 <a href="#" class="button" id="action_Search" title="Search"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
             </div>
-            <div id="Albums" class="lgsection floatleft">
+            <div id="Albums" class="section lgsection floatleft">
                 <div class="loading"></div>
                 <div id="Artists" class="smsection floatleft" tabindex="0">
                     <div class="padder">
@@ -91,11 +92,11 @@
                 <div id="BottomContainer"><ul id="BottomIndex"></ul></div>
                 </div>
                 <table id="AlbumContainer" class="simplelist songlist noselect" cellspacing="1">
-                <thead id="AlbumHeader"></thead>
-                <tbody id="AlbumRows"></tbody>
+                <thead></thead>
+                <tbody></tbody>
                 </table>
             </div>
-            
+            <div id="status_Library" class="status alignleft" data-type="" data-offset=""><img src="images/arrow_left_gl_8x8.png" /> <a id="action_PreviousAlbumList" class="previous" href="#">Previous</a> | <a id="action_NextAlbumList" class="next" href="#">Next</a> <img src="images/arrow_right_gl_8x8.png" /></div>            
         </div>
         <div id="tabCurrent" class="tabcontent">
             <div class="actions floatleft">
@@ -103,19 +104,21 @@
                 <a href="#" class="button" id="action_Empty" title="Remove All">Empty</a>
             </div>
             <div class="subactions floatleft">
-                <a href="#" class="button" id="action_CurrentSelectAll" title="Select All">All</a>
-                <a href="#" class="button" id="action_CurrentSelectNone" title="Select None">None</a>
-                <a href="#" class="button" id="action_AddCurrentToPlaylist" title="Add Selected To Playlist">+ Playlist</a>
+                <div id="currentActions">
+                <a href="#" class="button disabled" id="action_CurrentSelectAll" title="Select All">All</a>
+                <a href="#" class="button disabled" id="action_CurrentSelectNone" title="Select None">None</a>
+                <a href="#" class="button disabled" id="action_AddCurrentToPlaylist" title="Add Selected To Playlist">+ Playlist</a>
                 <div id="submenu_AddCurrentToPlaylist" class="submenu shadow" style="display: none;"></div>
                 <a href="#" class="button" id="action_AutoPilot" title="Autopilot"><img class="pad" src="images/steering_wheel_gd_12x12.png" /></a>
+                </div>
             </div>
-            <div id="CurrentPlaylist" class="fullsection floatleft noselect">
+            <div id="CurrentPlaylist" class="section fullsection floatleft noselect">
                 <table id="CurrentPlaylistContainer" class="simplelist songlist" cellspacing="1">
                 <thead></thead>
                 <tbody></tbody>
                 </table>
             </div>
-            <div id="status"></div>
+            <div id="status_Current" class="status">0 song(s), 00:00:00 total time</div>
         </div>
         <div id="tabPlaylists" class="tabcontent">
             <div class="actions floatleft">
@@ -129,7 +132,7 @@
                 <a href="#" class="button" id="action_RemoveSongs" title="Remove selected song(s) from playlist">Remove Song(s)</a>
             </div>
             <div class="clear"></div>
-            <div id="Tracks" class="lgsection floatleft noselect">
+            <div id="Tracks" class="section lgsection floatleft noselect">
                 <div class="loading"></div>
                 <div id="Playlists" class="smsection floatleft noselect">
                     <div class="padder">
@@ -146,6 +149,7 @@
                 <tbody></tbody>
                 </table>
             </div>
+            <div id="status_Playlists" class="status">0 song(s), 00:00:00 total time</div>
         </div>
         <div id="tabPodcasts" class="tabcontent">
             <div class="actions floatleft">
@@ -154,7 +158,7 @@
             <div class="subactions floatleft">
             </div>
             <div class="clear"></div>
-            <div id="Podcasts" class="lgsection floatleft noselect">
+            <div id="Podcasts" class="section lgsection floatleft noselect">
                 <div class="loading"></div>
                 <div id="PodcastList" class="smsection floatleft noselect">
                     <div class="padder">
@@ -167,6 +171,7 @@
                 <tbody></tbody>
                 </table>
             </div>
+            <div id="status_Podcasts" class="status">0 song(s), 00:00:00 total time</div>
         </div>
         <div id="tabPreferences" class="tabcontent">
             <div class="actions floatleft">
@@ -174,7 +179,7 @@
                 <a href="#" class="button" id="SavePreferences" title="Save Preferences">Save</a>
             </div>
             <div class="clear"></div>
-            <div class="lgsection floatleft">
+            <div class="section lgsection floatleft">
                 <div class="subsection floatleft">
                     <h3 class="title">Login</h3>
                     <label for="Username">Username <span class="red">*</span></label><br />
@@ -272,10 +277,15 @@
                         <span class="changes">- </span>
                     </li>
                     -->
+                    <li class="log"><span class="version">10/15/2012 - 2.2.0</span>
+                        <span class="changes">- Column sorting for all headers in all tables! (Thanks to <a href="https://github.com/joequery/Stupid-Table-Plugin" target="_blank">joequery</a>)</span>
+                        <span class="changes">- Fancy Webkit styled scrollbars for those of you with browsers that don't suck (Works with Dark theme)</span>
+                        <span class="changes">- Auto Albums feature Next & Previous links to page through results</span>
+                        <span class="changes">- Forced to include permissions ("http://*/*" & "https://*/*"). Your Subsonic server can be at any URL. Will be asked to accept "Access your data on all websites".</span>
+                    </li>
                     <li class="log"><span class="version">10/8/2012 - 2.1.5</span>
                         <span class="changes">- Added song count and total time to Current Playlist</span>
                         <span class="changes">- Migrated to version 2 of Chrome App manifest.json</span>
-                        <span class="changes">- Added to manifest.json > "content_security_policy": "script-src 'self' https://*/; object-src 'self'"</span>
                     </li>
                     <li class="log"><span class="version">10/7/2012 - 2.1.2</span>
                         <span class="changes">- Current Playlist will stay focused on the current track (Thanks <a href="https://github.com/tsquillario/MiniSub/issues/42" target="_blank">Concept211</a>)</span>

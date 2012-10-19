@@ -15,9 +15,6 @@ h3.title {
     color: #f2f2f2;
 }
 
-.odd { background: none; }
-.even { background: #272727; }
-
 #content 
 {
     background: #222222;
@@ -98,13 +95,17 @@ h3.title {
 {
     color: #d6d469;
     background: #2e2e2e;
-    border: 1px solid #5a5a5a;
+    border: 1px solid #1d1d1d;
 }
-#status
+.status
 {
     background: #222;
     border-top: 1px solid #1D1D1D;
     border-left: 1px solid #1D1D1D;
+}
+.status a 
+{
+    color: #d6d469;
 }
 #player
 {
@@ -146,7 +147,7 @@ a.button:hover {
     -moz-box-shadow: 0 2px 0 rgba(242, 242, 242, 0.2) 
     -webkit-box-shadow:0 2px 5px rgba(242, 242, 242, 0.2);
     box-shadow: 0 1px 2px rgba(242, 242, 242, 0.15);
-    border: solid 1px #5a5a5a;
+    border-color: #5a5a5a;
 }
 a.button:active {
     color: #000;
@@ -155,8 +156,22 @@ a.button:active {
 a.selected {
     color: #939393;
     border-color: #5a5a5a;
-    -moz-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2) -webkit-box-shadow:0 2px 5px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 2px 0 rgba(242, 242, 242, 0.2) 
+    -webkit-box-shadow:0 2px 5px rgba(242, 242, 242, 0.2);
+    box-shadow: 0 1px 2px rgba(242, 242, 242, 0.15);
+    background: #161616;
+    background: -webkit-gradient(linear,0% 40%,0% 70%,from(#161616),to(#111111));
+    background: -moz-linear-gradient(linear,0% 40%,0% 70%,from(#161616),to(#111111));
+}
+a.disabled {
+    color: #3D3D3D;
+    background: #2E2E2E;
+}
+a.disabled:hover {
+    color: #3D3D3D;
+    border-color: #1d1d1d;
+    -moz-box-shadow: none;
+    box-shadow: none;
 }
 ul.simplelist li
 {
@@ -196,8 +211,13 @@ ul.simplelist li.selected
 }
 table.songlist th {
     color: #F2F2F2;
+    border-bottom: 1px solid #2e2e2e;    
+    background: #2E2E2E;
 }
-table.songlist tr:hover
+table.songlist th:hover, table.songlist th.sorted {
+	background: #272727;
+}
+table.songlist tr.album:hover
 {
     background: #1d1d1d;
 }
@@ -212,6 +232,10 @@ table.songlist tr.album td.albumart img
 table.songlist tr.song {
     border-bottom: 1px solid #232323;
 }
+table.songlist tr.song:hover
+{
+    background: #1d1d1d;
+}
 table.songlist tr.song td.album img
 {
     border: 1px solid #232323;
@@ -225,12 +249,15 @@ table.songlist tr.song td.album a:hover
     color: #d6d469;
     text-decoration: underline;    
 }
-table.songlist tr.selected 
-{
-    background: #3a3a3a;
-}
+table.songlist tr:nth-child(odd)   { background-color: #272727; }
+table.songlist tr:nth-child(even)  { background-color: #2e2e2e; }
 table.songlist tr.playing {
     background: #161616;
+}
+table.songlist tr.selected
+{
+    background: #3a3a3a;
+    border-bottom: 1px solid #232323;
 }
 #submenu_CurrentPlaylist 
 {
@@ -254,4 +281,10 @@ fieldset
 #donate {
     background: #232323;
     border: 1px solid #1D1D1D;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(34, 34, 34, 0.8); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(34, 34, 34, 0.2); 
 }
