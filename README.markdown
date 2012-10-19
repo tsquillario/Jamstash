@@ -23,14 +23,14 @@ Features
 
 You will need a Subsonic server to be able to play your own music. Subsonic is a free, web-based media streamer, providing ubiquitous access to your music. Use it to share your music with friends, or to listen to your own music while at work. Please see http://www.subsonic.org
 
-Chrome App: https://chrome.google.com/webstore/detail/minisub/jccdpflnecheidefpofmlblgebobbloc
-Forum: http://forum.subsonic.org/forum/viewforum.php?f=12
-Donations: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VMTENRSJWQ234
+* Chrome App: https://chrome.google.com/webstore/detail/minisub/jccdpflnecheidefpofmlblgebobbloc
+* Forum: http://forum.subsonic.org/forum/viewforum.php?f=12
+* Donations: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VMTENRSJWQ234
 
 Change Log inside...
 
 **Permissions**
-You will have to allow MiniSub to "Access your data on all websites". This is required because your Subsonic server could be at any URL `http://*/*` or `https://*/*` 
-I NEVER access, read, modify, store, or transmit your personal data.
-https://github.com/tsquillario/MiniSub/blob/master/manifest.json
-http://developer.chrome.com/extensions/xhr.html
+*You will have to allow MiniSub to "Access your data on all websites". This is required because your Subsonic server could be at any URL `http://*/*` or `https://*/*` 
+*I NEVER access, read, modify, store, or transmit your personal data.
+* https://github.com/tsquillario/MiniSub/blob/master/manifest.json
+* http://developer.chrome.com/extensions/xhr.html
