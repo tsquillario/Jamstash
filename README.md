@@ -24,6 +24,7 @@ Features
 You will need a Subsonic server to be able to play your own music. Subsonic is a free, web-based media streamer, providing ubiquitous access to your music. Use it to share your music with friends, or to listen to your own music while at work. Please see http://www.subsonic.org
 
 * Chrome App: https://chrome.google.com/webstore/detail/minisub/jccdpflnecheidefpofmlblgebobbloc
+* Github: https://github.com/tsquillario/MiniSub
 * Forum: http://forum.subsonic.org/forum/viewforum.php?f=12
 * Donations: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VMTENRSJWQ234
 

@@ -1,8 +1,8 @@
 {
 	"manifest_version": 2,
-	"name": "MiniSub (Beta)",
+	"name": "MiniSub",
 	"description": "MiniSub - HTML5 Mini Player for Subsonic",
-	"version": "2.2.0",
+	"version": "2.2.1",
 	"app": {
 		"launch": {
 			"local_path": "index.html"
