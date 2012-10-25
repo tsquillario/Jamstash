@@ -341,7 +341,7 @@ function getRandomSongList(action, appendto, genre, folder) {
                     $("#TrackContainer thead").html(header);
                 }
                 if (action == 'autoplay') {
-                    $("#TrackContainer").empty();
+                    $("#TrackContainer tbody").empty();
                     $(appendto).empty();
                 }
                 // There is a bug in the API that doesn't return a JSON array for one artist
