@@ -57,7 +57,7 @@
     // Version check
     if (getCookie('CurrentVersion')) {
         if (checkVersionNewer(parseVersionString(getCookie('CurrentVersion')), parseVersionString(currentVersion))) {
-            updateMessage('MiniSub updated to ' + currentVersion);
+            updateMessage('MiniSub updated to v' + currentVersion);
             setCookie('CurrentVersion', currentVersion);
         }
     } else {
@@ -651,14 +651,14 @@
         getRandomSongList('', '#TrackContainer tbody', genre, folder);
     });
     $('#AutoPlaylistContainer li.item a.play, #FolderContainer li.item a.play').live('click', function () {
-        var genre = $(this).data('genre');
-        var folder = $(this).data('folder');
+        var genre = $(this).data('genre') !== undefined ? $(this).data('genre') : '';
+        var folder = $(this).data('folder') !== undefined ? $(this).data('folder') : '';
         getRandomSongList('autoplay', '#CurrentPlaylistContainer tbody', genre, folder);
         return false;
     });
     $('#AutoPlaylistContainer li.item a.add, #FolderContainer li.item a.add').live('click', function () {
-        var genre = $(this).data('genre');
-        var folder = $(this).data('folder');
+        var genre = $(this).data('genre') !== undefined ? $(this).data('genre') : '';
+        var folder = $(this).data('folder') !== undefined ? $(this).data('folder') : '';
         getRandomSongList('', '#CurrentPlaylistContainer tbody', genre, folder);
         return false;
     });
