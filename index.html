@@ -32,7 +32,7 @@
     <script src="js/ui-ready.js" type="text/javascript"></script>
     <script src="js/ui-load.js" type="text/javascript"></script>
 </head>
-<body>
+<body onload="drawvolumecontroller(10,35,$.cookie('Volume')?(($.cookie('Volume')/10)-10)*-1:0);">
 
 <div id="container">
     <div id="messages"></div>    
@@ -434,6 +434,7 @@
                     <div class="rate"><a id="songdetails_rate" class="rate" href="" title="Add To Favorites"></a></div>
                     <div class="vertshade"></div>
                 </div>
+                <div id="volumcontroller" class="floatleft"></div>
                 <div id="submenu_CurrentPlaylist" class="submenu shadow" style="display: none;">
                 <table id="CurrentPlaylistPreviewContainer" class="simplelist songlist">
                 <thead></thead>

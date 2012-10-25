@@ -68,6 +68,7 @@ function playSong(el, songid, albumid, position, loadonly) {
                         stream: true,
                         type: 'audio/mp3',
                         multiShot: false,
+                        volume: $.cookie('Volume')?$.cookie('Volume'):100,
                         whileloading: function () {
                             //if (debug) { console.log('loaded:' + this.bytesLoaded + ' total:' + this.bytesTotal); }
                             var percent = this.bytesLoaded / this.bytesTotal;

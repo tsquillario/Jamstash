@@ -157,6 +157,7 @@
             if (unicode == 189) { // dash
                 if (volume <= 100 && volume > 0 && source == '') {
                     volume += -10;
+                    drawvolumecontroller(10,35,((volume/10)-10)*-1);
                     soundManager.setVolume('audio', volume);
                     setCookie('Volume', volume);
                     updateMessage('Volume: ' + volume + '%');
@@ -165,6 +166,7 @@
             if (unicode == 187) { // equals
                 if (volume < 100 && volume >= 0 && source == '') {
                     volume += 10;
+                    drawvolumecontroller(10,35,((volume/10)-10)*-1);
                     soundManager.setVolume('audio', volume);
                     setCookie('Volume', volume);
                     updateMessage('Volume: ' + volume + '%');
