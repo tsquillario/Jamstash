@@ -65,11 +65,15 @@
     }
 
     // Table Sorting
-
     $('#CurrentPlaylistContainer').stupidtable();
     $('#TrackContainer').stupidtable();
     $('#PodcastContainer').stupidtable();
     $('#AlbumContainer').stupidtable();
+
+    $('#action_RequestURL').click(function () {
+        askPermission();
+        return false;
+    });
 
     // Tabs
     $('.tabcontent').hide(); //Hide all content
@@ -629,7 +633,7 @@
             msg = 'Autopilot On';
             if ($('#CurrentPlaylistContainer tbody').html() == '') {
                 $('#CurrentPlaylistContainer tbody').empty();
-                getRandomSongList('', '#CurrentPlaylistContainer tbody', '', '');
+                getRandomSongList('autoplay', '#CurrentPlaylistContainer tbody', '', '');
                 $('#currentActions a.button').removeClass('disabled');
             }
         }
@@ -642,8 +646,8 @@
     $('#AutoPlaylistContainer li.item, #FolderContainer li.item').live('click', function () {
         $('#AutoPlaylistContainer li, #FolderContainer li, #PlaylistContainer li').removeClass('selected');
         $(this).addClass('selected');
-        var genre = $(this).data('genre');
-        var folder = $(this).data('folder');
+        var genre = $(this).data('genre') !== undefined ? $(this).data('genre') : '';
+        var folder = $(this).data('folder') !== undefined ? $(this).data('folder') : '';
         getRandomSongList('', '#TrackContainer tbody', genre, folder);
     });
     $('#AutoPlaylistContainer li.item a.play, #FolderContainer li.item a.play').live('click', function () {
@@ -909,8 +913,9 @@
         if ($('#SaveTrackPosition').is(':checked')) {
             setCookie('SaveTrackPosition', '1');
             var sm = soundManager.getSoundById('audio');
-            if (sm !== undefined) {
+            if (sm) {
                 saveTrackPosition();
+                alert('save');
             }
         } else {
             setCookie('SaveTrackPosition', null);
@@ -942,7 +947,6 @@
         return false;
     });
 
-    /*
     // JQuery UI Sortable - Drag and drop sorting
     var fixHelper = function (e, ui) {
     ui.children().each(function () {
@@ -956,6 +960,5 @@
     $("#TrackContainer tbody").sortable({
     helper: fixHelper
     }).disableSelection();
-    */
 });                                                                                                                        // End document.ready
 

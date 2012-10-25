@@ -1,16 +1,17 @@
 function generateRowHTML(child, appendto, rowcolor) {
-    var albumhtml, isDir, starred, duration, i;
+    var html, isDir, starred, duration, artist, i;
     isDir = child.isDir;
     if (child.starred !== undefined) { starred = true; } else { starred = false; }
     if (child.duration !== undefined) { duration = child.duration; } else { duration = ''; }
+    if (child.artist !== undefined) { artist = child.artist; } else { artist = ''; }
     if (isDir === true) {
-        albumhtml = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, child.artist, child.userRating, starred);
+        html = generateAlbumHTML(rowcolor, child.id, child.parent, child.coverArt, child.title, artist, child.userRating, starred);
     } else {
         var track;
         if (child.track === undefined) { track = "&nbsp;"; } else { track = child.track; }
-        albumhtml = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, '', child.artist, child.album, child.coverArt, child.userRating, starred, duration);
+        html = generateSongHTML(rowcolor, child.id, child.parent, track, child.title, '', artist, child.album, child.coverArt, child.userRating, starred, duration);
     }
-    return albumhtml;
+    return html;
 }
 function generateAlbumHeaderHTML() {
     var html;
@@ -32,7 +33,7 @@ function generateAlbumHTML(rowcolor, childid, parentid, coverart, title, artist,
     if (coverart == undefined) {
         html += '<td class=\"albumart\"><img src=\"images/albumdefault_50.jpg\" /></td>';
     } else {
-        html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=json&size=50&id=' + coverart + '\" /></td>';
+        html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=json&size=50&id=' + coverart + '\" /></td>';
     }
     html += '<td class=\"album\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
@@ -74,7 +75,7 @@ function generateSongHTML(rowcolor, childid, parentid, track, title, description
     if (coverart == undefined) {
         coverartSrc = 'images/albumdefault_25.jpg';
     } else {
-        coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=json&size=25&id=' + coverart;
+        coverartSrc = baseURL + '/getCoverArt.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=json&size=25&id=' + coverart;
     }
     html += '<td class=\"album\" data-order-by=\"' + album + '\"><a href="#" class=\"albumlink\"><img src=\"' + coverartSrc + '\" />' + album + '</a></td>';
     html += '<td class=\"time\">' + time + '</td>';

@@ -309,6 +309,7 @@ function toggleAlbumListNextPrev(el, on, type, offset) {
     }
 }
 function getRandomSongList(action, appendto, genre, folder) {
+    if (debug) { console.log('action:' + action + ', appendto:' + appendto + ', genre:' + genre + ', folder:' + folder); }
     var size, gstring;
     gstring = '';
     if (getCookie('AutoPlaylistSize')) {
@@ -316,14 +317,13 @@ function getRandomSongList(action, appendto, genre, folder) {
     } else {
         size = 25;
     }
-    if (genre !== undefined && genre != '') {
+    if (genre != '' && genre != 'Random') {
         gstring = '&genre=' + genre;
-	} 
-	if (genre == 'Random') {
-		gstring = '';
-	}
-    if (folder !== undefined && folder != '') {
-		gstring = '&musicFolderId=' + folder;
+    }
+    if (typeof folder == 'number' && folder == 0) {
+        gstring = '&musicFolderId=' + folder;
+    } else if (folder != '') {
+        gstring = '&musicFolderId=' + folder;
     }
     if (genre == 'Starred') {
         getStarred(action, appendto, 'song');
@@ -372,10 +372,9 @@ function getRandomSongList(action, appendto, genre, folder) {
                 }
                 if (appendto === '#CurrentPlaylistContainer tbody') {
                     updateMessage(items.length + ' Song(s) Added');
+                    updateStatus('#status_Current', countCurrentPlaylist('#CurrentPlaylistContainer'));
                 }
-                if (action == '' && genre == '' && folder == '') {
-                    nextPlay();
-                } else if (action == 'autoplay') {
+                if (action == 'autoplay' || action == 'autoplayappend') {
                     autoPlay();
                 }
             } else {
@@ -526,7 +525,7 @@ function updateNowPlaying(showPopup) {
                         if (msg.coverArt === undefined) {
                             coverartSrc = 'images/albumdefault_50.jpg';
                         } else {
-                            coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=json&size=50&id=' + msg.coverArt;
+                            coverartSrc = baseURL + '/getCoverArt.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=json&size=50&id=' + msg.coverArt;
                         }
                         if (getCookie('Notification_NowPlaying')) {
                             var sid = msg.username + '-' + msg.id;
@@ -1165,7 +1164,7 @@ function loadVideos(refresh) {
                         if (video.coverArt === undefined) {
                             coverartSrc = 'images/albumdefault_25.jpg';
                         } else {
-                            coverartSrc = baseURL + '/getCoverArt.view?v=' + version + '&c=' + applicationName + '&f=json&size=25&id=' + video.coverArt;
+                            coverartSrc = baseURL + '/getCoverArt.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&f=json&size=25&id=' + video.coverArt;
                         }
                         var time = secondsToTime(video.duration);
                         html += '<td class=\"album\"><img src=\"' + coverartSrc + '\" />' + video.album + '</td>';

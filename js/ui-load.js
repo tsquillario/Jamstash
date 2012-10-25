@@ -18,16 +18,6 @@
             $(el).hide();
         }
     });
-    if (getCookie('SaveTrackPosition')) {
-        window.setInterval(function () {
-            if (getCookie('SaveTrackPosition')) {
-                var sm = soundManager.getSoundById('audio');
-                if (sm !== undefined) {
-                    saveTrackPosition();
-                }
-            }
-        }, 5000);
-    }
     if (getCookie('CurrentSong')) {
         var currentSong = JSON.parse(getCookie("CurrentSong"));
         playSong(null, currentSong.songid, currentSong.albumid, currentSong.position, true);

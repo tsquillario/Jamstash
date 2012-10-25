@@ -10,7 +10,7 @@ var passwordenc;
 var server;
 var smwidth;
 var volume = 50;
-var currentVersion = '2.2.1';
+var currentVersion = '2.2.2';
 
 function getCookie(value) {
     if ($.cookie(value)) {

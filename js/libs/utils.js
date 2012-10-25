@@ -18,8 +18,10 @@ function HexEncode(n) {
         i[t] = u.charAt(t >> 4) + u.charAt(t & 15);
     for (t = 0; t < n.length; t++)
         r[t] = i[n.charCodeAt(t)];
-    return r.join("") 
+    return r.join("")
 }
+String.prototype.hexDecode = function () { var r = ''; for (var i = 0; i < this.length; i += 2) { r += unescape('%' + this.substr(i, 2)); } return r; }
+String.prototype.hexEncode = function () { var r = ''; var i = 0; var h; while (i < this.length) { h = this.charCodeAt(i++).toString(16); while (h.length < 2) { h = h; } r += h; } return r; }
 function findKeyForCode(code) {
     var map = { 'keymap': [
 	                { 'key': 'a', 'code': 65 },
@@ -292,4 +294,15 @@ function parseDate(date) {
     var month = parseInt(dateParts[1], 10) - 1;
     var date = months[month] + " " + dateParts[2] + ", " + dateParts[0];
     return date;
+}
+function askPermission() {
+    chrome.permissions.request({
+        origins: [getCookie('Server')]
+    }, function (granted) {
+        if (granted) {
+            return true;
+        } else {
+            return false;
+        }
+    });
 }

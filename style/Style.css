@@ -280,6 +280,7 @@ a#logo:hover
 {
     display: block;
 }
+
 /* Library Style */
 ul.simplelist
 {
@@ -658,6 +659,10 @@ table.songlist tr.selected
 table.songlist tr.selected td:first-child
 {
     background: url('../images/check_8x7.png') 10px 16px no-repeat;
+}
+table.songlist tr.selected td.album a
+{
+    color: #ffffff;
 }
 #ArtistContainer
 {

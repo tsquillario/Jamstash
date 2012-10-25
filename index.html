@@ -1,7 +1,8 @@
 ﻿<!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="UTF-8">
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
     <title>Subsonic - MiniSub</title>
     <link href="images/subsonic_32x32.ico" rel="shortcut icon" />
     <link rel="icon" href="images/subsonic_48x48.png" sizes="48x48"/>
@@ -187,7 +188,8 @@
                     <label for="Password">Password <span class="red">*</span></label><br />
                     <input type="password" id="Password" name="Password" class="large"/><br />
                     <label for="Server">Server <span class="red">*</span></label><br />
-                    <input type="text" id="Server" name="Server" class="xlarge" title="Subsonic Server URL Ex: http://host:port/subsonic"/><br />
+                    <input type="text" id="Server" name="Server" class="xlarge" title="Subsonic Server URL Ex: http://host:port/subsonic"/>
+                    <!--<a href="#" class="button" id="action_RequestURL" title="Request Permission for Server URL">Enable URL</a><br />-->
                     <label for="SubsonicVersion">Subsonic API: <span id="SubsonicVersion"></span></label><br />
                 </div>
                 <div class="subsection floatleft">
@@ -277,6 +279,11 @@
                         <span class="changes">- </span>
                     </li>
                     -->
+                    <li class="log"><span class="version">10/25/2012 - 2.2.2</span>
+                        <span class="changes">- Re-enabled Drag and Drop sorting on Current Playlist</span>
+                        <span class="changes">- Started passing the contentType directly (hopefully supporting Ogg, as well as others depending on your browser)</span>
+                        <span class="changes">- Taking a lot of crap for the "Access your data on all websites", sorry I have no other choice! (<a href="https://groups.google.com/a/chromium.org/d/msg/chromium-apps/Q1M1HoLpOCo/hFBCS07acCMJ" target="_blank">Chromium Apps Forum Post</a>)</span>
+                    </li>
                     <li class="log"><span class="version">10/15/2012 - 2.2.0</span>
                         <span class="changes">- Column sorting for all headers in all tables! (Thanks to <a href="https://github.com/joequery/Stupid-Table-Plugin" target="_blank">joequery</a>)</span>
                         <span class="changes">- Fancy Webkit styled scrollbars for those of you with browsers that don't suck (Works with Dark theme)</span>
