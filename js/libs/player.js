@@ -25,7 +25,7 @@ function playSong(el, songid, albumid, position, loadonly) {
                         album = child.album;
                         coverart = child.coverArt;
                         rating = child.userRating;
-                        if (child.contentType !== undefined) { contenttype = child.contentType; } else { contenttype = 'audio/mp3'; }
+                        if (child.contentType == 'audio/ogg') { contenttype = child.contentType; } else { contenttype = 'audio/mp3'; }
                         if (child.starred !== undefined) { starred = true; } else { starred = false; }
                     }
                 });
@@ -63,7 +63,10 @@ function playSong(el, songid, albumid, position, loadonly) {
                             console.log(key + ': ' + value);
                         });
                     }
-                    soundManager.destroySound('audio');
+                    var sm = soundManager.getSoundById('audio');
+                    if (typeof sm !== undefined) {
+                        soundManager.destroySound('audio');
+                    }
                     soundManager.createSound({
                         id: 'audio',
                         url: baseURL + '/stream.view?u=' + username + '&p=' + password + '&v=' + version + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,

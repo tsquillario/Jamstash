@@ -631,9 +631,13 @@
             setCookie('AutoPilot', true);
             $('#action_AutoPilot').addClass('selected');
             msg = 'Autopilot On';
-            if ($('#CurrentPlaylistContainer tbody').html() == '') {
+            var sm = soundManager.getSoundById('audio');
+            if ($('#CurrentPlaylistContainer tbody').html() == '' && !sm) {
                 $('#CurrentPlaylistContainer tbody').empty();
                 getRandomSongList('autoplay', '#CurrentPlaylistContainer tbody', '', '');
+                $('#currentActions a.button').removeClass('disabled');
+            } else {
+                getRandomSongList('', '#CurrentPlaylistContainer tbody', '', '');
                 $('#currentActions a.button').removeClass('disabled');
             }
         }
@@ -915,7 +919,6 @@
             var sm = soundManager.getSoundById('audio');
             if (sm) {
                 saveTrackPosition();
-                alert('save');
             }
         } else {
             setCookie('SaveTrackPosition', null);
