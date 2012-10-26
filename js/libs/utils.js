@@ -126,6 +126,7 @@ function updateStatus(el, msg) {
     }
 }
 // Convert to unicode support
+/* Old 
 var toHTML = {
     on: function (str) {
         var a = [],
@@ -135,6 +136,21 @@ var toHTML = {
     },
     un: function (str) {
         return str.replace(/&#(x)?([^&]{1,5});?/g,
+        function (a, b, c) {
+            return String.fromCharCode(parseInt(c, b ? 16 : 10))
+        })
+    }
+};
+*/
+var toHTML = {
+    on: function (str) {
+        var a = [],
+        i = 0;
+        for (; i < str.length; ) a[i] = str.charCodeAt(i++);
+        return "&#" + a.join(";&#") + ";"
+    },
+    un: function (str) {
+        return str.replace(/&#(x)?([^;]{1,5});?/g,
         function (a, b, c) {
             return String.fromCharCode(parseInt(c, b ? 16 : 10))
         })

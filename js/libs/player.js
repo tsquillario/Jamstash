@@ -40,7 +40,7 @@ function playSong(el, songid, albumid, position, loadonly) {
             $('#songdetails_song').attr('parentid', albumid);
             $('#songdetails_song').attr('childid', songid);
             $('#songdetails_artist').html(artist + ' - ' + album);
-            $('#songdetails_artist').attr('title', artist + ' - ' + album);
+            $('#songdetails_artist').attr('title', toHTML.un(artist + ' - ' + album));
             var coverartSrc, coverartFullSrc;
             if (coverart == undefined) {
                 coverartSrc = 'images/albumdefault_56.jpg';
