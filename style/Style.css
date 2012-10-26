@@ -160,10 +160,10 @@ a#logo:hover
     min-height: 360px;
     padding: 0 0 40px 0;
     float: left;
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
     background: #fff;
-    border-right: 1px solid #f2f2f2;
+    /*border-right: 1px solid #f2f2f2;*/
     position: absolute;
     top: 39px;
     left: 60px;
@@ -1142,7 +1142,7 @@ a.button img.pad { margin: 1px 0 -1px 0; }
 
 /* Scrollbar Style */
 ::-webkit-scrollbar {
-    width: 14px;
+    width: 12px;
 }
 ::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.2); 
