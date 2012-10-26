@@ -54,6 +54,11 @@
     if (getCookie('AutoPilot')) {
         setCookie('AutoPilot', null)
     }
+    if (getCookie('EnableMediaKeys')) {
+        $('#EnableMediaKeys').attr('checked', true);
+    } else {
+        $('#EnableMediaKeys').attr('checked', false);
+    }
     // Version check
     if (getCookie('CurrentVersion')) {
         if (checkVersionNewer(parseVersionString(getCookie('CurrentVersion')), parseVersionString(currentVersion))) {
@@ -938,6 +943,7 @@
         setCookie('Server', null);
         setCookie('ApplicationName', null);
         setCookie('HideAZ', null);
+        setCookie('EnableMediaKeys', null);
         location.reload(true);
     });
     $('#ChangeLogShowMore').live('click', function () {
@@ -945,6 +951,13 @@
             $(el).show();
         });
         return false;
+    });
+    $('#EnableMediaKeys').live('click', function () {
+        if ($('#EnableMediaKeys').is(':checked')) {
+            setCookie('EnableMediaKeys', '1');
+        } else {
+            setCookie('EnableMediaKeys', null);
+        }
     });
 
     // JQuery UI Sortable - Drag and drop sorting
