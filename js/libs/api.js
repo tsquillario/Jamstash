@@ -8,7 +8,14 @@ function ping() {
             if (data["subsonic-response"].status == 'ok') {
                 version = data["subsonic-response"].version;
                 $('#SubsonicVersion').html(version);
+            } else {
+                if (typeof data["subsonic-response"].error != 'undefined') {
+                    alert(data["subsonic-response"].error.message);
+                }
             }
+        },
+        error: function () {
+            alert('Bad Server');
         }
     });
 }
@@ -38,70 +45,95 @@ function loadArtists(id, refresh) {
             error: function () { if (debug) { console.log("ERROR!"); } },
             success: function (data) {
                 if (debug) { console.log("SUCCESS"); }
-                if (data["subsonic-response"].status === 'ok') {
-                    var indexlist, indexname;
+                if (data["subsonic-response"].status == 'ok') {
+                    var indexlist, name;
 
-                    // There is a bug in the API that doesn't return a JSON array for one artist
-                    var indexes = [];
-                    if (data["subsonic-response"].indexes.index !== undefined) {
-                        if (data["subsonic-response"].indexes.index.length > 0) {
-                            indexes = data["subsonic-response"].indexes.index;
-                        } else {
-                            indexes[0] = data["subsonic-response"].indexes.index;
-                        }
-
-                        $.each(indexes, function (i, index) {
-                            indexname = index.name;
-                            $('<li class=\"index\" id=\"index_' + indexname + '\" title=\"Scroll to Top\"><a name=\"index_' + indexname + '\">' + indexname + '</a><span class=\"floatright\">&uarr;</span></li>').appendTo("#ArtistContainer");
-                            indexlist += '<li><a href=\"#' + indexname + '\">' + indexname + '</a></li>';
-                            var artists = [];
-                            if (index.artist.length > 0) {
-                                artists = index.artist;
+                    if (typeof data["subsonic-response"].indexes != 'undefined') {
+                        if (typeof data["subsonic-response"].indexes.shortcut != 'undefined') {
+                            var shortcuts = [];
+                            if (data["subsonic-response"].indexes.shortcut.length > 0) {
+                                shortcuts = data["subsonic-response"].indexes.shortcut;
                             } else {
-                                artists[0] = index.artist;
+                                shortcuts[0] = data["subsonic-response"].indexes.shortcut;
                             }
-                            $.each(artists, function (i, artist) {
-                                if (artist.name !== undefined) {
-                                    var html = "";
-                                    html += '<li id=\"' + artist.id + '\" class=\"item\">';
-                                    html += '<span>' + artist.name + '</span>';
+                            var html = '<li class=\"index\" id=\"shortcuts\">Shortcuts</li>';
+                            $(html).appendTo("#ArtistContainer");
+                            $.each(shortcuts, function (i, item) {
+                                if (item.name !== undefined) {
+                                    var html = '<li id=\"' + item.id + '\" class=\"item\">';
+                                    html += '<span>' + item.name + '</span>';
                                     html += '</li>';
                                     $(html).appendTo("#ArtistContainer");
                                 }
                             });
-                        });
-                        //$(indexlist).appendTo("#IndexList");
-                        $("#BottomIndex").empty();
-                        $(indexlist).appendTo("#BottomIndex");
-                    }
-                    if (data["subsonic-response"].indexes.child !== undefined) {
-                        var rowcolor;
-                        if (data["subsonic-response"].indexes.child.length > 0) {
-                            indexes = data["subsonic-response"].indexes.child;
-                        } else {
-                            indexes[0] = data["subsonic-response"].indexes.child;
                         }
-                        var appendto = '#AlbumContainer tbody';
-                        $(appendto).empty();
-                        $.each(indexes, function (i, child) {
-                            if (i % 2 === 0) {
-                                rowcolor = 'even';
-                            } else {
-                                rowcolor = 'odd';
+
+                        var indexes = [];
+                        if (typeof data["subsonic-response"].indexes != 'undefined') {
+                            if (typeof data["subsonic-response"].indexes.index != 'undefined') {
+                                if (data["subsonic-response"].indexes.index.length > 0) {
+                                    indexes = data["subsonic-response"].indexes.index;
+                                } else {
+                                    indexes[0] = data["subsonic-response"].indexes.index;
+                                }
+
+
+                                $.each(indexes, function (i, index) {
+                                    name = index.name;
+                                    $('<li class=\"index\" id=\"index_' + name + '\" title=\"Scroll to Top\"><a name=\"index_' + name + '\">' + name + '</a><span class=\"floatright\">&uarr;</span></li>').appendTo("#ArtistContainer");
+                                    indexlist += '<li><a href=\"#' + name + '\">' + name + '</a></li>';
+                                    var artists = [];
+                                    if (index.artist.length > 0) {
+                                        artists = index.artist;
+                                    } else {
+                                        artists[0] = index.artist;
+                                    }
+                                    $.each(artists, function (i, artist) {
+                                        if (artist.name !== undefined) {
+                                            var html = "";
+                                            html += '<li id=\"' + artist.id + '\" class=\"item\">';
+                                            html += '<span>' + artist.name + '</span>';
+                                            html += '</li>';
+                                            $(html).appendTo("#ArtistContainer");
+                                        }
+                                    });
+                                });
+                                //$(indexlist).appendTo("#IndexList");
+                                $("#BottomIndex").empty();
+                                $(indexlist).appendTo("#BottomIndex");
                             }
-                            var html = generateRowHTML(child, appendto, rowcolor);
-                            $(html).appendTo(appendto);
-                        });
-                        header = generateSongHeaderHTML();
+                            if (data["subsonic-response"].indexes.child !== undefined) {
+                                var rowcolor;
+                                if (data["subsonic-response"].indexes.child.length > 0) {
+                                    indexes = data["subsonic-response"].indexes.child;
+                                } else {
+                                    indexes[0] = data["subsonic-response"].indexes.child;
+                                }
+                                var appendto = '#AlbumContainer tbody';
+                                $(appendto).empty();
+                                $.each(indexes, function (i, child) {
+                                    if (i % 2 === 0) {
+                                        rowcolor = 'even';
+                                    } else {
+                                        rowcolor = 'odd';
+                                    }
+                                    var html = generateRowHTML(child, appendto, rowcolor);
+                                    $(html).appendTo(appendto);
+                                });
+                                header = generateSongHeaderHTML();
+                            }
+                            if (smwidth) {
+                                resizeSMSection(0);
+                            }
+                        }
+                    } else {
+                        var status = data["subsonic-response"].status;
+                        if (status == 'ok') {
+                            alert('Status: ' + status + ', but Subsonic is busy, wait and refresh...');
+                        } else {
+                            alert(msg);
+                        }
                     }
-                    if (smwidth) {
-                        resizeSMSection(0);
-                    }
-                } else {
-                    var error = data["subsonic-response"].status;
-                    var errorcode = data["subsonic-response"].error.code;
-                    var errormsg = data["subsonic-response"].error.message;
-                    alert('Status: ' + error + ', Code: ' + errorcode + ', Message: ' + errormsg);
                 }
             }
         });
@@ -254,38 +286,41 @@ function getAlbumListBy(id, offset) {
         dataType: 'json',
         timeout: 10000,
         success: function (data) {
-            if (data["subsonic-response"].albumList.album !== undefined) {
-                $("#AlbumContainer tbody").empty();
-                var header = generateAlbumHeaderHTML();
-                $("#AlbumContainer thead").html(header);
-                // There is a bug in the API that doesn't return a JSON array for one artist
-                var albums = [];
-                if (data["subsonic-response"].albumList.album.length > 0) {
-                    albums = data["subsonic-response"].albumList.album;
-                } else {
-                    albums[0] = data["subsonic-response"].albumList.album;
-                }
-
-                var rowcolor;
-                var html;
-                $.each(albums, function (i, album) {
-                    if (i % 2 === 0) {
-                        rowcolor = 'even';
+            if (data["subsonic-response"].status != 'failed') {
+                if (typeof data["subsonic-response"].albumList.album != "undefined") {
+                    $("#AlbumContainer tbody").empty();
+                    var header = generateAlbumHeaderHTML();
+                    $("#AlbumContainer thead").html(header);
+                    // There is a bug in the API that doesn't return a JSON array for one artist
+                    var albums = [];
+                    if (data["subsonic-response"].albumList.album.length > 0) {
+                        albums = data["subsonic-response"].albumList.album;
                     } else {
-                        rowcolor = 'odd';
+                        albums[0] = data["subsonic-response"].albumList.album;
                     }
-                    // Only show albums, not songs (Rated songs will also be returned in API call, trying to display them will break Back button, disabled for now)
-                    var albumhtml, starred;
-                    if (album.starred !== undefined) { starred = true; } else { starred = false; }
-                    if (album.isDir === true) {
-                        albumhtml = generateAlbumHTML(rowcolor, album.id, album.parent, album.coverArt, album.title, album.artist, album.userRating, starred);
-                    }
-                    $(albumhtml).appendTo("#AlbumContainer tbody").hide().fadeIn('fast');
-                });
-                $('#songActions a.button').addClass('disabled');
-                toggleAlbumListNextPrev('#status_Library', true, id, offset);
-            } else {
-                $('#AlbumContainer tbody').empty();
+
+                    var rowcolor;
+                    var html;
+                    $.each(albums, function (i, album) {
+                        if (i % 2 === 0) {
+                            rowcolor = 'even';
+                        } else {
+                            rowcolor = 'odd';
+                        }
+                        // Only show albums, not songs (Rated songs will also be returned in API call, trying to display them will break Back button, disabled for now)
+                        var albumhtml, starred;
+                        if (album.starred !== undefined) { starred = true; } else { starred = false; }
+                        if (album.isDir === true) {
+                            albumhtml = generateAlbumHTML(rowcolor, album.id, album.parent, album.coverArt, album.title, album.artist, album.userRating, starred);
+                        }
+                        $(albumhtml).appendTo("#AlbumContainer tbody").hide().fadeIn('fast');
+                    });
+                    $('#songActions a.button').addClass('disabled');
+                    toggleAlbumListNextPrev('#status_Library', true, id, offset);
+                } else {
+                    updateMessage('Albums failed to load, no music :(');
+                    $('#AlbumContainer tbody').empty();
+                }
             }
         }
     });
@@ -980,9 +1015,8 @@ function saveTrackPosition() {
     var songid = el.attr('childid');
     if (songid !== undefined) {
         var albumid = el.attr('parentid');
-        var sm = soundManager.getSoundById('audio');
-        var position = sm.position;
-        if (position != null && position >= 5000) {
+        var position = $("#playdeck").data("jPlayer").status.currentTime;
+        if (position != null && position >= 5) {
             var currentSong = {
                 songid: songid,
                 albumid: albumid,

@@ -10,7 +10,7 @@ var passwordenc;
 var server;
 var smwidth;
 var volume = 50;
-var currentVersion = '2.2.6';
+var currentVersion = '2.2.7';
 
 function getCookie(value) {
     if ($.cookie(value)) {
@@ -44,15 +44,6 @@ function setCookie(key, value) {
     }
     */
 }
-
-//Sound manager
-soundManager.url = 'js/sm/swf';
-if (getCookie('ForceFlash')) {
-    soundManager.preferFlash = true;
-} else {
-    soundManager.preferFlash = false;
-}
-soundManager.useHTML5Audio = true;
 
 // Set auth cookies if specified in URL on launch
 var u = getParameterByName('u'); 

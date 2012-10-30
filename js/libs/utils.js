@@ -203,7 +203,7 @@ function scrollTitle(text) {
     if (pos > ml) {
         pos = 0;
     } else {
-        timer = window.setTimeout("scrollTitle()", speed);
+        //timer = window.setTimeout("scrollTitle()", speed);
     }
     // To stop timer, clearTimeout(timer);
 }

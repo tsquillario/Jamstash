@@ -1,5 +1,4 @@
 ﻿$(window).load(function () {
-
     if (getCookie('defaultsmwidth')) {
         var width = getCookie('defaultsmwidth');
         smwidth = width;

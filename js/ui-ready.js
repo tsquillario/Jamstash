@@ -37,7 +37,6 @@
     if (getCookie('Debug')) {
         $('#Debug').attr('checked', true);
         debug = true;
-        soundManager.debugMode = true;
     } else {
         $('#Debug').attr('checked', false);
     }
@@ -138,6 +137,9 @@
             // a-z
             if (unicode >= 65 && unicode <= 90 && $('#tabLibrary').is(':visible')) {
                 var key = findKeyForCode(unicode);
+                if (key == 'x' || key == 'y' || key == 'z') {
+                    key = 'x-z';
+                }
                 var el = '#index_' + key.toUpperCase();
                 if ($(el).length > 0) {
                     $('#Artists').stop().scrollTo(el, 400);
@@ -161,7 +163,7 @@
             if (unicode == 189) { // dash
                 if (volume <= 100 && volume > 0 && source == '') {
                     volume += -10;
-                    soundManager.setVolume('audio', volume);
+                    $("#playdesk").jPlayer("volume", volume/100);
                     setCookie('Volume', volume);
                     updateMessage('Volume: ' + volume + '%');
                 }
@@ -169,7 +171,7 @@
             if (unicode == 187) { // equals
                 if (volume < 100 && volume >= 0 && source == '') {
                     volume += 10;
-                    soundManager.setVolume('audio', volume);
+                    $("#playdesk").jPlayer("volume", volume / 100);
                     setCookie('Volume', volume);
                     updateMessage('Volume: ' + volume + '%');
                 }
@@ -631,8 +633,8 @@
             setCookie('AutoPilot', true);
             $('#action_AutoPilot').addClass('selected');
             msg = 'Autopilot On';
-            var sm = soundManager.getSoundById('audio');
-            if ($('#CurrentPlaylistContainer tbody').html() == '' && !sm) {
+            var audio = typeof $("#playdeck").data("jPlayer") != 'undefined' ? true : false;
+            if ($('#CurrentPlaylistContainer tbody').html() == '' && !audio) {
                 $('#CurrentPlaylistContainer tbody').empty();
                 getRandomSongList('autoplay', '#CurrentPlaylistContainer tbody', '', '');
                 $('#currentActions a.button').removeClass('disabled');
@@ -747,10 +749,6 @@
     });
 
     // Player Click Events
-    $('#PlayTrack').live('click', function () {
-        playPauseSong();
-        return false;
-    });
     $('#NextTrack').live('click', function () {
         var next;
         var length = $('#CurrentPlaylistContainer tr.song').size();
@@ -787,6 +785,12 @@
         $(this).removeClass('favorite');
         $(this).addClass('rate');
         return false;
+    });
+    $('#audiocontainer .scrubber').mouseover(function (e) {
+        $('.audiojs .scrubber').stop().animate({ height: '8px' });
+    });
+    $('#audiocontainer .scrubber').mouseout(function (e) {
+        $('.audiojs .scrubber').stop().animate({ height: '4px' });
     });
 
     // Side Bar Click Events
@@ -916,8 +920,8 @@
     $('#SaveTrackPosition').live('click', function () {
         if ($('#SaveTrackPosition').is(':checked')) {
             setCookie('SaveTrackPosition', '1');
-            var sm = soundManager.getSoundById('audio');
-            if (sm) {
+            var audio = typeof $("#playdeck").data("jPlayer") != 'undefined' ? true : false;
+            if (audio) {
                 saveTrackPosition();
             }
         } else {
@@ -952,16 +956,16 @@
 
     // JQuery UI Sortable - Drag and drop sorting
     var fixHelper = function (e, ui) {
-    ui.children().each(function () {
-    $(this).width($(this).width());
-    });
-    return ui;
+        ui.children().each(function () {
+            $(this).width($(this).width());
+        });
+        return ui;
     };
     $("#CurrentPlaylistContainer tbody").sortable({
-    helper: fixHelper
+        helper: fixHelper
     }).disableSelection();
     $("#TrackContainer tbody").sortable({
-    helper: fixHelper
+        helper: fixHelper
     }).disableSelection();
-});                                                                                                                        // End document.ready
+});                                                                                                                                   // End document.ready
 

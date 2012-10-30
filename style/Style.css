@@ -912,7 +912,7 @@ table.songlist tr.selected td.album a
     float: right;
     border: none;
     line-height: 17px;
-    padding: 0 5px;
+    padding: 0 0 0 5px;
     font-size: 11px;
     text-shadow: none;
     height: 36px;
@@ -981,12 +981,18 @@ table.songlist tr.selected td.album a
     font-size: 12px;
     font-weight: bold;
     line-height: 14px;
-    margin: 12px 0 2px 0;
+    margin: 6px 0 2px 0;
 }
 #songdetails li.album
 {
     font-size: 11px;
     line-height: 14px;
+}
+#songdetails li.specs
+{
+    opacity: .6;
+    font-size: 10px;
+    line-height: 15px;
 }
 #songdetails li span.label
 {

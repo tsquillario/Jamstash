@@ -22,7 +22,7 @@
     <script src="js/plugins/jquery.linkify-1.0-min.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.periodic.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.scrollTo-1.4.2-min.js" type="text/javascript"></script>
-    <script src="js/sm/soundmanager2-jsmin.js" type="text/javascript"></script>
+    <script src="js/jplayer/jquery.jplayer.min.js" type="text/javascript"></script>
     <script src="js/fancybox/jquery.fancybox-1.3.4.pack.js" type="text/javascript"></script>
     <script src="js/libs/api.js" type="text/javascript"></script>
     <script src="js/libs/utils.js" type="text/javascript"></script>
@@ -188,9 +188,10 @@
                     <label for="Password">Password <span class="red">*</span></label><br />
                     <input type="password" id="Password" name="Password" class="large"/><br />
                     <label for="Server">Server <span class="red">*</span></label><br />
-                    <input type="text" id="Server" name="Server" class="xlarge" title="Subsonic Server URL Ex: http://host:port/subsonic"/>
+                    <input type="text" id="Server" name="Server" class="xlarge" title="Subsonic Server URL Ex: http://host:port/subsonic"/><br />
                     <!--<a href="#" class="button" id="action_RequestURL" title="Request Permission for Server URL">Enable URL</a><br />-->
                     <label for="SubsonicVersion">Subsonic API: <span id="SubsonicVersion"></span></label><br />
+                    <label for="SMStats">Audio State: <span id="SMStats"></span></label><br />
                 </div>
                 <div class="subsection floatleft">
                     <h3 class="title">Keyboard Shortcuts</h3>
@@ -279,6 +280,10 @@
                         <span class="changes">- </span>
                     </li>
                     -->
+                    <li class="log"><span class="version">10/30/2012 - 2.2.7</span>
+                        <span class="changes">- Added Shortcuts!</span>
+                        <span class="changes">- Switched to <a href="http://www.jplayer.org" target="_blank">jPlayer</a> for HTML5/Flash audio+video, video support coming soon!</span>
+                    </li>
                     <li class="log"><span class="version">10/26/2012 - 2.2.6</span>
                         <span class="changes">- Re-enabled Drag and Drop sorting on Current Playlist</span>
                         <span class="changes">- Started passing the contentType directly (hopefully supporting Ogg, as well as others depending on your browser)</span>
@@ -430,6 +435,7 @@
                 <div class="playeractions floatleft">
                     <a href="#" class="button" id="PreviousTrack" title="Previous Track"><img src="images/first_24x24.png" /></a>
                     <a href="#" class="button" id="PlayTrack" title="Play/Pause"><img src="images/play_24x32.png" /></a>
+                    <a href="#" class="button" id="PauseTrack" title="Play/Pause" style="display: none;"><img src="images/pause_24x32.png" /></a>
                     <a href="#" class="button" id="NextTrack" title="Next Track"><img src="images/last_24x24.png" /></a>
                 </div>
                 <div id="songdetails">
@@ -437,10 +443,12 @@
                     <ul id="songdetailstext">
                     <li id="songdetails_song" class="song" title=""></li>
                     <li id="songdetails_artist" class="album" title=""></li>
+                    <li id="songdetails_specs" class="specs"></li>
                     </ul>
                     <div class="rate"><a id="songdetails_rate" class="rate" href="" title="Add To Favorites"></a></div>
                     <div class="vertshade"></div>
                 </div>
+                <div id="playdeck"></div>
                 <div id="submenu_CurrentPlaylist" class="submenu shadow" style="display: none;">
                 <table id="CurrentPlaylistPreviewContainer" class="simplelist songlist">
                 <thead></thead>
@@ -452,8 +460,9 @@
             <div id="playermiddle">
                 <div id="audiocontainer">
                     <div class="audiojs" id="audio_wrapper0">
-                    <div class="scrubber"><div class="progress"></div><div class="loaded" ></div></div>
-                    <div class="time"><em class="played">00:00</em>/<strong class="duration">00:00</strong></div><div class="error-message"></div>
+                    <div class="scrubber"><div class="progress"></div><div class="loaded"></div></div>
+                    <div class="time"><em id="played">00:00</em>/<strong id="duration">00:00</strong></div>
+                    <div class="error-message"></div>
                     </div>
                 </div>
             </div>
