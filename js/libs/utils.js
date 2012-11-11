@@ -1,4 +1,23 @@
 /* Reusable Functions */
+function clickButton(el) {
+    var el = $(el);
+    if (el) {
+        var classes = $(el).attr('class').split(" ");
+        for (var i = 0, l = classes.length; i < l; ++i) {
+            var types = ['shuffle', 'mute'];
+            if (jQuery.inArray(classes[i], types) >= 0) {
+                var up = classes[i] + '_up';
+                if (el.hasClass(up)) {
+                    el.removeClass(up);
+                    return false;
+                } else {
+                    el.addClass(up);
+                    return true;
+                }
+            }
+        }
+    }
+}
 function confirmDelete() {
     var question = confirm('Are you sure you want to delete the selected item(s)?');
     if (question) {
@@ -217,7 +236,7 @@ function hasNotificationPermission() {
     return !!(window.webkitNotifications) && (window.webkitNotifications.checkPermission() == 0);
 }
 var notifications = new Array();
-function showNotification(pic, title, text, type) {
+function showNotification(pic, title, text, type, bind) {
     if (hasNotificationPermission()) {
         //closeAllNotifications()
         var popup;
@@ -225,10 +244,15 @@ function showNotification(pic, title, text, type) {
             popup = window.webkitNotifications.createNotification(pic, title, text);
         } else if (type == 'html') {
             popup = window.webkitNotifications.createHTMLNotification(text);
-        } 
+        }
+        if (bind = '#NextTrack') {
+            popup.addEventListener('click', function () {
+                $(bind).click();
+            })
+        }
         notifications.push(popup);
         setTimeout(function (notWin) {
-        notWin.cancel();
+            notWin.cancel();
         }, 10000, popup);
         popup.show();
     } else {

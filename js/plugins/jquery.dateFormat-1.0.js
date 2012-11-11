@@ -1,8 +1,8 @@
-(function ($) {
-		
+(function (jQuery) {
+
 		var daysInWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 		var shortMonthsInYear = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		var longMonthsInYear = ["January", "February", "March", "April", "May", "June", 
+		var longMonthsInYear = ["January", "February", "March", "April", "May", "June",
 														"July", "August", "September", "October", "November", "December"];
 		var shortMonthsToNumber = [];
 		shortMonthsToNumber["Jan"] = "01";
@@ -17,8 +17,8 @@
 		shortMonthsToNumber["Oct"] = "10";
 		shortMonthsToNumber["Nov"] = "11";
 		shortMonthsToNumber["Dec"] = "12";
-	
-    $.format = (function () {
+
+    jQuery.format = (function () {
         function strDay(value) {
  						return daysInWeek[parseInt(value, 10)] || value;
         }
@@ -30,7 +30,7 @@
 
         function strLongMonth(value) {
 					var monthArrayIndex = parseInt(value, 10) - 1;
-					return longMonthsInYear[monthArrayIndex] || value;					
+					return longMonthsInYear[monthArrayIndex] || value;
         }
 
         var parseMonth = function (value) {
@@ -73,9 +73,9 @@
 
         return {
             date: function (value, format) {
-                /* 
+                /*
 					value = new java.util.Date()
-                 	2009-12-18 10:54:50.546 
+                 	2009-12-18 10:54:50.546
 				*/
                 try {
                     var date = null;
@@ -84,13 +84,16 @@
                     var dayOfMonth = null;
                     var dayOfWeek = null;
                     var time = null;
-                    if (typeof value.getFullYear === "function") {
+										if (typeof value == "number"){
+											return this.date(new Date(value), format);
+										} else if (typeof value.getFullYear == "function") {
                         year = value.getFullYear();
                         month = value.getMonth() + 1;
                         dayOfMonth = value.getDate();
                         dayOfWeek = value.getDay();
                         time = parseTime(value.toTimeString());
-										} else if (value.search(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.?\d{0,3}[-+]?\d{2}:\d{2}/) != -1) { /* 2009-04-19T16:11:05+02:00 */
+                    } else if (value.search(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.?\d{0,3}[Z\-+]?(\d{2}:?\d{2})?/) != -1) {
+                        /* 2009-04-19T16:11:05+02:00 || 2009-04-19T16:11:05Z */
                         var values = value.split(/[T\+-]/);
                         year = values[0];
                         month = values[1];
@@ -133,6 +136,16 @@
                             date = new Date(year, month - 1, dayOfMonth);
                             dayOfWeek = date.getDay();
                             break;
+                        case 1:
+                            /* added by Jonny, for 2012-02-07CET00:00:00 (Doctrine Entity -> Json Serializer) */
+                            var values2 = values[0].split("");
+                            year=values2[0]+values2[1]+values2[2]+values2[3];
+                            month= values2[5]+values2[6];
+                            dayOfMonth = values2[8]+values2[9];
+                            time = parseTime(values2[13]+values2[14]+values2[15]+values2[16]+values2[17]+values2[18]+values2[19]+values2[20])
+                            date = new Date(year, month - 1, dayOfMonth);
+                            dayOfWeek = date.getDay();
+                            break;
                         default:
                             return value;
                         }
@@ -140,13 +153,15 @@
 
                     var pattern = "";
                     var retValue = "";
+                    var unparsedRest = "";
                     /*
-						Issue 1 - variable scope issue in format.date 
+						Issue 1 - variable scope issue in format.date
                     	Thanks jakemonO
 					*/
                     for (var i = 0; i < format.length; i++) {
                         var currentPattern = format.charAt(i);
                         pattern += currentPattern;
+                        unparsedRest = "";
                         switch (pattern) {
                         case "ddd":
                             retValue += strDay(dayOfWeek);
@@ -160,6 +175,13 @@
                                 dayOfMonth = '0' + dayOfMonth;
                             }
                             retValue += dayOfMonth;
+                            pattern = "";
+                            break;
+                        case "d":
+                            if (format.charAt(i + 1) == "d") {
+                                break;
+                            }
+                            retValue += parseInt(dayOfMonth, 10);
                             pattern = "";
                             break;
                         case "MMMM":
@@ -183,8 +205,23 @@
                             retValue += month;
                             pattern = "";
                             break;
+                        case "M":
+                            if (format.charAt(i + 1) == "M") {
+                                break;
+                            }
+                            retValue += parseInt(month, 10);
+                            pattern = "";
+                            break;
                         case "yyyy":
                             retValue += year;
+                            pattern = "";
+                            break;
+                        case "yy":
+                            if (format.charAt(i + 1) == "y" &&
+                           	format.charAt(i + 2) == "y") {
+                            	break;
+                      	    }
+                            retValue += String(year).slice(-2);
                             pattern = "";
                             break;
                         case "HH":
@@ -193,9 +230,21 @@
                             break;
                         case "hh":
                             /* time.hour is "00" as string == is used instead of === */
-                            retValue += (time.hour == 0 ? 12 : time.hour < 13 ? time.hour : time.hour - 12);
+                            var hour = (time.hour == 0 ? 12 : time.hour < 13 ? time.hour : time.hour - 12);
+                            hour = String(hour).length == 1 ? '0' + hour : hour;
+                            retValue += hour;
                             pattern = "";
                             break;
+												case "h":
+												    if (format.charAt(i + 1) == "h") {
+												        break;
+												    }
+												    var hour = (time.hour == 0 ? 12 : time.hour < 13 ? time.hour : time.hour - 12);
+												    retValue += parseInt(hour, 10);
+														// Fixing issue https://github.com/phstc/jquery-dateFormat/issues/21
+														// retValue = parseInt(retValue, 10);
+												    pattern = "";
+												    break;
                         case "mm":
                             retValue += time.minute;
                             pattern = "";
@@ -231,9 +280,12 @@
                                 pattern = pattern.substring(1, 2);
                             } else if ((pattern.length === 3 && pattern.indexOf("yyy") === -1)) {
                                 pattern = "";
+                            } else {
+                            	unparsedRest = pattern;
                             }
                         }
                     }
+                    retValue += unparsedRest;
                     return retValue;
                 } catch (e) {
                     console.log(e);
@@ -244,20 +296,22 @@
     }());
 }(jQuery));
 
+jQuery.format.date.defaultShortDateFormat = "dd/MM/yyyy";
+jQuery.format.date.defaultLongDateFormat = "dd/MM/yyyy hh:mm:ss";
 
-$(document).ready(function () {
-    $(".shortDateFormat").each(function (idx, elem) {
-        if ($(elem).is(":input")) {
-            $(elem).val($.format.date($(elem).val(), "dd/MM/yyyy"));
+jQuery(document).ready(function () {
+    jQuery(".shortDateFormat").each(function (idx, elem) {
+        if (jQuery(elem).is(":input")) {
+            jQuery(elem).val(jQuery.format.date(jQuery(elem).val(), jQuery.format.date.defaultShortDateFormat));
         } else {
-            $(elem).text($.format.date($(elem).text(), "dd/MM/yyyy"));
+            jQuery(elem).text(jQuery.format.date(jQuery(elem).text(), jQuery.format.date.defaultShortDateFormat));
         }
     });
-    $(".longDateFormat").each(function (idx, elem) {
-        if ($(elem).is(":input")) {
-            $(elem).val($.format.date($(elem).val(), "dd/MM/yyyy hh:mm:ss"));
+    jQuery(".longDateFormat").each(function (idx, elem) {
+        if (jQuery(elem).is(":input")) {
+            jQuery(elem).val(jQuery.format.date(jQuery(elem).val(), jQuery.format.date.defaultLongDateFormat));
         } else {
-            $(elem).text($.format.date($(elem).text(), "dd/MM/yyyy hh:mm:ss"));
+            jQuery(elem).text(jQuery.format.date(jQuery(elem).text(), jQuery.format.date.defaultLongDateFormat));
         }
     });
 });
