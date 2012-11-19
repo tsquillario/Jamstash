@@ -1,5 +1,4 @@
 ﻿$(window).load(function () {
-
     if (getCookie('defaultsmwidth')) {
         var width = getCookie('defaultsmwidth');
         smwidth = width;
@@ -20,7 +19,7 @@
     });
     if (getCookie('CurrentSong')) {
         var currentSong = JSON.parse(getCookie("CurrentSong"));
-        playSong(null, currentSong.songid, currentSong.albumid, currentSong.position, true);
+        getSongData(null, currentSong.songid, currentSong.albumid, currentSong.position, true);
         loadCurrentPlaylist();
     }
     resizeContent();
@@ -44,17 +43,20 @@ function resizeContent() {
             $('.tabcontent').css({ 'width': tabwidth + 'px' });
         }
         var sbheight = $(window).height() - 152;
-        $('#SideBar').css({ 'height': (sbheight + 107) + 'px' });
+        var sbwidth = $('#SideBar').width();
+        $('#SideBar').css({ 'height': (sbheight + 104) + 'px' });
         $('#ChatMsgs').css({ 'height': (sbheight - 166) + 'px' });
+        $('.status').css({ 'right': (sbwidth + 10) + 'px' });
     } else {
         var tabwidth = $(window).width() - 58;
         if (tabwidth >= 300) {
             $('.tabcontent').css({ 'width': tabwidth + 'px' });
+            $('.status').css({ 'right': 4 + 'px' });
         }
     }
     var tabwidth = $('.tabcontent').width();
-    $('#AlbumContainer, #TrackContainer, #PodcastContainer, #CurrentPlaylistContainer').css({ 'width': (tabwidth - smwidth - 45) + 'px' });
-    $('#CurrentPlaylistContainer').css({ 'width': (tabwidth - 30) + 'px' });
+    $('#AlbumContainer, #TrackContainer, #PodcastContainer').css({ 'width': (tabwidth - smwidth - 45) + 'px' });
+    $('#CurrentPlaylistContainer, #VideosContainer').css({ 'width': (tabwidth - 30) + 'px' });
     $('#player').css({ 'width': tabwidth + 'px' });
 }
 function resizeSMSection(x) {

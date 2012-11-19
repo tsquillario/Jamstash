@@ -14,6 +14,10 @@ a:hover
 h3.title {
     color: #f2f2f2;
 }
+span.apiversion
+{
+    color: #ffffff;
+}
 
 #content 
 {
@@ -112,12 +116,12 @@ h3.title {
     background: #2E2E2E;
     border: 1px solid #1D1D1D;
 }
-#coverart 
-{
-    border: 1px solid #232323;
-}
 .vertshade {
-    background-image: -webkit-gradient( linear, left top, right top, from(rgba(46, 46, 46, 0)), to(rgba(46, 46, 46, 1)));
+    background: -webkit-gradient(linear, left top, right top, from(rgba(46, 46, 46, 0)), to(rgba(46, 46, 46, 1)));
+}
+.horizshade 
+{
+    background: -webkit-gradient(linear, center top, center bottom, from(rgba(46, 46, 46, 0)), to(rgba(46, 46, 46, 1)));
 }
 #songdetails 
 {
@@ -126,9 +130,18 @@ h3.title {
 #songdetails.hover 
 {
     border: solid 1px #212121;
+    background: -webkit-gradient(linear, center top, center bottom, from(rgba(46, 46, 46, 0)), to(rgba(34, 34, 34, .4)));    
 }
 #songdetails ul {
     color: #F2F2F2;
+}
+#songdetails a.rate
+{
+	background-color: #2e2e2e;
+}
+#songdetails a.rate:hover
+{
+	background-color: #2e2e2e;
 }
 /* Button Style */
 a.button {
@@ -203,7 +216,8 @@ ul.simplelist li.selected
 #BottomContainer
 {
     border-top: 1px solid #F2F2F2;
-    background: #2a2a2a;
+    /*background: #2a2a2a;*/
+    background: rgba(42, 42, 42, .8);
 }
 #BottomContainer #BottomIndex li a
 {
@@ -229,22 +243,22 @@ table.songlist tr.album td.albumart img
 {
     border: 1px solid #232323;
 }
-table.songlist tr.song {
+table.songlist tr.row {
     border-bottom: 1px solid #232323;
 }
-table.songlist tr.song:hover
+table.songlist tr.row:hover
 {
     background: #1d1d1d;
 }
-table.songlist tr.song td.album img
+table.songlist tr.row td.album img
 {
     border: 1px solid #232323;
 }
-table.songlist tr.song td.album a
+table.songlist tr.row td.album a
 {
     color: #f2f2f2;
 }
-table.songlist tr.song td.album a:hover
+table.songlist tr.row td.album a:hover
 {
     color: #d6d469;
     text-decoration: underline;    

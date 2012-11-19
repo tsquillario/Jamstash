@@ -33,6 +33,9 @@ Change Log inside...
 **Permissions**
 * You will have to allow MiniSub to "Access your data on all websites". This is required because your Subsonic server could be at any URL `http://*/*` or `https://*/*` 
 * I NEVER access, read, modify, store, or transmit your personal data.
-* http://code.google.com/p/chromium/issues/detail?id=158004
+* If you want to help star this issue: http://code.google.com/p/chromium/issues/detail?id=158004
 * https://github.com/tsquillario/MiniSub/blob/master/manifest.json
 * http://developer.chrome.com/extensions/xhr.html
+
+License: GNU General Public License version 2 (GPLv2)
+https://github.com/tsquillario/MiniSub/blob/master/gpl-2.0.txt

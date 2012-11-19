@@ -3,14 +3,13 @@ var debug = false;
 var audio = null;
 var hostURL = location.href;
 var baseURL;
-var version;
+var apiVersion;
 var username;
 var password;
 var passwordenc;
 var server;
 var smwidth;
-var volume = 50;
-var currentVersion = '2.2.4';
+var currentVersion = '2.3.1';
 
 function getCookie(value) {
     if ($.cookie(value)) {
@@ -44,15 +43,6 @@ function setCookie(key, value) {
     }
     */
 }
-
-//Sound manager
-soundManager.url = 'js/sm/swf';
-if (getCookie('ForceFlash')) {
-    soundManager.preferFlash = true;
-} else {
-    soundManager.preferFlash = false;
-}
-soundManager.useHTML5Audio = true;
 
 // Set auth cookies if specified in URL on launch
 var u = getParameterByName('u'); 
@@ -97,13 +87,14 @@ if (getCookie('password')) {
     setCookie('passwordenc', 'enc:' + HexEncode(getCookie('password')));
     setCookie('password', null);
 }
-if (getCookie('Volume')) {
-    volume = parseInt(getCookie('Volume'));
-}
-var version = '1.6.0';
+var apiVersion = '1.6.0';
 
 function loadTabContent(tab) {
-    if (username && password) {
+        var tabid = '#action_' + tab.substring(1, tab.length);
+        $("ul.tabs li a").removeClass("active"); //Remove any "active" class
+        $(tabid).addClass("active"); //Add "active" class to selected tab
+        $(".tabcontent").hide(); //Hide all tab content
+        window.location.hash = tab;
         switch (tab) {
             case '#tabLibrary':
                 if (debug) { console.log("TAG LIBRARY"); }
@@ -114,8 +105,8 @@ function loadTabContent(tab) {
                 }
                 getMusicFolders();
                 break;
-            case '#tabCurrent':
-                if (debug) { console.log("TAG CURRENT"); }
+            case '#tabQueue':
+                if (debug) { console.log("TAG QUEUE"); }
                 var header = generateSongHeaderHTML();
                 $('#CurrentPlaylistContainer thead').html(header);
                 var count = $('#CurrentPlaylistContainer tbody tr.song').size();
@@ -150,7 +141,7 @@ function loadTabContent(tab) {
             default:
                 break;
         }
-    }
+        $(tab).fadeIn('fast'); //Fade in the active ID content
 }
 
 
