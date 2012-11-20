@@ -44,7 +44,11 @@ function connect() {
         // Play the next song.
         simulateClick('NextTrack');
       } else if (key == PLAY) {
-        simulateClick('PlayTrack');
+        if(isVisible('PlayTrack')) {
+          simulateClick('PlayTrack');
+        } else {
+          simulateClick('PauseTrack');
+        }
       }
     };
 
