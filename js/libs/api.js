@@ -197,6 +197,7 @@ function loadAutoPlaylists(refresh) {
             genresArr.push('Random');
         }
         $.each(genresArr, function (i, genre) {
+            genre = genre.trim();
             var html = "";
             html += '<li class=\"item\" data-genre=\"' + genre + '\">';
             html += '<span>' + genre + '</span>';
@@ -237,9 +238,13 @@ function getAlbums(id, action, appendto) {
                 var rowcolor;
                 var header;
                 $.each(children, function (i, child) {
+                    var isVideo = false;
                     if (child.isDir == true) { isDir = true; }
-                    var html = generateRowHTML(child, appendto);
-                    $(html).appendTo(appendto).hide().fadeIn('fast');
+                    if (child.isVideo == true) { isVideo = true; }
+                    if (!isVideo) {
+                        var html = generateRowHTML(child, appendto);
+                        $(html).appendTo(appendto).hide().fadeIn('fast');
+                    }
                 });
                 toggleAlbumListNextPrev('#status_Library', false, '', '');
                 if (appendto == '#CurrentPlaylistContainer') {
@@ -303,6 +308,7 @@ function getAlbumListBy(id, offset) {
                         }
                         $(albumhtml).appendTo("#AlbumContainer tbody").hide().fadeIn('fast');
                     });
+                    $('#BreadCrumbs').empty();
                     $('#songActions a.button').addClass('disabled');
                     toggleAlbumListNextPrev('#status_Library', true, id, offset);
                 } else {
@@ -333,26 +339,27 @@ function toggleAlbumListNextPrev(el, on, type, offset) {
 }
 function getRandomSongList(action, appendto, genre, folder) {
     if (debug) { console.log('action:' + action + ', appendto:' + appendto + ', genre:' + genre + ', folder:' + folder); }
-    var size, gstring;
-    gstring = '';
+    var size;
     if (getCookie('AutoPlaylistSize')) {
         size = getCookie('AutoPlaylistSize');
     } else {
         size = 25;
     }
+    var genreParams = '';
     if (genre != '' && genre != 'Random') {
-        gstring = '&genre=' + genre;
+        genreParams = '&genre=' + genre;
     }
+    folderParams = '';
     if (typeof folder == 'number' && folder == 0 && folder != 'all') {
-        gstring = '&musicFolderId=' + folder;
+        folderParams = '&musicFolderId=' + folder;
     } else if (folder != '' && folder != 'all') {
-        gstring = '&musicFolderId=' + folder;
+        folderParams = '&musicFolderId=' + folder;
     }
     if (genre == 'Starred') {
         getStarred(action, appendto, 'song');
     } else {
     $.ajax({
-        url: baseURL + '/getRandomSongs.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&size=' + size + gstring,
+        url: baseURL + '/getRandomSongs.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&size=' + size + genreParams + folderParams,
         method: 'GET',
         dataType: 'json',
         timeout: 10000,
@@ -396,6 +403,7 @@ function getRandomSongList(action, appendto, genre, folder) {
                     autoPlay();
                 }
             } else {
+                updateStatus('#status_Playlists', '');
                 $(appendto).empty();
             }
         }
@@ -750,6 +758,7 @@ function getPlaylist(id, action, appendto) {
             } else {
                 if (appendto === '#TrackContainer tbody') {
                     $(appendto).empty();
+                    updateStatus('#status_Playlists', '');
                 }
             }
         }

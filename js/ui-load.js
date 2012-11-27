@@ -17,6 +17,7 @@
             $(el).hide();
         }
     });
+    // Saved Position
     if (getCookie('CurrentSong')) {
         var currentSong = JSON.parse(getCookie("CurrentSong"));
         getSongData(null, currentSong.songid, currentSong.albumid, currentSong.position, true);
@@ -55,7 +56,7 @@ function resizeContent() {
         }
     }
     var tabwidth = $('.tabcontent').width();
-    $('#AlbumContainer, #TrackContainer, #PodcastContainer').css({ 'width': (tabwidth - smwidth - 45) + 'px' });
+    $('#BreadCrumbContainer, #AlbumContainer, #TrackContainer, #PodcastContainer').css({ 'width': (tabwidth - smwidth - 45) + 'px' });
     $('#CurrentPlaylistContainer, #VideosContainer').css({ 'width': (tabwidth - 30) + 'px' });
     $('#player').css({ 'width': tabwidth + 'px' });
 }
@@ -70,6 +71,6 @@ function resizeSMSection(x) {
         $('#BottomContainer').css({ 'width': (newsmwidth - 23) + 'px' });
         setCookie('defaultsmwidth', newwidth);
         var ulwidth = newsmwidth + 6;
-        $('#AlbumContainer, #TrackContainer, #PodcastContainer').css({ 'margin-left': (ulwidth + 15) + 'px' });
+        $('#BreadCrumbContainer, #AlbumContainer, #TrackContainer, #PodcastContainer').css({ 'margin-left': (ulwidth + 15) + 'px' });
     }
 }

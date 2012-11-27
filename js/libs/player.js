@@ -61,11 +61,11 @@ function getSongData(el, songid, albumid, position, loadonly) {
                 }
             }
 
-            playSong(el, songid, albumid, title, artist, album, coverart, rating, starred, contenttype, suffix, specs, loadonly);
+            playSong(el, songid, albumid, title, artist, album, coverart, rating, starred, contenttype, suffix, specs, position, loadonly);
         }
     });
 }
-function playSong(el, songid, albumid, title, artist, album, coverart, rating, starred, contenttype, suffix, specs, loadonly) {
+function playSong(el, songid, albumid, title, artist, album, coverart, rating, starred, contenttype, suffix, specs, position, loadonly) {
             var volume = 1;
             if (getCookie('Volume')) {
                 volume = parseFloat(getCookie('Volume'));
@@ -134,6 +134,7 @@ function playSong(el, songid, albumid, title, artist, album, coverart, rating, s
                     if (!loadonly) {
                         $(this).jPlayer("play");
                     } else {
+                        $('#' + songid).addClass('playing');
                         $(this).jPlayer("pause", position);
                     }
 		        },

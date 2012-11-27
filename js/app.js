@@ -9,7 +9,7 @@ var password;
 var passwordenc;
 var server;
 var smwidth;
-var currentVersion = '2.3.1';
+var currentVersion = '2.3.2';
 
 function getCookie(value) {
     if ($.cookie(value)) {
@@ -44,11 +44,12 @@ function setCookie(key, value) {
     */
 }
 
-// Set auth cookies if specified in URL on launch
+// Get URL Querystring Parameters
 var u = getParameterByName('u'); 
 var p = getParameterByName('p');
 var s = getParameterByName('s');
 if (u && p && s) {
+    // Auto configuration from Querystring params
     if (!getCookie('username')) {
         setCookie('username', u);
         username = u;

@@ -200,7 +200,7 @@ a#logo:hover
     overflow: auto;
     background: #fff;
     border: 1px solid #cbcbcb;
-    margin-top: 5px;
+    margin-top: 4px;
 }
 .padder
 {
@@ -262,7 +262,7 @@ a#logo:hover
     text-align: center;
     position: absolute;
     z-index: 99;
-    bottom: 86px;
+    bottom: 87px;
     right: 4px;
     background: #f2f2f2;
     padding: 2px 10px;
@@ -292,6 +292,7 @@ a#logo:hover
 {
     display: block;
 }
+
 
 /* Library Style */
 ul.simplelist
@@ -376,7 +377,42 @@ ul.mainlist li.item a.add:hover
 {
     background: url('../images/plus_8x8.png') no-repeat 6px center #DEECFB;
 }
-#AlbumContainer, #TrackContainer, #PodcastContainer
+#BreadCrumbContainer
+{
+    margin: 5px 5px 0 221px;
+    font-size: 12px;
+    height: 22px;
+}
+#BreadCrumb 
+{
+    float: left;
+    margin: 0;
+    padding: 2px 8px;
+    color: #AEAEA7;
+    background: #f6f6f6;  
+    border-radius: .4em;  
+}
+#BreadCrumb img
+{
+    padding: 2px 0px 2px 0;
+    float: left;
+}
+#BreadCrumb a
+{
+    margin: 0 2px 0 6px;
+    text-decoration: none;
+    color: #829FC0;
+}
+#BreadCrumb a:hover
+{
+  text-decoration: underline;
+}
+
+#AlbumContainer
+{
+    margin: 0 5px 5px 221px;
+}
+#TrackContainer, #PodcastContainer
 {
     margin: 5px 5px 5px 221px;
 }
@@ -396,15 +432,6 @@ ul.mainlist li.item a.add:hover
 #CurrentPlaylistContainer tr.song a.remove:hover
 {
     background: url('../images/minus_8x2.png') no-repeat 6px center #DEECFB;
-}
-#BreadCrumb a
-{
-    color: #4B95E5;
-    font-size: 12px;
-}
-#BreadCrumb a:hover
-{
-    text-decoration: underline;
 }
 table.songlist
 {

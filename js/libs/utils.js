@@ -253,7 +253,7 @@ function showNotification(pic, title, text, type, bind) {
         notifications.push(popup);
         setTimeout(function (notWin) {
             notWin.cancel();
-        }, 10000, popup);
+        }, 20000, popup);
         popup.show();
     } else {
         console.log("showNotification: No Permission");

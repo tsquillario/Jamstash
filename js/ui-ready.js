@@ -117,7 +117,7 @@
     // Keyboard shortcuts
     $(document).keydown(function (e) {
         var source = e.target.id;
-        if (source != 'Search' && source != 'ChatMsg') {
+        if (source != 'Search' && source != 'ChatMsg' && source != 'AutoPlaylists') {
             var unicode = e.charCode ? e.charCode : e.keyCode;
             // a-z
             if (unicode >= 65 && unicode <= 90 && $('#tabLibrary').is(':visible')) {
@@ -149,8 +149,7 @@
         }
     });
 
-    // Main Click Events
-    // Albums Click Event
+    // Library Click Event
     $('#MusicFolders').live('change', function () {
         var folder = $(this).val();
         if (folder != 'all') {
@@ -165,6 +164,7 @@
         $('#ArtistContainer li').removeClass('selected');
         $(this).addClass('selected');
         getAlbums($(this).attr("id"), '', '#AlbumContainer tbody');
+        $('#BreadCrumbs').html('<a href=\"\" artistid=\"' + $(this).attr("id") + '\">' + $(this).find('span').text() + '</a>');
     });
     $('#BottomIndex li a').live('click', function () {
         var el = 'a[name = "index_' + $(this).text() + '"]';
@@ -176,6 +176,27 @@
         $('#ArtistContainer li').removeClass('selected');
         $(this).addClass('selected');
         getAlbumListBy($(this).attr("id"));
+    });
+    $('#BreadCrumbs a').live('click', function () {
+        var artistid = $(this).attr('artistid');
+        var albumid = $(this).attr('albumid');
+        if (typeof artistid != 'undefined') {
+            getAlbums(artistid, '', '#AlbumContainer tbody');
+        } else if (typeof albumid != 'undefined') {
+            getAlbums(albumid, '', '#AlbumContainer tbody');
+        }
+        return false;
+    });
+    $('tr.album').live('click', function (e) {
+        var albumid = $(this).attr('childid');
+        var album = $(this).find('td.album').text();
+        var artistid = $(this).attr('parentid');
+        var artist = $(this).find('td.artist').text();
+        getAlbums(albumid, '', '#AlbumContainer tbody');
+        var html = '<a href=\"\" artistid=\"' + artistid + '\">' + artist + '</a>';
+        html += ' ><a href=\"\" albumid=\"' + albumid + '\">' + album + '</a>';
+        $('#BreadCrumbs').html(html);
+        return false;
     });
     $('tr.album a.play').live('click', function (e) {
         var albumid = $(this).parent().parent().attr('childid');
@@ -208,19 +229,6 @@
         starItem(itemid, false);
         $(this).removeClass('favorite');
         $(this).addClass('rate');
-        return false;
-    });
-    $('tr.album').live('click', function (e) {
-        var albumid = $(this).attr('childid');
-        var artistid = $(this).attr('parentid');
-        getAlbums(albumid, '', '#AlbumContainer tbody');
-        return false;
-    });
-
-    $('tr.album').live('click', function (e) {
-        var albumid = $(this).attr('childid');
-        var artistid = $(this).attr('parentid');
-        getAlbums(albumid, '', '#AlbumContainer tbody');
         return false;
     });
 
@@ -520,8 +528,33 @@
             loadTabContent('#tabQueue');
         }
     });
+    $('#songdetails').bind('mousewheel', function (event, delta, deltaX, deltaY) {
+        var dir = delta > 0 ? 'Up' : 'Down';
+        var vel = Math.abs(delta);
+        var v = getCookie('Volume') ? parseFloat(getCookie('Volume')) : 1;
+        if (deltaY > 0) {
+            var newVolume = v + .2;
+            if (newVolume <= 1) {
+                $("#playdesk").jPlayer({
+                    volume: newVolume
+                });
+                setCookie('Volume', newVolume);
+            }
+        } else {
+            var newVolume = v - .2;
+            if (newVolume > 0) {
+                $("#playdesk").jPlayer({
+                    volume: newVolume
+                });
+                setCookie('Volume', newVolume);
+            }
+        }
+        if (debug) { console.log(dir + ' velocity: ' + vel + ' x: ' + deltaX + ' y: ' + deltaY); }
+        return false;
+    });
     $('#songdetails').mouseover(function () {
         $(this).addClass('hover');
+
         /*
         var total = $("#CurrentPlaylistContainer tr.song").size();
         if (total > 0) {
@@ -1001,5 +1034,5 @@
     $("#TrackContainer tbody").sortable({
         helper: fixHelper
     }).disableSelection();
-});                                                                                                                                                       // End document.ready
+});                                                                                                                                                                    // End document.ready
 

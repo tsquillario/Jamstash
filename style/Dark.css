@@ -213,6 +213,15 @@ ul.simplelist li.selected
 {
     background: #3A3A3A;
 }
+#BreadCrumb 
+{
+    color: #D6D469;
+    background: #222222;  
+}
+#BreadCrumb a
+{
+    color: #D6D469;
+}
 #BottomContainer
 {
     border-top: 1px solid #F2F2F2;
@@ -239,6 +248,10 @@ table.songlist tr.album
 {
     border-bottom: 1px solid #232323;
 }
+table.songlist tr.album td
+{
+    color: #f2f2f2;
+}
 table.songlist tr.album td.albumart img
 {
     border: 1px solid #232323;
@@ -250,13 +263,17 @@ table.songlist tr.row:hover
 {
     background: #1d1d1d;
 }
+table.songlist tr.row td
+{
+    color: #f2f2f2;
+}
 table.songlist tr.row td.album img
 {
     border: 1px solid #232323;
 }
 table.songlist tr.row td.album a
 {
-    color: #f2f2f2;
+    color: #D6D469;
 }
 table.songlist tr.row td.album a:hover
 {
