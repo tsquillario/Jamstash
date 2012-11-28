@@ -397,15 +397,20 @@ ul.mainlist li.item a.add:hover
     padding: 2px 0px 2px 0;
     float: left;
 }
-#BreadCrumb a
+#BreadCrumbs a
 {
     margin: 0 2px 0 6px;
     text-decoration: none;
     color: #829FC0;
 }
-#BreadCrumb a:hover
+#BreadCrumbs a:hover
 {
   text-decoration: underline;
+}
+#BreadHome a
+{
+    padding: 0;
+    margin: 0;
 }
 
 #AlbumContainer

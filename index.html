@@ -22,7 +22,6 @@
     <script src="js/plugins/jquery.linkify-1.0-min.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.periodic.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.scrollTo-1.4.2-min.js" type="text/javascript"></script>
-    <script src="js/plugins/jquery.mousewheel.min.js" type="text/javascript"></script>
     <script src="js/jplayer/jquery.jplayer.min.js" type="text/javascript"></script>
     <script src="js/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
     <script src="js/libs/api.js" type="text/javascript"></script>
@@ -45,7 +44,7 @@
         <li><a href="#tabQueue" id="action_tabQueue" title="Play Queue"><img src="images/play_alt_gd_16x16.png" /></a></li>
         <li><a href="#tabPlaylists" id="action_tabPlaylists" title="Playlists"><img src="images/list_gd_16x14.png" /></a></li>
         <li><a href="#tabPodcasts" id="action_tabPodcasts" title="Podcasts"><img src="images/rss_16x16.png" /></a></li>
-        <li><a href="#tabVideos" id="action_tabVideos" title="Videos"><img src="images/movie_gd_16x16.png" /></a></li>
+        <!--<li><a href="#tabVideos" id="action_tabVideos" title="Videos"><img src="images/movie_gd_16x16.png" /></a></li>-->
         <li><a href="#tabPreferences" id="action_tabPreferences" class="last" title="Preferences"><img src="images/cog_16x16.png" /></a></li>
         </ul>
         <div id="toploading"></div>
@@ -93,7 +92,7 @@
                     </div>
                 <div id="BottomContainer"><ul id="BottomIndex"></ul></div>
                 </div>
-                <div id="BreadCrumbContainer"><div id="BreadCrumb"><img src="images/home_gl_12x12.png" /><div id="BreadCrumbs" class="floatleft"></div></div></div>
+                <div id="BreadCrumbContainer"><div id="BreadCrumb"><a href="#" id="BreadHome"><img src="images/home_gl_12x12.png" /></a><div id="BreadCrumbs" class="floatleft"></div></div></div>
                 <table id="AlbumContainer" class="simplelist songlist noselect" cellspacing="1">
                 <thead></thead>
                 <tbody></tbody>
@@ -296,7 +295,7 @@
                         <span class="changes">- </span>
                     </li>
                     -->
-                    <li class="log"><span class="version">11/26/2012 - 2.3.2</span>
+                    <li class="log"><span class="version">11/27/2012 - 2.3.4</span>
                         <span class="changes">- Basic Breadcrumb navigation implemented</span>
                     </li>
                     <li class="log"><span class="version">11/1/2012 - 2.3.1</span>
@@ -436,7 +435,7 @@
                     <h3 class="title">Thanks</h3>
                     <ul class="preferences">
                     <li>Icons - <a href="http://somerandomdude.com/work/iconic" target="_blank">http://somerandomdude.com/work/iconic</a></li>
-                    <li>Audio Library - <a href="http://www.schillmania.com/projects/soundmanager2" target="_blank">http://www.schillmania.com/projects/soundmanager2</a></li>
+                    <li>Audio Library - <a href="http://jplayer.org" target="_blank">http://jplayer.org</a></li>
                     </ul>
                 </div>
             </div>

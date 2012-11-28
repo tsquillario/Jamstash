@@ -9,7 +9,7 @@ var password;
 var passwordenc;
 var server;
 var smwidth;
-var currentVersion = '2.3.2';
+var currentVersion = '2.3.4';
 
 function getCookie(value) {
     if ($.cookie(value)) {

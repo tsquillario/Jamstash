@@ -7,10 +7,11 @@ MiniSub is an HTML5 Web Player for the Subsonic streaming server.
 Features
 * HTML5 Audio with Flash fallback (provided by the SoundManager2 library)
 * Flexible Layout (will scale to whatever size your browser window is)
-* Keyboard shortcuts (back, forward, play/pause, skip to artist, volume control)
+* Keyboard shortcuts (back, forward, play/pause, skip to artist)
 * Playlist support (create new, add to existing, delete)
 * Podcast support (includes description field on hover)
 * Favorite/Starred support for Albums & Songs
+* Shortcuts supported
 * Chat support (when the chat window is open it will auto-update in the background)
 * Now Playing support (see what others are streaming at the moment)
 * Easy installation (Chrome App or manual install)

@@ -144,7 +144,7 @@
                 playPauseSong();
                 return false;
             } else if (unicode == 36 && $('#tabLibrary').is(':visible')) {
-                $('#Artists').stop().scrollTo('#auto', 400);
+                $('#Artists').stop().scrollTo('#MusicFolders', 400);
             }
         }
     });
@@ -176,6 +176,10 @@
         $('#ArtistContainer li').removeClass('selected');
         $(this).addClass('selected');
         getAlbumListBy($(this).attr("id"));
+    });
+    $('#BreadHome').live('click', function () {
+        $('#Artists').stop().scrollTo('#MusicFolders', 400);
+        return false;
     });
     $('#BreadCrumbs a').live('click', function () {
         var artistid = $(this).attr('artistid');
@@ -527,30 +531,6 @@
         if (source != 'A' && hash != '#tabQueue') {
             loadTabContent('#tabQueue');
         }
-    });
-    $('#songdetails').bind('mousewheel', function (event, delta, deltaX, deltaY) {
-        var dir = delta > 0 ? 'Up' : 'Down';
-        var vel = Math.abs(delta);
-        var v = getCookie('Volume') ? parseFloat(getCookie('Volume')) : 1;
-        if (deltaY > 0) {
-            var newVolume = v + .2;
-            if (newVolume <= 1) {
-                $("#playdesk").jPlayer({
-                    volume: newVolume
-                });
-                setCookie('Volume', newVolume);
-            }
-        } else {
-            var newVolume = v - .2;
-            if (newVolume > 0) {
-                $("#playdesk").jPlayer({
-                    volume: newVolume
-                });
-                setCookie('Volume', newVolume);
-            }
-        }
-        if (debug) { console.log(dir + ' velocity: ' + vel + ' x: ' + deltaX + ' y: ' + deltaY); }
-        return false;
     });
     $('#songdetails').mouseover(function () {
         $(this).addClass('hover');
@@ -965,6 +945,8 @@
     $('#ScrollTitle').live('click', function () {
         if ($('#ScrollTitle').is(':checked')) {
             setCookie('ScrollTitle', '1');
+        } else {
+            setCookie('ScrollTitle', null);
         }
     });
     $('#Debug').live('click', function () {
