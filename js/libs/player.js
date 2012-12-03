@@ -5,10 +5,10 @@ function getSongData(el, songid, albumid, position, loadonly) {
     var minimumVersion = parseVersionString('1.8.0');
     if (checkVersion(runningVersion, minimumVersion)) {
         if (debug) { console.log('apiVersion at or above 1.8.0 using getSong.view'); }        
-        ajaxUrl = baseURL + '/getSong.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + songid;
+        ajaxUrl = baseURL + '/getSong.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + songid;
     } else {
         if (debug) { console.log('apiVersion below 1.8.0 using getMusicDirectory.view'); }        
-        ajaxUrl = baseURL + '/getMusicDirectory.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + albumid; // Deprecated: apiVersion 1.8.0
+        ajaxUrl = baseURL + '/getMusicDirectory.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + albumid; // Deprecated: apiVersion 1.8.0
     }
     if (debug) { console.log(ajaxUrl) }
     $.ajax({
@@ -87,8 +87,8 @@ function playSong(el, songid, albumid, title, artist, album, coverart, rating, s
                 coverartSrc = 'images/albumdefault_60.jpg';
                 coverartFullSrc = '';
             } else {
-                coverartSrc = baseURL + '/getCoverArt.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&size=60&id=' + coverart;
-                coverartFullSrc = baseURL + '/getCoverArt.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + coverart;
+                coverartSrc = baseURL + '/getCoverArt.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&size=60&id=' + coverart;
+                coverartFullSrc = baseURL + '/getCoverArt.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + coverart;
             }
             $('#coverartimage').attr('href', coverartFullSrc);
             $('#coverartimage img').attr('src', coverartSrc);
@@ -101,6 +101,7 @@ function playSong(el, songid, albumid, title, artist, album, coverart, rating, s
                 audioSolution = "flash,html";
             }
             $("#playdeck").jPlayer("destroy");
+            $.jPlayer.timeFormat.showHour = true; 
             $("#playdeck").jPlayer({
                 swfPath: "js/jplayer",
                 wmode: "window",
@@ -124,11 +125,11 @@ function playSong(el, songid, albumid, title, artist, album, coverart, rating, s
                 ready: function () {
                     if (suffix == 'oga') {
                         $(this).jPlayer("setMedia", {
-                            oga: baseURL + '/stream.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
+                            oga: baseURL + '/stream.view?v=' + apiVersion + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
                         });
                     } else if (suffix == 'mp3') {
                         $(this).jPlayer("setMedia", {
-                            mp3: baseURL + '/stream.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
+                            mp3: baseURL + '/stream.view?v=' + apiVersion + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
                         });
                     }
                     if (!loadonly) {
@@ -138,10 +139,18 @@ function playSong(el, songid, albumid, title, artist, album, coverart, rating, s
                         $(this).jPlayer("pause", position);
                     }
 		        },
-                volumechange: function(event) { // The $.jPlayer.event.ended event
+                timeupdate: function(event) {
+                    // Scrobble song once percentage is reached
+                    var p = event.jPlayer.status.currentPercentAbsolute;
+                    if (!scrobbled && p > 30) {
+                        if (debug) { console.log('LAST.FM SCROBBLE - Percent Played: ' + p); }
+                        scrobbleSong(true);
+                    }
+                },
+                volumechange: function(event) {
                     setCookie('Volume', event.jPlayer.options.volume);
                 },
-                ended: function() { // The $.jPlayer.event.ended event
+                ended: function() {
                     var next = $('#CurrentPlaylistContainer tr.playing').next();
                     if (!changeTrack(next)) {
                         if (getCookie('AutoPilot')) {
@@ -173,7 +182,7 @@ function playSong(el, songid, albumid, title, artist, album, coverart, rating, s
                 var solution = data.solutions[i];
                 if (data[solution].used) {
                     spechtml += "<strong>" + solution + "</strong> is";
-                    spechtml += " being used with<strong>";
+                    spechtml += " currently being used with<strong>";
                     for (format in data[solution].support) {
                         if (data[solution].support[format]) {
                             spechtml += " " + format;
@@ -233,7 +242,7 @@ function playVideo(id, bitrate) {
 function scrobbleSong(submission) {
     var songid = $('#songdetails_song').attr('childid');
     $.ajax({
-        url: baseURL + '/scrobble.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + songid + "&submission=" + submission,
+        url: baseURL + '/scrobble.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + songid + "&submission=" + submission,
         method: 'GET',
         dataType: 'json',
         timeout: 10000,
@@ -246,12 +255,12 @@ function scrobbleSong(submission) {
 }
 function rateSong(songid, rating) {
     $.ajax({
-        url: baseURL + '/setRating.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + songid + "&rating=" + rating,
+        url: baseURL + '/setRating.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + songid + "&rating=" + rating,
         method: 'GET',
         dataType: 'json',
         timeout: 10000,
         success: function () {
-            updateMessage('Rating Updated!');
+            updateMessage('Rating Updated!', true);
         }
     });
 }
@@ -259,9 +268,9 @@ function starItem(itemid, starred) {
     var url;
     if (itemid !== undefined) {
         if (starred) {
-            url = baseURL + '/star.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + itemid;
+            url = baseURL + '/star.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + itemid;
         } else {
-            url = baseURL + '/unstar.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + itemid;
+            url = baseURL + '/unstar.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + itemid;
         }
         $.ajax({
             url: url,
@@ -269,7 +278,7 @@ function starItem(itemid, starred) {
             dataType: 'json',
             timeout: 10000,
             success: function () {
-                updateMessage('Favorite Updated!');
+                updateMessage('Favorite Updated!', true);
             }
         });
     }

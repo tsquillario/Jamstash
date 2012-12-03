@@ -253,6 +253,7 @@ a#logo:hover
     border-radius: 4px 4px 4px 4px;
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
     opacity: 0.8;
+    cursor: pointer;        
 }
 .status
 {
@@ -595,7 +596,7 @@ table.songlist tr.row td.album
     padding: 0;
     line-height: 31px;
 }
-table.songlist tr.row td.album a
+table.songlist tr.row a
 {
     color: #829FC0;
     text-decoration: none;  
@@ -604,7 +605,7 @@ table.songlist tr.row td.album a
 	white-space: nowrap;
     font-size: 12px;  
 }
-table.songlist tr.row td.album a:hover
+table.songlist tr.row a:hover
 {
     text-decoration: underline;    
 }
@@ -1124,6 +1125,15 @@ table.songlist tr.selected td.album a
 #songdetails a.shuffle:hover, #songdetails a.shuffle_up
 {
     background: url('../images/loop_alt4_gl_16x12.png') 0 center no-repeat;
+}
+#songdetails a.lock
+{
+    float: left;
+    margin: 2px;
+	height: 12px;
+    width: 9px;
+    display: block;
+	background: url('../images/lock_stroke_gl_9x12.png') 0 center no-repeat;	
 }
 #songdetails a.first
 {

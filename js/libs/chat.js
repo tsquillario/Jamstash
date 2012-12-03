@@ -4,7 +4,7 @@ function updateChatMessages() {
     updater = $.periodic({ period: 1000, decay: 1.5, max_period: 1800000 }, function () {
         $.ajax({
             periodic: this,
-            url: baseURL + '/getChatMessages.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&since=' + starttime,
+            url: baseURL + '/getChatMessages.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&since=' + starttime,
             method: 'GET',
             dataType: 'json',
             timeout: 10000,
@@ -49,7 +49,7 @@ function stopUpdateChatMessages() {
 function addChatMessage(msg) {
     $.ajax({
         type: 'GET',
-        url: baseURL + '/addChatMessage.view?u=' + username + '&p=' + password,
+        url: baseURL + '/addChatMessage.view',
         dataType: 'json',
         timeout: 10000,
         data: { v: apiVersion, c: applicationName, f: "json", message: msg },

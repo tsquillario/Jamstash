@@ -9,7 +9,7 @@ var password;
 var passwordenc;
 var server;
 var smwidth;
-var currentVersion = '2.3.4';
+var currentVersion = '2.3.5';
 
 function getCookie(value) {
     if ($.cookie(value)) {
@@ -83,11 +83,11 @@ if (getCookie('passwordenc')) {
         password = 'enc:' + HexEncode(getCookie('password'));
     }
 }
-var auth = makeBaseAuth(username, password);
 if (getCookie('password')) {
     setCookie('passwordenc', 'enc:' + HexEncode(getCookie('password')));
     setCookie('password', null);
 }
+var auth = makeBaseAuth(username, password.substring(4, password.length).hexDecode());
 var apiVersion = '1.6.0';
 
 function loadTabContent(tab) {

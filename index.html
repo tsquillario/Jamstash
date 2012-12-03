@@ -217,6 +217,7 @@
                     <li><em>Spacebar</em> Play/Pause</li>
                     <li><em>&rarr;</em> Next Track</li>
                     <li><em>&larr;</em> Previous Track</li>
+                    <li><em>-/_</em> Volume Down <em>=/+</em> Volume Up</li>
                     <li><span></span></li>
                     </ul>
                 </div>
@@ -271,7 +272,7 @@
                         <span>Local Storage</span><br />
                         <div class="clear"></div>
                         <div class="inputwrap"><input type="checkbox" id="SaveTrackPosition" name="SaveTrackPosition" value="1" title="Saves Play Queue & Track Position Periodically (Uses HTML5: localStorage)"/></div>
-                        <label for="SaveTrackPosition">Save Current Position</label>
+                        <label for="SaveTrackPosition">Save Progress</label>
                         </fieldset>
                     </div>
                 </div>
@@ -295,6 +296,11 @@
                         <span class="changes">- </span>
                     </li>
                     -->
+                    <li class="log"><span class="version">12/3/2012 - 2.3.5</span>
+                        <span class="changes">- Added keyboard volume controls back. Use the plus (=/+) and minus (-/_) keys</span>
+                        <span class="changes">- Change Save Current Position to Save Progress, added an indicator next to volume</span>
+                        <span class="changes">- Fixed Last.fm scrobble feature, this works again!</span>
+                    </li>
                     <li class="log"><span class="version">11/27/2012 - 2.3.4</span>
                         <span class="changes">- Basic Breadcrumb navigation implemented</span>
                     </li>
@@ -473,7 +479,8 @@
                     <!--<a href="#" id="action_ShuffleMode" class="shuffle first" title="Shuffle Mode"></a>-->
                     <a href="#" id="action_Mute" class="mute first" title="Mute"></a>
                     <a href="#" id="action_UnMute" class="unmute first" title="Unmute" style="display: none;"></a>
-                    <div class="jp-volume-bar"><div class="jp-volume-bar-value"></div></div><a href="#" id="action_VolumeMax" class="volume" title="Max Volume"></a>         
+                    <div class="jp-volume-bar"><div class="jp-volume-bar-value"></div></div><a href="#" id="action_VolumeMax" class="volume" title="Max Volume"></a>
+                    <a href="#" id="action_SaveProgress" class="lock" title="Progress Saved" style="display: none;"></a>
                     </li>
                     </ul>
                     <div class="rate"><a id="songdetails_rate" class="rate" href="" title="Add To Favorites"></a></div>

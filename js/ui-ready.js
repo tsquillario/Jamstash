@@ -45,18 +45,13 @@
     } else {
         $('#ForceFlash').attr('checked', false);
     }
-    if (getCookie('SaveTrackPosition')) {
-        $('#SaveTrackPosition').attr('checked', true);
-    } else {
-        $('#SaveTrackPosition').attr('checked', false);
-    }
     if (getCookie('AutoPilot')) {
         setCookie('AutoPilot', null)
     }
     // Version check
     if (getCookie('CurrentVersion')) {
         if (checkVersionNewer(parseVersionString(getCookie('CurrentVersion')), parseVersionString(currentVersion))) {
-            updateMessage('MiniSub updated to v' + currentVersion);
+            updateMessage('MiniSub updated to v' + currentVersion, false);
             setCookie('CurrentVersion', currentVersion);
         }
     } else {
@@ -106,7 +101,7 @@
         return false;
     });
 
-    // Ajax Loading Screen
+    // Show/Hide Loading
     $("#toploading").ajaxStart(function () {
         $(this).show();
     });
@@ -119,8 +114,7 @@
         var source = e.target.id;
         if (source != 'Search' && source != 'ChatMsg' && source != 'AutoPlaylists') {
             var unicode = e.charCode ? e.charCode : e.keyCode;
-            // a-z
-            if (unicode >= 65 && unicode <= 90 && $('#tabLibrary').is(':visible')) {
+            if (unicode >= 65 && unicode <= 90 && $('#tabLibrary').is(':visible')) { // a-z
                 var key = findKeyForCode(unicode);
                 if (key == 'x' || key == 'y' || key == 'z') {
                     key = 'x-z';
@@ -129,22 +123,41 @@
                 if ($(el).length > 0) {
                     $('#Artists').stop().scrollTo(el, 400);
                 }
-                // right arrow
-            } else if (unicode == 39 || unicode == 176) {
+            } else if (unicode == 39 || unicode == 176) { // right arrow
                 var next = $('#CurrentPlaylistContainer tr.playing').next();
                 if (!next.length) next = $('#CurrentPlaylistContainer li').first();
                 changeTrack(next);
-                // back arrow
-            } else if (unicode == 37 || unicode == 177) {
+            } else if (unicode == 37 || unicode == 177) { // back arrow
                 var prev = $('#CurrentPlaylistContainer tr.playing').prev();
                 if (!prev.length) prev = $('#CurrentPlaylistContainer tr').last();
                 changeTrack(prev);
-                // spacebar
-            } else if (unicode == 32 || unicode == 179 || unicode == 0179) {
+            } else if (unicode == 32 || unicode == 179 || unicode == 0179) { // spacebar
                 playPauseSong();
                 return false;
-            } else if (unicode == 36 && $('#tabLibrary').is(':visible')) {
+            } else if (unicode == 36 && $('#tabLibrary').is(':visible')) { // home
                 $('#Artists').stop().scrollTo('#MusicFolders', 400);
+            }
+            if (unicode == 189) { // dash - volume down
+                var volume = getCookie('Volume') ? parseFloat(getCookie('Volume')) : 1;
+                if (volume <= 1 && volume > 0 && source == '') {
+                    volume += -.1;
+                    $("#playdeck").jPlayer({
+                        volume: volume
+                    });
+                    setCookie('Volume', volume);
+                    //updateMessage('Volume: ' + Math.round(volume * 100) + '%');
+                }
+            }
+            if (unicode == 187) { // equals - volume up
+                var volume = getCookie('Volume') ? parseFloat(getCookie('Volume')) : 1;
+                if (volume < 1 && volume >= 0 && source == '') {
+                    volume += .1;
+                    $("#playdeck").jPlayer({
+                        volume: volume
+                    });
+                    setCookie('Volume', volume);
+                    //updateMessage('Volume: ' + Math.round(volume * 100) + '%');
+                }
             }
         }
     });
@@ -288,7 +301,7 @@
                 $(track).clone().appendTo('#CurrentPlaylistContainer');
                 count++;
             }
-            updateMessage(count + ' Song(s) Added');
+            updateMessage(count + ' Song(s) Added', true);
             var firstsong = $('#CurrentPlaylistContainer tr.song:first');
             songid = $(firstsong).attr('childid');
             albumid = $(firstsong).attr('parentid');
@@ -329,7 +342,7 @@
         $(this).addClass('rate');
         return false;
     });
-    $('table.songlist tr.song a.albumlink').live('click', function (event) {
+    $('table.songlist tr.song td.album a').live('click', function (event) {
         var parentid = $(this).parent().parent().attr('parentid');
         if (parentid != '' && parentid !== undefined) {
             $('#AutoAlbumContainer li').removeClass('selected');
@@ -338,6 +351,17 @@
         }
         return false;
     });
+    /*
+    $('table.songlist tr.song td.artist a').live('click', function (event) {
+    var artistid = $(this).parent().parent().attr('artistid');
+    if (artistid != '' && artistid !== undefined) {
+    $('#AutoAlbumContainer li').removeClass('selected');
+    $('#ArtistContainer li').removeClass('selected');
+    getArtist(artistid, 'link', '#AlbumContainer tbody');
+    }
+    return false;
+    });
+    */
     $('li.index').live('click', function (e) {
         $('#Artists').stop().scrollTo('#auto', 400);
         return false;
@@ -596,7 +620,7 @@
                 $(this).addClass('selected');
                 count++;
             });
-            updateMessage(count + ' Song(s) Selected');
+            updateMessage(count + ' Song(s) Selected', true);
         }
         return false;
     });
@@ -633,7 +657,7 @@
             }
         }
         $(this).attr("title", msg);
-        updateMessage(msg);
+        updateMessage(msg, true);
         return false;
     });
 
@@ -1016,5 +1040,5 @@
     $("#TrackContainer tbody").sortable({
         helper: fixHelper
     }).disableSelection();
-});                                                                                                                                                                    // End document.ready
+});                                                                                                                                                                     // End document.ready
 

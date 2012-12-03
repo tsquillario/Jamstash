@@ -1,5 +1,5 @@
 function generateRowHTML(child, appendto) {
-    var html, isDir, starred, duration, artist, i;
+    var html, isDir, starred, duration, artist, artistId, i;
     isDir = child.isDir;
     if (child.starred !== undefined) { starred = true; } else { starred = false; }
     if (child.duration !== undefined) { duration = child.duration; } else { duration = ''; }
@@ -33,7 +33,7 @@ function generateAlbumHTML(childid, parentid, coverart, title, artist, rating, s
     if (coverart == undefined) {
         html += '<td class=\"albumart\"><img src=\"images/albumdefault_50.jpg\" /></td>';
     } else {
-        html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&size=50&id=' + coverart + '\" /></td>';
+        html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&size=50&id=' + coverart + '\" /></td>';
     }
     html += '<td class=\"album\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
@@ -72,13 +72,14 @@ function generateSongHTML(childid, parentid, track, title, description, artist, 
         html += '<td class=\"title\">' + title + '</td>';
     }
     html += '<td class=\"artist\">' + artist + '</td>';
+    //html += '<td class=\"artist\"><a href="#">' + artist + '</a></td>';
     var coverartSrc;
     if (coverart == undefined) {
         coverartSrc = 'images/albumdefault_25.jpg';
     } else {
-        coverartSrc = baseURL + '/getCoverArt.view?u=' + username + '&p=' + password + '&v=' + apiVersion + '&c=' + applicationName + '&f=json&size=25&id=' + coverart;
+        coverartSrc = baseURL + '/getCoverArt.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&size=25&id=' + coverart;
     }
-    html += '<td class=\"album\" data-order-by=\"' + album + '\"><a href="#" class=\"albumlink\"><img src=\"' + coverartSrc + '\" />' + album + '</a></td>';
+    html += '<td class=\"album\" data-order-by=\"' + album + '\"><a href="#"><img src=\"' + coverartSrc + '\" />' + album + '</a></td>';
     html += '<td class=\"time\">' + time + '</td>';
     html += '</tr>';
     return html;

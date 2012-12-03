@@ -12,6 +12,11 @@
     if (getCookie('HideAZ')) {
         $('#BottomContainer').hide();
     }
+    if (getCookie('SaveTrackPosition')) {
+        $('#SaveTrackPosition').attr('checked', true);
+    } else {
+        $('#SaveTrackPosition').attr('checked', false);
+    }
     $('ul#ChangeLog li.log').each(function (i, el) {
         if (i > 3) {
             $(el).hide();

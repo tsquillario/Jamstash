@@ -120,16 +120,22 @@ function secondsToTime(secs) {
     return time;
 }
 var msgIndex = 1;
-function updateMessage(msg) {
+function updateMessage(msg, autohide) {
     if (msg != '') {
         var id = msgIndex;
         $('#messages').append('<span id=\"msg_' + id + '\" class="message">' + msg + '</span>');
         $('#messages').fadeIn();
-        setTimeout(function () {
-            var el = '#msg_' + id;
-            $(el).fadeOut( function() { $(this).remove(); });
-        },
-        5000);
+        var el = '#msg_' + id;
+        if (autohide) {
+            setTimeout(function () {
+                $(el).fadeOut(function () { $(this).remove(); });
+            }, 10000);
+        } else {
+            $(el).click(function () {
+                $(el).fadeOut(function () { $(this).remove(); });
+                return false;
+            });
+        }
         msgIndex++;
     }
 }
