@@ -33,7 +33,7 @@ function generateAlbumHTML(childid, parentid, coverart, title, artist, rating, s
     if (coverart == undefined) {
         html += '<td class=\"albumart\"><img src=\"images/albumdefault_50.jpg\" /></td>';
     } else {
-        html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&size=50&id=' + coverart + '\" /></td>';
+        html += '<td class=\"albumart\"><img src=\"' + baseURL + '/getCoverArt.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&size=50&id=' + coverart + '\" /></td>';
     }
     html += '<td class=\"album\">' + title + '</td>';
     html += '<td class=\"artist\">' + artist + '</td>';
@@ -77,7 +77,7 @@ function generateSongHTML(childid, parentid, track, title, description, artist, 
     if (coverart == undefined) {
         coverartSrc = 'images/albumdefault_25.jpg';
     } else {
-        coverartSrc = baseURL + '/getCoverArt.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&size=25&id=' + coverart;
+        coverartSrc = baseURL + '/getCoverArt.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&size=25&id=' + coverart;
     }
     html += '<td class=\"album\" data-order-by=\"' + album + '\"><a href="#"><img src=\"' + coverartSrc + '\" />' + album + '</a></td>';
     html += '<td class=\"time\">' + time + '</td>';

@@ -5,16 +5,16 @@ function getSongData(el, songid, albumid, position, loadonly) {
     var minimumVersion = parseVersionString('1.8.0');
     if (checkVersion(runningVersion, minimumVersion)) {
         if (debug) { console.log('apiVersion at or above 1.8.0 using getSong.view'); }        
-        ajaxUrl = baseURL + '/getSong.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + songid;
+        ajaxUrl = baseURL + '/getSong.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&id=' + songid;
     } else {
         if (debug) { console.log('apiVersion below 1.8.0 using getMusicDirectory.view'); }        
-        ajaxUrl = baseURL + '/getMusicDirectory.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + albumid; // Deprecated: apiVersion 1.8.0
+        ajaxUrl = baseURL + '/getMusicDirectory.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&id=' + albumid; // Deprecated: apiVersion 1.8.0
     }
     if (debug) { console.log(ajaxUrl) }
     $.ajax({
         url: ajaxUrl,
         method: 'GET',
-        dataType: 'json',
+        dataType: protocol,
         timeout: 10000,
         success: function (data) {
             var title, artist, album, rating, starred, contenttype, suffix;
@@ -36,7 +36,6 @@ function getSongData(el, songid, albumid, position, loadonly) {
             }
             if (typeof data["subsonic-response"].directory != 'undefined') { // Deprecated: apiVersion 1.8.0
                 if (typeof data["subsonic-response"].directory.child != 'undefined') {
-                    // There is a bug in the API that doesn't return a JSON array for one artist
                     var children = [];
                     if (data["subsonic-response"].directory.child.length > 0) {
                         children = data["subsonic-response"].directory.child;
@@ -87,8 +86,8 @@ function playSong(el, songid, albumid, title, artist, album, coverart, rating, s
                 coverartSrc = 'images/albumdefault_60.jpg';
                 coverartFullSrc = '';
             } else {
-                coverartSrc = baseURL + '/getCoverArt.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&size=60&id=' + coverart;
-                coverartFullSrc = baseURL + '/getCoverArt.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + coverart;
+                coverartSrc = baseURL + '/getCoverArt.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&size=60&id=' + coverart;
+                coverartFullSrc = baseURL + '/getCoverArt.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&id=' + coverart;
             }
             $('#coverartimage').attr('href', coverartFullSrc);
             $('#coverartimage img').attr('src', coverartSrc);
@@ -125,11 +124,11 @@ function playSong(el, songid, albumid, title, artist, album, coverart, rating, s
                 ready: function () {
                     if (suffix == 'oga') {
                         $(this).jPlayer("setMedia", {
-                            oga: baseURL + '/stream.view?v=' + apiVersion + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
+                            oga: baseURL + '/stream.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
                         });
                     } else if (suffix == 'mp3') {
                         $(this).jPlayer("setMedia", {
-                            mp3: baseURL + '/stream.view?v=' + apiVersion + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
+                            mp3: baseURL + '/stream.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&id=' + songid + '&salt=' + salt,
                         });
                     }
                     if (!loadonly) {
@@ -181,11 +180,11 @@ function playSong(el, songid, albumid, title, artist, album, coverart, rating, s
             for (i = 0; i < data.solutions.length; i++) {
                 var solution = data.solutions[i];
                 if (data[solution].used) {
-                    spechtml += "<strong>" + solution + "</strong> is";
+                    spechtml += "<strong class=\"codesyntax\">" + solution + "</strong> is";
                     spechtml += " currently being used with<strong>";
                     for (format in data[solution].support) {
                         if (data[solution].support[format]) {
-                            spechtml += " " + format;
+                            spechtml += " <strong class=\"codesyntax\">" + format + "</strong>";
                         }
                     }
                     spechtml += "</strong> support";
@@ -199,7 +198,7 @@ function playSong(el, songid, albumid, title, artist, album, coverart, rating, s
             scrobbleSong(false);
             scrobbled = false;
 
-            if (getCookie('Notification_Song')) {
+            if (getCookie('Notification_Song') && !loadonly) {
                 showNotification(coverartSrc, toHTML.un(title), toHTML.un(artist + ' - ' + album), 'text', '#NextTrack');
             }
             if (getCookie('ScrollTitle')) {
@@ -242,9 +241,9 @@ function playVideo(id, bitrate) {
 function scrobbleSong(submission) {
     var songid = $('#songdetails_song').attr('childid');
     $.ajax({
-        url: baseURL + '/scrobble.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + songid + "&submission=" + submission,
+        url: baseURL + '/scrobble.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&id=' + songid + "&submission=" + submission,
         method: 'GET',
-        dataType: 'json',
+        dataType: protocol,
         timeout: 10000,
         success: function () {
             if (submission) {
@@ -255,9 +254,9 @@ function scrobbleSong(submission) {
 }
 function rateSong(songid, rating) {
     $.ajax({
-        url: baseURL + '/setRating.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + songid + "&rating=" + rating,
+        url: baseURL + '/setRating.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&id=' + songid + "&rating=" + rating,
         method: 'GET',
-        dataType: 'json',
+        dataType: protocol,
         timeout: 10000,
         success: function () {
             updateMessage('Rating Updated!', true);
@@ -268,14 +267,14 @@ function starItem(itemid, starred) {
     var url;
     if (itemid !== undefined) {
         if (starred) {
-            url = baseURL + '/star.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + itemid;
+            url = baseURL + '/star.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&id=' + itemid;
         } else {
-            url = baseURL + '/unstar.view?v=' + apiVersion + '&c=' + applicationName + '&f=json&id=' + itemid;
+            url = baseURL + '/unstar.view?' + baseParams + '&v=' + apiVersion + '&c=' + applicationName + '&id=' + itemid;
         }
         $.ajax({
             url: url,
             method: 'GET',
-            dataType: 'json',
+            dataType: protocol,
             timeout: 10000,
             success: function () {
                 updateMessage('Favorite Updated!', true);

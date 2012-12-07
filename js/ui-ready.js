@@ -1,5 +1,14 @@
 ﻿$(document).ready(function () {
-    //User config staff
+    // Inject Basic Auth
+    /*
+    $.ajaxSetup({
+        beforeSend: function (req) {
+            req.setRequestHeader('Authorization', auth);
+        }
+        //headers: { "Authorization": "Basic " + auth }
+    });
+    */
+    // Fill Preferences from Cookies
     if (getCookie('username')) { $('#Username').val(getCookie('username')); }
     //$('#Password').val(getCookie('passwordenc'));
     if (getCookie('AutoPlaylists')) { $('#AutoPlaylists').val(getCookie('AutoPlaylists')); }
@@ -7,6 +16,10 @@
     if (getCookie('AutoPlaylistSize')) { $('#AutoPlaylistSize').val(getCookie('AutoPlaylistSize')); }
     if (getCookie('Server')) { $('#Server').val(getCookie('Server')); }
     if (getCookie('ApplicationName')) { $('#ApplicationName').val(getCookie('ApplicationName')); }
+
+    if (getCookie('Server')) {
+        baseURL = getCookie('Server') + '/rest';
+    }
 
     // Set Preferences defaults
     if (getCookie('Theme')) {
@@ -45,6 +58,11 @@
     } else {
         $('#ForceFlash').attr('checked', false);
     }
+    if (getCookie('Protocol')) {
+        $('#Protocol').attr('checked', true);
+    } else {
+        $('#Protocol').attr('checked', false);
+    }
     if (getCookie('AutoPilot')) {
         setCookie('AutoPilot', null)
     }
@@ -68,6 +86,61 @@
         askPermission();
         return false;
     });
+
+    function loadTabContent(tab) {
+        var tabid = '#action_' + tab.substring(1, tab.length);
+        $("ul.tabs li a").removeClass("active"); //Remove any "active" class
+        $(tabid).addClass("active"); //Add "active" class to selected tab
+        $(".tabcontent").hide(); //Hide all tab content
+        window.location.hash = tab;
+        switch (tab) {
+            case '#tabLibrary':
+                if (debug) { console.log("TAG LIBRARY"); }
+                if (getCookie('MusicFolders')) {
+                    loadArtists(getCookie('MusicFolders'), false);
+                } else {
+                    loadArtists();
+                }
+                getMusicFolders();
+                break;
+            case '#tabQueue':
+                if (debug) { console.log("TAG QUEUE"); }
+                var header = generateSongHeaderHTML();
+                $('#CurrentPlaylistContainer thead').html(header);
+                var count = $('#CurrentPlaylistContainer tbody tr.song').size();
+                updateStatus('#status_Current', countCurrentPlaylist('#CurrentPlaylistContainer'));
+                if (count > 0) {
+                    $('#currentActions a.button').removeClass('disabled');
+                }
+                var songid = $('#CurrentPlaylistContainer tbody tr.playing').attr('childid');
+                if (songid !== undefined) {
+                    $('#CurrentPlaylist').scrollTo($('#' + songid), 400);
+                }
+                break;
+            case '#tabPlaylists':
+                if (debug) { console.log("TAG PLAYLIST"); }
+                loadPlaylists();
+                loadFolders();
+                loadAutoPlaylists();
+                updateStatus('#status_Playlists', countCurrentPlaylist('#TrackContainer'));
+                break;
+            case '#tabPodcasts':
+                if (debug) { console.log("TAG PODCAST"); }
+                loadPodcasts();
+                updateStatus('#status_Podcasts', countCurrentPlaylist('#PodcastContainer'));
+                break;
+            case '#tabVideos':
+                if (debug) { console.log("TAG VIDEOS"); }
+                loadVideos(true);
+                break;
+            case '#tabPreferences':
+                getGenres();
+                break;
+            default:
+                break;
+        }
+        $(tab).fadeIn('fast'); //Fade in the active ID content
+    }
 
     // Tabs
     $('.tabcontent').hide(); //Hide all content
@@ -913,7 +986,8 @@
         if (applicationname != "") {
             setCookie('ApplicationName', applicationname);
         }
-        location.reload(true);
+        updateMessage('Preferences Saved...', true);
+        //location.reload(true);
     });
     $('#Theme').live('change', function () {
         var theme = $(this).val();
@@ -988,7 +1062,15 @@
         } else {
             setCookie('ForceFlash', null);
         }
-        location.reload(true);
+        //location.reload(true);
+    });
+    $('#Protocol').live('click', function () {
+        if ($('#Protocol').is(':checked')) {
+            setCookie('Protocol', '1');
+        } else {
+            setCookie('Protocol', null);
+        }
+        //location.reload(true);
     });
     $('#SaveTrackPosition').live('click', function () {
         if ($('#SaveTrackPosition').is(':checked')) {
@@ -1018,7 +1100,7 @@
         setCookie('Server', null);
         setCookie('ApplicationName', null);
         setCookie('HideAZ', null);
-        location.reload(true);
+        //location.reload(true);
     });
     $('#ChangeLogShowMore').live('click', function () {
         $('ul#ChangeLog li.log').each(function (i, el) {

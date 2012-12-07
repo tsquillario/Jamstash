@@ -309,6 +309,10 @@ fieldset
 {
     border: 1px solid #1d1d1d;
 }
+label
+{
+    color: #D6D469;
+}
 #donate {
     background: #232323;
     border: 1px solid #1D1D1D;

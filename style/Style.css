@@ -15,7 +15,7 @@ img
 h3.title
 {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     font-variant: small-caps;
     padding: 0;
     margin: 5px 0;
@@ -48,6 +48,7 @@ span.apiversion
 .even { background: #f4f4f4; }
 */
 .red { color: #E64F4C; }
+.codesyntax { font-family: "Courier New"; }
 .italic { font-style: italic; }
 .beer { font-size: 17px; }
 
@@ -1365,6 +1366,7 @@ select#MusicFolders
 label
 {
     font-size: 12px;
+    font-weight: bold;
     margin: 0 5px;
 }
 .inputwrap

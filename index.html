@@ -24,12 +24,12 @@
     <script src="js/plugins/jquery.scrollTo-1.4.2-min.js" type="text/javascript"></script>
     <script src="js/jplayer/jquery.jplayer.min.js" type="text/javascript"></script>
     <script src="js/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
-    <script src="js/libs/api.js" type="text/javascript"></script>
     <script src="js/libs/utils.js" type="text/javascript"></script>
+    <script src="js/app.js" type="text/javascript"></script>
+    <script src="js/libs/api.js" type="text/javascript"></script>
     <script src="js/libs/chat.js" type="text/javascript"></script>
     <script src="js/libs/generators.js" type="text/javascript"></script>
     <script src="js/libs/player.js" type="text/javascript"></script>
-    <script src="js/app.js" type="text/javascript"></script>
     <script src="js/ui-ready.js" type="text/javascript"></script>
     <script src="js/ui-load.js" type="text/javascript"></script>
 </head>
@@ -224,6 +224,7 @@
                 <div class="clear"></div>
                 <div class="subsection floatleft">
                     <h3 class="title">Options</h3>
+                    <label class="red">* Refresh (F5) required</label><br />
                     <label for="Theme">Theme</label><br />
                     <select id="Theme" name="Theme" class="large">
                     <option value="default">Default</option>
@@ -236,7 +237,7 @@
                     <input type="text" id="AutoAlbumSize" name="AutoAlbumSize" class="large" title="Number of Albums to Get on the Music Library tab"/><br />
                     <label for="AutoPlaylistSize">Auto Playlist Size (Default 25)</label><br />
                     <input type="text" id="AutoPlaylistSize" name="AutoPlaylistSize" class="large" title="Number of Songs to Get on the Playlist tab"/><br />
-                    <label for="ApplicationName">Application Name (Default MiniSub)</label><br />
+                    <label for="ApplicationName">Application Name (Default MiniSub)*</label><br />
                     <input type="text" id="ApplicationName" name="ApplicationName" class="large" title="Custom Player Name"/><br />
                 </div>
                 <div class="subsection floatleft">
@@ -255,8 +256,11 @@
                         <div class="inputwrap"><input type="checkbox" id="Debug" name="Debug" value="1" title="Enable Debug Mode (Events will be logged to the Javascript Console)"/></div>
                         <label for="Debug">Debug Mode</label>
                         <div class="clear"></div>
-                        <div class="inputwrap"><input type="checkbox" id="ForceFlash" name="ForceFlash" value="1" title="Force Flash (Option doesn't work with Chrome App)"/></div>
-                        <label for="ForceFlash">Force Flash</label>
+                        <div class="inputwrap"><input type="checkbox" id="ForceFlash" name="ForceFlash" value="1" title="Force Flash Plugin for Audio (Option doesn't work with Chrome App)"/></div>
+                        <label for="ForceFlash">Force Flash </label>
+                        <div class="clear"></div>
+                        <div class="inputwrap"><input type="checkbox" id="Protocol" name="Protocol" value="1" title="Enable Cross-Domain AJAX Requests (Use if MiniSub is hosted in a different domain than Subsonic)"/></div>
+                        <label for="Protocol">Enable JSONP*</label>
                         </fieldset>
                         <div class="clear"></div>
                         <fieldset>
@@ -296,10 +300,15 @@
                         <span class="changes">- </span>
                     </li>
                     -->
+                    <li class="log"><span class="version"> - 2.3.6</span>
+                        <span class="changes">- Added Setting to toggle JSONP (This is for cross-domain requests, aka Subsonic is hosted on a different domain than MiniSub)</span>
+                        <span class="changes">- Switched back to URL authentication (Including coverArt)</span>
+                    </li>
                     <li class="log"><span class="version">12/3/2012 - 2.3.5</span>
                         <span class="changes">- Added keyboard volume controls back. Use the plus (=/+) and minus (-/_) keys</span>
                         <span class="changes">- Change Save Current Position to Save Progress, added an indicator next to volume</span>
                         <span class="changes">- Fixed Last.fm scrobble feature, this works again!</span>
+                        <span class="changes">- Switch to Basic Authentication</span>
                     </li>
                     <li class="log"><span class="version">11/27/2012 - 2.3.4</span>
                         <span class="changes">- Basic Breadcrumb navigation implemented</span>

@@ -1,3 +1,36 @@
+
+function getCookie(value) {
+    if ($.cookie(value)) {
+        return $.cookie(value);
+    } else {
+        return false;
+    }
+    /* jQuery.cookies.js
+    if (browserStorageCheck) {
+    var item = localStorage.getItem(value);
+    if (item != '' && item != undefined) {
+    return true;
+    } else {
+    return false;
+    }
+    } else {
+    if (debug) { console.log('HTML5::loadStorage not supported on your browser' + html.length + ' characters'); }
+    }
+    */
+}
+function setCookie(key, value) {
+    $.cookie(key, value, { expires: 365 });
+    /* jQuery.cookies.js
+    try {
+    if (debug) { console.log('Saving : ' + key + ':' + value); }
+    localStorage.setItem(key, value);
+    } catch (e) {
+    if (e == QUOTA_EXCEEDED_ERR) {
+    alert('Quota exceeded!');
+    }
+    }
+    */
+}
 /* Reusable Functions */
 function clickButton(el) {
     var el = $(el);
