@@ -505,6 +505,16 @@
         }
         return false;
     });
+    $('#action_RescanLibrary').click(function () {
+        $.get(getCookie('Server') + '/rest/getUser.view?u=' + getCookie('username') + '&p=' + getCookie('passwordenc') + '&v=1.3.0&c=minisub&username=' + getCookie('username'), function(xml) {
+            if ($(xml).find('user').attr('adminRole') == 'true') {
+                $.get(getCookie('Server') + '/musicFolderSettings.view?scanNow');
+            } else {
+                alert('You are not logged in as an admin user!');
+            }
+        });
+        return false;
+    });
     $('#action_IncreaseWidth').click(function () {
         resizeSMSection(50);
         return false;
