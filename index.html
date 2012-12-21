@@ -33,6 +33,7 @@
     <script src="js/libs/player.js" type="text/javascript"></script>
     <script src="js/ui-ready.js" type="text/javascript"></script>
     <script src="js/ui-load.js" type="text/javascript"></script>
+    <script src="js/keysocket-minisub.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -297,6 +298,11 @@
                 </div>
                 <div class="subsection floatleft">
                     <h3 class="title">Keyboard Shortcuts</h3>
+                    <div class="checkboxes">
+                      <div class="inputwrap"><input type="checkbox" id="EnableMediaKeys" name="EnableMediaKeys" value="1" title="Enable media keys (requires keysocket)"/></div>
+                      <label for="EnableMediaKeys">Enable media keys (requires <a href="https://github.com/borismus/keysocket" target="_blank">keysocket</a>)</label>
+                    </div>
+                    <div class="clear"></div>
                     <ul class="preferences">
                     <li><em>[a-z]</em> Use to Quickly Browse to an Artist</li>
                     <li><em>Home</em> Scroll to Top of Artist List</li>
