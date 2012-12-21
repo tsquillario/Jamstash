@@ -1123,6 +1123,10 @@ function loadCurrentPlaylist() {
         var html = localStorage.getItem('CurrentPlaylist');
         if (html != '' && html !== undefined && html !== null) {
             $('#CurrentPlaylistContainer tbody').html(html);
+            var songid = $('#CurrentPlaylistContainer tbody tr.playing').attr('childid');
+            if (typeof songid != 'undefined') {
+                $('#CurrentPlaylist').scrollTo($('#' + songid), 400);
+            }
             if (debug) { console.log('Load Play Queue From localStorage: ' + html.length + ' characters'); }
         }
     } else {

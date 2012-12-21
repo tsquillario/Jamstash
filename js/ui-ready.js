@@ -130,10 +130,6 @@
                 if (count > 0) {
                     $('#currentActions a.button').removeClass('disabled');
                 }
-                var songid = $('#CurrentPlaylistContainer tbody tr.playing').attr('childid');
-                if (songid !== undefined) {
-                    $('#CurrentPlaylist').scrollTo($('#' + songid), 400);
-                }
                 break;
             case '#tabPlaylists':
                 if (debug) { console.log("TAG PLAYLIST"); }
