@@ -52,43 +52,23 @@ span.apiversion
     border-right: 1px solid #232323;
     border-bottom: none;
 }
-#nav a.first
-{
-    border-top: 1px solid #232323;
-}
-#nav a.first:hover
-{
-    border: 1px solid #5A5A5A;
-    border-right: 1px solid #232323;
-    border-bottom: none;
-}
-#nav a.last
-{
-    border-bottom: 1px solid #232323;
-}
-#nav a.last:hover
-{
-    border: 1px solid #5A5A5A;
-    border-right: 1px solid #232323;
-    border-bottom: none;
-}
 #nav a.active  
 {
     color: #545454; 
     background: #2E2E2E; 
 	border: 1px solid #1D1D1D;
-	border-right: none;
+	border-bottom: none;
 }
 #nav a.active:hover  
 {
     color: #545454; 
     border: 1px solid #5A5A5A;
-	border-right: none;
-    border-bottom: 1px solid #1D1D1D;
+    border: 1px solid #1D1D1D;
+	border-bottom: none;
 }
 #SideBar
 {
-    background: #2e2e2e;
+    background: #292929;
     border: 1px solid #1d1d1d;
 }
 #NowPlaying, #ChatMsgs
@@ -301,6 +281,13 @@ ul.preferences li em
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
     color: #f2f2f2;
 }
+.form {
+    border: 1px solid #1A1A1A;
+    background: #292929;
+    overflow: auto;
+    float: left;
+    margin: 10px;
+}
 .inputwrap
 {
     border: 1px solid #1d1d1d;
@@ -315,10 +302,18 @@ label
 }
 #donate {
     background: #232323;
-    border: 1px solid #1D1D1D;
+}
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.2); 
+    -webkit-border-radius: 10px;
+    background: #252525;
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(34, 34, 34, 0.8); 
+    border: 1px solid #1a1a1a;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(29, 29, 29, 0.8); 
+    -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.2); 
 }
 ::-webkit-scrollbar-thumb:window-inactive {
     background: rgba(34, 34, 34, 0.2); 

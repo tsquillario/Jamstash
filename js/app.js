@@ -12,7 +12,9 @@ var passwordenc;
 var server;
 var smwidth;
 var apiVersion = '1.6.0';
-var currentVersion = '2.3.6';
+var currentVersion = '2.3.7';
+var applicationName;
+var unity;
 
 // Get URL Querystring Parameters
 var u = getParameterByName('u');
@@ -30,12 +32,16 @@ if (u && p && s) {
     }
     if (!getCookie('Server')) {
         setCookie('Server', s, { expires: 365 });
-        baseURL = getCookie('Server') + '/rest';
+        server = getCookie('Server') + '/rest';
+        baseURL = server;
     }
     window.location.href = getPathFromUrl(window.location);
 }
 
-var applicationName;
+if (getCookie('Server')) {
+    server = getCookie('Server') + '/rest';
+    baseURL = server;
+}
 if (getCookie('ApplicationName')) {
     applicationName = getCookie('ApplicationName');
 } else {
@@ -59,4 +65,4 @@ if (getCookie('Protocol')) {
     protocol = 'jsonp';
 }
 var auth = makeBaseAuth(username, password.substring(4, password.length).hexDecode());
-baseParams = 'u=' + username + '&p=' + password + '&f=' + protocol;
+baseParams = 'u=' + username + '&p=' + password + '&f=' + protocol + '&v=' + apiVersion + '&c=' + applicationName;

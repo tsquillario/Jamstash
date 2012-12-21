@@ -238,15 +238,16 @@ var timer = null;
 var scrollMsg = "";
 var pos = 0;
 function scrollTitle(text) {
-    if (scrollMsg === "") {
-        if (text === "") {
+    if (scrollMsg == "") {
+        if (text == "") {
             scrollMsg = document.title;
         } else {
             scrollMsg = text;
         }
     } else {
-        if (text != undefined && text != scrollMsg) {
+        if (typeof text != 'undefined' && text != scrollMsg) {
             scrollMsg = text;
+            pos = 0;
         }
     }
     var msg = scrollMsg;
@@ -261,7 +262,7 @@ function scrollTitle(text) {
     if (pos > ml) {
         pos = 0;
     } else {
-        //timer = window.setTimeout("scrollTitle()", speed);
+        timer = window.setTimeout("scrollTitle()", speed);
     }
     // To stop timer, clearTimeout(timer);
 }
@@ -287,6 +288,7 @@ function showNotification(pic, title, text, type, bind) {
         if (bind = '#NextTrack') {
             popup.addEventListener('click', function () {
                 $(bind).click();
+                this.cancel();
             })
         }
         notifications.push(popup);

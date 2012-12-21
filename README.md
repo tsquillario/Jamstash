@@ -10,7 +10,7 @@ https://github.com/tsquillario/MiniSub/issues
 Features
 * HTML5 Audio with Flash fallback (provided by the SoundManager2 library)
 * Flexible Layout (will scale to whatever size your browser window is)
-* Keyboard shortcuts (back, forward, play/pause, skip to artist)
+* Keyboard shortcuts (back, forward, play/pause, skip to artist, media keys)
 * Playlist support (create new, add to existing, delete)
 * Podcast support (includes description field on hover)
 * Favorite/Starred support for Albums & Songs
