@@ -128,7 +128,7 @@
                 var count = $('#CurrentPlaylistContainer tbody tr.song').size();
                 updateStatus('#status_Current', countCurrentPlaylist('#CurrentPlaylistContainer'));
                 if (count > 0) {
-                    $('#currentActions a.button').removeClass('disabled');
+                    $('#actionsQueue a.button').removeClass('disabled');
                 }
                 break;
             case '#tabPlaylists':
@@ -168,8 +168,8 @@
             var firstTab = $("ul.tabs li:first a").attr("href");
             loadTabContent(firstTab);
         }
-        $('a#logo').attr("href", getCookie('Server'));
-        $('a#logo').attr("title", 'Launch Subsonic');
+        $('#logo').attr("href", getCookie('Server'));
+        $('#logo').attr("title", 'Launch Subsonic');
         if (getCookie('Notification_NowPlaying')) {
             updateNowPlaying(true);
         }
@@ -583,22 +583,26 @@
 
     // Play Queue Click Events
     $('#action_Shuffle').live('click', function () {
-        $('#CurrentPlaylistContainer tbody tr.song:not(#CurrentPlaylistContainer tbody tr.playing)').shuffle();
-        /* Sets currently playing song first in list after sort
-        $('#CurrentPlaylistContainer tbody tr.song').shuffle();
-        $('#CurrentPlaylistContainer tbody tr.playing').insertBefore($('#CurrentPlaylistContainer tbody tr:first'));
-        */
-        $('#CurrentPlaylistContainer thead').find('th').removeClass('sorted ascending descending');
-        var songid = $('#CurrentPlaylistContainer tbody tr.playing').attr('childid');
-        if (songid !== undefined) {
-            $('#CurrentPlaylist').scrollTo($('#' + songid), 400);
+        if (!$(this).hasClass('disabled')) {
+            $('#CurrentPlaylistContainer tbody tr.song:not(#CurrentPlaylistContainer tbody tr.playing)').shuffle();
+            /* Sets currently playing song first in list after sort
+            $('#CurrentPlaylistContainer tbody tr.song').shuffle();
+            $('#CurrentPlaylistContainer tbody tr.playing').insertBefore($('#CurrentPlaylistContainer tbody tr:first'));
+            */
+            $('#CurrentPlaylistContainer thead').find('th').removeClass('sorted ascending descending');
+            var songid = $('#CurrentPlaylistContainer tbody tr.playing').attr('childid');
+            if (songid !== undefined) {
+                $('#CurrentPlaylist').scrollTo($('#' + songid), 400);
+            }
         }
         return false;
     });
     $('#action_Empty').live('click', function () {
-        $('#CurrentPlaylistContainer tbody').empty();
-        deleteCurrentPlaylist();
-        updateStatus('#status_Current', '');
+        if (!$(this).hasClass('disabled')) {
+            $('#CurrentPlaylistContainer tbody').empty();
+            deleteCurrentPlaylist();
+            updateStatus('#status_Current', '');
+        }
         return false;
     });
     $('#action_AddCurrentToPlaylist').click(function () {
@@ -616,6 +620,7 @@
                 submenu.css({ "left": (pos.left) + "px", "top": (pos.top + height + 14) + "px" }).fadeIn(400);
             }
         }
+        return false;
     });
     $("#submenu_AddCurrentToPlaylist a").live("click", function (event) {
         var id = $(this).attr('childid');
@@ -679,16 +684,6 @@
     });
     $('#songdetails').mouseout(function () {
         $(this).removeClass('hover')
-    });
-    $('.tabcontent').mouseenter(function () {
-        $('.status').each(function (i) {
-            if ($(this).hasClass('on')) {
-                $(this).fadeIn();
-            }
-        });
-    });
-    $('.tabcontent').mouseleave(function () {
-        $('.status').stop().fadeOut();
     });
     $('#action_CurrentSelectAll').click(function () {
         if (!$(this).hasClass('disabled')) {
@@ -970,7 +965,7 @@
     $('#audiocontainer .scrubber').mouseout(function (e) {
         $('.audiojs .scrubber').stop().animate({ height: '4px' });
     });
-    $('#action_ShuffleMode').live('click', function () {
+    $('#action_ShuffleMode').live('click', function () { // This is not being used currently
         clickButton(this);
         return false;
     });

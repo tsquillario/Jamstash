@@ -7,12 +7,12 @@ var baseURL;
 var baseParams;
 var apiVersion;
 var username;
-var password;
+var password = '';
 var passwordenc;
 var server;
 var smwidth;
 var apiVersion = '1.6.0';
-var currentVersion = '2.3.8';
+var currentVersion = '2.4.0';
 var applicationName;
 var unity;
 

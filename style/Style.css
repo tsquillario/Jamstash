@@ -61,7 +61,7 @@ span.apiversion
     width: 100%;
     height: 100%;
 }
-a#logo
+#logo
 {
     position: absolute;
     width: 54px;
@@ -71,7 +71,7 @@ a#logo
     top: 0;
     right: 248px;
 }
-a#logo:hover
+#logo:hover
 {
     background: url('../images/subsonic_dn_36.png') no-repeat 5px 1px;    
 }
@@ -124,6 +124,7 @@ a#logo:hover
 	border: 1px solid #CBCBCB;
 	border-bottom: none;
 	padding: 8px 12px 9px 12px;
+	box-shadow: -2px 1px 2px -2px rgba(0, 0, 0, 0.25);
 }
 #nav a.active:hover  
 {
@@ -207,7 +208,7 @@ a#logo:hover
 }
 .subsection
 {
-    margin: 15px 20px;
+    margin: 10px 20px;
 }
 .subsection small
 {
@@ -254,6 +255,21 @@ a#logo:hover
     opacity: 0.95;
     cursor: pointer;        
 }
+.pager
+{
+    display: none;
+    font-size: 12px;
+    padding: 0 5px;
+    float: right;
+}
+.pager a.previous
+{
+    margin: 0 5px 0 0;
+}
+.pager a.next 
+{
+    margin: 0 0 0 5px;
+}
 .status
 {
     display: none;
@@ -270,23 +286,15 @@ a#logo:hover
     border-left: 1px solid #CBCBCB;
     opacity: .9;
 }
-.status a 
+.status a, .pager a
 {
     color: #545454;
     text-decoration: none;
     font-size: 12px;
 }
-.status a:hover 
+.status a:hover, .pager a:hover
 {
     text-decoration: underline;
-}
-.status a.previous 
-{
-    margin: 0 5px 0 0;
-}
-.status a.next 
-{
-    margin: 0 0 0 5px;
 }
 .on
 {
@@ -525,9 +533,8 @@ table.songlist tr.album td.artist a:hover
 table.songlist tr.album .itemactions
 {
     width: 80px;
-    padding: 0 10px;
+    padding: 0 10px 0 20px;
     margin: 0;
-    float: right;
 }
 table.songlist tr.album td.albumart
 {
@@ -614,7 +621,7 @@ table.songlist tr.row td
 table.songlist tr.row .itemactions
 {
     width: 80px;
-    padding: 0 10px;
+    padding: 0 10px 0 20px;
     /*display: block;*/
     float: right;
 }

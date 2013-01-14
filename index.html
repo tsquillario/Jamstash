@@ -96,18 +96,20 @@
                 <div id="BottomContainer"><ul id="BottomIndex"></ul></div>
                 </div>
                 <div class="tablecontainer">
-                    <div id="BreadCrumbContainer"><div id="BreadCrumb"><a href="#" id="BreadHome"><img src="images/home_gl_12x12.png" /></a><div id="BreadCrumbs" class="floatleft"></div></div></div>
+                    <div id="BreadCrumbContainer">
+                        <div id="BreadCrumb"><a href="#" id="BreadHome"><img src="images/home_gl_12x12.png" /></a><div id="BreadCrumbs" class="floatleft"></div></div>
+                        <div id="status_Library" class="pager alignleft" data-type="" data-offset=""><img src="images/arrow_left_gl_8x8.png" /> <a id="action_PreviousAlbumList" class="previous" href="#">Previous</a> | <a id="action_NextAlbumList" class="next" href="#">Next</a> <img src="images/arrow_right_gl_8x8.png" /></div>                                    
+                    </div>
                     <table id="AlbumContainer" class="simplelist songlist noselect" cellspacing="1">
                     <thead></thead>
                     <tbody></tbody>
                     </table>
                 </div>
             </div>
-            <div id="status_Library" class="status alignleft" data-type="" data-offset=""><img src="images/arrow_left_gl_8x8.png" /> <a id="action_PreviousAlbumList" class="previous" href="#">Previous</a> | <a id="action_NextAlbumList" class="next" href="#">Next</a> <img src="images/arrow_right_gl_8x8.png" /></div>            
             <div class="clear"></div>
         </div>
         <div id="tabQueue" class="tabcontent">
-            <div class="actions floatleft">
+            <div id="actionsQueue" class="actions floatleft">
                 <a href="#" class="button disabled" id="action_Shuffle" title="Shuffle"><img src="images/fork_11x12.png" /></a>
                 <a href="#" class="button disabled" id="action_CurrentSelectAll" title="Select All">All</a>
                 <a href="#" class="button disabled" id="action_CurrentSelectNone" title="Select None">None</a>
@@ -316,6 +318,9 @@
                         <span class="changes">- </span>
                     </li>
                     -->
+                    <li class="log"><span class="version">1/11/2013 - 2.3.9</span>
+                        <span class="changes">- Minor bug fixes</span>
+                    </li>
                     <li class="log"><span class="version">12/21/2012 - 2.3.8</span>
                         <span class="changes">- Added support for the <a href="https://chrome.google.com/webstore/detail/swayfm-unified-music-medi/icckhjgjjompfgoiidainoapgjepncej" target="_blank">Sway.fm Unified Music Media Keys</a> Chrome extension</span>
                         <span class="changes">- Added Artist links</span>

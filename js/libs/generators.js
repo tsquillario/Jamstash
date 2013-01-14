@@ -16,7 +16,7 @@ function generateRowHTML(child, appendto, artistid) {
 }
 function generateAlbumHeaderHTML() {
     var html;
-    html = '<tr><th></th><th></th><th class=\"type-string\">Album</th><th class=\"type-string\">Artist</th><th class=\"type-string\">Created</th></tr>';
+    html = '<tr><th style=\"width: 80px;\"></th><th></th><th class=\"type-string\">Album</th><th class=\"type-string\">Artist</th><th class=\"type-string\">Created</th></tr>';
     return html;
 }
 function generateAlbumHTML(childid, parentid, coverart, title, artist, rating, starred, created) {
@@ -44,7 +44,7 @@ function generateAlbumHTML(childid, parentid, coverart, title, artist, rating, s
 }
 function generateSongHeaderHTML() {
     var html;
-    html = '<tr><th></th><th class=\"type-int\">Track</th><th class=\"type-string\">Title</th><th class=\"type-string\">Artist</th><th class=\"type-string\">Album</th><th class=\"alignright\">Time</th></tr>';
+    html = '<tr><th style=\"width: 80px;\"></th><th class=\"type-int\">Track</th><th class=\"type-string\">Title</th><th class=\"type-string\">Artist</th><th class=\"type-string\">Album</th><th class=\"alignright\">Time</th></tr>';
     return html;
 }
 function generateSongHTML(childid, parentid, artistid, track, title, description, artist, album, coverart, rating, starred, duration) {
