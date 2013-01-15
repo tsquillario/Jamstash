@@ -66,14 +66,14 @@ span.apiversion
     position: absolute;
     width: 54px;
     height: 36px;
-    background: url('../images/subsonic_36.png') no-repeat 5px 1px;   
+    background: url('../images/subsonic_36.png') no-repeat 5px 3px;   
     cursor: pointer;
     top: 0;
     right: 248px;
 }
 #logo:hover
 {
-    background: url('../images/subsonic_dn_36.png') no-repeat 5px 1px;    
+    background: url('../images/subsonic_dn_36.png') no-repeat 5px 2px;    
 }
 #nav 
 {
@@ -628,7 +628,7 @@ table.songlist tr.row .itemactions
 table.songlist tr.row td.track
 {
     width: 80px;
-    text-align: right;
+    text-align: left;
 }
 table.songlist tr.row td.title
 {

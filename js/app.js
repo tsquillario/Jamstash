@@ -12,7 +12,7 @@ var passwordenc;
 var server;
 var smwidth;
 var apiVersion = '1.6.0';
-var currentVersion = '2.4.0';
+var currentVersion = '2.4.1';
 var applicationName;
 var unity;
 
