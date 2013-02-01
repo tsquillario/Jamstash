@@ -1,5 +1,5 @@
 function updateBaseParams() {
-    baseURL = server + '/rest';
+    baseURL = server;
     baseParams = 'u=' + username + '&p=' + password + '&f=' + protocol + '&v=' + apiVersion + '&c=' + applicationName;
 }
 function ping() {
