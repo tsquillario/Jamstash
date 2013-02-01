@@ -1018,8 +1018,8 @@
             setCookie('passwordenc', password);
         }
         if ($('#Server').val() != "") {
-            server = $('#Server').val();
-            setCookie('Server', server);
+            server = $('#Server').val() + '/rest';
+            setCookie('Server', $('#Server').val());
         }
         var AutoPlaylists = $('#AutoPlaylists').val();
         setCookie('AutoPlaylists', AutoPlaylists);
