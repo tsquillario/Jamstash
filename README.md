@@ -5,7 +5,7 @@ Imagine you can stream all your music from home, to any device, where ever you a
 MiniSub is an HTML5 Web Player for the Subsonic streaming server. 
 
 ***Please submit all bug reports & feature requests via the GitHub page***
-https://github.com/tsquillario/MiniSub/issues
+https://github.com/tsquillario/Jamstash/issues
 
 Features
 * HTML5 Audio with Flash fallback (provided by the SoundManager2 library)
