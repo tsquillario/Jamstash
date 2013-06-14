@@ -1,8 +1,8 @@
-MiniSub - HTML5 Mini Player for Subsonic
+Jamstash - HTML5 Mini Player for Subsonic
 
 Imagine you can stream all your music from home, to any device, where ever you are. That is Subsonic! Now imagine having a Web App to stream your music that is as beautiful and well designed as it is functional, that is MiniSub!
 
-MiniSub is an HTML5 Web Player for the Subsonic streaming server. 
+Jamstash is an HTML5 Web Player for the Subsonic streaming server. 
 
 ***Please submit all bug reports & feature requests via the GitHub page***
 https://github.com/tsquillario/Jamstash/issues
