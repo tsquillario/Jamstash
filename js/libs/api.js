@@ -7,7 +7,7 @@ function ping() {
         url: baseURL + '/ping.view?' + baseParams,
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             if (data["subsonic-response"].status == 'ok') {
                 apiVersion = data["subsonic-response"].version;
@@ -45,7 +45,7 @@ function loadArtists(id, refresh) {
             url: url,
             method: 'GET',
             dataType: protocol,
-            timeout: 10000,
+            timeout: 60000,
             done: function () { if (debug) { console.log("DONE!"); } },
             error: function () { if (debug) { console.log("ERROR!"); } },
             success: function (data) {
@@ -147,7 +147,7 @@ function getMusicFolders() {
         url: baseURL + '/getMusicFolders.view?' + baseParams,
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             if (data["subsonic-response"].musicFolders.musicFolder !== undefined) {
                 var folders = [];
@@ -219,7 +219,7 @@ function getMusicDirectory(id, action, appendto, artistid) {
         url: baseURL + '/getMusicDirectory.view?' + baseParams + '&id=' + id,
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             if (action == '') {
                 $('#AlbumContainer tbody').empty();
@@ -288,7 +288,7 @@ function getArtist(id, action, appendto) {
         url: baseURL + '/getArtist.view?' + baseParams + '&id=' + id,
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             if (action == '') {
                 $('#AlbumContainer tbody').empty();
@@ -347,7 +347,7 @@ function getAlbumListBy(id, offset) {
         url: url,
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             if (data["subsonic-response"].status != 'failed') {
                 if (typeof data["subsonic-response"].albumList.album != "undefined") {
@@ -426,7 +426,7 @@ function getRandomSongList(action, appendto, genre, folder) {
             url: baseURL + '/getRandomSongs.view?' + baseParams + '&size=' + size + genreParams + folderParams,
             method: 'GET',
             dataType: protocol,
-            timeout: 10000,
+            timeout: 60000,
             success: function (data) {
                 if (data["subsonic-response"].randomSongs.song !== undefined) {
                     if (appendto == '#TrackContainer tbody') {
@@ -484,7 +484,7 @@ function getStarred(action, appendto, type) {
         url: baseURL + '/getStarred.view?' + baseParams + '&size=' + size,
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             if (data["subsonic-response"].starred !== undefined) {
                 if (appendto === '#TrackContainer tbody') {
@@ -570,7 +570,7 @@ function previewStarredCoverArt() {
         url: baseURL + '/getStarred.view?' + baseParams + '&size=25',
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             var coverarts = [];
             if (data["subsonic-response"].starred !== undefined) {
@@ -636,7 +636,7 @@ function updateNowPlaying(showPopup) {
             url: baseURL + '/getNowPlaying.view?' + baseParams,
             method: 'GET',
             dataType: protocol,
-            timeout: 10000,
+            timeout: 60000,
             success: function (data) {
                 if (data["subsonic-response"].nowPlaying.entry === undefined) {
                     this.periodic.increment();
@@ -694,7 +694,7 @@ function search(type, query) {
         url: baseURL + '/search2.view?' + baseParams + '&query=' + query,
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             $("#AlbumContainer tbody").empty();
             if (data["subsonic-response"].searchResult2 !== "") {
@@ -749,7 +749,7 @@ function rescanLibrary() {
         url: baseURL + '/getUser.view?' + baseParams + '&username=' + getCookie('username'),
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             if (data["subsonic-response"].user.adminRole == true) {
                 $.get(getCookie('Server') + '/musicFolderSettings.view?scanNow');
@@ -772,7 +772,7 @@ function loadFolders(refresh) {
             url: baseURL + '/getMusicFolders.view?' + baseParams,
             method: 'GET',
             dataType: protocol,
-            timeout: 10000,
+            timeout: 60000,
             success: function (data) {
                 var musicFolders = [];
                 if (data["subsonic-response"].musicFolders.musicFolder.length > 0) {
@@ -805,7 +805,7 @@ function loadPlaylists(refresh) {
             url: baseURL + '/getPlaylists.view?' + baseParams,
             method: 'GET',
             dataType: protocol,
-            timeout: 10000,
+            timeout: 60000,
             success: function (data) {
                 var playlists = [];
                 if (data["subsonic-response"].playlists.playlist !== undefined) {
@@ -842,7 +842,7 @@ function savePlaylist(playlistid) {
             type: 'GET',
             url: baseURL + '/createPlaylist.view?' + baseParams,
             dataType: protocol,
-            timeout: 10000,
+            timeout: 60000,
             data: { playlistId: playlistid, songId: songs },
             success: function () {
                 getPlaylist(playlistid);
@@ -857,7 +857,7 @@ function getPlaylist(id, action, appendto) {
         url: baseURL + '/getPlaylist.view?' + baseParams + '&id=' + id,
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             if (data["subsonic-response"].playlist.entry !== undefined) {
                 if (appendto === '#TrackContainer tbody') {
@@ -911,7 +911,7 @@ function loadPlaylistsForMenu(menu) {
         url: baseURL + '/getPlaylists.view?' + baseParams,
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             var playlists = [];
             if (data["subsonic-response"].playlists.playlist !== undefined) {
@@ -935,7 +935,7 @@ function newPlaylist() {
             url: baseURL + '/createPlaylist.view?' + baseParams + '&name=' + reply,
             method: 'GET',
             dataType: protocol,
-            timeout: 10000,
+            timeout: 60000,
             success: function (data) {
                 loadPlaylists(true);
             }
@@ -947,7 +947,7 @@ function deletePlaylist(id) {
         url: baseURL + '/deletePlaylist.view?' + baseParams + '&id=' + id,
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             loadPlaylists(true);
             $('#TrackContainer tbody').empty();
@@ -973,7 +973,7 @@ function addToPlaylist(playlistid, from) {
                 url: baseURL + '/getPlaylist.view?' + baseParams + '&id=' + playlistid,
                 method: 'GET',
                 dataType: protocol,
-                timeout: 10000,
+                timeout: 60000,
                 success: function (data) {
                     var children = [];
                     if (data["subsonic-response"].playlist.entry !== undefined) {
@@ -1002,7 +1002,7 @@ function addToPlaylist(playlistid, from) {
                                 type: 'GET',
                                 url: baseURL + '/updatePlaylist.view?' + baseParams,
                                 dataType: protocol,
-                                timeout: 10000,
+                                timeout: 60000,
                                 data: { playlistId: playlistid, songIdToAdd: selected },
                                 success: function (data) {
                                     // Add logic to show an error if the playlist update fails
@@ -1019,7 +1019,7 @@ function addToPlaylist(playlistid, from) {
                                 type: 'GET',
                                 url: baseURL + '/createPlaylist.view?' + baseParams,
                                 dataType: protocol,
-                                timeout: 10000,
+                                timeout: 60000,
                                 data: { playlistId: playlistid, songId: currentsongs },
                                 success: function () {
                                     $('table.songlist tr.song').each(function () {
@@ -1040,7 +1040,7 @@ function addToPlaylist(playlistid, from) {
                     type: 'GET',
                     url: baseURL + '/createPlaylist.view?' + baseParams,
                     dataType: protocol,
-                    timeout: 10000,
+                    timeout: 60000,
                     data: { name: "" + reply + "", songId: selected },
                     success: function () {
                         $('table.songlist tr.song').each(function () {
@@ -1214,7 +1214,7 @@ function loadPodcasts(refresh) {
             url: baseURL + '/getPodcasts.view?' + baseParams,
             method: 'GET',
             dataType: protocol,
-            timeout: 10000,
+            timeout: 60000,
             success: function (data) {
                 var podcasts = [];
                 if (data["subsonic-response"].podcasts.channel !== undefined) {
@@ -1248,7 +1248,7 @@ function getPodcast(id, action, appendto) {
         url: baseURL + '/getPodcasts.view?' + baseParams,
         method: 'GET',
         dataType: protocol,
-        timeout: 10000,
+        timeout: 60000,
         success: function (data) {
             var podcasts = [];
             if (data["subsonic-response"].podcasts.channel.length > 0) {
@@ -1321,7 +1321,7 @@ function loadVideos(refresh) {
             url: baseURL + '/getVideos.view?' + baseParams,
             method: 'GET',
             dataType: protocol,
-            timeout: 10000,
+            timeout: 60000,
             success: function (data) {
                 if (data["subsonic-response"].videos != '') {
                     var videos = [];
