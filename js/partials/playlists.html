@@ -1,0 +1,76 @@
+<!-- Start: Template Tab -->
+<div class="tabcontent">
+    <div id="tabTemplate">
+        <div class="actions floatleft">
+            <a href="" class="button" id="action_RefreshPlaylists" title="Refresh Playlists" ng-click="getPlaylists()"><img class="pad" src="images/reload_9x11.png" /></a>
+        </div>
+        <div class="subactions floatleft">
+            <a href="" class="button" id="action_NewPlaylist" title="New Playlist" ng-click="newPlaylist()">+ New</a>
+            <a href="" class="button" id="action_DeletePlaylist" title="Delete Selected Playlist" ng-click="deletePlaylist()">Delete</a>
+            <a href="" class="button" id="action_SavePlaylist" title="Save Playlist" ng-click="savePlaylist()">Save</a>
+            <a href="" class="button" id="action_RemoveSongs" title="Remove selected song(s) from playlist" ng-click="removeSelectedSongs()">Remove Song(s)</a>
+        </div>
+        <div class="clear"></div>
+        <div id="LayoutContainer" class="section lgsection">
+            <!-- Playlists -->
+            <div class="ui-layout-west noselect hide" tabindex="0">
+                <ul class="simplelist mainlist noselect">
+                    <li class="index" id="auto">Auto Playlists</li>
+                    <li class="item" ng-click="getStarred('', 'song')" ng-class="{'selected': selectedAutoPlaylist == 'starred'}">
+                        <div class="itemactions">
+                            <a class="add" href="" ng-click="getStarred('add', 'song')" title="Add To Play Queue" stop-event="click"></a><a class="play" href="" ng-click="getStarred('play', 'song')" title="Play" stop-event="click"></a>
+                        </div>
+                        <div class="title">Starred</div>
+                    </li>
+                    <li class="item" ng-click="getRandomSongs('', '', '')" ng-class="{'selected': selectedAutoPlaylist == 'random'}">
+                        <div class="itemactions">
+                            <a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add', '', '')" stop-event="click"></a><a class="play" href="" title="Play" ng-click="getRandomSongs('play', '', '')" stop-event="click"></a>
+                        </div>
+                        <div class="title">Random</div>
+                    </li>
+                    <li class="index" id="auto">Genre Playlists</li>
+                    <select id="Genres" name="Genres" class="large" ng-model="selectedGenre" ng-options="o for o in Genres">
+                        <option value="">[Select Genre]</option>
+                    </select>
+                    <li class="item" ng-repeat="o in playlistsGenre" ng-click="getRandomSongs('', o, '')" ng-class="{'selected': selectedAutoPlaylist == o}">
+                        <div class="itemactions">
+                            <a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add', o, '')" stop-event="click"></a><a class="play" href="" title="Play" ng-click="getRandomSongs('play', o, '')" stop-event="click"></a>
+                        </div>
+                        <div class="title">{{o}}</div>
+                    </li>
+                </ul>
+                <ul class="simplelist mainlist noselect">
+                    <li class="index" id="folder">Folder Playlists</li>
+                    <li class="item" ng-repeat="o in MusicFolders" ng-click="getRandomSongs('', '', o.id)" ng-class="{'selected': o.id == selectedAutoPlaylist}">
+                        <div class="itemactions">
+                            <a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add', '', o.id)" stop-event="click"></a><a class="play" href="" title="Play" ng-click="getRandomSongs('play', '', o.id)" stop-event="click"></a>
+                        </div>
+                        <div class="title">{{o.name}}</div>
+                    </li>
+                </ul>
+                <ul class="simplelist mainlist noselect" >
+                    <li class="index" id="auto">My Playlists</li>
+                    <li class="item" ng-repeat="o in playlists" ng-click="getPlaylist(o.id, '')" ng-class="{'selected': o.id == selectedPlaylist}">
+                        <div class="itemactions">
+                            <a class="add" href="" title="Add To Play Queue" ng-click="getPlaylist(o.id, 'add')" stop-event="click"></a><a class="play" href="" title="Play" ng-click="getPlaylist(o.id, 'play')" stop-event="click"></a>
+                        </div>
+                        <div class="title" title="{{'Songs: ' + o.songCount + ', Public: ' + o.public}}">{{o.name}}</div>
+                    </li>
+                </ul>
+                <ul class="simplelist mainlist noselect" >
+                    <li class="index" id="auto">Shared Playlists</li>
+                    <li class="item" ng-repeat="o in playlistsPublic" ng-click="getPlaylist(o.id, '')" ng-class="{'selected': o.id == selectedPlaylist}">
+                        <div class="itemactions">
+                            <a class="add" href="" title="Add To Play Queue" ng-click="getPlaylist(o.id, 'add')" stop-event="click"></a><a class="play" href="" title="Play" ng-click="getPlaylist(o.id, 'play')" stop-event="click"></a>
+                        </div>
+                        <div class="title" title="{{'Owner: ' + o.owner + ' Songs: ' + o.songCount}}">{{o.name}}</div>
+                    </li>
+                </ul>
+            </div>
+            <!-- Songs -->
+            <div class="ui-layout-center noselect hide" ng-include src="'js/partials/songs.html'"></div>
+        </div>
+    </div>
+<div class="clear"></div>
+</div>
+<!-- End: Library Tab -->

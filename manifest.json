@@ -1,19 +1,19 @@
 {
 	"manifest_version": 2,
-	"name": "MiniSub",
-	"description": "MiniSub - HTML5 Mini Player for Subsonic",
-	"version": "2.4.1",
+	"name": "Jamstash (Beta)",
+	"description": "HTML5 Player for Subsonic & Archive.org",
+	"version": "3.0.8",
 	"app": {
 		"launch": {
-			"local_path": "index.html"
+			"web_url": "http://jamstash.com/beta"
 		}
 	},
-	"icons": { 
+	"icons": {
 		"16": "icon_16.png",
-		"128": "icon_128.png" 
+		"128": "icon_128.png"
 	},
 	"permissions": [
-		"unlimited_storage",
+		"unlimitedStorage",
 		"notifications",
 		"http://*/*", 
 		"https://*/*"
