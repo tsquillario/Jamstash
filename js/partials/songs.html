@@ -8,8 +8,9 @@
             <div class="clear"></div>
         </div>
         <div class="track floatleft" ng-bind-html-unsafe="o.track"></div>
-        <div class="title floatleft" title="{{o.description}}">{{o.name}}</div>
-        <a ng-href="#/library/{{o.parentid}}" class="albumblock floatleft" ng-show="o.album" stop-event="click">{{o.album}}</a>
+        <div class="title floatleft" title="{{o.description}}" ng-bind-html-unsafe="o.name"></div>
+        <a ng-href="#/library/{{o.parentid}}" class="albumblock floatleft" ng-show="o.album && itemType === 'ss'" stop-event="click" ng-bind-html-unsafe="o.album" title="{{itemType}}"></a>
+        <a ng-href="#/archive/{{o.artist}}/{{o.parentid}}" class="albumblock floatleft" ng-show="o.album && itemType === 'archive'" stop-event="click" ng-bind-html-unsafe="o.album" title="{{itemType}}"></a>
         <div class="albumblock floatleft" ng-show="!o.album">&nbsp;</div>
         <div class="time floatleft">{{o.time}}</div>
         <div class="clear"></div>

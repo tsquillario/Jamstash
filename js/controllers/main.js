@@ -6,12 +6,27 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
     $rootScope.playingSong;
     $rootScope.MusicFolders = [];
     $rootScope.Genres = [];
+    $rootScope.selectedPlaylist = "";
+    $rootScope.selectedAutoPlaylist = "";
+    $rootScope.selectedMusicFolder = "";
+    $rootScope.unity;
 
+    $rootScope.$watch("selectedMusicFolder", function (newValue, oldValue) {
+        if (newValue !== oldValue) {
+            if (typeof newValue != 'undefined' && newValue != null) {
+                utils.setValue('MusicFolders', angular.toJson(newValue), true);
+                //$scope.getArtists(newValue.id);
+            } else {
+                utils.setValue('MusicFolders', null, true);
+                //$scope.getArtists();
+            }
+        }
+    });
     /*
     $scope.playSong = function (loadonly, data) { 
-        $scope.$apply(function () {
-            $rootScope.playSong(loadonly, data);
-        });
+    $scope.$apply(function () {
+    $rootScope.playSong(loadonly, data);
+    });
     }
     */
 
@@ -37,6 +52,7 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         }
         notifications.updateMessage(setting + ' : ' + globals.settings[id], true);
     }
+
     $.ajaxSetup({
         'beforeSend': function () {
             $("#loading").show();
@@ -44,6 +60,23 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         'complete': function () {
             $("#loading").hide();
         }
+    });
+
+
+    $("a.coverartfancy").live("click", function () {
+        $("a.coverartfancy").fancybox({
+            beforeShow: function () {
+                //this.title = $('#songdetails_artist').html();
+            },
+            afterLoad: function () {
+                //this.inner.prepend( '<h1>1. My custom title</h1>' );
+                //this.content = '<h1>2. My custom title</h1>';
+            },
+            hideOnContentClick: true,
+            type: 'image',
+            openEffect: 'none',
+            closeEffect: 'none'
+        });
     });
 
     var submenu_active = false;
@@ -55,19 +88,41 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         $('div.submenu').hide();
         //setTimeout(function () { if (submenu_active == false) $('div.submenu').stop().fadeOut(); }, 400);
     });
+    $scope.toggleSubmenu = function (menu, pl, pos, margin) {
+        var submenu = $(menu);
+        if (submenu.css('display') !== 'none') {
+            submenu.fadeOut();
+        } else {
+            var el = $(pl);
+            off = el.offset();
+            width = el.width();
+            height = el.height();
+            switch (pos) {
+                case 'right':
+                    //show the menu to the right of placeholder
+                    submenu.css({ "left": (off.left + margin) + "px", "top": (off.top) + "px" }).fadeIn(400);
+                    break;
+                case 'left':
+                    //show the menu to the right of placeholder
+                    submenu.css({ "left": (off.left - margin) + "px", "top": (off.top) + "px" }).fadeIn(400);
+                    break;
+            }
+            setTimeout(function () { if (submenu_active == false) $('div.submenu').stop().fadeOut(); }, 10000);
+        }
+    }
 
     $("a.coverartfancy").fancybox({
-        beforeShow : function() {
+        beforeShow: function () {
             //this.title = $('#songdetails_artist').html();
         },
-        afterLoad : function() {
+        afterLoad: function () {
             //this.inner.prepend( '<h1>1. My custom title</h1>' );
             //this.content = '<h1>2. My custom title</h1>';
         },
         hideOnContentClick: true,
         type: 'image',
         openEffect: 'none',
-        closeEffect: 'none',
+        closeEffect: 'none'
     });
 
     $('#action_Welcome').fancybox({
@@ -82,6 +137,8 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         $('.audiojs .scrubber').stop().animate({ height: '4px' });
     });
 
+    $('.message').live('click', function () { $(this).remove(); });
+
     // JQuery UI Sortable - Drag and drop sorting
     var fixHelper = function (e, ui) {
         ui.children().each(function () {
@@ -91,6 +148,28 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
     };
     $("#QueuePreview ul.songlist").sortable({
         helper: fixHelper
+    });
+
+    // Sway.fm Unity Plugin
+    $rootScope.unity = UnityMusicShim();
+    $rootScope.unity.setSupports({
+        playpause: true,
+        next: true,
+        previous: true
+    });
+    $rootScope.unity.setCallbackObject({
+        pause: function () {
+            if (globals.settings.Debug) { console.log("Unity: Recieved playpause command"); }
+            player.playPauseSong();
+        },
+        next: function () {
+            if (globals.settings.Debug) { console.log("Unity: Recieved next command"); }
+            $rootScope.nextTrack();
+        },
+        previous: function () {
+            if (globals.settings.Debug) { console.log("Unity: Recieved previous command"); }
+            $rootScope.previousTrack();
+        }
     });
 
     // JQuery Layout Plugin
@@ -121,13 +200,13 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
     var pageLayout = $("body").layout(pageLayoutOptions);
 
     $scope.layoutThreeCol = {
-        east__size: .5,
+        east__size: .45,
         east__minSize: 400,
         east__maxSize: .5, // 50% of layout width
         east__initClosed: false,
         east__initHidden: false,
         //center__size: 'auto',
-        center__minWidth: .3,
+        center__minWidth: .35,
         center__initClosed: false,
         center__initHidden: false,
         west__size: .2,
@@ -162,9 +241,9 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
             }
         }
     }
-    
-    $document.keydown(function(e){
-       $scope.scrollToIndex(e);
+
+    $document.keydown(function (e) {
+        $scope.scrollToIndex(e);
     });
     $scope.scrollToIndex = function (e) {
         var source = e.target.id;
@@ -236,7 +315,22 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
             $('#SubsonicArtists').stop().scrollTo(el, 400);
         }
     };
-    $scope.isActive = function(route) {
+    $scope.scrollToTop = function () {
+        $('#Artists').stop().scrollTo('#auto', 400);
+    }
+    $scope.selectAll = function () {
+        angular.forEach($rootScope.song, function (item, key) {
+            $scope.selectedSongs.push(item);
+            item.selected = true;
+        });
+    }
+    $scope.selectNone = function () {
+        angular.forEach($rootScope.song, function (item, key) {
+            $scope.selectedSongs = [];
+            item.selected = false;
+        });
+    }
+    $scope.isActive = function (route) {
         return route === $location.path();
     };
     $scope.getMusicFolders = function () {
@@ -254,12 +348,18 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
                         folders[0] = data["subsonic-response"].musicFolders.musicFolder;
                     }
 
-                    /* Fix default saved folder
-                    if (utils.getValue('MusicFolders')) {
-                        $scope.selectedMusicFolders = utils.getValue('MusicFolders');
-                    }
-                    */
                     $rootScope.MusicFolders = folders;
+                    if (utils.getValue('MusicFolders')) {
+                        var folder = angular.fromJson(utils.getValue('MusicFolders'));
+                        var i = 0, index = "";
+                        angular.forEach($rootScope.MusicFolders, function (item, key) {
+                            if (item.id == folder.id) {
+                                index = i;
+                            }
+                            i++;
+                        });
+                        $rootScope.selectedMusicFolder = $rootScope.MusicFolders[index];
+                    }
                     $scope.$apply();
                 }
             }
@@ -270,23 +370,23 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         $rootScope.Genres = genres.split(',');
         /* This is broken in version 4.8, unable to convert XML to JSON
         $.ajax({
-            url: globals.BaseURL() + '/getGenres.view?' + globals.BaseParams(),
-            method: 'GET',
-            dataType: globals.settings.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function (data) {
-                if (typeof data["subsonic-response"].genres != 'undefined') {
-                    var items = [];
-                    if (data["subsonic-response"].genres.length > 0) {
-                        items = data["subsonic-response"].genres;
-                    } else {
-                        items[0] = data["subsonic-response"].genres;
-                    }
+        url: globals.BaseURL() + '/getGenres.view?' + globals.BaseParams(),
+        method: 'GET',
+        dataType: globals.settings.Protocol,
+        timeout: globals.settings.Timeout,
+        success: function (data) {
+        if (typeof data["subsonic-response"].genres != 'undefined') {
+        var items = [];
+        if (data["subsonic-response"].genres.length > 0) {
+        items = data["subsonic-response"].genres;
+        } else {
+        items[0] = data["subsonic-response"].genres;
+        }
 
-                    $rootScope.Genres = items;
-                    $scope.$apply();
-                }
-            }
+        $rootScope.Genres = items;
+        $scope.$apply();
+        }
+        }
         });
         */
     }
@@ -385,26 +485,28 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         }
         //$scope.$apply();
     }
-    $scope.getRandomSongs = function (action, genre, folder) {
+    $rootScope.getRandomSongs = function (action, genre, folder) {
         if (globals.settings.Debug) { console.log('action:' + action + ', genre:' + genre + ', folder:' + folder); }
         var size = globals.settings.AutoPlaylistSize;
-        $scope.selectedPlaylist = null;
+        $rootScope.selectedPlaylist = null;
         if (typeof folder == 'number') {
-            $scope.selectedAutoPlaylist = folder;
+            $rootScope.selectedAutoPlaylist = folder;
         } else if (genre != '') {
-            $scope.selectedAutoPlaylist = genre;            
+            $rootScope.selectedAutoPlaylist = genre;
         } else {
-            $scope.selectedAutoPlaylist = 'random';
+            $rootScope.selectedAutoPlaylist = 'random';
         }
         var genreParams = '';
         if (genre != '' && genre != 'Random') {
             genreParams = '&genre=' + genre;
         }
         folderParams = '';
-        if (typeof folder == 'number' && folder == 0 && folder != 'all') {
+        if (typeof folder == 'number' && folder != '' && folder != 'all') {
+            //alert(folder);
             folderParams = '&musicFolderId=' + folder;
-        } else if (folder != '' && folder != 'all') {
-            folderParams = '&musicFolderId=' + folder;
+        } else if (typeof $rootScope.selectedMusicFolder.id != 'undefined') {
+            //alert($rootScope.selectedMusicFolder.id);
+            folderParams = '&musicFolderId=' + $rootScope.selectedMusicFolder.id;
         }
         $.ajax({
             url: globals.BaseURL() + '/getRandomSongs.view?' + globals.BaseParams() + '&size=' + size + genreParams + folderParams,
@@ -454,6 +556,7 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
     utils.switchTheme(globals.settings.Theme);
     if (globals.settings.Server != '' && globals.settings.Username != '' && globals.settings.Password != '') {
         $scope.ping();
+        $scope.getMusicFolders();
         if (globals.settings.SaveTrackPosition) {
             player.loadTrackPosition();
             player.startSaveTrackPosition();

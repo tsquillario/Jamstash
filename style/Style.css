@@ -66,26 +66,18 @@ span.apiversion
     display: inline-block;
     background-color: #EEF4FA;
 }
-
+.infolink {
+    float: right;
+    margin: 0 5px 5px 5px;
+}
+.infolink a {
+    padding: 0 4px;
+}
 #container {
 	text-align: left;
     overflow: hidden;
     width: 100%;
     height: 100%;
-}
-#logo
-{
-    position: absolute;
-    width: 54px;
-    height: 36px;
-    background: url('../images/subsonic_36.png') no-repeat 5px 3px;   
-    cursor: pointer;
-    top: 0;
-    right: 248px;
-}
-#logo:hover
-{
-    background: url('../images/subsonic_dn_36.png') no-repeat 5px 2px;    
 }
 #version
 {
@@ -98,10 +90,10 @@ span.apiversion
 #nav 
 {
     height: 54px;
-    width: 270px;
+    /*width: 270px;*/
     position: absolute;
     top: 2px;
-    left: 0;
+    left: 50px;
     z-index: 99;
 }
 #nav ul 
@@ -127,7 +119,7 @@ span.apiversion
 	text-decoration: none;
 	background: #f4f4f4;
     border: 1px solid #E4E4E4;
-    border-right: 1px solid #D5D5D5;
+    border-left: 1px solid #D5D5D5;
     border-bottom: none;
 }
 #nav a:hover  
@@ -162,14 +154,33 @@ span.apiversion
     display: block;
     margin: 3px 0 4px 1px;
 }
-#search
+#jslogo
 {
-    height: 30px;
-    width: 250px;
     position: absolute;
     top: 6px;
-    right: 0;
-    z-index: 1;
+    left: 12px;
+    width: 32px;
+    height: 32px;
+    background: url('../images/favicon_32x32.png') no-repeat 0 0;   
+    cursor: pointer;
+}
+#jslogo:hover
+{
+    background: url('../images/favicon_32x32.png') no-repeat 0 1px;    
+}
+#sslogo
+{
+    position: absolute;
+    top: -1px;
+    right: 7px;
+    width: 54px;
+    height: 36px;
+    background: url('../images/subsonic_36.png') no-repeat 5px 3px;   
+    cursor: pointer;
+}
+#sslogo:hover
+{
+    background: url('../images/subsonic_dn_36.png') no-repeat 5px 2px;    
 }
 #content 
 {
@@ -264,12 +275,14 @@ span.apiversion
 #messages
 {
     display: none;
-    /*width: 600px;*/
+    width: 200px;
+    max-height: 205px;
+    overflow: hidden;
     font-size: 12px;
     position: absolute;
-    z-index: 99;
-    top: 0;
-    right: 10px;
+    z-index: 999;
+    bottom: 5px;
+    right: 5px;
 }
 #messages .message
 {
@@ -375,7 +388,6 @@ ul.actionlist li
     font-size: 13px;
     cursor: pointer;
     padding: 0;
-    border-bottom: 1px solid #f2f2f2;
 }
 #AutoAlbumContainer li.item
 {
@@ -516,11 +528,7 @@ ul.songlist .album
     font-size: 13px;
     border-bottom: 1px solid #EFEFEF;
     cursor: pointer;
-    padding: 4px
-}
-ul.songlist .album .details
-{
-	font-size: 11px;
+    padding: 4px;
 }
 ul.songlist .album a
 {
@@ -534,10 +542,6 @@ ul.songlist .album a:hover
 {
     text-decoration: underline;    
 }
-ul.songlist .album .albumlink {
-    float: right;
-    margin: 0 5px 5px 5px;
-}
 ul.songlist .album .description
 {
     background: #ffffff;
@@ -550,7 +554,7 @@ ul.songlist .album .description
 }
 ul.songlist .album .itemactions
 {
-    width: 80px;
+    width: 100px;
     padding: 0;
     margin: 4px 0 0 2px;
     float: left;
@@ -573,10 +577,21 @@ ul.songlist .album .albumart img
     margin: 3px 10px 0 10px;
     padding: 2px;
     border: 1px solid #DEDEDE;
+    width: 50px;
 }
 ul.songlist .album .title
 {
     padding: 5px 0 0px 0;
+    line-height: 18px;
+}
+ul.songlist .album .artist
+{
+    line-height: 14px;
+}
+ul.songlist .album .details
+{
+    font-size: 11px;
+    line-height: 14px;
 }
 ul.songlist .album a.play
 {
@@ -617,6 +632,49 @@ ul.songlist .album a.rate:hover
 ul.songlist .album a.favorite
 {
 	background: url('../images/star_yo_12x12.png') 4px center no-repeat;	
+}
+ul.songlist .album a.info
+{
+    background: url('../images/info_gl_4x8.png') no-repeat 7px center;
+}
+ul.songlist .albumgrid
+{
+    width: 185px;
+    height: 230px;
+    float: left;
+    margin: 5px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+ul.songlist .albumgrid .title
+{
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+    height: 18px;
+    background: -webkit-linear-gradient(right, #eee 0%, #333 40%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+}
+ul.songlist .albumgrid .albumart img
+{
+    width: 160px;
+}
+ul.songlist .albumgrid .albuminfo 
+{
+    float: left;
+    margin: 0 10px;
+    overflow: hidden;
+    width: 165px;
+}
+ul.songlist .albumgrid .itemactions
+{
+    margin: 0 auto;
+    float: none;
+}
+ul.songlist .albumgrid .itemactions a
+{
+    height: 20px
 }
 
 ul.songlist .row
@@ -756,6 +814,7 @@ ul.songlist li.selected
     background-image: url('../images/check_8x7.png');
     background-position: 10px 16px;
     background-repeat: no-repeat;
+    border-bottom: 1px solid #C0D5EB;
 }
 ul.songlist li.selected:hover {
     background-color: #D4E2F1;
@@ -780,17 +839,12 @@ ul.songlist li:hover
 #ArtistContainer
 {
 }
-#AZContainer
+#AZIndex
 {
-    border-top: 1px solid #F2F2F2;
     float: right;
     margin: 0 5px 0 0;
-    /*
-    position: fixed;
-    bottom: 85px;
-    */
 }
-#AZContainer a
+#AZIndex a
 {
     color: #7EA8D5;
     font-size: 24px;
@@ -798,17 +852,13 @@ ul.songlist li:hover
     padding: 5px 5px 0 5px;
     display: block;
 }
-#AZContainer a:hover { text-decoration: underline; }
+#AZIndex a:hover { text-decoration: underline; }
 #submenu_AZIndex 
 {
     display: none;
     width: 200px;
     height: 100px;
     position: fixed;
-    /*
-    bottom: 94px;
-    left: 4px;
-    */
     background: #f9f9f9;
     border: 1px solid #C3C3C3;
     z-index: 999;
@@ -845,19 +895,25 @@ ul.songlist li:hover
 .actions
 {
     height: 30px;
-    margin: 6px 20px 0 265px;
+    margin: 6px 5px 0 280px;
     padding: 0 0 0 5px;
 }
 .subactions
 {
     height: 29px;
-    width: 660px;
-    margin: 5px 0 0 0;
+    /* width: 660px; */
+    margin: 5px 68px 0 0;
     padding: 0 0 0 5px;
+    float: right;
+}
+#search
+{
+    margin: 6px 0 0 0;
+    float: left;
 }
 .submenu 
 {
-    position: absolute;
+    position: fixed;
     background: #fff;
     padding: 5px 10px;
     margin: 2px 0 0 1px;
@@ -893,6 +949,7 @@ ul.songlist li:hover
     overflow-x: hidden;
     border: solid 1px gainsboro;
 }
+
 #SideBar 
 {
     display: none;
@@ -1155,10 +1212,10 @@ ul.songlist li:hover
 }
 .audiojs .time
 {
-    float: right;
+    float: left;
     border: none;
     line-height: 17px;
-    padding: 0 0 0 5px;
+    padding: 0 5px 0 0;
     font-size: 11px;
     text-shadow: none;
     height: 36px;
@@ -1578,7 +1635,7 @@ input.chat
 input#Search
 {
     border: 1px solid #DCDCDC;
-    width: 110px;
+    width: 200px;
     margin: 0 0 0 5px;
 }
 select

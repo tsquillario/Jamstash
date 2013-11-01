@@ -15,9 +15,9 @@ function SettingsCtrl($scope, $routeParams, $location, utils, globals, json, not
     $scope.Themes = ["Default", "Dark"];
     $scope.$watch('settings.HideAZ', function () {
         if (globals.settings.HideAZ) {
-            $('#AZContainer').hide();
+            $('#AZIndex').hide();
         } else {
-            $('#AZContainer').show();
+            $('#AZIndex').show();
         }
     });
     $scope.save = function () {
@@ -63,10 +63,11 @@ function SettingsCtrl($scope, $routeParams, $location, utils, globals, json, not
         var Server = "http://subsonic.org/demo";
         var Tab = "tabLibrary";
         if (utils.confirmDelete("Do you want to connect to the Subsonic Demo server?")) {
-            settings.Username(Username);
-            settings.Password(Password);
-            settings.Server(Server);
-            location.reload();
+            globals.settings.Username = Username;
+            globals.settings.Password = Password;
+            globals.settings.Server = Server;
+            //$scope.save();
+            $location.url('/library');
         }
     }
 

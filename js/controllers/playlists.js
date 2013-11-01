@@ -6,8 +6,6 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
     $scope.playlists = [];
     $scope.playlistsPublic = [];
     $scope.playlistsGenre = globals.SavedGenres;
-    $scope.selectedPlaylist;
-    $scope.selectedAutoPlaylist;
     $scope.selectedGenre;
     $scope.$watch("selectedGenre", function (newValue, oldValue) {
         if (newValue !== oldValue) {
@@ -44,8 +42,8 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
         });
     }
     $scope.getPlaylist = function (id, action) {
-        $scope.selectedAutoPlaylist = null;
-        $scope.selectedPlaylist = id;
+        $rootScope.selectedAutoPlaylist = null;
+        $rootScope.selectedPlaylist = id;
         $.ajax({
             url: globals.BaseURL() + '/getPlaylist.view?' + globals.BaseParams() + '&id=' + id,
             method: 'GET',
@@ -93,8 +91,8 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
     }
     $scope.getStarred = function (action, type) {
         var size = globals.settings.AutoPlaylistSize;
-        $scope.selectedPlaylist = null;
-        $scope.selectedAutoPlaylist = 'starred';
+        $rootScope.selectedPlaylist = null;
+        $rootScope.selectedAutoPlaylist = 'starred';
         $.ajax({
             url: globals.BaseURL() + '/getStarred.view?' + globals.BaseParams() + '&size=' + size,
             method: 'GET',
@@ -225,8 +223,8 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
         }
     }
     $scope.deletePlaylist = function () {
-        if ($scope.selectedPlaylist != null) {
-            var id = $scope.selectedPlaylist;
+        if ($rootScope.selectedPlaylist != null) {
+            var id = $rootScope.selectedPlaylist;
             if (utils.confirmDelete('Are you sure you want to delete the selected playlist?')) {
                 $.ajax({
                     url: globals.BaseURL() + '/deletePlaylist.view?' + globals.BaseParams() + '&id=' + id,
@@ -241,8 +239,8 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
         }
     }
     $scope.savePlaylist = function () {
-        if ($scope.selectedPlaylist() != null) {
-            var id = $scope.selectedPlaylist().id();
+        if ($rootScope.selectedPlaylist() != null) {
+            var id = $rootScope.selectedPlaylist().id();
             var songs = [];
             ko.utils.arrayForEach($rootScope.song(), function (item) {
                 songs.push(item.id);
@@ -297,7 +295,7 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
 
     /* Launch on Startup */
     $scope.getPlaylists();
-    $scope.getMusicFolders();
+    //$scope.getMusicFolders();
     $scope.getGenres();
     /* End Startup */
 });

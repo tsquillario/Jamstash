@@ -1,4 +1,10 @@
 ﻿[
+{ "date": "10/31/2013", "version": "3.1.1",
+    "changes": [
+	{ "text": "- Sway.fm Media Keys plugin fixed" },
+	{ "text": "- Fixed issue with multiple sub-folders levels, other bug fixes" }
+    ]
+},
 { "date": "9/26/2013", "version": "3.1.0",
     "changes": [
 	{ "text": "- ReRewrite of the code using <a href=\"http://angularjs.org\" target=\"_blank\">AngularJS</a>" },

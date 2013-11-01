@@ -1,0 +1,591 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    <title>Jamstash</title>
+    <link href="images/favicon_32x32.ico" rel="shortcut icon" />
+    <link rel="icon" href="images/favicon_48x48.png" sizes="48x48"/>
+    <link rel="icon" href="images/favicon_32x32.png" sizes="32x32"/>
+    <link href="style/Style.css" rel="stylesheet" type="text/css" data-name="main" />
+    <link href="" rel="stylesheet" type="text/css" data-name="theme" />
+    <link href="js/plugins/jquery.layout-default.css" rel="stylesheet" type="text/css" />
+    <link href="js/plugins/fancybox/jquery.fancybox.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" data-main="js/main" src="js/plugins/require.js"></script>
+</head>
+<body data-bind="event: { keydown: $root.scrollToIndex }">
+<div id="container">
+    <div id="header">
+        <div id="messages"></div>    
+        <div id="loading"></div>
+        <div id="nav">
+            <ul class="tabs">
+            <li><a href="#tabQueue" title="Play Queue" data-bind="click: $root.changeTab.bind($data, 'tabQueue'), css: { active: $root.activeTab() === 'tabQueue' } "><img src="images/play_alt_gd_16x16.png" /></a></li>
+            <li><a href="#tabLibrary" class="first" title="Library" data-bind="click: $root.changeTab.bind($data, 'tabLibrary'), css: { active: $root.activeTab() === 'tabLibrary' } "><img src="images/headphones_gd_16x14.png" /></a></li>
+            <li><a href="#tabArchive" class="first" title="Archive.org" data-bind="click: $root.changeTab.bind($data, 'tabArchive'), css: { active: $root.activeTab() === 'tabArchive' } "><img src="images/archive_gd_16x16.png" /></a></li>
+            <!--<li><a href="#tabPlaylists" title="Playlists"><img src="images/list_gd_16x14.png" /></a></li>-->
+            <!--<li><a href="#tabVideos" id="action_tabVideos" title="Videos"><img src="images/movie_gd_16x16.png" /></a></li>-->
+            <li><a href="#tabSettings" class="last" title="Settings" data-bind="click: $root.changeTab.bind($data, 'tabSettings'), css: { active: $root.activeTab() == 'tabSettings' } "><img src="images/cog_16x16.png" /></a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="content">
+        <!-- Start: Library Tab -->
+        <div id="tab1" class="tabcontent" data-bind="visible: activeTab() == 'tabLibrary', stopBinding: true">
+            <div id="tabLibrary">
+                <a id="logo" target="_blank" data-bind="attr: { href: settings.Server(), title: settings.Server() }"></a>
+                <div id="search">
+                    <input type="text" id="Search" class="medium" title="Wildcards (*) supported" data-bind="returnKey: $root.search"/>
+                    <select id="SearchType" name="SearchType">
+                        <option value="album">Album</option>
+                        <option value="song">Song</option>
+                    </select>
+                    <a href="#" class="button" id="action_Search" title="Search" data-bind="click: $root.search"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
+                </div>
+                <div class="actions floatleft">
+                    <a href="#" class="button" id="action_RefreshArtists" title="Refresh Artist List" data-bind="click: $root.getArtists"><img class="pad" src="images/reload_9x11.png" /></a>
+                    <a href="#" class="button" id="action_RescanLibrary" title="Rescan Library" data-bind="click: $root.rescanLibrary"><img class="pad" src="images/loop_alt1_gd_12x9.png" /></a>
+                </div>
+                <div class="subactions floatleft">
+                    <a href="#" class="button" id="action_SelectAll" title="Select All" data-bind="click: $root.selectAll">All</a>
+                    <a href="#" class="button" id="action_SelectNone" title="Select None" data-bind="click: $root.selectNone">None</a>
+                    <a href="#" class="button" id="action_AddToQueue" title="Add To Play Queue" data-bind="click: $root.addSongsToQueue">+ Queue</a>
+                    <a href="#" class="button" id="action_AddToPlaylist" title="Add Selected To Playlist" data-bind="click: $root.addSongsToPlaylist">+ Playlist</a>
+                    <div id="submenu_AddToPlaylist" class="submenu shadow" style="display: none;" data-bind="foreach: playlistMenu">
+                        <a href="#" data-bind="attr: { id: id }, html: name, click: $root.addToPlaylist"></a><br />
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div id="SubsonicAlbums" class="section lgsection">
+                    <div id="SubsonicArtists" class="ui-layout-west noselect hide" tabindex="0">
+                        <div class="accordion">
+                            <div class="accordionItem">
+                                <div class="accordionItemTitle" id="libraryAccordion" data-bind="click: $root.toggleAccordion.bind($data, 'libraryAccordion')"><img src="images/headphones_gd_16x14.png" /> Library</div>
+                                <div class="accordionItemContents">
+                                <select id="MusicFolders" class="folders" data-bind="options: MusicFolders, optionsText: 'text', optionsValue: 'value', value: $root.selectedMusicFolders, optionsCaption: 'All Folders'"></select>
+                                <ul id="AutoAlbumContainer" class="simplelist mainlist noselect">
+                                <li class="index" id="auto">Auto Albums</li>
+                                <!-- ko foreach: AutoAlbums -->
+                                <li class="item" data-bind="attr: { id: id }, click: $root.getAlbumListBy.bind($data, 0), css: { selected: $data === $root.selectedAutoAlbum() }"><span data-bind="text: name"></span> 
+                                    <div class="floatright">
+                                    <a href="#" class="nextprev hover" id="random" title="Previous" data-bind="click: $root.getAlbumListBy.bind($data, $root.offset() - parseInt(settings.AutoAlbumSize())), clickBubble: false">&lsaquo;</a> 
+                                    <a href="#" class="nextprev hover" id="random" title="Next" data-bind="click: $root.getAlbumListBy.bind($data, $root.offset() + parseInt(settings.AutoAlbumSize())), clickBubble: false">&rsaquo;</a>
+                                    </div>
+                                </li>
+                                <!-- /ko -->
+                                </ul>
+                                <ul class="simplelist mainlist noselect">
+                                    <li class="index" title="Scroll to Top" data-bind="click: $root.scrollToTop"><a>Shortcuts</a></li>
+                                    <ul class="simplelist mainlist noselect" data-bind="foreach: shortcut">
+                                            <li class="item" data-bind="attr: { id: id }, click: $root.getAlbums, css: { selected: $data === $root.selectedArtist() }"><span data-bind="html: name"></span></li>
+                                    </ul>
+                                </ul>
+                                <div id="AZContainer" class="subactionsfixed">
+                                    <a href="" data-bind="click: $root.toggleAZ, clickBubble: false">A-Z</a>
+                                </div>
+                                <div id="submenu_AZIndex" class="submenu shadow" style="display: none;"><ul data-bind="foreach: index"><li><a data-bind="text: name, click: $root.scrollToIndex, clickBubble: false"></a></li></ul></div>
+                                <ul class="simplelist mainlist noselect" data-bind="foreach: index">
+                                    <li class="index" title="Scroll to Top" data-bind="attr: { id: name }, click: $root.scrollToTop"><a data-bind="text: name"></a><span class="floatright">↑</span></li>
+                                    <ul class="simplelist mainlist noselect" data-bind="foreach: artist">
+                                            <li class="item" data-bind="attr: { id: id }, click: $root.getAlbums, css: { selected: $data === $root.selectedArtist() }"><span data-bind="html: name"></span></li>
+                                    </ul>
+                                </ul>
+                                </div>
+                            </div>
+                            <div class="accordionItem">
+                                <div class="accordionItemTitle"  id="playlistsAccordion" data-bind="click: $root.toggleAccordion.bind($data, 'playlistsAccordion')"><img src="images/list_gd_16x14.png" /> Playlists</div>
+                            </div>
+                            <div class="accordionItem">
+                                <div class="accordionItemTitle"  id="podcastsAccordion" data-bind="click: $root.toggleAccordion.bind($data, 'podcastsAccordion')"><img src="images/rss_16x16.png" /> Podcasts</div>
+                            </div>
+                            <div class="accordionItem">
+                                <div class="accordionItemTitle"  id="archiveAccordion" data-bind="click: $root.toggleAccordion.bind($data, 'archiveAccordion')"><img src="images/archive_gd_16x16.png" /> Archive.org</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-layout-center">
+                        <div data-bind="templateWithContext: { name: $root.templateToUse(), data: $root.album, context: { flag: 'subsonic' } }"></div>
+                    </div>
+                    <div class="ui-layout-east noselect hide">
+                        <ul class="simplelist songlist" data-bind="template: { name: 'song-template', foreach: $root.song }"></ul>
+                    </div>
+                </div>
+            </div>
+        <div class="clear"></div>
+        </div>
+        <!-- End: Library Tab -->
+        <!-- Start: Archive.org Tab -->
+        <div id="tab2" class="tabcontent" data-bind="visible: activeTab() === 'tabArchive', stopBinding: true">
+            <div id="tabArchive">
+                <div class="actions floatleft">
+                    <a href="#" class="button" id="action_RefreshArtists" title="Refresh Artist List"><img class="pad" src="images/reload_9x11.png" /></a>
+                </div>
+                <div class="subactions floatleft">
+                    <a href="#" class="button" id="action_SelectAll" title="Select All" data-bind="click: $root.selectAll">All</a>
+                    <a href="#" class="button" id="action_SelectNone" title="Select None" data-bind="click: $root.selectNone">None</a>
+                    <a href="#" class="button" id="action_AddToQueue" title="Add To Play Queue" data-bind="click: $root.addSongsToQueue">+ Queue</a>
+                </div>
+                <div class="clear"></div>
+                <div id="ArchiveAlbums" class="section lgsection">
+                    <div class="ui-layout-west" tabindex="0">
+                        <select class="large" id="Collections" data-bind="event: { change: $root.selectedCollectionChange }, options: AllCollections, optionsCaption: '[Select Collection]'"></select><br />
+                        <ul class="simplelist mainlist noselect" data-bind="foreach: artist">
+                            <li class="item" data-bind="attr: { id: id }, click: $root.getAlbums.bind($data, 'collection'), css: { selected: $data === $root.selectedArtist() }"><span data-bind="text: name"></span></li>
+                        </ul>
+                    </div>
+                    <div class="ui-layout-center">
+                        <ul class="actionlist">
+                            <li>
+                            <select data-bind="options: ArchiveAlbumSort, value: $root.selectedArchiveAlbumSort"></select>
+                            <select id="Years" data-bind="options: Years, value: $root.selectedYear, optionsCaption: '[Year]'"></select>
+                            <input type="text" id="Source" name="Source" class="m" data-bind="value: $root.selectedSource" placeholder="Source" title="Source"/>
+                            <input type="text" id="Description" name="Source" class="mlg" data-bind="value: $root.selectedDescription" placeholder="Description" title="Description"/>
+                            </li>
+                        </ul>
+                        <ul class="simplelist songlist noselect" data-bind="templateWithContext: { name: 'album-template', data: $root.album, context: { flag: 'archive' } }"></ul>
+                    </div>
+                    <div class="ui-layout-east noselect">
+                        <ul class="simplelist songlist" data-bind="template: { name: 'song-template', foreach: $root.song }"></ul>
+                    </div>
+                </div>
+            </div>
+        <div class="clear"></div>
+        </div>
+        <!-- End: Archive.org Tab -->
+        <!-- Templates -->
+        <script type="text/html" id="album-template">
+            <!-- ko if: flag != 'archive' -->
+                <ul class="actionlist">
+                    <li><select data-bind="options: $root.SubsonicAlbumSort, value: $root.selectedSubsonicAlbumSort"></select></li>
+                </ul>
+            <!-- /ko -->
+            <ul class="simplelist songlist noselect">
+            <!-- ko foreach: $data -->
+            <li class="album" userrating="undefined" data-bind="attr: { id: id, parentid: parentid }, click: $root.getSongs.bind($data, id(), ''), css: { selected: $data === $root.selectedAlbum() }">
+                <div class="albumlink"><a href="" data-bind="attr: { href: url, title: url }, visible: ($parent.flag == 'archive'), click: $root.openLink, clickBubble: false" target="_blank">Source</a></div>
+                <div class="itemactions">
+                    <a class="add" href="" title="Add To Play Queue" data-bind="click: $root.getSongs.bind($data, id(), 'add'), clickBubble: false"></a>
+                    <a class="play" href="" title="Play" data-bind="click: $root.getSongs.bind($data, id(), 'play'), clickBubble: false"></a>
+                    <a class="download" href="" title="Download"></a>
+                    <a href="" title="Favorite" data-bind="css: { favorite: starred(), rate: !starred() }, click: $root.updateFavorite, clickBubble: false"></a>
+                </div>
+                <div class="albumart"><img data-bind="attr: { src: coverart }" src="images/albumdefault_50.jpg"></div>
+                <div class="title" data-bind="html: name"></div>
+                <div class="artist"><a href="#" data-bind="attr: { id: parentid }, html: artist, click: $root.getAlbums, clickBubble: false"></a></div>
+                <div class="details" data-bind="text: 'Created: ' + date()"></div>
+                <div class="description shadow" data-bind="html: description, visible: ($parent.flag == 'archive' && $data === $root.selectedAlbum())"></div>
+                <div class="clear"></div>
+            </li>
+            <!-- /ko -->
+            </ul>
+        </script>
+        <script type="text/html" id="podcast-template">
+            <ul class="simplelist songlist" >
+            <!-- ko foreach: $data -->
+            <li class="album" userrating="undefined" data-bind="attr: { id: id, parentid: parentid }, click: $root.getPodcast.bind($data, ''), css: { selected: $data === $root.selectedAlbum() }">
+                <div class="itemactions">
+                    <a class="add" href="" title="Add To Play Queue" data-bind="click: $root.getPodcast.bind($data, 'add'), clickBubble: false"></a><a class="play" href="" title="Play" data-bind="click: $root.getPodcast.bind($data, 'play'), clickBubble: false"></a>
+                </div>
+                <div class="albumart"><img data-bind="attr: { src: coverart }" src="images/albumdefault_50.jpg"></div>
+                <div class="title" data-bind="html: name"></div>
+                <div class="clear"></div>
+            </li>
+            <!-- /ko -->
+            </ul>
+        </script>
+        <script type="text/html" id="playlist-template">
+            <ul class="actionlist">
+                <li>
+                <a href="#" class="button" id="action_NewPlaylist" title="New Playlist" data-bind="click: $root.newPlaylist">+ New</a>
+                <a href="#" class="button" id="action_DeletePlaylist" title="Delete Selected Playlist" data-bind="click: $root.deletePlaylist">Delete</a>
+                <a href="#" class="button" id="action_SavePlaylist" title="Save Playlist" data-bind="click: $root.savePlaylist">Save</a>
+                <a href="#" class="button" id="action_RemoveSongs" title="Remove selected song(s) from playlist" data-bind="click: $root.removeSelectedSongs">Remove Song(s)</a>
+                </li>
+            </ul>
+            <ul class="simplelist"><li class="index" id="auto">Auto Playlists</li></ul>
+            <ul class="simplelist songlist">
+            <li class="album">
+                <div class="itemactions">
+                    <a class="add" href="" title="Add To Play Queue"></a><a class="play" href="" title="Play"></a>
+                </div>
+                <div class="albumart"><img src="images/albumdefault_50.jpg"></div>
+                <div class="title">Starred</div>
+                <div class="clear"></div>
+            </li>
+            <li class="album" data-bind="click: $root.getRandomSongs.bind($data, '', '', '')">
+                <div class="itemactions">
+                    <a class="add" href="" title="Add To Play Queue" data-bind="click: $root.getRandomSongs.bind($data, 'add', '', ''), clickBubble: false"></a><a class="play" href="" title="Play" data-bind="click: $root.getRandomSongs.bind($data, 'play', '', ''), clickBubble: false"></a>
+                </div>
+                <div class="albumart"><img src="images/albumdefault_50.jpg"></div>
+                <div class="title">Random</div>
+                <div class="clear"></div>
+            </li>
+            </ul>
+            <ul class="simplelist"><li class="index" id="folder">Folder Playlists</li></ul>
+            <ul class="simplelist songlist" data-bind="foreach: $root.MusicFolders">
+                <li class="album" data-bind="click: $root.getRandomSongs.bind($data, '', '', value())">
+                    <div class="itemactions">
+                        <a class="add" href="" title="Add To Play Queue" data-bind="click: $root.getRandomSongs.bind($data, 'add', '', value()), clickBubble: false"></a><a class="play" href="" title="Play" data-bind="click: $root.getRandomSongs.bind($data, 'play', '', value()), clickBubble: false"></a>
+                    </div>
+                    <div class="albumart"><img src="images/albumdefault_50.jpg"></div>
+                    <div class="title" data-bind="html: text"></div>
+                    <div class="clear"></div>
+                </li>
+            </ul>
+            <ul class="simplelist"><li class="index" id="auto">Saved Playlists</li></ul>
+            <ul class="simplelist songlist" >
+            <!-- ko foreach: $data -->
+            <li class="album" userrating="undefined" data-bind="attr: { id: id, parentid: parentid }, click: $root.getPlaylist.bind($data, id(), ''), css: { selected: $data === $root.selectedPlaylist() }">
+                <div class="itemactions">
+                    <a class="add" href="" title="Add To Play Queue" data-bind="click: $root.getPlaylist.bind($data, id(), 'add'), clickBubble: false"></a><a class="play" href="" title="Play" data-bind="click: $root.getPlaylist.bind($data, id(), 'play'), clickBubble: false"></a>
+                </div>
+                <div class="albumart"><img data-bind="attr: { src: coverart }" src="images/albumdefault_50.jpg"></div>
+                <div class="title" data-bind="html: name"></div>
+                <div class="clear"></div>
+            </li>
+            <!-- /ko -->
+            </ul>
+        </script>
+        <script type="text/html" id="song-template">
+            <li class="row song" data-bind="attr: { id: id, parentid: parentid, title: description }, css: { selected: selected, playing: playing }, event: { dblclick: playSong.bind($data, false), click: $root.selectSong } ">
+                <div class="itemactions">
+                    <a class="add" href="" title="Add To Play Queue"></a>
+                    <a class="remove" href="" title="Remove"></a>
+                    <a class="play" href="" title="Play" data-bind="click: $root.addFromPlayedToQueue, clickBubble: false"></a><a class="download" href="" title="Download"></a>
+                    <a href="" title="Favorite" data-bind="css: { favorite: starred(), rate: !starred() }, click: $root.updateFavorite, clickBubble: false"></a>
+                    <div class="clear"></div>
+                </div>
+                <div class="track floatleft" data-bind="html: track"></div>
+                <div class="title floatleft" data-bind="html: name"></div>
+                <a href="#" class="albumblock floatleft" data-bind="attr: { id: parentid }, html: album, click: $root.getSongs.bind($data, parentid(), ''), clickBubble: false"></a>
+                <div class="time floatleft" data-bind="text: time"></div>
+                <div class="clear"></div>
+            </li>
+        </script>
+        <!-- Start: Queue Tab -->
+        <div id="tabQueue" class="tabcontent" data-bind="visible: activeTab() == 'tabQueue'">
+            <div class="actions floatleft">
+                <a href="" class="button" title="Shuffle" data-bind="click: $root.queueShuffle"><img src="images/fork_gd_11x12.png" /></a>                <a href="#" class="button" id="action_CurrentSelectAll" title="Select All" data-bind="click: $root.selectAll">All</a>
+                <a href="#" class="button" id="action_CurrentSelectNone" title="Select None" data-bind="click: $root.selectNone">None</a>
+                <a href="#" class="button" id="action_CurrentRemoveSongs" title="Remove selected song(s) from Play Queue" data-bind="click: $root.removeSelectedSongs">Remove Song(s)</a>
+                <a href="#" class="button" id="action_Empty" title="Remove All" data-bind="click: $root.emptyQueue">Empty</a>
+                <a href="#" class="button" id="action_AddCurrentToPlaylist" title="Add Selected To Playlist">+ Playlist</a>
+                <div id="submenu_AddCurrentToPlaylist" class="submenu shadow" style="display: none;"></div>
+            </div>
+            <div id="Queue" class="section fullsection floatleft noselect">
+                <ul class="simplelist songlist" data-bind="foreach: queue">
+                    <li class="row song" artistid="204" duration="194" userrating="undefined" data-bind="attr: { id: id, parentid: parentid }, css: { selected: selected,  playing: playing }, event: { dblclick: playSong.bind($data, false), click: $root.selectSong } ">
+                        <div class="itemactions">
+                            <a class="remove" href="" title="Remove"></a><a class="play" href="" title="Play"></a><a class="download" href="" title="Download"></a><a class="rate" href="" title="Add To Favorites"></a>
+                            <div class="clear"></div>
+                        </div>
+                        <div class="track floatleft" data-bind="html: track"></div>
+                        <div class="title floatleft" data-bind="html: name"></div>
+                        <div class="albumblock floatleft">
+                            <img class="floatleft" data-bind="attr: { src: coverartthumb }" src="images/albumdefault_25.jpg" />
+                            <div class="albumtext floatleft" data-bind="html: album"></div>
+                            <div class="artist floatleft" data-bind="html: '[' + artist() + ']'"></div>
+                        </div>
+                        <div class="time floatleft" data-bind="text: time"></div>
+                        <div class="clear"></div>
+                    </li>
+                </ul>
+            </div>
+            <div id="status_Current" class="status" data-bind="text: $root.queueTotal"></div>
+        <div class="clear"></div>
+        </div>
+        <!-- End: Queue Tab -->
+        <!-- Start: Playlist Tab -->
+        <div id="tabPlaylists" class="tabcontent" data-bind="visible: activeTab() == 'tabPlaylists', stopBinding: true">
+            <div class="actions floatleft">
+                <a href="#" class="button" id="action_RefreshPlaylists" title="Refresh Playlists"><img class="pad" src="images/reload_9x11.png" /></a>
+                <a href="#" class="button" id="action_NewPlaylist" title="New Playlist">+ New</a>
+            </div>
+            <div id="playlistActions" class="subactions floatleft">
+                <a href="#" class="button" id="action_DeletePlaylist" title="Delete Selected Playlist">Delete</a>
+                <a href="#" class="button" id="action_SavePlaylist" title="Save Playlist">Save</a>
+                <a href="#" class="button" id="action_RemoveSongs" title="Remove selected song(s) from playlist">Remove Song(s)</a>
+            </div>
+            <div class="clear"></div>
+            <div id="Tracks" class="section lgsection floatleft noselect">
+                <div id="Playlists" class="smsection floatleft noselect">
+                    <div class="padder">
+                    <ul class="simplelist"><li class="index">Auto Playlists</li></ul>
+                    <ul id="AutoPlaylistContainer" class="simplelist mainlist"></ul>
+					<ul class="simplelist"><li class="index">Folder Playlists</li></ul>
+                    <ul id="FolderContainer" class="simplelist mainlist"></ul>
+                    <ul class="simplelist"><li class="index">Saved Playlists</li></ul>
+                    <ul id="PlaylistContainer" class="simplelist mainlist"></ul>
+                    </div>
+                </div>
+                <div class="tablecontainer">
+                <table id="TrackContainer" class="simplelist songlist">
+                <thead></thead>
+                <tbody></tbody>
+                </table>
+                </div>
+            </div>
+            <div id="status_Playlists" class="status">0 song(s), 00:00:00 total time</div>
+        </div>
+
+        <!-- End: Playlist Tab -->
+        <!-- Start: Video Tab -->
+        <div id="tabVideos" class="tabcontent" data-bind="visible: activeTab() == 'tabVideos', stopBinding: true">
+            <div class="actions floatleft">
+                <a href="#" class="button" id="action_RefreshVideos" title="Refresh Videos"><img class="pad" src="images/reload_9x11.png" /></a>
+            </div>
+            <div class="subactions floatleft"><span class="alert">***Opens new window to the video URL...</span>
+            </div>
+            <div id="Videos" class="section fullsection floatleft noselect">
+                <div class="tablecontainer">
+                <table id="VideosContainer" class="simplelist songlist" cellspacing="1">
+                <thead></thead>
+                <tbody></tbody>
+                </table>
+                </div>
+                <div id="videodeck"></div>
+                <div id="videooverlay" class="darkoverlay"></div>
+            </div>
+        </div>
+        <!-- End: Video Tab -->
+
+    <div class="clear"></div>
+
+    </div>
+    <div id="tabSettings" class="tabcontent" data-bind="visible: activeTab() === 'tabSettings'">
+            <div class="section fullsection floatleft">
+                <form class="form" id="Settings" action="#" method="post">
+                    <div class="subsection floatleft">
+                        <h3 class="title">Login</h3>
+                        <label for="Username">Username <span class="red">*</span></label><br />
+                        <input type="text" id="Username" name="Username" class="large" data-bind="value: settings.Username"/><br />
+                        <label for="Password">Password <span class="red">*</span></label><br />
+                        <input type="password" id="Password" name="Password" class="large" data-bind="value: settings.Password"/><br />
+                        <label for="Server">Server <span class="red">*</span> (<a href="" title="Connect to Demo Subsonic Server" data-bind="click: $root.setupDemo">Demo</a>)</label><br />
+                        <input type="text" id="Server" name="Server" class="xlarge" title="Subsonic Server URL Ex: http://host:port/subsonic" data-bind="value: settings.Server"/><br />
+                        <!--<a href="#" class="button" id="action_RequestURL" title="Request Permission for Server URL">Enable URL</a><br />-->
+                        <label for="SubsonicVersion">Subsonic API: <span class="apiversion" id="SubsonicVersion" data-bind="text: settings.ApiVersion"></span></label><br />
+                        <label for="SMStats">Audio State: <span id="SMStats"></span></label><br /><br />
+                        <h3 class="title">Archive.org Settings</h3>
+                        <label for="Collections">Saved Collections (<a href="" title="Load Example Collections?" data-bind="click: $root.setupDemoCollections">Demo</a>)</label><br />
+                        <input type="text" id="SavedCollections" name="SavedCollections" class="large" title="Comma separated list of Collections" data-bind="value: settings.SavedCollections"/><br />
+                        <br />
+                        <a id="action_Welcome" href="#welcome">Launch Welcome</a>
+                        <div id="welcome"><h2>Welcome</h2></div>
+                    </div>
+                    <div class="subsection floatleft">
+                        <h3 class="title">Options</h3>
+                        <label for="Theme">Theme</label><br />
+                        <select id="Theme" name="Theme" class="large" data-bind="options: settings.Themes, value: settings.Theme"></select><br />
+                        <label for="AutoPlaylists">Genres</label><br />
+                        <select id="Genres" name="Genres" class="large"></select><br />
+                        <input type="text" id="AutoPlaylists" name="AutoPlaylists" class="large" title="Comma separated list of genres for Auto Playlists" data-bind="value: settings.AutoPlaylists"/><br />
+                        <!--<label for="AutoFilter">Filter</label><br />
+                        <input type="text" id="AutoFilter" name="AutoFilter" class="large" title="Comma separated list of albums for the AutoPilot Filter"/><br />-->
+                        <label for="AutoAlbumSize">Auto Album Size</label><br />
+                        <input type="text" id="AutoAlbumSize" name="AutoAlbumSize" class="large" title="Number of Albums to Get on the Music Library tab" data-bind="value: settings.AutoAlbumSize"/><br />
+                        <label for="AutoPlaylistSize">Auto Playlist Size</label><br />
+                        <input type="text" id="AutoPlaylistSize" name="AutoPlaylistSize" class="large" title="Number of Songs to Get on the Playlist tab" data-bind="value: settings.AutoPlaylistSize"/><br />
+                        <label for="ApplicationName">Application Name</label><br />
+                        <input type="text" id="ApplicationName" name="ApplicationName" class="large" title="Custom Player Name" data-bind="value: settings.ApplicationName"/><br />
+                    </div>
+                    <div class="subsection floatleft">
+                        <div class="checkboxes">
+                            <fieldset>
+                            <legend class="aligncenter">General</legend>
+                            <div class="inputwrap"><input type="checkbox" id="AutoPlay" name="AutoPlay" value="1" title="When the Queue has ended, load random songs" data-bind="checked: settings.AutoPlay"/></div>
+                            <label for="AutoPlay">Auto Play</label>
+                            <div class="clear"></div>
+                            <div class="inputwrap"><input type="checkbox" id="LoopQueue" name="LoopQueue" value="1" title="When the Queue has ended, start from beginning" data-bind="checked: settings.LoopQueue"/></div>
+                            <label for="LoopQueue">Loop Queue</label>
+                            <div class="clear"></div>
+                            <div class="inputwrap"><input type="checkbox" id="HideAZ" name="HideAZ" value="1" title="Hide A-Z at Bottom of Artists (Tablet/Touch friendly feature)" data-bind="checked: settings.HideAZ"/></div>
+                            <label for="HideAZ">Hide A-Z</label>
+                            <div class="clear"></div>
+                            <div class="inputwrap"><input type="checkbox" id="ScrollTitle" name="ScrollTitle" value="1" title="Scroll the Title Once" data-bind="checked: settings.ScrollTitle"/></div>
+                            <label for="ScrollTitle">Scroll Title</label>
+                            </fieldset>
+                            <div class="clear"></div>
+                            <fieldset>
+                            <legend class="aligncenter">Advanced</legend>
+                            <div class="inputwrap"><input type="checkbox" id="Debug" name="Debug" value="1" title="Enable Debug Mode (Events will be logged to the Javascript Console)" data-bind="checked: settings.Debug"/></div>
+                            <label for="Debug">Debug Mode</label>
+                            <div class="clear"></div>
+                            <div class="inputwrap"><input type="checkbox" id="ForceFlash" name="ForceFlash" value="1" title="Force Flash Plugin for Audio (Option doesn't work with Chrome App)" data-bind="checked: settings.ForceFlash"/></div>
+                            <label for="ForceFlash">Force Flash </label>
+                            <div class="clear"></div>
+                            <label for="Protocol">Protocol</label><br />
+                            <select id="Protocol" name="Protocol" class="" data-bind="options: settings.Protocols, value: settings.Protocol" title="Enable Cross-Domain AJAX Requests (Use if hosted in a different domain than Subsonic)"></select>
+                            </fieldset>
+                            <div class="clear"></div>
+                            <fieldset>
+                            <legend class="aligncenter">HTML5 [Beta]</legend>
+                            <span>Notifications</span><br />
+                            <div class="clear"></div>
+                            <div class="inputwrap"><input type="checkbox" id="NotificationSong" name="NotificationSong" value="1" title="Enable Notifications When Tracks Change" data-bind="checked: settings.NotificationSong"/></div>
+                            <label for="Notification_Song">Song Change</label>
+                            <div class="clear"></div>
+                            <div class="inputwrap"><input type="checkbox" id="NotificationNowPlaying" name="NotificationNowPlaying" value="1" title="Enable Notifications When Other Users Play Songs" data-bind="checked: settings.NotificationNowPlaying"/></div>
+                            <label for="Notification_Song">Now Playing</label>
+                            <div class="clear"></div>
+                            <span>Local Storage</span><br />
+                            <div class="clear"></div>
+                            <div class="inputwrap"><input type="checkbox" id="SaveTrackPosition" name="SaveTrackPosition" value="1" title="Saves Play Queue & Track Position Periodically (Uses HTML5: localStorage)" data-bind="checked: settings.SaveTrackPosition"/></div>
+                            <label for="SaveTrackPosition">Save Progress</label>
+                            </fieldset>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="subsection floatleft"><small><i>*All settings will be automatically saved</i></small></div>
+                </form>
+                <div class="subsection floatleft">
+                    <h3 class="title">Tips</h3>
+                    <ul class="preferences">
+                    <li>Click the Notification to quickly Skip the Song</li>
+                    <li>Click <img src="images/play_gl_6x8.png" /> on a song to play the rest of the album</li>
+                    </ul>
+                    <h3 class="title">Keyboard Shortcuts</h3>
+                    <ul class="preferences">
+                    <!--<li><em>[1-6]</em> Switch to corresponding tab</li>-->
+                    <li><em>[a-z]</em> Use to Quickly Browse to an Artist</li>
+                    <li><em>Home</em> Scroll to Top of Artist List</li>
+                    <li><em>Spacebar</em> Play/Pause</li>
+                    <li><em>&rarr;</em> Next Track</li>
+                    <li><em>&larr;</em> Previous Track</li>
+                    <li><em>-/_</em> Volume Down <em>=/+</em> Volume Up</li>
+                    <li><em>Media Keys</em> via <a href="https://chrome.google.com/webstore/detail/swayfm-unified-music-medi/icckhjgjjompfgoiidainoapgjepncej" target="_blank">Sway.fm Unified Music Media Keys</a></li>
+                    </ul>
+                    <div id="donate" class="subsection floatleft">
+                        <h3 class="title">Buy me a <span class="beer">beer</span>! I'd like that :)</h3>
+                        <form id="paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                        <input type="hidden" name="cmd" value="_s-xclick">
+                        <input type="hidden" name="hosted_button_id" value="VMTENRSJWQ234">
+                        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                        <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                        </form>
+                        <small>*This is a donation to <a href="https://twitter.com/tsquillario" target="_blank">tsquillario</a>, the developer of <a href="https://github.com/tsquillario/Jamstash" target="_blank">Jamstash</a>.
+                        <br />Not related to a Subsonic License!</small>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div class="subsection floatleft">
+                    <h3 class="title">Change Log</h3>
+                    <ul id="ChangeLog" class="preferences" data-bind="foreach: $root.changeLog">
+                        <li class="log"><span class="version" data-bind="text: date + ' - ' + version"></span>
+                            <!-- ko foreach: changes -->
+                            <span class="changes" data-bind="html: text"></span>
+                            <!-- /ko -->
+                        </li>
+                    </ul>
+                    <a href="#" data-bind="click: changeLogShowMore">Show More</a>
+                </div>
+                <div class="clear"></div>
+                <div class="subsection floatleft">
+                    <h3 class="title">Links</h3>
+                    <ul class="preferences">
+                    <li>GitHub Repo - <a href="https://github.com/tsquillario/Jamstash" target="_blank">https://github.com/tsquillario/Jamstash</a></li>
+                    <li>Jamstash Chrome App - <a href="https://chrome.google.com/webstore/detail/jccdpflnecheidefpofmlblgebobbloc" target="_blank">Chrome Web Store</a></li>
+                    <li><a href="https://twitter.com/tsquillario" target="_blank">Follow @tsquillario</a>
+                    </ul>
+                    <h3 class="title">Thanks</h3>
+                    <ul class="preferences">
+                    <li>Icons - <a href="http://somerandomdude.com/work/iconic" target="_blank">http://somerandomdude.com/work/iconic</a></li>
+                    <li>Audio Library - <a href="http://jplayer.org" target="_blank">http://jplayer.org</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div id="SideBar">
+            <div id="NowPlaying">
+                <div class="header"><img src="images/rss_12x12.png" /> Now Playing</div>
+                <div id="NowPlayingList"><span class="user">Loading...</span></div>
+            </div>
+            <div id="Chat">
+                <div class="header"><img src="images/chat_alt_stroke_12x12.png" /> Chat</div>
+                <div id="ChatMsgs"></div>
+            </div>
+            <div class="submit"><img src="images/comment_stroke_gl_12x11.png" /><input type="text" id="ChatMsg" class="chat" title="Hit [Enter] to Post" /></div>
+        </div>
+        <!-- Audio Player -->
+        <div class="clear"></div>
+        
+    <div class="clear"></div>
+    <div id="player">
+        <div id="playerleft" class="floatleft">
+            <div class="playeractions floatleft">
+                <a class="button" id="PreviousTrack" title="Previous Track"><img src="images/first_24x24.png" /></a>
+                <a class="button" id="PlayTrack" title="Play/Pause" data-bind="click: defaultPlay"><img src="images/play_24x32.png" /></a>
+                <a class="button" id="PauseTrack" title="Play/Pause" style="display: none;"><img src="images/pause_24x32.png" /></a>
+                <a class="button" id="NextTrack" title="Next Track" data-bind="click: nextTrack"><img src="images/last_24x24.png" /></a>
+            </div>
+            <div id="songdetails" data-bind="with: $root.playingSong">
+                <!--<pre data-bind="text: JSON.stringify(ko.toJS($root.playingSong), null, 2)"></pre>-->
+                <div id="coverart"><a id="coverartimage" data-bind="attr: { href: coverartfull }" href="images/albumdefault_120.jpg"><img data-bind="attr: { src: coverartthumb }" src="images/albumdefault_60.jpg" alt=""/></a></div>
+                <ul>
+                <li class="song" data-bind="attr: { id: id }, html: name"></li>
+                <li class="album" data-bind="html: album"></li>
+                <li class="specs" data-bind="html: specs"></li>
+                <li id="songdetails_controls">
+                    <a href="#" id="action_Mute" class="mute first" title="Mute"></a>
+                    <a href="#" id="action_UnMute" class="unmute first" title="Unmute" style="display: none;"></a>
+                    <div class="jp-volume-bar"><div class="jp-volume-bar-value"></div></div><a href="#" id="action_VolumeMax" class="volume" title="Max Volume"></a>
+                    <a href="#" class="loop" title="Repeat" id="Repeat" data-bind="click: $root.toggleSetting, css: { hoverSelected: !settings.Repeat() }"></a>
+                    <a href="#" class="lock" title="Progress Saved" data-bind="visible: settings.SaveTrackPosition()"></a>
+                </li>
+                </ul>
+                <div class="rate"><a href="" title="Favorite" data-bind="css: { favorite: starred(), rate: !starred() }, click: $root.updateFavorite, clickBubble: false"></a></div>
+                <div class="vertshade"></div>
+            </div>
+            <div id="playdeck_1"></div>
+            <div id="playdeck_2"></div>
+            <div id="submenu_CurrentPlaylist" class="submenu shadow" style="display: none;">
+            <table id="CurrentPlaylistPreviewContainer" class="simplelist songlist">
+            <thead></thead>
+            <tbody></tbody>
+            </table>
+            </div>
+        </div>
+        <div class="playeractionssmall"><a href="#" class="button" id="action_ToggleSideBar" title="Toggle Side Bar"><img src="images/arrow_right_gl_12x12.png" /></a></div>
+        <div id="playermiddle">
+            <div id="audiocontainer">
+                <div class="audiojs" id="audio_wrapper0">
+                <div class="scrubber"><div class="progress"></div><div class="loaded"></div></div>
+                <div class="time"><em id="played">00:00</em>/<strong id="duration">00:00</strong></div>
+                <div class="error-message"></div>
+                </div>
+            </div>
+            <div id="preview"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    </div><!-- end #content -->
+</div> <!-- End container -->
+<div id="footer">
+    <div id="QueuePreview">
+        <ul id="QueuePreviewList" class="songlist" data-bind="foreach: queue">
+            <li class="row song" data-bind="attr: { id: id, parentid: parentid }, css: { playing: playing }, event: { dblclick: playSong.bind($data, false) } ">
+                <div class="albumart"><img class="" data-bind="attr: { src: coverartthumb }" src="images/albumdefault_25.jpg" /></div>
+                <div class="clear"></div>
+                <div class="title" data-bind="html: name, attr: { title: track() + ' - ' + name() + ' - ' + time() }"></div>
+                <div class="albumtext" data-bind="html: album, attr: { title: album }"></div>
+                <div class="albumtext" data-bind="html: '[' + artist() + ']', attr: { title: artist }"></div>
+            </li>
+        </ul>
+    </div>
+</div>
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+  m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-40174100-1', 'jamstash.com');
+    ga('send', 'pageview');
+
+</script>
+</body>
+</html>

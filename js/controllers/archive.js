@@ -1,7 +1,9 @@
 ﻿JamStash.controller('ArchiveCtrl',
-function ArchiveCtrl($scope, $rootScope, $location, $http, utils, globals, model, notifications, player, json) {
+function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, globals, model, notifications, player, json) {
     $("#LayoutContainer").layout($scope.layoutThreeCol);
 
+    $scope.settings = globals.settings;
+    $scope.itemType = 'archive';
     $rootScope.song = [];
     $scope.Protocol = 'jsonp';
     $scope.artist = [];
@@ -9,20 +11,45 @@ function ArchiveCtrl($scope, $rootScope, $location, $http, utils, globals, model
     $scope.selectedArtist;
     $scope.selectedAlbum;
     $scope.selectedSongs = [];
+    $scope.SavedCollections = globals.SavedCollections;
     $scope.AllCollections = [];
+    $scope.loadedCollection = false;
     json.getCollections(function (data) {
         $scope.AllCollections = data;
+        $scope.loadedCollection = true;
     });
+    $scope.writeSavedCollection = function () {
+        utils.setValue('SavedCollections', $scope.SavedCollections.join(), false);
+        /*
+        $scope.$apply(function () {
+        });
+        */
+        globals.SavedCollections = $scope.SavedCollections;
+    }
+    $scope.addSavedCollection = function (newValue) {
+        if ($scope.SavedCollections.indexOf(newValue) == -1) {
+            $scope.SavedCollections.push(newValue);
+            $scope.writeSavedCollection();
+        }
+    }
+    $scope.deleteSavedCollection = function (index) {
+        $scope.SavedCollections.splice(index, 1);
+        $scope.writeSavedCollection();
+    }
     $scope.selectedCollection;
     $scope.$watch("selectedCollection", function (newValue, oldValue) {
         if (newValue !== oldValue) {
-            if (globals.SavedCollections.length > 0) {
-                globals.SavedCollections.push(newValue);
-            }
-            $scope.artist.push(new model.Artist('', newValue));
-            utils.setValue('SavedCollections', globals.SavedCollections.join(), false);
+            $scope.addSavedCollection(newValue);
         }
     });
+    $scope.setupDemoCollections = function () {
+        var demo = ["YonderMountainStringBand", "GreenskyBluegrass"];
+        angular.forEach(demo, function (item, key) {
+            if ($scope.SavedCollections.indexOf(item) == -1) {
+                $scope.SavedCollections.push(item);
+            }
+        });
+    }
     $scope.archiveUrl = 'https://archive.org/';
 
     /* Filter */
@@ -72,39 +99,46 @@ function ArchiveCtrl($scope, $rootScope, $location, $http, utils, globals, model
     };
     $scope.filterSave = function () {
         if ($scope.selectedArtist) {
-            $scope.getAlbums('');
+            $scope.getAlbums('', '');
         }
     }
     /* End Filter */
 
+    /*
     $scope.getArtists = function (data) {
-        var map = function (data) {
-            return new model.Artist('', data);
-        };
-        angular.forEach(globals.SavedCollections, function (item, key) {
-            $scope.artist.push(map(item));
-        });
+    var map = function (data) {
+    return new model.Artist('', data);
     };
-    $scope.getAlbums = function (name) {
+    angular.forEach($scope.SavedCollections, function (item, key) {
+    $scope.artist.push(map(item));
+    });
+    };
+    */
+    $scope.getAlbums = function (name, identifier) {
+        var url = $scope.archiveUrl + 'advancedsearch.php?q=';
         if (name != '') {
             $scope.selectedArtist = name;
+            url += 'collection:(' + name + ') AND format:(MP3)';
+        } else if ($scope.selectedArtist) {
+            url += 'collection:(' + $scope.selectedArtist + ') AND format:(MP3)';
+        } else {
+            url += 'identifier:(' + identifier + ')';
         }
         var map = function (data) {
             var song = data;
-            var coverart, starred;
+            var coverartthumb, coverartfull, starred;
             var url = $scope.archiveUrl + 'details/' + song.identifier;
-            coverart = 'images/albumdefault_50.jpg';
+            coverartthumb = 'images/albumdefault_50.jpg';
+            coverartfull = 'images/albumdefault_160.jpg';
             if (parseInt(song.avg_rating) == 5) { starred = true; } else { starred = false; }
             //var description = '<b>Details</b><br />';
             var description = '<b>Source</b>: ' + song.source + '<br />';
             description += '<b>Date</b>: ' + song.date + '<br />';
             description += typeof song.publisher != 'undefined' ? '<b>Transferer</b>: ' + song.publisher + '<br />' : '';
             description += typeof song.avg_rating != 'undefined' ? '<b>Rating</b>: ' + song.avg_rating + '<br />' : '';
-            description += '<b>Downloads</b>: ' + song.downloads + '<br />';
-            //description += typeof song.description == 'undefined' ? '' : song.description.replace("\n", "<br />");
-            return new model.Album(song.identifier, null, song.title, null, coverart, $.format.date(new Date(song.publicdate), "yyyy-MM-dd h:mm a"), starred, description, url);
+            description += typeof song.downloads != 'undefined' ? '<b>Downloads</b>: ' + song.downloads + '<br />' : '';
+            return new model.Album(song.identifier, null, song.title, song.collection[0], coverartthumb, coverartfull, $.format.date(new Date(song.publicdate), "yyyy-MM-dd h:mm a"), starred, description, url);
         }
-        var url = $scope.archiveUrl + 'advancedsearch.php?q=collection:(' + $scope.selectedArtist + ') AND format:(MP3)';
         if ($scope.filter.Source) {
             url += ' AND source:(' + $scope.filter.Source + ')';
         }
@@ -136,8 +170,9 @@ function ArchiveCtrl($scope, $rootScope, $location, $http, utils, globals, model
                         $scope.album.push(map(item));
                     });
                     $scope.$apply();
+                    notifications.updateMessage($scope.album.length, true);
                 } else {
-                    notifications.updateMessage("0 records returned", true);
+                    notifications.updateMessage("Sorry :(", true);
                 }
             },
             error: function () {
@@ -145,16 +180,16 @@ function ArchiveCtrl($scope, $rootScope, $location, $http, utils, globals, model
             }
         });
     };
-    $scope.mapSong = function (key, song, server, dir, coverart) {
+    $scope.mapSong = function (key, song, server, dir, identifier, coverart) {
         var url, time, track, title, rating, starred, contenttype, suffix;
         var specs = ''
         if (song.format == 'VBR MP3') {
             url = 'http://' + server + dir + key;
-            specs = song.bitrate + 'kbps, ' + song.format.toLowerCase();
+            if (typeof song.bitrate == 'undefined' || typeof song.format == 'undefined') { specs = '&nbsp;'; } else { specs = song.bitrate + 'kbps, ' + song.format.toLowerCase(); }
             if (typeof song.track == 'undefined') { track = '&nbsp;'; } else { track = song.track; }
             if (typeof song.title == 'undefined') { title = '&nbsp;'; } else { title = song.title; }
             if (typeof song.length == 'undefined') { time = '&nbsp;'; } else { time = utils.timeToSeconds(song.length); }
-            return new model.Song(song.md5, song.album, song.track, title, song.creator, '', song.album, '', coverart, coverart, time, '', '', 'mp3', specs, url, 0, '');
+            return new model.Song(song.md5, identifier, song.track, title, song.creator, '', song.album, '', coverart, coverart, time, '', '', 'mp3', specs, url, 0, '');
         }
     };
     $scope.getSongs = function (id, action) {
@@ -169,24 +204,25 @@ function ArchiveCtrl($scope, $rootScope, $location, $http, utils, globals, model
                 var coverart = '';
                 var server = data.server;
                 var dir = data.dir;
+                var identifier = data.metadata.identifier[0];
                 if (typeof data.misc.image != 'undefined') {
                     coverart = data.misc.image;
                 }
                 var items = data.files;
                 if (action == 'add') {
                     angular.forEach(items, function (item, key) {
-                        var song = $scope.mapSong(key, item, server, dir, coverart);
+                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
                         if (song) {
                             $rootScope.queue.push(song);
                         }
                     });
+                    $('body').layout().open('south'); 
+                    notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
                     $scope.$apply();
-                    $('body').layout().open('south');
-                    notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                 } else if (action == 'play') {
                     $rootScope.queue = [];
                     angular.forEach(items, function (item, key) {
-                        var song = $scope.mapSong(key, item, server, dir, coverart);
+                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
                         if (song) {
                             $rootScope.queue.push(song);
                         }
@@ -196,11 +232,11 @@ function ArchiveCtrl($scope, $rootScope, $location, $http, utils, globals, model
                         $rootScope.playSong(false, next);
                     });
                     $('body').layout().open('south');
-                    notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
+                    notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
                 } else {
                     $rootScope.song = [];
                     angular.forEach(items, function (item, key) {
-                        var song = $scope.mapSong(key, item, server, dir, coverart);
+                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
                         if (song) {
                             $rootScope.song.push(song);
                         }
@@ -211,12 +247,14 @@ function ArchiveCtrl($scope, $rootScope, $location, $http, utils, globals, model
         });
     };
     $scope.addSongsToQueue = function () {
-        angular.forEach($scope.selectedSongs, function (item, key) {
-            $scope.queue.push(item);
-            item.selected = false;
-        });
-        $('body').layout().open('south');
-        notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
+        if ($scope.selectedSongs.length > 0) {
+            angular.forEach($scope.selectedSongs, function (item, key) {
+                $scope.queue.push(item);
+                item.selected = false;
+            });
+            $('body').layout().open('south');
+            notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
+        }
     }
     $scope.scrollToTop = function () {
         $('#Artists').stop().scrollTo('#auto', 400);
@@ -233,16 +271,16 @@ function ArchiveCtrl($scope, $rootScope, $location, $http, utils, globals, model
             item.selected = false;
         });
     }
-    $scope.setupDemoCollections = function () {
-        if (globals.SavedCollections.length == 0) {
-            globals.SavedCollections = ["YonderMountainStringBand", "GreenskyBluegrass"];
-            $scope.getArtists();
-        }
-    }
-
-
 
     /* Launch on Startup */
-    $scope.getArtists();
+    if ($routeParams.artist) {
+        if ($routeParams.album) {
+            //collection:(GreenskyBluegrass) AND format:(MP3) AND identifier:(gsbg2013-09-20.flac16)
+            $scope.getAlbums('', $routeParams.album);
+        } else {
+            $scope.getAlbums($routeParams.artist, '');
+        }
+        $scope.addSavedCollection($routeParams.artist);
+    }
     /* End Startup */
 });

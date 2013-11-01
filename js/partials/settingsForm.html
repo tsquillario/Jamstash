@@ -4,7 +4,7 @@
     <input type="text" id="Username" name="Username" class="large" ng-model="settings.Username"/><br />
     <label for="Password">Password <span class="red">*</span></label><br />
     <input type="password" id="Password" name="Password" class="large" ng-model="settings.Password"/><br />
-    <label for="Server">Server <span class="red">*</span> (<a href="" title="Connect to Demo Subsonic Server" data-bind="click: $root.setupDemo">Demo</a>)</label><br />
+    <label for="Server">Server <span class="red">*</span> (<a href="" title="Connect to Demo Subsonic Server" ng-click="setupDemo()">Demo</a>)</label><br />
     <input type="text" id="Server" name="Server" class="xlarge" title="Subsonic Server URL Ex: http://host:port/subsonic" ng-model="settings.Server"/><br />
     <!--<a href="#" class="button" id="action_RequestURL" title="Request Permission for Server URL">Enable URL</a><br />-->
     <label for="SubsonicVersion">Subsonic API: <span class="apiversion" id="SubsonicVersion">{{settings.ApiVersion}}</span></label><br />

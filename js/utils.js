@@ -10,7 +10,11 @@ JamStash.service('utils', function ($cookieStore) {
         }
     };
     this.setValue = function (key, value, notify) {
-        $cookieStore.put(key, value);
+        if (value !== null) {
+            $cookieStore.put(key, value);
+        } else {
+            $cookieStore.remove(key);
+        }
         if (notify) {
         }
         /* jQuery.cookies.js

@@ -117,7 +117,7 @@
                     $rootScope.queue = items;
                     if ($rootScope.queue.length > 0) {
                         //$('body').layout().open('south');
-                        notifications.updateMessage($rootScope.queue.length + ' Song(s) Loaded to Queue', true);
+                        notifications.updateMessage($rootScope.queue.length + ' Saved Song(s)', true);
                     }
                     if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + $rootScope.queue.length + ' song(s)'); }
                 }
@@ -159,6 +159,20 @@
         $('#songdetails').css('visibility', 'visible');
 
         $rootScope.loadjPlayer(player1, url, suffix, loadonly, position);
+        if (!loadonly) {
+            // Sway.fm UnityShim
+            var playerState = {
+                playing: true,
+                title: title,
+                artist: artist,
+                favorite: false,
+                albumArt: coverartfull
+            }
+            if ($rootScope.unity) {
+                $rootScope.unity.sendState(playerState);
+            }
+            // End UnityShim
+        }
         $('#Queue').stop().scrollTo('#' + id, 400);
         $('#QueuePreviewList').stop().scrollTo('#' + id, 400);
         var spechtml = '';
@@ -240,18 +254,6 @@
                 }
                 if (!loadonly) { // Start playing
                     $(this).jPlayer("play");
-                    /* Uncomment to enable Unity shim
-                    var playerState = {
-                        playing: true,
-                        title: title,
-                        artist: artist,
-                        favorite: false,
-                        albumArt: coverartFullSrc
-                    }
-                    if (unity) {
-                        unity.sendState(playerState);
-                    }
-                    */
                 } else { // Loadonly
                     //$('#' + songid).addClass('playing');
                     $(this).jPlayer("pause", position);
@@ -287,7 +289,7 @@
                             var next = $rootScope.queue[0];
                             $rootScope.playSong(false, next);                
                         } else if (globals.settings.AutoPlay) { // Load more tracks if enabled
-                            $scope.getRandomSongs('play', '', '');
+                            $rootScope.getRandomSongs('play', '', '');
                             notifications.updateMessage('Auto Play Activated...', true);
                         }
                     } else {

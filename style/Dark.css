@@ -26,19 +26,19 @@ span.apiversion
 .lgsection
 {
     background: #323232;
-    border-top: 1px solid #1D1D1D;
-    border-bottom: 1px solid #1D1D1D;
+    border-top: 1px solid #5A5A5A;
+    border-bottom: 1px solid #5A5A5A;
 }
 .fullsection
 {
     background: #323232;
-    border-top: 1px solid #1D1D1D;
-    border-bottom: 1px solid #1D1D1D;
+    border-top: 1px solid #5A5A5A;
+    border-bottom: 1px solid #5A5A5A;
 }
 .smsection
 {
     background: none;
-    /*border-right: 1px solid #1D1D1D;*/
+    /*border-right: 1px solid #5A5A5A;*/
 }
 #nav a 
 {
@@ -51,27 +51,25 @@ span.apiversion
 {
     color: #545454; 
     border: 1px solid #5A5A5A;
-    border-right: 1px solid #232323;
     border-bottom: none;
 }
 #nav a.active  
 {
     color: #545454; 
     background: #323232; 
-	border: 1px solid #1D1D1D;
+	border: 1px solid #5A5A5A;
 	border-bottom: none;
 }
 #nav a.active:hover  
 {
     color: #545454; 
     border: 1px solid #5A5A5A;
-    border: 1px solid #1D1D1D;
 	border-bottom: none;
 }
 #SideBar
 {
     background: #292929;
-    border: 1px solid #1d1d1d;
+    border: 1px solid #5A5A5A;
 }
 #NowPlaying, #ChatMsgs
 {
@@ -86,8 +84,8 @@ span.apiversion
 .status
 {
     background: #222;
-    border-top: 1px solid #1D1D1D;
-    border-left: 1px solid #1D1D1D;
+    border-top: 1px solid #1d1d1d;
+    border-left: 1px solid #1d1d1d;
 }
 .status a 
 {
@@ -96,8 +94,8 @@ span.apiversion
 #player
 {
     background: #323232;
-    border-top: 1px solid #1D1D1D;
-    border-bottom: 1px solid #1D1D1D;
+    border-top: 1px solid #5A5A5A;
+    border-bottom: 1px solid #5A5A5A;
 }
 .vertshade {
     background: -webkit-gradient(linear, left top, right top, from(rgba(46, 46, 46, 0)), to(rgba(46, 46, 46, 1)));
@@ -136,7 +134,7 @@ a.button {
     background: #323232;
     background: -webkit-gradient(linear,0% 40%,0% 70%,from(#323232),to(#323232));
     background: -moz-linear-gradient(linear,0% 40%,0% 70%,from(#323232),to(#323232));
-    border: solid 1px #1d1d1d;
+    border: solid 1px #5A5A5A;
 }
 a.button:hover {
     color: #939393;
@@ -165,7 +163,7 @@ a.disabled {
 }
 a.disabled:hover {
     color: #3D3D3D;
-    border-color: #1d1d1d;
+    border-color: #5A5A5A;
     -moz-box-shadow: none;
     box-shadow: none;
 }
@@ -205,13 +203,12 @@ ul.simplelist li.selected
 {
     color: #D6D469;
 }
-#AZContainer
+#submenu_AZIndex
 {
-    border-top: 1px solid #F2F2F2;
-    /*background: #2a2a2a;*/
-    background: rgba(42, 42, 42, .8);
+    border: 1px solid #5A5A5A;
+    background: #323232;
 }
-#AZContainer #AZIndex li a
+#AZIndex #AZIndex li a
 {
     color: #f2f2f2;
 }
@@ -238,6 +235,12 @@ ul.songlist li.album
 ul.songlist li.album .albumart img
 {
     border: 1px solid #232323;
+}
+ul.songlist .albumgrid .title
+{
+    background: -webkit-linear-gradient(right, #2e2e2e 0%, #fff 40%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 ul.songlist li.row {
     border-bottom: 1px solid #232323;
@@ -293,11 +296,11 @@ ul.preferences li em
 }
 .inputwrap
 {
-    border: 1px solid #1d1d1d;
+    border: 1px solid #5A5A5A;
 }
 fieldset
 {
-    border: 1px solid #1d1d1d;
+    border: 1px solid #5A5A5A;
 }
 label
 {
@@ -347,6 +350,9 @@ label
 #QueuePreview .row {
     border: solid 1px #000000;
     background: #222222;
+}
+#QueuePreview .row .albumart img {
+    border-color: #1d1d1d;
 }
 #QueuePreview .queueactions {
     border-right: 1px solid #000000;

@@ -1,47 +1,60 @@
 /* Declare app level module */
-var JamStash = angular.module('JamStash', ['ngCookies'])
-  .config(function ($routeProvider) {
-      $routeProvider.when('/index', {
-          redirectTo: '/library'
-      })
-    .when('/settings', {
-        templateUrl: 'js/partials/settings.html',
-        controller: 'SettingsCtrl'
-    })
-    .when('/library', {
-        templateUrl: 'js/partials/library.html',
-        controller: 'SubsonicCtrl'
-    })
-    .when('/library/:albumId', {
-        templateUrl: 'js/partials/library.html',
-        controller: 'SubsonicCtrl'
-    })
-    .when('/playlists', {
-        templateUrl: 'js/partials/playlists.html',
-        controller: 'PlaylistCtrl'
-    })
-    .when('/podcasts', {
-        templateUrl: 'js/partials/podcasts.html',
-        controller: 'PodcastCtrl'
-    })
-    .when('/archive', {
-        templateUrl: 'js/partials/archive.html',
-        controller: 'ArchiveCtrl'
-    })
-    .otherwise({
-        redirectTo: '/library'
-    });
-  })
-.run(function ($rootScope, $location, globals) {
-    // register listener to watch route changes
+var JamStash = angular.module('JamStash', ['ngCookies']);
+JamStash.config(function ($routeProvider) {
+    $routeProvider
+        .when('/index', { redirectTo: '/library' })
+        .when('/settings', { templateUrl: 'js/partials/settings.html', controller: 'SettingsCtrl' })
+        .when('/library', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl' })
+        .when('/library/:albumId', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl' })
+        .when('/playlists', { templateUrl: 'js/partials/playlists.html', controller: 'PlaylistCtrl' })
+        .when('/podcasts', { templateUrl: 'js/partials/podcasts.html', controller: 'PodcastCtrl' })
+        .when('/archive', { templateUrl: 'js/partials/archive.html', controller: 'ArchiveCtrl' })
+        .when('/archive/:artist', { templateUrl: 'js/partials/archive.html', controller: 'ArchiveCtrl' })
+        .when('/archive/:artist/:album', { templateUrl: 'js/partials/archive.html', controller: 'ArchiveCtrl' })
+        .otherwise({ redirectTo: '/index' });
+})
+.run(['$rootScope', '$location', 'globals', function ($rootScope, $location, globals) {
     $rootScope.$on("$locationChangeStart", function (event, next, current) {
-        if (next.templateUrl != 'js/partials/settings.html') {
-            if (globals.settings.Server == '' && globals.settings.Username == '' && globals.settings.Password == '') {
-                $location.path("/settings");
-            }
+        $rootScope.loggedIn = false;
+        var path = $location.path().replace(/^\/([^\/]*).*$/, '$1');
+        if (globals.settings.Username != "" && globals.settings.Password != "" && globals.settings.Server != "") {
+            $rootScope.loggedIn = true;
+        }
+        if (!$rootScope.loggedIn && (path != 'settings' && path != 'archive')) {
+            $location.path('/settings');
         }
     });
+} ]);
+
+/*
+JamStash.config(function ($httpProvider) {
+    $httpProvider.interceptors.push(function ($rootScope, $location, $q, globals) {
+        return {
+            'request': function (request) {
+                // if we're not logged-in to the AngularJS app, redirect to login page
+                //$rootScope.loggedIn = $rootScope.loggedIn || globals.settings.Username;
+                $rootScope.loggedIn = false;
+                if (globals.settings.Username != "" && globals.settings.Password != "" && globals.settings.Server != "") {
+                    $rootScope.loggedIn = true;
+                }
+                if (!$rootScope.loggedIn && $location.path() != '/settings' && $location.path() != '/archive') {
+                    $location.path('/settings');
+                }
+                return request;
+            },
+            'responseError': function (rejection) {
+                // if we're not logged-in to the web service, redirect to login page
+                if (rejection.status === 401 && $location.path() != '/settings') {
+                    $rootScope.loggedIn = false;
+                    $location.path('/settings');
+                }
+                return $q.reject(rejection);
+            }
+        };
+    });
 });
+*/
+
 
 JamStash.service('model', function (utils) {
     this.Index = function (name, artist) {
@@ -52,12 +65,13 @@ JamStash.service('model', function (utils) {
         this.id = id;
         this.name = name;
     }
-    this.Album = function (id, parentid, name, artist, coverart, date, starred, description, url) {
+    this.Album = function (id, parentid, name, artist, coverartthumb, coverartfull, date, starred, description, url) {
         this.id = id;
         this.parentid = parentid;
         this.name = name;
         this.artist = artist;
-        this.coverart = coverart;
+        this.coverartthumb = coverartthumb;
+        this.coverartfull = coverartfull;
         this.date = date;
         this.starred = starred;
         this.description = description;
@@ -97,6 +111,7 @@ JamStash.service('globals', function (utils) {
         Password: "guest"),
         Server: "http://subsonic.org/demo"),
         */
+        Url: "http://Jamstash.com/beta/#/archive/",
         Username: "",
         Password: "",
         Server: "",
@@ -171,13 +186,14 @@ JamStash.filter('capitalize', function () {
     }
 });
 
-JamStash.service('notifications', function (globals) {
+JamStash.service('notifications', function ($rootScope, globals) {
     var msgIndex = 1;
     this.updateMessage = function (msg, autohide) {
         if (msg != '') {
             var id = msgIndex;
             $('#messages').append('<span id=\"msg_' + id + '\" class="message">' + msg + '</span>');
             $('#messages').fadeIn();
+            $("#messages").scrollTo('100%');
             var el = '#msg_' + id;
             if (autohide) {
                 setTimeout(function () {
@@ -213,7 +229,7 @@ JamStash.service('notifications', function (globals) {
             if (bind = '#NextTrack') {
                 popup.addEventListener('click', function (bind) {
                     //$(bind).click();
-                    require("player").nextTrack();
+                    $rootScope.nextTrack();
                     this.cancel();
                 })
             }

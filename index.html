@@ -1,7 +1,10 @@
 ﻿<!DOCTYPE HTML>
 <html lang="en" ng-app="JamStash">
 <head>
-<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    <meta name="description" content="HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming">
+    <meta name="keywords" content="Subsonic, Archive.org, Live Music Archive, HTML5 Audio, Music Streaming, Live Music">
+    <meta property="og:image" content="http://jamstash.com/beta/images/fbpreview.png"/>
     <title>Jamstash</title>
     <link href="images/favicon_32x32.ico" rel="shortcut icon" />
     <link rel="icon" href="images/favicon_48x48.png" sizes="48x48"/>
@@ -12,17 +15,17 @@
     <link href="js/plugins/fancybox/jquery.fancybox.css" rel="stylesheet" type="text/css" />
     <script src="js/plugins/jquery-1.8.3.js" type="text/javascript"></script>
     <script src="js/plugins/angular.min.js" type="text/javascript"></script>
-    <script src="js/plugins/angular-cookies.min.js" type="text/javascript"></script>
+    <script src="js/plugins/angular-cookies.js" type="text/javascript"></script>
     <script src="js/plugins/jquery-ui-1.9.2.custom.min.js" type="text/javascript"></script>
     <script src="js/plugins/fancybox/jquery.fancybox.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.base64.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.dateFormat-1.0.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.layout-latest.min.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.scrollTo.min.js" type="text/javascript"></script>
+    <script src="js/plugins/UnityShim.js" type="text/javascript"></script>
     <script src="js/plugins/jplayer/jquery.jplayer.min.js" type="text/javascript"></script>
     <script src="js/app.js" type="text/javascript"></script>
     <script src="js/utils.js" type="text/javascript"></script>
-    <script src="js/subsonic.js" type="text/javascript"></script>
     <script src="js/controllers/main.js" type="text/javascript"></script>
     <script src="js/controllers/settings.js" type="text/javascript"></script>
     <script src="js/controllers/playlists.js" type="text/javascript"></script>
@@ -36,13 +39,15 @@
     <div id="header">
         <div id="messages"></div>    
         <div id="loading"></div>
+        <a id="jslogo" title="Jamstash"></a> 
+        <a id="sslogo" target="_blank" ng-show="settings.Server" ng-href="{{settings.Server}}" title="{{settings.Server}}"></a> 
         <div id="nav">
             <ul class="tabs">
             <li><a href="#/library" class="first" title="Library" ng-class="{'active': isActive('/library')}"><img src="images/headphones_gd_16x14.png" /></a></li>
             <li><a href="#/playlists" title="Playlists" ng-class="{'active': isActive('/playlists')}"><img src="images/list_gd_16x14.png" /></a></li>
             <li><a href="#/podcasts" title="Podcasts" ng-class="{'active': isActive('/podcasts')}"><img src="images/rss_16x16.png" /></a></li>
             <li><a href="#/archive" class="" title="Archive.org - Live Music Archive" ng-class="{'active': isActive('/archive')}"><img src="images/archive_gd_16x16.png" /></a></li>
-            <li><a href="#/settings" class="last" title="Settings" ng-class="{'active': isActive('/settings')}""><img src="images/cog_16x16.png" /></a></li>
+            <li><a href="#/settings" class="last" title="Settings" ng-class="{'active': isActive('/settings')}"><img src="images/cog_16x16.png" /></a></li>
             </ul>
         </div>
     </div>
@@ -76,9 +81,9 @@
             <div id="songdetails">
                 <div id="coverart"><a class="coverartfancy" href="{{playingSong.coverartfull}}"><img ng-src="{{playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" alt=""/></a></div>
                 <ul>
-                <li class="song" id="{{playingSong.id}}">{{playingSong.name}}</li>
-                <li class="album">{{playingSong.album}}</li>
-                <li class="specs">{{playingSong.specs}}</li>
+                <li class="song" id="{{playingSong.id}}" ng-bind-html-unsafe="playingSong.name"></li>
+                <li class="album" ng-bind-html-unsafe="playingSong.album"></li>
+                <li class="specs" ng-bind-html-unsafe="playingSong.specs"></li>
                 <li id="songdetails_controls">
                     <a href="" id="action_Mute" class="mute first" title="Mute"></a>
                     <a href="" id="action_UnMute" class="unmute first" title="Unmute" style="display: none;"></a>
@@ -99,7 +104,7 @@
             </table>
             </div>
         </div>
-        <div class="playeractionssmall"><a href="#" class="button" id="action_ToggleSideBar" title="Toggle Side Bar"><img src="images/arrow_right_gl_12x12.png" /></a></div>
+        <div class="playeractionssmall"><!--<a href="" class="button" id="action_ToggleSideBar" title="Toggle Side Bar"><img src="images/arrow_right_gl_12x12.png" /></a>--></div>
         <div id="playermiddle">
             <div id="audiocontainer">
                 <div class="audiojs" id="audio_wrapper0">
@@ -125,9 +130,9 @@
             <li class="row song" ng-repeat="o in queue" ng-class="{'playing': o.playing, 'selected': o.selected}" ng-click="selectSong(o)" ng-dblclick="playSong(false, o)" id="{{o.id}}" parentid="{{o.parentid}}">
                 <div class="albumart"><a class="coverartfancy" href="{{o.coverartfull}}"><img class="" ng-src="{{o.coverartthumb}}" src="images/albumdefault_25.jpg" /></a></div>
                 <div class="clear"></div>
-                <div class="title" title="{{ o.track + ' - ' + o.name + ' - ' + o.time }}">{{o.name}}</div>
-                <div class="albumtext" title="{{o.album}}">{{o.album}}</div>
-                <div class="albumtext" title="{{o.artist}}">{{o.artist}}</div>
+                <div class="title" title="{{ o.track + ' - ' + o.name + ' - ' + o.time }}" ng-bind-html-unsafe="o.name"></div>
+                <div class="albumtext" title="{{o.album}}" ng-bind-html-unsafe="o.album"></div>
+                <div class="albumtext" title="{{o.artist}}" ng-bind-html-unsafe="o.artist"></div>
             </li>
         </ul>
     </div>

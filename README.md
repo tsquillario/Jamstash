@@ -7,7 +7,6 @@ What?
 * Archive.org browsing and streaming
 
 Features
-* Basic Archive.org browsing and streaming
 * HTML5 Audio with Flash fallback (provided by the jPlayer library)
 * Flexible Layout (will scale to whatever size your browser window is)
 * Keyboard shortcuts (back, forward, play/pause, skip to artist, media keys)
@@ -24,13 +23,15 @@ Features
 * Last.fm support
 * Autopilot Mode (click one button and songs continue to play)
 * AutoSave Mode (saves position and current playlist if you close or refresh your browser)
+* Built with AngularJS
 
 ***Please submit all bug reports & feature requests via the GitHub page***
 https://github.com/tsquillario/Jamstash/issues
 
 You will need a Subsonic server to be able to play your own music. Subsonic is a free, web-based media streamer, providing ubiquitous access to your music. Use it to share your music with friends, or to listen to your own music while at work. Please see http://www.subsonic.org
 
-* Live Demo: http://tsquillario.github.io/Jamstash
+* Twitter (Release Announcements): https://twitter.com/JamstashApp
+* Live Beta: http://jamstash.com/beta
 * Github Repo: https://github.com/tsquillario/Jamstash
 * Chrome App: https://chrome.google.com/webstore/detail/minisub/jccdpflnecheidefpofmlblgebobbloc
 * Forum: http://forum.subsonic.org/forum/viewforum.php?f=12
