@@ -127,7 +127,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                 var items = [];
                 if (typeof data["subsonic-response"].directory.child != 'undefined') {
                     if (data["subsonic-response"].directory.child.length > 0) {
-                            items = data["subsonic-response"].directory.child;
+                        items = data["subsonic-response"].directory.child;
                     } else {
                         items[0] = data["subsonic-response"].directory.child;
                     }
@@ -308,12 +308,18 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         }
     }
     $scope.addSongsToQueue = function () {
-        angular.forEach($scope.selectedSongs, function (item, key) {
-            $scope.queue.push(item);
-            item.selected = false;
-        });
-        $('body').layout().open('south');
-        notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
+
+        if ($scope.selectedSongs.length !== 0) {
+            angular.forEach($scope.selectedSongs, function (item, key) {
+                $scope.queue.push(item);
+                item.selected = false;
+            });
+            $('body').layout().open('south');
+            notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
+
+            $scope.selectedSongs.length = 0;
+        }
+
     }
     $scope.scrollToTop = function () {
         $('#Artists').stop().scrollTo('#auto', 400);
