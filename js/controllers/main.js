@@ -550,6 +550,30 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
             }
         });
     }
+    $scope.updateFavorite = function (item) {
+        var id = item.id;
+        var starred = item.starred;
+        var url;
+        if (starred) {
+            url = globals.BaseURL() + '/unstar.view?' + globals.BaseParams() + '&id=' + id;
+            item.starred = undefined;
+        } else {
+            url = globals.BaseURL() + '/star.view?' + globals.BaseParams() + '&id=' + id;
+            item.starred = true;
+        }
+        $.ajax({
+            url: url,
+            method: 'GET',
+            dataType: globals.settings.Protocol,
+            timeout: globals.settings.Timeout,
+            success: function () {
+                notifications.updateMessage('Favorite Updated!', true);
+            }
+        });
+    }
+
+
+
 
     /* Launch on Startup */
     $scope.loadSettings();

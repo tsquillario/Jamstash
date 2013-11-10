@@ -118,7 +118,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
             coverartfull = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&id=' + album.coverArt;
         }
         if (typeof album.starred !== 'undefined') { starred = true; } else { starred = false; }
-        return new model.Album(album.id, album.parent, album.album, album.artist, coverartthumb, coverartfull, $.format.date(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '');
+        return new model.Album(album.id, album.parent, album.title, album.artist, coverartthumb, coverartfull, $.format.date(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '');
     }
     $scope.getAlbums = function (id) {
         $scope.selectedAutoAlbum = null;
@@ -215,6 +215,10 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                         items = data["subsonic-response"].directory.child;
                     } else {
                         items[0] = data["subsonic-response"].directory.child;
+                    }
+                    if (typeof data["subsonic-response"].directory.id != 'undefined') {
+                        //alert(data["subsonic-response"].directory.id);
+                        // Look at bringing back the breadcrumb
                     }
                     //alert(JSON.stringify(getMusicDirectory["subsonic-response"].directory.child));
                     if (action == 'add') {
@@ -320,27 +324,6 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
             notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
             $scope.selectedSongs.length = 0;
         }
-    }
-    $scope.updateFavorite = function (item) {
-        var id = item.id;
-        var starred = item.starred;
-        var url;
-        if (starred) {
-            url = globals.BaseURL() + '/unstar.view?' + globals.BaseParams() + '&id=' + id;
-            item.starred = undefined;
-        } else {
-            url = globals.BaseURL() + '/star.view?' + globals.BaseParams() + '&id=' + id;
-            item.starred = true;
-        }
-        $.ajax({
-            url: url,
-            method: 'GET',
-            dataType: globals.settings.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function () {
-                notifications.updateMessage('Favorite Updated!', true);
-            }
-        });
     }
     $scope.sortDateFunction = function (a, b) {
         return a.date < b.date ? 1 : -1;

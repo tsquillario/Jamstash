@@ -2,7 +2,8 @@
 { "date": "10/31/2013", "version": "3.1.1",
     "changes": [
 	{ "text": "- Sway.fm Media Keys plugin fixed" },
-	{ "text": "- Fixed issue with multiple sub-folders levels, other bug fixes" }
+	{ "text": "- Fixed issue with multiple sub-folders levels, other bug fixes" },
+	{ "text": "- Ability to star playing song" }
     ]
 },
 { "date": "9/26/2013", "version": "3.1.0",

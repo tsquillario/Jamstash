@@ -1327,24 +1327,26 @@ ul.songlist li:hover
 #songdetails a.rate
 {
     float: left;
-	height: 66px;
-    width: 32px;
+	height: 12px;
+    width: 12px;
+    margin: 2px;
     display: block;
-	background: url('../images/star_wo_12x12.png') 10px center no-repeat;	
+	background: url('../images/star_wo_12x12.png') 0 center no-repeat;	
 	background-color: #ffffff;
 }
 #songdetails a.rate:hover
 {
-    background: url('../images/star_lgo_12x12.png') 10px center no-repeat;
+    background: url('../images/star_lgo_12x12.png') 0 center no-repeat;
 	background-color: #ffffff;
 }
 #songdetails a.favorite
 {
     float: left;
-	height: 64px;
-    width: 30px;
+	height: 12px;
+    width: 12px;
+    margin: 2px;
     display: block;
-	background: url('../images/star_yo_12x12.png') 10px center no-repeat;	
+	background: url('../images/star_yo_12x12.png') 0 center no-repeat;	
 }
 #songdetails a.mute
 {

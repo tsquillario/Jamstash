@@ -89,10 +89,10 @@
                     <a href="" id="action_UnMute" class="unmute first" title="Unmute" style="display: none;"></a>
                     <div class="jp-volume-bar"><div class="jp-volume-bar-value"></div></div><a href="" id="action_VolumeMax" class="volume" title="Max Volume"></a>
                     <a href="" class="loop" title="Repeat" ng-click="toggleSetting('Repeat')" ng-class="{'hoverSelected': !settings.Repeat }"></a>
-                    <a href="" id="action_SaveProgress" class="lock" title="Progress Saved" ng-show="settings.SaveTrackPosition"></a>
+                    <a href="" id="action_SaveProgress" class="lock" title="Save Track Position: On" ng-show="settings.SaveTrackPosition"></a>
+                    <a title="Favorite" href="" ng-class="{'favorite': playingSong.starred, 'rate': !playingSong.starred}" ng-click="updateFavorite(playingSong)" stop-event="click"></a>
                 </li>
                 </ul>
-                <div class="rate"><a href="" title="Favorite" data-bind="css: { favorite: starred(), rate: !starred() }, click: $root.updateFavorite, clickBubble: false"></a></div>
                 <div class="vertshade"></div>
             </div>
             <div id="playdeck_1"></div>

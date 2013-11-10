@@ -3,8 +3,8 @@ Jamstash - HTML5 Music Streamer
 Imagine you can stream all your music from home, to any device, where ever you are. That is Subsonic! Now imagine having a Web App to stream your music that is as beautiful and well designed as it is functional, that is Jamstash!
 
 What?
-* HTML5 Audio Streamer for your Subsonic server. 
-* Archive.org browsing and streaming
+* HTML5 Music Streaming App for your Subsonic server
+* Archive.org Browsing and Streaming of Live Music
 
 Features
 * HTML5 Audio with Flash fallback (provided by the jPlayer library)

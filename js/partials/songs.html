@@ -1,5 +1,5 @@
 ﻿<ul class="simplelist songlist">
-    <li class="row song" ng-repeat="o in song" ng-dblclick="playSong(false, o)" ng-click="selectSong(o)" ng-dblclick="playSong(false, o)" ng-class="{'selected': o.selected, 'playing': o.playing}" data-bind="attr: { id: id, parentid: parentid, title: description }">
+    <li class="row song" ng-repeat="o in song" ng-click="selectSong(o)" ng-dblclick="playSong(false, o)" ng-class="{'selected': o.selected, 'playing': o.playing}" data-bind="attr: { id: id, parentid: parentid, title: description }">
         <div class="itemactions">
             <a class="add" href="" title="Add To Play Queue" ng-click="addSongToQueue(o)" stop-event="click"></a>
             <a class="remove" href="" title="Remove"></a>
