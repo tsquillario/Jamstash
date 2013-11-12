@@ -128,7 +128,7 @@
             <!--<a href="" class="button buttonvertical" id="action_QueueToPlaylist" title="Create Playlist From Queue"><img src="images/list_gd_12x11.png" /></a>-->
         </div>
         <ul id="QueuePreviewList" class="songlist noselect">
-            <li class="row song" ng-repeat="o in queue" ng-class="{'playing': o.playing, 'selected': o.selected}" ng-click="selectSong(o)" ng-dblclick="playSong(false, o)" id="{{o.id}}" parentid="{{o.parentid}}">
+            <li class="row song" ng-repeat="o in queue track by $index" ng-class="{'playing': o.playing, 'selected': o.selected}" ng-click="selectSong(o)" ng-dblclick="playSong(false, o)" id="{{o.id}}" parentid="{{o.parentid}}">
                 <div class="albumart"><a class="coverartfancy" href="{{o.coverartfull}}"><img class="" ng-src="{{o.coverartthumb}}" src="images/albumdefault_25.jpg" /></a></div>
                 <div class="clear"></div>
                 <div class="title" title="{{ o.track + ' - ' + o.name + ' - ' + o.time }}" ng-bind-html-unsafe="o.name"></div>
