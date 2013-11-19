@@ -623,11 +623,11 @@ ul.songlist .album a.remove
 }
 ul.songlist .album a.rate
 {
-	background: url('../images/star_wo_12x12.png') 4px center no-repeat;	
+	background: url('../images/star_lgo_12x12.png') 4px center no-repeat;	
 }
 ul.songlist .album a.rate:hover
 {
-    background: url('../images/star_lgo_12x12.png') 4px center no-repeat;
+    background: url('../images/star_lg_12x12.png') 4px center no-repeat;
 }
 ul.songlist .album a.favorite
 {
@@ -777,11 +777,11 @@ ul.songlist .row a.add:hover
 }
 ul.songlist .row a.rate
 {
-	background: url('../images/star_wo_12x12.png') center 3px no-repeat;	
+	background: url('../images/star_lgo_12x12.png') center 3px no-repeat;	
 }
 ul.songlist .row a.rate:hover
 {
-    background: url('../images/star_lgo_12x12.png') center 3px no-repeat;
+    background: url('../images/star_lg_12x12.png') center 3px no-repeat;
 }
 ul.songlist .row a.favorite
 {
@@ -1331,12 +1331,12 @@ ul.songlist li:hover
     width: 12px;
     margin: 2px;
     display: block;
-	background: url('../images/star_wo_12x12.png') 0 center no-repeat;	
+	background: url('../images/star_lgo_12x12.png') 0 center no-repeat;	
 	background-color: #ffffff;
 }
 #songdetails a.rate:hover
 {
-    background: url('../images/star_lgo_12x12.png') 0 center no-repeat;
+    background: url('../images/star_lg_12x12.png') 0 center no-repeat;
 	background-color: #ffffff;
 }
 #songdetails a.favorite
