@@ -3,6 +3,7 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
     $("#LayoutContainer").layout($scope.layoutTwoCol);
 
     $rootScope.song = [];
+    $scope.itemType = 'pl';
     $scope.playlists = [];
     $scope.playlistsPublic = [];
     $scope.playlistsGenre = globals.SavedGenres;

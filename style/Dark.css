@@ -26,14 +26,14 @@ span.apiversion
 .lgsection
 {
     background: #323232;
-    border-top: 1px solid #5A5A5A;
-    border-bottom: 1px solid #5A5A5A;
+    border-top: 1px solid #1D1D1D;
+    border-bottom: 1px solid #1D1D1D;
 }
 .fullsection
 {
     background: #323232;
-    border-top: 1px solid #5A5A5A;
-    border-bottom: 1px solid #5A5A5A;
+    border-top: 1px solid #1D1D1D;
+    border-bottom: 1px solid #1D1D1D;
 }
 .smsection
 {
@@ -50,26 +50,26 @@ span.apiversion
 #nav a:hover  
 {
     color: #545454; 
-    border: 1px solid #5A5A5A;
+    border: 1px solid #1D1D1D;
     border-bottom: none;
 }
 #nav a.active  
 {
     color: #545454; 
     background: #323232; 
-	border: 1px solid #5A5A5A;
+	border: 1px solid #1D1D1D;
 	border-bottom: none;
 }
 #nav a.active:hover  
 {
     color: #545454; 
-    border: 1px solid #5A5A5A;
+    border: 1px solid #1D1D1D;
 	border-bottom: none;
 }
 #SideBar
 {
     background: #292929;
-    border: 1px solid #5A5A5A;
+    border: 1px solid #1D1D1D;
 }
 #NowPlaying, #ChatMsgs
 {
@@ -134,7 +134,7 @@ a.button {
     background: #323232;
     background: -webkit-gradient(linear,0% 40%,0% 70%,from(#323232),to(#323232));
     background: -moz-linear-gradient(linear,0% 40%,0% 70%,from(#323232),to(#323232));
-    border: solid 1px #5A5A5A;
+    border: solid 1px #1A1A1A;
 }
 a.button:hover {
     color: #939393;
@@ -314,16 +314,26 @@ label
     -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.2); 
     -webkit-border-radius: 10px;
     background: #252525;
+    /*
+    background: #232323;
+    border-bottom: 1px solid #171717;
+    */
 }
 ::-webkit-scrollbar-thumb {
+    cursor: pointer;
     border: 1px solid #1a1a1a;
     -webkit-border-radius: 10px;
     border-radius: 10px;
-    background: #030303;
+    /*background: #030303;*/
+    background: #bbb;
     -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.2); 
 }
 ::-webkit-scrollbar-thumb:window-inactive {
     background: rgba(34, 34, 34, 0.2); 
+}
+.ui-layout-resizer {
+    background: #232323 !important;
+    border: 1px solid #171717 !important;;
 }
 .accordion .accordionItemTitle {
 	background: #383838;
