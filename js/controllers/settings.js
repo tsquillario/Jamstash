@@ -13,6 +13,11 @@ function SettingsCtrl($scope, $routeParams, $location, utils, globals, json, not
     ];
     $scope.Protocols = ["json", "jsonp"];
     $scope.Themes = ["Default", "Dark"];
+    $scope.LibraryLayouts = [
+        { id: "list", name: "List" },
+        { id: "grid", name: "Grid" },
+    ];
+    $scope.DefaultLibraryLayout = 'grid';
     $scope.$watch('settings.HideAZ', function () {
         if (globals.settings.HideAZ) {
             $('#AZIndex').hide();

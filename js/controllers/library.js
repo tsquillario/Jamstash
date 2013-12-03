@@ -32,7 +32,8 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
             $scope.sortSubsonicAlbums(newValue);
         }
     });
-    $scope.selectedLayout = 'grid';
+    $scope.selectedLayout = globals.settings.DefaultLibraryLayout;
+    //not sure how to just grab the layouts hash from the settings controller
     $scope.Layouts = [
         { id: "list", name: "List" },
         { id: "grid", name: "Grid" },
