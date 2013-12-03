@@ -41,6 +41,11 @@
         <div class="clear"></div>
         <div class="inputwrap"><input type="checkbox" id="ScrollTitle" name="ScrollTitle" value="1" title="Scroll the Title Once" ng-model="settings.ScrollTitle"/></div>
         <label for="ScrollTitle">Scroll Title</label>
+        <div class="clear"></div>
+        <label for="DefaultLibraryLayout">Default Library Layout</label>
+        <div class="clear"></div>
+        <select id="DefaultLibraryLayout" name="DefaultLibraryLayout" class="" ng-model="settings.DefaultLibraryLayout" ng-options="o.id as o.name for o in LibraryLayouts" title="AJAX Request Library Layout"></select>
+        <div class="clear"></div>
         </fieldset>
         <div class="clear"></div>
         <fieldset id="HTML5">

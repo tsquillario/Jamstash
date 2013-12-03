@@ -131,6 +131,7 @@ JamStash.service('globals', function (utils) {
         SaveTrackPosition: false,
         ForceFlash: false,
         Theme: "Default",
+        DefaultLibraryLayout: "grid",
         AutoPlay: false,
         LoopQueue: false,
         Repeat: false,
