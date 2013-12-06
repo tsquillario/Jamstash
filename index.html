@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html lang="en" ng-app="JamStash">
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -15,7 +15,8 @@
     <link href="js/plugins/fancybox/jquery.fancybox.css" rel="stylesheet" type="text/css" />
     <script src="js/plugins/jquery-1.8.3.js" type="text/javascript"></script>
     <script src="js/plugins/angular.min.js" type="text/javascript"></script>
-    <script src="js/plugins/angular-cookies.js" type="text/javascript"></script>
+    <script src="js/plugins/angular-route.min.js" type="text/javascript"></script>
+    <script src="js/plugins/angular-cookies.min.js" type="text/javascript"></script>
     <script src="js/plugins/jquery-ui-1.9.2.custom.min.js" type="text/javascript"></script>
     <script src="js/plugins/fancybox/jquery.fancybox.js" type="text/javascript"></script>
     <script src="js/plugins/jquery.base64.js" type="text/javascript"></script>
@@ -81,9 +82,9 @@
             <div id="songdetails">
                 <div id="coverart"><a class="coverartfancy" href="{{playingSong.coverartfull}}"><img ng-src="{{playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" alt=""/></a></div>
                 <ul>
-                <li class="song" id="{{playingSong.id}}" ng-bind-html-unsafe="playingSong.name"></li>
-                <li class="album" ng-bind-html-unsafe="playingSong.album"></li>
-                <li class="specs" ng-bind-html-unsafe="playingSong.specs"></li>
+                <li class="song" id="{{playingSong.id}}" ng-bind="playingSong.name"></li>
+                <li class="album" ng-bind="playingSong.album"></li>
+                <li class="specs" ng-bind="playingSong.specs"></li>
                 <li id="songdetails_controls">
                     <a href="" id="action_Mute" class="mute first" title="Mute"></a>
                     <a href="" id="action_UnMute" class="unmute first" title="Unmute" style="display: none;"></a>
@@ -131,9 +132,9 @@
             <li class="row song" ng-repeat="o in queue track by $index" ng-class="{'playing': o.playing, 'selected': o.selected}" ng-click="selectSong(o)" ng-dblclick="playSong(false, o)" id="{{o.id}}" parentid="{{o.parentid}}">
                 <div class="albumart"><a class="coverartfancy" href="{{o.coverartfull}}"><img class="" ng-src="{{o.coverartthumb}}" src="images/albumdefault_25.jpg" /></a></div>
                 <div class="clear"></div>
-                <div class="title" title="{{ o.track + ' - ' + o.name + ' - ' + o.time }}" ng-bind-html-unsafe="o.name"></div>
-                <div class="albumtext" title="{{o.album}}" ng-bind-html-unsafe="o.album"></div>
-                <div class="albumtext" title="{{o.artist}}" ng-bind-html-unsafe="o.artist"></div>
+                <div class="title" title="{{ o.track + ' - ' + o.name + ' - ' + o.time }}" ng-bind="o.name"></div>
+                <div class="albumtext" title="{{o.album}}" ng-bind="o.album"></div>
+                <div class="albumtext" title="{{o.artist}}" ng-bind="o.artist"></div>
             </li>
         </ul>
     </div>

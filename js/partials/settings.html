@@ -35,7 +35,7 @@
             <h3 class="title">Change Log</h3>
             <ul id="ChangeLog" class="preferences">
                 <li class="log" ng-repeat="o in changeLog"><span class="version">{{o.date + ' - ' + o.version}}</span>
-                    <span class="changes" ng-repeat="a in o.changes" ng-bind-html-unsafe="a.text"></span>
+                    <span class="changes" ng-repeat="a in o.changes" ng-bind="a.text"></span>
                 </li>
             </ul>
             <a href="" ng-click="changeLogShowMore()">Show More</a>

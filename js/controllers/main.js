@@ -23,7 +23,7 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         }
     });
     /*
-    $scope.playSong = function (loadonly, data) { 
+    $scope.playSong = function (loadonly, data) {
     $scope.$apply(function () {
     $rootScope.playSong(loadonly, data);
     });
@@ -174,8 +174,8 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
 
     // JQuery Layout Plugin
     function resizePageLayout() {
-        var pageLayout = $("body").data("layout");
-        if (pageLayout) pageLayout.resizeAll();
+        //var pageLayout = $("body").data("layout");
+        //if (pageLayout) pageLayout.resizeAll();
     };
 
     //$( "#nav" ).tabs();
@@ -437,8 +437,15 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         if (typeof song.track == 'undefined') { track = '&nbsp;'; } else { track = song.track; }
         if (typeof song.starred !== 'undefined') { starred = true; } else { starred = false; }
         if (song.bitRate !== undefined) { specs += song.bitRate + ' Kbps'; }
-        if (song.transcodedSuffix !== undefined) { specs += ', transcoding:' + song.suffix + ' > ' + song.transcodedSuffix; } else { specs += ', ' + song.suffix; }
-        if (song.transcodedSuffix !== undefined) { suffix = song.transcodedSuffix; } else { suffix = song.suffix; }
+
+        if (song.transcodedSuffix !== undefined)
+        {
+            specs += ' / transcoding: ' + song.suffix + '⇝' + song.transcodedSuffix;
+            suffix = song.transcodedSuffix;
+        } else {
+            specs += ' / ' + song.suffix;
+            suffix = song.suffix;
+        }
         if (suffix == 'ogg') { suffix = 'oga'; }
         var salt = Math.floor(Math.random() * 100000);
         url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.id + '&salt=' + salt;
