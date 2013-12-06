@@ -24,16 +24,15 @@
         </div>
         <div class="clear"></div>
         <div id="SubsonicAlbums" class="section lgsection">
-            <div id="SubsonicArtists" class="ui-layout-west noselect hide" tabindex="0">
-                <div id="AZIndex" ng-show="!settings.HideAZ" class="subactionsfixed">
-                    <a href="" ng-click="toggleAZ()" stop-event="click">A-Z</a>
-                </div>
+            <div id="SubsonicArtists" class="ui-layout-west noselect" tabindex="0">
                 <div id="submenu_AZIndex" class="submenu shadow" style="display: none;">
                     <ul>
                     <li ng-repeat="o in index"><a href="" ng-click="scrollToIndexName(o.name)">{{o.name}}</a></li>
-                    <li><a href="" class="close" ng-click="scrollToIndexName('AZIndex')">[Top]</a></li>
-                    <li><a href="" class="close" ng-click="toggleAZ()">[Close]</a></li>
                     </ul>
+                    <a href="" class="close" ng-click="toggleAZ()">[Close]</a>
+                </div>
+                <div id="AZIndex" ng-show="!settings.HideAZ" class="subactionsfixed">
+                    <a href="" ng-click="toggleAZ()" stop-event="click">A-Z</a>
                 </div>
                 <select id="MusicFolders" class="folders" ng-model="$root.selectedMusicFolder" ng-options="o as o.name for o in MusicFolders">
                     <option value="">All Folders</option>

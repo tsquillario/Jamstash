@@ -83,11 +83,12 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
     $('div.submenu').mouseenter(function () {
         submenu_active = true;
     });
+
     $('div.submenu').mouseleave(function () {
         submenu_active = false;
         $('div.submenu').hide();
-        //setTimeout(function () { if (submenu_active == false) $('div.submenu').stop().fadeOut(); }, 400);
     });
+
     $scope.toggleSubmenu = function (menu, pl, pos, margin) {
         var submenu = $(menu);
         if (submenu.css('display') !== 'none') {
@@ -105,6 +106,9 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
                 case 'left':
                     //show the menu to the right of placeholder
                     submenu.css({ "left": (off.left - margin) + "px", "top": (off.top) + "px" }).fadeIn(400);
+                    break;
+                default:
+                    submenu.fadeIn(400);
                     break;
             }
             setTimeout(function () { if (submenu_active == false) $('div.submenu').stop().fadeOut(); }, 10000);
