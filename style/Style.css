@@ -74,7 +74,8 @@ span.apiversion
     padding: 0 4px;
 }
 #container {
-	text-align: left;
+    padding: 0 !important;
+    text-align: left;
     overflow: hidden;
     width: 100%;
     height: 100%;
@@ -836,62 +837,67 @@ ul.songlist li:hover
     overflow-y: scroll;
     overflow-x: hidden;
 }
-#ArtistContainer
-{
+
+#submenu_AZIndex {
+    display:none;
+    background:#f9f9f9;
+    border:1px solid #C3C3C3;
+    list-style-type:none;
+    margin: auto;
+    position: relative;
 }
+
+#submenu_AZIndex li {
+    display: inline-block;
+    width: 10%;
+    text-align: center;
+}
+
+#submenu_AZIndex li a {
+    color:#4B95E5;
+    text-decoration:none;
+    font-size:22px;
+    cursor:pointer;
+    margin: 0;
+    padding: 0;
+}
+
+#submenu_AZIndex ul
+{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#submenu_AZIndex a.close {
+    font-size: 12px;
+    padding: 6px 16px;
+    display: block;
+    width: 100%;
+}
+
 #AZIndex
 {
-    float: right;
-    margin: 0 5px 0 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    border-bottom-left-radius: 5px;
+    padding: 5px;
 }
+
 #AZIndex a
 {
     color: #7EA8D5;
     font-size: 24px;
     text-decoration: none;
-    padding: 5px 5px 0 5px;
-    display: block;
 }
-#AZIndex a:hover { text-decoration: underline; }
-#submenu_AZIndex 
-{
-    display: none;
-    width: 200px;
-    height: 100px;
-    position: fixed;
-    background: #f9f9f9;
-    border: 1px solid #C3C3C3;
-    z-index: 999;
-} 
-#submenu_AZIndex ul 
-{
-    list-style-type: none;
-    margin: 0;
-    padding: 0 0 0 10px;
+
+#AZIndex a:hover {
+    text-decoration:underline;
 }
-#submenu_AZIndex li
-{
-    float: left;
-    height: 18px;
-    padding: 0 2px 5px 2px;
-}
-#submenu_AZIndex li a
-{
-    color: #4B95E5;
-    text-decoration: none;
-    font-size: 24px;
-    padding: 0 5px 0 0;
-    cursor: pointer;    
-}
-#submenu_AZIndex li a:hover
-{
-    text-decoration: underline;
-}
-#submenu_AZIndex a.close {
-    font-size: 12px;
-    padding: 6px 16px;
-    display: block;
-}
+
 .actions
 {
     height: 30px;
@@ -1050,49 +1056,34 @@ ul.songlist li:hover
 {
 }
 
-#queue
-{
-    background: #fff;
-    border-top: 1px solid #cbcbcb;
-    border-bottom: 1px solid #cbcbcb;
-    margin: 4px 0;
-    height: 75px;
-    position: absolute;
-    bottom: 0; /* Sit it on the bottom */
-    left: 0;
-    width: 100%; /* As wide as it's allowed */
-}
 #QueuePreview {
-    height: 150px;
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    z-index: 999;
+    padding: 0;
     display: none;
-    background: #ffffff;
+    position: relative;
 }
+
 #QueuePreview ul {
-    height: 135px;
-    padding: 4px;
+    padding: 0;
     margin: 0;
+    height: 100%;
     list-style-type: none;
     overflow-x: auto;
     overflow-y: hidden;
     text-align: left;
-    white-space: nowrap;    
-    background: #5b5b4e; 
+    white-space: nowrap;
+    background: #5b5b4e;
 }
-#QueuePreview li {
-}
+
 #QueuePreview .queueactions {
-    padding: 0 5px;
     float: left;
-    border-right: 1px solid #cbcbcb;
+    width: 45px;
     height: 100%;
 }
+
 #QueuePreview li.selected {
     background-color: #D4E2F1;
 }
+
 #QueuePreview li.playing {
     background-image: none;
     background-color: #528AC6;
@@ -1745,4 +1736,7 @@ legend
 }
 .ui-layout-west {
     z-index: 900 !important;
+}
+.ui-layout-east {
+    z-index: 1900 !important;
 }

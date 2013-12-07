@@ -24,16 +24,15 @@
         </div>
         <div class="clear"></div>
         <div id="SubsonicAlbums" class="section lgsection">
-            <div id="SubsonicArtists" class="ui-layout-west noselect hide" tabindex="0">
-                <div id="AZIndex" ng-show="!settings.HideAZ" class="subactionsfixed">
-                    <a href="" ng-click="toggleAZ()" stop-event="click">A-Z</a>
-                </div>
+            <div id="SubsonicArtists" class="ui-layout-west noselect" tabindex="0">
                 <div id="submenu_AZIndex" class="submenu shadow" style="display: none;">
                     <ul>
                     <li ng-repeat="o in index"><a href="" ng-click="scrollToIndexName(o.name)">{{o.name}}</a></li>
-                    <li><a href="" class="close" ng-click="scrollToIndexName('AZIndex')">[Top]</a></li>
-                    <li><a href="" class="close" ng-click="toggleAZ()">[Close]</a></li>
                     </ul>
+                    <a href="" class="close" ng-click="toggleAZ()">[Close]</a>
+                </div>
+                <div id="AZIndex" ng-show="!settings.HideAZ" class="subactionsfixed">
+                    <a href="" ng-click="toggleAZ()" stop-event="click">A-Z</a>
                 </div>
                 <select id="MusicFolders" class="folders" ng-model="$root.selectedMusicFolder" ng-options="o as o.name for o in MusicFolders">
                     <option value="">All Folders</option>
@@ -51,14 +50,14 @@
                 <ul class="simplelist mainlist noselect" ng-show="shortcut.length">
                     <li class="index" title="Scroll to Top" data-bind="click: $root.scrollToTop"><a>Shortcuts</a></li>
                     <ul class="simplelist mainlist noselect" ng-repeat="o in shortcut">
-                            <li class="item" id="{{o.id}}" ng-click="getAlbums(o.id)" ng-class="{'selected': selectedArtist == o.id}"><span ng-bind-html-unsafe="o.name"></span></li>
+                            <li class="item" id="{{o.id}}" ng-click="getAlbums(o.id)" ng-class="{'selected': selectedArtist == o.id}"><span ng-bind="o.name"></span></li>
                     </ul>
                 </ul>
                 <!-- Artist -->
                 <ul class="simplelist mainlist noselect" ng-repeat="o in index">
                     <li class="index" title="Scroll to Top" id="{{o.name}}" ng-click="scrollToTop()"><a>{{o.name}}</a><span class="floatright">?</span></li>
                     <ul class="simplelist mainlist noselect">
-                        <li class="item" id="{{a.id}}" ng-repeat="a in o.artist" ng-class="{'selected': selectedArtist == a.id}" ng-click="getAlbums(a.id)"><span ng-bind-html-unsafe="a.name"></span></li>
+                        <li class="item" id="{{a.id}}" ng-repeat="a in o.artist" ng-class="{'selected': selectedArtist == a.id}" ng-click="getAlbums(a.id)"><span ng-bind="a.name"></span></li>
                     </ul>
                 </ul>
             </div>
@@ -84,15 +83,17 @@
                     </div>
                     <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
                     <div class="albuminfo">
-                        <div class="title" title="{{o.name}}" ng-bind-html-unsafe="o.name"></div>
-                        <div class="artist" title="{{o.artist}}"><a href="" id="{{o.parentid}}" ng-click="getAlbums(o.parentid)" stop-event="click" ng-bind-html-unsafe="o.artist"></a></div>
+                        <div class="title" title="{{o.name}}" ng-bind="o.name"></div>
+                        <div class="artist" title="{{o.artist}}"><a href="" id="{{o.parentid}}" ng-click="getAlbums(o.parentid)" stop-event="click" ng-bind="o.artist"></a></div>
                     </div>
                     <div class="clear"></div>
                 </li>
                 </ul>
             </div>
             <!-- Song -->
-            <div class="ui-layout-east noselect hide" ng-include src="'js/partials/songs.html'"></div>
+            <div class="ui-layout-east noselect" >
+                <ng-include src="'js/partials/songs.html'"></ng-include>
+            </div>
         </div>
     </div>
 <div class="clear"></div>

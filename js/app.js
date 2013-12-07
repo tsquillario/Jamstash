@@ -1,5 +1,5 @@
 /* Declare app level module */
-var JamStash = angular.module('JamStash', ['ngCookies']);
+var JamStash = angular.module('JamStash', ['ngCookies','ngRoute']);
 JamStash.config(function ($routeProvider) {
     $routeProvider
         .when('/index', { redirectTo: '/library' })

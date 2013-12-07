@@ -62,13 +62,15 @@
                         <div class="title">{{o.name}}</div>
                         <div class="artist"><a href="" id="{{o.parentid}}" ng-click="getAlbums(o.artist, o.id)" stop-event="click">{{o.artist}}</a></div>
                         <!--<div class="details">Created: {{o.date}}</div>-->
-                        <div class="description shadow" ng-show="selectedAlbum == o.id" ng-bind-html-unsafe="o.description"></div>
+                        <div class="description shadow" ng-show="selectedAlbum == o.id" ng-bind="o.description"></div>
                         <div class="clear"></div>
                     </li>
                 </ul>
             </div>
             <!-- Song -->
-            <div class="ui-layout-east noselect hide" ng-include src="'js/partials/songs.html'"></div>
+            <div class="ui-layout-east noselect hide" >
+                <ng-include src="'js/partials/songs.html'"></ng-include>
+            </div>
         </div>
     </div>
 <div class="clear"></div>

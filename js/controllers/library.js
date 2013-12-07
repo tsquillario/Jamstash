@@ -313,7 +313,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         }
     }
     $scope.toggleAZ = function (event) {
-        $scope.toggleSubmenu('#submenu_AZIndex', '#AZIndex', 'right', 44);
+        $scope.toggleSubmenu('#submenu_AZIndex', '#AZIndex', '', 44);
     }
     $scope.addSongsToQueue = function () {
         if ($scope.selectedSongs.length !== 0) {
