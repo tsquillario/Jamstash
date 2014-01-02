@@ -13,11 +13,23 @@ function SettingsCtrl($scope, $routeParams, $location, utils, globals, json, not
     ];
     $scope.Protocols = ["json", "jsonp"];
     $scope.Themes = ["Default", "Dark"];
+    $scope.SearchTypeLayout = [
+        { id: "song", name: "Song" },
+        { id: "album", name: "Album" },
+    ];
+    $scope.DefaultSearchType = 'song';
     $scope.LibraryLayouts = [
         { id: "list", name: "List" },
         { id: "grid", name: "Grid" },
     ];
     $scope.DefaultLibraryLayout = 'grid';
+    $scope.DefaultSubsonicAlbumSort = 'list';
+    $scope.SubsonicAlbumSort = [
+        { id: "default", name: "Default Sort" },
+        { id: "artist", name: "Artist" },
+        { id: "album", name: "Album" },
+        { id: "createdate desc", name: "Created Date - Desc" },
+    ];
     $scope.$watch('settings.HideAZ', function () {
         if (globals.settings.HideAZ) {
             $('#AZIndex').hide();
