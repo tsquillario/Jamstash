@@ -470,16 +470,10 @@ ul.mainlist li.item a.add:hover
 {
     background: url('../images/plus_8x8.png') no-repeat 6px center #DEECFB;
 }
-#BreadCrumbContainer
-{
-    margin: 5px 5px 0 0;
-    font-size: 12px;
-    height: 22px;
-}
 #BreadCrumb 
 {
-    float: left;
-    margin: 0;
+    float: right;
+    margin: 5px 0 0 0;
     padding: 2px 8px;
     color: #AEAEA7;
     background: #f6f6f6;  
@@ -692,6 +686,11 @@ ul.songlist .row a:hover
 {
     text-decoration: underline;    
 }
+ul.songlist .row span.albumblock
+{
+    color: #7EA8D5;
+    font-size: 12px;
+}
 ul.songlist .row .album img
 {
     border: 1px solid #DEDEDE;
@@ -892,6 +891,15 @@ ul.songlist li:hover
     padding: 6px 16px;
     display: block;
 }
+#submenu_AddToPlaylist {
+    width: 100px;
+}
+#submenu_AddToPlaylist a {
+    float: left;
+    padding: 4px;
+    display: block;
+    clear: both;
+}
 .actions
 {
     height: 30px;
@@ -1083,6 +1091,7 @@ ul.songlist li:hover
     background: #5b5b4e; 
 }
 #QueuePreview li {
+    height: 120px;
 }
 #QueuePreview .queueactions {
     padding: 0 5px;

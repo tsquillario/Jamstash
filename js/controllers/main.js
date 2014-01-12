@@ -22,6 +22,13 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
             }
         }
     });
+    $rootScope.loggedIn = function () {
+        if (globals.settings.Server != '' && globals.settings.Username != '' && globals.settings.Password != '') {
+            return true;
+        } else {
+            return false;
+        }
+    }
     /*
     $scope.playSong = function (loadonly, data) { 
     $scope.$apply(function () {
@@ -330,6 +337,17 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
             item.selected = false;
         });
     }
+    $scope.addSongsToQueue = function () {
+        if ($scope.selectedSongs.length !== 0) {
+            angular.forEach($scope.selectedSongs, function (item, key) {
+                $scope.queue.push(item);
+                item.selected = false;
+            });
+            $('body').layout().open('south');
+            notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
+            $scope.selectedSongs.length = 0;
+        }
+    }
     $scope.isActive = function (route) {
         return route === $location.path();
     };
@@ -397,10 +415,14 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
             dataType: globals.settings.Protocol,
             timeout: globals.settings.Timeout,
             success: function (data) {
-                if (data["subsonic-response"].user.downloadRole == true) {
-                    $window.location.href = globals.BaseURL() + '/download.view?' + globals.BaseParams() + '&id=' + id;
+                if (typeof data["subsonic-response"].error != 'undefined') {
+                    notifications.updateMessage('Error: ' + data["subsonic-response"].error.message, true);                    
                 } else {
-                    notifications.updateMessage('You do not have permission to Download', true);
+                    if (data["subsonic-response"].user.downloadRole == true) {
+                        $window.location.href = globals.BaseURL() + '/download.view?' + globals.BaseParams() + '&id=' + id;
+                    } else {
+                        notifications.updateMessage('You do not have permission to Download', true);
+                    }
                 }
             }
         });
@@ -574,11 +596,10 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
 
 
 
-
     /* Launch on Startup */
     $scope.loadSettings();
     utils.switchTheme(globals.settings.Theme);
-    if (globals.settings.Server != '' && globals.settings.Username != '' && globals.settings.Password != '') {
+    if ($scope.loggedIn) {
         $scope.ping();
         $scope.getMusicFolders();
         if (globals.settings.SaveTrackPosition) {

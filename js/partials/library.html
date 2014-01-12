@@ -17,9 +17,9 @@
             <a href="" class="button" id="action_SelectAll" title="Select All" ng-click="selectAll()">All</a>
             <a href="" class="button" id="action_SelectNone" title="Select None" ng-click="selectNone()">None</a>
             <a href="" class="button" id="action_AddToQueue" title="Add To Queue" ng-click="addSongsToQueue()">+ Queue</a>
-            <a href="" class="button" id="action_AddToPlaylist" title="Add Selected To Playlist" ng-click="addSongsToPlaylist()">+ Playlist</a>
-            <div id="submenu_AddToPlaylist" class="submenu shadow" style="display: none;" data-bind="foreach: playlistMenu">
-                <a href="#" data-bind="attr: { id: id }, html: name, click: $root.addToPlaylist"></a><br />
+            <a href="" class="button" id="action_AddToPlaylist" title="Add Selected To Playlist" ng-click="loadPlaylistsForMenu()">+ Playlist</a>
+            <div id="submenu_AddToPlaylist" class="submenu shadow" style="display: none;">
+                <a href="" ng-repeat="o in playlistMenu" ng-click="addToPlaylist(o.id)">{{o.name}}</a>
             </div>
         </div>
         <div class="clear"></div>
@@ -58,7 +58,7 @@
                 <ul class="simplelist mainlist noselect" ng-repeat="o in index">
                     <li class="index" title="Scroll to Top" id="{{o.name}}" ng-click="scrollToTop()"><a>{{o.name}}</a><span class="floatright">?</span></li>
                     <ul class="simplelist mainlist noselect">
-                        <li class="item" id="{{a.id}}" ng-repeat="a in o.artist" ng-class="{'selected': selectedArtist == a.id}" ng-click="getAlbums(a.id)"><span ng-bind-html-unsafe="a.name"></span></li>
+                        <li class="item" id="{{a.id}}" ng-repeat="a in o.artist" ng-class="{'selected': selectedArtist == a.id}" ng-click="getAlbums(a.id)"><a ng-href="" ng-bind-html-unsafe="a.name"></a></li>
                     </ul>
                 </ul>
             </div>
@@ -70,25 +70,42 @@
                     <select id="selectedSubsonicAlbumSort" ng-model="selectedSubsonicAlbumSort" ng-options="o.id as o.name for o in SubsonicAlbumSort"></select>
                     <select id="selectedLayout" ng-model="selectedLayout" ng-options="o.id as o.name for o in Layouts"></select>
                     </form>
+                        <!--
+                        <div id="BreadCrumb">
+                        <a href="#" id="BreadHome"><img src="images/home_gl_12x12.png"></a>
+                        <div id="BreadCrumbs" class="floatleft"><a ng-show="artistId" ng-href="#/library/{{artistId}}">AC/DC</a> &gt;<a ng-show="albumId" ng-href="#/library/{{albumId}}">Back In Black</a></div>
+                        </div>
+                        -->
                     </li>
                 </ul>
                 <div class="clear"></div>
                 <ul class="simplelist songlist noselect">
-                <li class="album" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': selectedLayout == 'grid'}" ng-click="getSongs(o.id, '')" ng-repeat="o in album" parentid="{{o.parentid}}">
-                    <div class="itemactions">
-                        <a class="add" href="" title="Add To Play Queue" ng-click="getSongs(o.id, 'add')" stop-event="click"></a>
-                        <a class="play" href="" title="Play" ng-click="getSongs(o.id, 'play')" stop-event="click"></a>
-                        <a class="download" href="" ng-click="download(o.id)" title="Download" stop-event="click"></a>
-                        <a title="Favorite" href="" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="updateFavorite(o)" stop-event="click"></a>
-                        <a class="info hover" href="" title="{{'Created: ' + o.date}}"></a>
-                    </div>
-                    <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
-                    <div class="albuminfo">
-                        <div class="title" title="{{o.name}}" ng-bind-html-unsafe="o.name"></div>
-                        <div class="artist" title="{{o.artist}}"><a href="" id="{{o.parentid}}" ng-click="getAlbums(o.parentid)" stop-event="click" ng-bind-html-unsafe="o.artist"></a></div>
-                    </div>
-                    <div class="clear"></div>
-                </li>
+                <div class="animate-switch-container" ng-repeat="o in album" ng-switch on="o.type">
+                    <!--<div class="animate-switch" ng-switch-default>default</div>-->
+                    <li class="album" ng-switch-when="byfolder" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': selectedLayout == 'grid'}" ng-click="getSongs(o.id, '')" parentid="{{o.parentid}}">
+                        <div class="itemactions">
+                            <a class="add" href="" title="Add To Play Queue" ng-click="getSongs(o.id, 'add')" stop-event="click"></a>
+                            <a class="play" href="" title="Play" ng-click="getSongs(o.id, 'play')" stop-event="click"></a>
+                            <a class="download" href="" ng-click="download(o.id)" title="Download" stop-event="click"></a>
+                            <a title="Favorite" href="" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="updateFavorite(o)" stop-event="click"></a>
+                            <a class="info hover" href="" title="{{'Created: ' + o.date}}"></a>
+                        </div>
+                        <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
+                        <div class="albuminfo">
+                            <div class="title" title="{{o.name}}" ng-bind-html-unsafe="o.name"></div>
+                            <div class="artist" title="{{o.artist}}"><a href="" id="{{o.parentid}}" ng-click="getAlbums(o.parentid)" stop-event="click" ng-bind-html-unsafe="o.artist"></a></div>
+                        </div>
+                        <div class="clear"></div>
+                    </li>
+                    <li class="album" ng-switch-when="bytag" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': selectedLayout == 'grid'}" ng-click="getAlbumByTag(o.id)">
+                        <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
+                        <div class="albuminfo">
+                            <div class="title" title="{{o.name}}" ng-bind-html-unsafe="o.name"></div>
+                            <div class="artist" title="{{o.artist}}"><a href="" ng-click="getArtistByTag(o.artistId)" stop-event="click" ng-bind-html-unsafe="o.artist"></a></div>
+                        </div>
+                        <div class="clear"></div>
+                    </li>
+                </div>
                 </ul>
             </div>
             <!-- Song -->

@@ -75,7 +75,7 @@
                 if (song) {
                     var position = audio.status.currentTime;
                     if (position != null) {
-                        $('#action_SaveProgress').fadeOut("slow").delay(500).fadeIn("slow").delay(500).fadeOut("slow").delay(500).fadeIn("slow");
+                        $('#action_SaveProgress').fadeTo("slow", 0).delay(500).fadeTo("slow", 1).delay(500).fadeTo("slow", 0).delay(500).fadeTo("slow", 1);
                         song.position = position;
                         // Save Queue
                         if (utils.browserStorageCheck()) {
@@ -191,7 +191,6 @@
             }
         }
         $('#SMStats').html(spechtml);
-        scrobbleSong(false);
         scrobbled = false;
 
         if (globals.settings.NotificationSong && !loadonly) {
@@ -215,7 +214,7 @@
             volume = parseFloat(utils.getValue('Volume'));
         }
         var audioSolution = "html,flash";
-        if (utils.getValue('ForceFlash')) {
+        if (globals.settings.ForceFlash) {
             audioSolution = "flash,html";
         }
         //var salt = Math.floor(Math.random() * 100000);
@@ -243,6 +242,7 @@
                 duration: "#duration"
             },
             ready: function () {
+                console.log("File Suffix: " + suffix);
                 if (suffix == 'oga') {
                     $(this).jPlayer("setMedia", {
                         oga: url,
@@ -352,24 +352,18 @@
     }
     
     scrobbleSong = function (submission) {
-        var songid = $('#songdetails li.song').attr('id');
-        if (typeof songid != 'undefined' && globals.settings.Username != '' && globals.settings.Server != '') {
-            if (globals.settings.Debug) { console.log('Scrobble Song: ' + songid); }
+        if ($rootScope.loggedIn && submission) {
+            var id = $rootScope.playingSong.id;
+            if (globals.settings.Debug) { console.log('Scrobble Song: ' + id); }
             $.ajax({
-                url: globals.BaseURL() + '/scrobble.view?' + globals.BaseParams() + '&id=' + songid + "&submission=" + submission,
+                url: globals.BaseURL() + '/scrobble.view?' + globals.BaseParams() + '&id=' + id + "&submission=" + submission,
                 method: 'GET',
                 dataType: globals.settings.Protocol,
                 timeout: 10000,
                 success: function () {
-                    if (submission) {
-                        scrobbled = true;
-                    }
+                    scrobbled = true;
                 }
             });
-        } else {
-            if (submission) {
-                scrobbled = true;
-            }
         }
     }
     rateSong = function (songid, rating) {

@@ -14,11 +14,8 @@ Features
 * Podcast support (includes description field on hover)
 * Favorite/Starred support for Albums & Songs
 * Shortcuts supported
-* Chat support (when the chat window is open it will auto-update in the background)
-* Now Playing support (see what others are streaming at the moment)
 * Easy installation (Chrome App or manual install)
 * FF/Chome support (IE9 works but is a little rough around the edges)
-* Sortable Columns
 * Light/Dark Theme
 * Last.fm support
 * Autopilot Mode (click one button and songs continue to play)

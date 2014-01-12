@@ -36,64 +36,9 @@
             }
         }
         
-        self.getAlbumsByTag = function (data, Event) { // Gets albums by ID3 tag
-            var id = event.currentTarget.id;
-            $('#AutoAlbumContainer li').removeClass('selected');
-            $('#ArtistContainer li').removeClass('selected');
-            $(this).addClass('selected');
-            var map = {
-                create: function (options) {
-                    var album = options.data;
-                    var coverart, starred;
-                    if (typeof album.coverArt != 'undefined') {
-                        coverart = self.settings.BaseURL() + '/getCoverArt.view?' + self.settings.BaseParams() + '&size=50&id=' + album.coverArt;
-                    }
-                    if (typeof album.starred !== 'undefined') { starred = true; } else { starred = false; }
-                    return new model.Album(album.id, album.parent, album.name, album.artist, coverart, album.created, starred, '', '');
-                }
-            }
-            $.ajax({
-                url: self.settings.BaseURL() + '/getArtist.view?' + self.settings.BaseParams() + '&id=' + id,
-                method: 'GET',
-                dataType: self.settings.Protocol(),
-                timeout: 10000,
-                success: function (data) {
-                    if (data["subsonic-response"].artist !== undefined) {
-                        var children = [];
-                        if (data["subsonic-response"].artist.album.length > 0) {
-                            children = data["subsonic-response"].artist.album;
-                        } else {
-                            children[0] = data["subsonic-response"].artist.album;
-                        }
-                        self.album.removeAll();
-                        self.templateToUse('album-template');
-                        mapping.fromJS(children, map, self.album);
-                    }
-                }
-            });
-        }
         
-        self.getSongsByTag = function (data, event) { // Gets songs by ID3 tag
-            var id = event.currentTarget.id;
-            $.ajax({
-                url: self.settings.BaseURL() + '/getAlbum.view?' + self.settings.BaseParams() + '&id=' + id,
-                method: 'GET',
-                dataType: self.settings.Protocol(),
-                timeout: 10000,
-                success: function (data) {
-                    if (data["subsonic-response"].album !== undefined) {
-                        var children = [];
-                        if (data["subsonic-response"].album.song.length > 0) {
-                            children = data["subsonic-response"].album.song;
-                        } else {
-                            children[0] = data["subsonic-response"].album.song;
-                        }
-                        self.song.removeAll();
-                        mapping.fromJS(children, self.songMapping, self.song);
-                    }
-                }
-            });
-        };
+        
+        
 
         // Referenced Functions
         self.getRandomSongs = function (action, genre, folder) { return subsonic.getRandomSongs(action, genre, folder); }

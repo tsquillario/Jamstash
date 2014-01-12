@@ -85,8 +85,15 @@
         <div class="clear"></div>
         <label for="Protocol">Protocol</label><br />
         <select id="Protocol" name="Protocol" class="" ng-model="settings.Protocol" ng-options="o for o in Protocols" title="Enable Cross-Domain AJAX Requests (Use if hosted in a different domain than Subsonic)"></select>
+        <!--
+        <div class="clear"></div>
+        <label title="Export these settings to a file">Export Settings</label><br />
+        <ng-download data="settings" />
+        -->
         </fieldset>
     </div>
 </div>
 <div class="clear"></div>
-<div class="submit"><a href="" class="button" ng-click="save()" title="Save Settings">Save</a></div>
+<div class="submit">
+<a href="" class="button" ng-click="save()" title="Save Settings">Save</a>
+</div>

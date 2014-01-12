@@ -6,11 +6,12 @@
             <a class="play" href="" title="Play" ng-click="playSong(false, o)" stop-event="click"></a><a class="download" href="" title="Download"></a>
             <a href="" title="Favorite" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="updateFavorite(o)" stop-event="click"></a>
             <div class="clear"></div>
-        </div>
+        </div> 
         <div class="track floatleft" ng-bind-html-unsafe="o.track"></div>
         <div class="title floatleft" title="{{o.description}}" ng-bind-html-unsafe="o.name"></div>
-        <a ng-href="#/library/{{o.parentid}}" class="albumblock floatleft" ng-show="o.album && itemType === 'ss'" stop-event="click" ng-bind-html-unsafe="o.album" title="{{itemType}}"></a>
-        <a ng-href="#/archive/{{o.artist}}/{{o.parentid}}" class="albumblock floatleft" ng-show="o.album && itemType === 'archive'" stop-event="click" ng-bind-html-unsafe="o.album" title="{{itemType}}"></a>
+        <span class="albumblock floatleft" ng-show="o.album && itemType === 'ss'" ng-bind-html-unsafe="o.album" title="{{o.album}}"></span>
+        <a ng-href="#/library/0/{{o.albumId}}" class="albumblock floatleft" ng-show="o.album && itemType === 'pl'" stop-event="click" ng-bind-html-unsafe="o.album" title="{{o.album}}"></a>
+        <a ng-href="#/archive/{{o.artist}}/{{o.parentid}}" class="albumblock floatleft" ng-show="o.album && itemType === 'archive'" stop-event="click" ng-bind-html-unsafe="o.album" title="{{o.album}}"></a>
         <div class="albumblock floatleft" ng-show="!o.album">&nbsp;</div>
         <div class="time floatleft">{{o.time}}</div>
         <div class="clear"></div>

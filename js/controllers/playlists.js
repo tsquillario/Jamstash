@@ -162,53 +162,6 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
             }
         });
     }
-    $scope.addSongsToPlaylist = function (data, event) {
-        var $this = $(event.target);
-        var submenu = $('div#submenu_AddToPlaylist');
-        if (submenu.is(":visible")) {
-            submenu.fadeOut();
-        } else {
-            $scope.loadPlaylistsForMenu('submenu_AddToPlaylist');
-            //get the position of the placeholder element
-            pos = $this.offset();
-            width = $this.width();
-            height = $this.height();
-            //show the menu directly over the placeholder
-            submenu.css({ "left": (pos.left) + "px", "top": (pos.top + height + 14) + "px" }).fadeIn(400);
-        }
-    }
-    $scope.playlistMenu = [];
-    $scope.loadPlaylistsForMenu = function (menu) {
-        var map = {
-            create: function (options) {
-                var artist = options.data;
-                return new model.Artist(artist.id, artist.name);
-            }
-        };
-        $.ajax({
-            url: globals.BaseURL() + '/getPlaylists.view?' + globals.BaseParams(),
-            method: 'GET',
-            dataType: globals.settings.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function (data) {
-                var playlists = [];
-                if (data["subsonic-response"].playlists.playlist !== undefined) {
-                    if (data["subsonic-response"].playlists.playlist.length > 0) {
-                        playlists = data["subsonic-response"].playlists.playlist;
-                    } else {
-                        playlists[0] = data["subsonic-response"].playlists.playlist;
-                    }
-                    mapping.fromJS(playlists, map, $scope.playlistMenu);
-                }
-                /*
-                $("<a href=\"#\" childid=\"new\">+ New</a><br />").appendTo("#" + menu);
-                $.each(playlists, function (i, playlist) {
-                $('<a href=\"#\" id=\"' + playlist.id + '\">' + playlist.name + '</a><br />').appendTo("#" + menu);
-                });
-                */
-            }
-        });
-    }
     $scope.newPlaylist = function (data, event) {
         var reply = prompt("Choose a name for your new playlist.", "");
         if (reply != 'null' && reply != null && reply != '') {
@@ -256,31 +209,6 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                     success: function () {
                         $scope.getPlaylist(id);
                         notifications.updateMessage('Playlist Updated!', true);
-                    },
-                    traditional: true // Fixes POST with an array in JQuery 1.4
-                });
-            }
-        }
-    }
-    $scope.addToPlaylist = function (data, event) {
-        var id = event.currentTarget.id;
-        var songs = [];
-        ko.utils.arrayForEach($scope.selectedSongs(), function (item) {
-            songs.push(item.id);
-        });
-        if (songs.length > 0) {
-            var runningVersion = utils.parseVersionString(globals.settings.ApiVersion());
-            var minimumVersion = utils.parseVersionString('1.8.0');
-            if (utils.checkVersion(runningVersion, minimumVersion)) { // is 1.8.0 or newer
-                $.ajax({
-                    type: 'GET',
-                    url: globals.BaseURL() + '/updatePlaylist.view?' + globals.BaseParams(),
-                    dataType: globals.settings.Protocol,
-                    timeout: globals.settings.Timeout,
-                    data: { playlistId: id, songIdToAdd: songs },
-                    success: function (data) {
-                        $scope.selectedSongs(null);
-                        updateMessage('Playlist Updated!', true);
                     },
                     traditional: true // Fixes POST with an array in JQuery 1.4
                 });

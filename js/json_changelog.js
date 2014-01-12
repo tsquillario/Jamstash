@@ -1,4 +1,9 @@
 ﻿[
+{ "date": "12/5/2013", "version": "3.1.2",
+    "changes": [
+	{ "text": "- Improved linking between tabs, + Playlist fixed, " }	
+    ]
+},
 { "date": "10/31/2013", "version": "3.1.1",
     "changes": [
 	{ "text": "- Sway.fm Media Keys plugin fixed" },

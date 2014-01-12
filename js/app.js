@@ -5,7 +5,8 @@ JamStash.config(function ($routeProvider) {
         .when('/index', { redirectTo: '/library' })
         .when('/settings', { templateUrl: 'js/partials/settings.html', controller: 'SettingsCtrl' })
         .when('/library', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl' })
-        .when('/library/:albumId', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl' })
+        .when('/library/:artistId', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl', reloadOnSearch: false })
+        .when('/library/:artistId/:albumId', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl', reloadOnSearch: false })
         .when('/playlists', { templateUrl: 'js/partials/playlists.html', controller: 'PlaylistCtrl' })
         .when('/podcasts', { templateUrl: 'js/partials/podcasts.html', controller: 'PodcastCtrl' })
         .when('/archive', { templateUrl: 'js/partials/archive.html', controller: 'ArchiveCtrl' })
@@ -17,7 +18,7 @@ JamStash.config(function ($routeProvider) {
     $rootScope.$on("$locationChangeStart", function (event, next, current) {
         $rootScope.loggedIn = false;
         var path = $location.path().replace(/^\/([^\/]*).*$/, '$1');
-        if (globals.settings.Username != "" && globals.settings.Password != "" && globals.settings.Server != "") {
+        if (globals.settings.Username != "" && globals.settings.Password != "" && globals.settings.Server != "" && path != 'archive') {
             $rootScope.loggedIn = true;
         }
         if (!$rootScope.loggedIn && (path != 'settings' && path != 'archive')) {
@@ -65,17 +66,19 @@ JamStash.service('model', function (utils) {
         this.id = id;
         this.name = name;
     }
-    this.Album = function (id, parentid, name, artist, coverartthumb, coverartfull, date, starred, description, url) {
+    this.Album = function (id, parentid, name, artist, artistId, coverartthumb, coverartfull, date, starred, description, url, type) {
         this.id = id;
         this.parentid = parentid;
         this.name = name;
         this.artist = artist;
+        this.artistId = artistId;
         this.coverartthumb = coverartthumb;
         this.coverartfull = coverartfull;
         this.date = date;
         this.starred = starred;
         this.description = description;
         this.url = url;
+        this.type = type;
     }
     this.Song = function (id, parentid, track, name, artist, artistId, album, albumId, coverartthumb, coverartfull, duration, rating, starred, suffix, specs, url, position, description) {
         this.id = id;
@@ -165,6 +168,28 @@ JamStash.directive('ngEnter', function () {
                 event.preventDefault();
             }
         });
+    };
+});
+JamStash.directive('ngDownload', function ($compile) {
+    return {
+        restrict: 'E',
+        scope: { data: '=' },
+        link: function (scope, elm, attrs) {
+            function getUrl() {
+                return URL.createObjectURL(new Blob([JSON.stringify(scope.data)], { type: "application/json" }));
+            }
+
+            elm.append($compile(
+                    '<a class="button" download="backup.json"' +
+                    'href="' + getUrl() + '">' +
+                    'Download' +
+                    '</a>'
+            )(scope));
+
+            scope.$watch(scope.data, function () {
+                elm.children()[0].href = getUrl();
+            });
+        }
     };
 });
 

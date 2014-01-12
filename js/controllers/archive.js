@@ -137,7 +137,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
             description += typeof song.publisher != 'undefined' ? '<b>Transferer</b>: ' + song.publisher + '<br />' : '';
             description += typeof song.avg_rating != 'undefined' ? '<b>Rating</b>: ' + song.avg_rating + '<br />' : '';
             description += typeof song.downloads != 'undefined' ? '<b>Downloads</b>: ' + song.downloads + '<br />' : '';
-            return new model.Album(song.identifier, null, song.title, song.collection[0], coverartthumb, coverartfull, $.format.date(new Date(song.publicdate), "yyyy-MM-dd h:mm a"), starred, description, url);
+            return new model.Album(song.identifier, null, song.title, song.collection[0], '', coverartthumb, coverartfull, $.format.date(new Date(song.publicdate), "yyyy-MM-dd h:mm a"), starred, description, url);
         }
         if ($scope.filter.Source) {
             url += ' AND source:(' + $scope.filter.Source + ')';
