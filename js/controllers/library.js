@@ -20,10 +20,11 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         { id: "frequent", name: "Most Played" },
         { id: "recent", name: "Recently Played" }
     ];
+    $scope.DefaultSearchType = globals.settings.DefaultSearchType;
     $scope.selectedAutoAlbum;
     $scope.selectedArtist;
     $scope.selectedAlbum;
-    $scope.selectedSubsonicAlbumSort = 'default';
+    $scope.selectedSubsonicAlbumSort = globals.settings.DefaultSubsonicAlbumSort;
     $scope.SubsonicAlbumSort = [
         { id: "default", name: "Default Sort" },
         { id: "artist", name: "Artist" },
@@ -35,6 +36,11 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
             $scope.sortSubsonicAlbums(newValue);
         }
     });
+    $scope.SearchType = globals.settings.DefaultSearchType;
+    $scope.SearchTypeLayout = [
+        { id: "song", name: "Song" },
+        { id: "album", name: "Album" },
+    ];
     $scope.selectedLayout = globals.settings.DefaultLibraryLayout;
     //not sure how to just grab the layouts hash from the settings controller
     $scope.Layouts = [
@@ -361,7 +367,8 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                     if (data["subsonic-response"].searchResult2 !== "") {
                         var header;
                         var items = [];
-                        if (type === 'song') {
+                        if (type === '0') {
+                            type = 'song'; //this could be done better if a way to share data between controllers was implemented
                             if (data["subsonic-response"].searchResult2.song !== undefined) {
                                 if (data["subsonic-response"].searchResult2.song.length > 0) {
                                     items = data["subsonic-response"].searchResult2.song;
@@ -375,7 +382,8 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                                 $scope.$apply();
                             }
                         }
-                        if (type === 'album') {
+                        if (type === '1') {
+                            type = 'album';
                             if (data["subsonic-response"].searchResult2.album !== undefined) {
                                 if (data["subsonic-response"].searchResult2.album.length > 0) {
                                     items = data["subsonic-response"].searchResult2.album;

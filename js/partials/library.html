@@ -7,10 +7,7 @@
         </div>
         <div id="search">
             <input type="text" id="Search" class="medium" title="Wildcards (*) supported" placeholder="Search..." ng-enter="search()"/>
-            <select id="SearchType" name="SearchType">
-                <option value="song">Song</option>
-                <option value="album">Album</option>
-            </select>
+                <select id="SearchType" name="SearchType"  ng-model="SearchType" ng-options="o.id as o.name for o in SearchTypeLayout"></select>
             <a href="" class="button" id="action_Search" title="Search" ng-click="search()"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
         </div>
         <div class="subactions">
