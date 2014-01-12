@@ -10,18 +10,6 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
     $rootScope.selectedAutoPlaylist = "";
     $rootScope.selectedMusicFolder = "";
     $rootScope.unity;
-
-    $rootScope.$watch("selectedMusicFolder", function (newValue, oldValue) {
-        if (newValue !== oldValue) {
-            if (typeof newValue != 'undefined' && newValue != null) {
-                utils.setValue('MusicFolders', angular.toJson(newValue), true);
-                //$scope.getArtists(newValue.id);
-            } else {
-                utils.setValue('MusicFolders', null, true);
-                //$scope.getArtists();
-            }
-        }
-    });
     $rootScope.loggedIn = function () {
         if (globals.settings.Server != '' && globals.settings.Username != '' && globals.settings.Password != '') {
             return true;
@@ -70,7 +58,7 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
     });
 
 
-    $("a.coverartfancy").live("click", function () {
+    $(".coverartfancy").on("click", "a", function () {
         $("a.coverartfancy").fancybox({
             beforeShow: function () {
                 //this.title = $('#songdetails_artist').html();
@@ -117,7 +105,30 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
             setTimeout(function () { if (submenu_active == false) $('div.submenu').stop().fadeOut(); }, 10000);
         }
     }
-
+    $rootScope.showQueue = function (show) {
+        var submenu = $(QueuePreview);
+        submenu.fadeIn(400);
+        setTimeout(function () { submenu.fadeOut(); }, 20000);
+    }
+    $rootScope.hideQueue = function (show) {
+        submenu.fadeOut();
+    }
+    $scope.toggleQueue = function (show) {
+        var submenu = $(QueuePreview);
+        if (submenu.css('display') !== 'none') {
+            $rootScope.showQueue();
+        } else {
+            $rootScope.hideQueue();
+        }
+    }
+    $scope.pinQueue = function () {
+        var submenu = $(QueuePreview);
+        if (submenu.css('display') !== 'none') {
+            submenu.fadeOut();
+        } else {
+            submenu.fadeIn(400);
+        }
+    }
     $("a.coverartfancy").fancybox({
         beforeShow: function () {
             //this.title = $('#songdetails_artist').html();
@@ -144,18 +155,7 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         $('.audiojs .scrubber').stop().animate({ height: '4px' });
     });
 
-    $('.message').live('click', function () { $(this).remove(); });
-
-    // JQuery UI Sortable - Drag and drop sorting
-    var fixHelper = function (e, ui) {
-        ui.children().each(function () {
-            $(this).width($(this).width());
-        });
-        return ui;
-    };
-    $("#QueuePreview ul.songlist").sortable({
-        helper: fixHelper
-    });
+    $('.message').on('click', function () { $(this).remove(); });
 
     // Sway.fm Unity Plugin
     $rootScope.unity = UnityMusicShim();
@@ -179,76 +179,45 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         }
     });
 
-    // JQuery Layout Plugin
+
+    // JQuery UI Sortable - Drag and drop sorting
+    /*
+    var fixHelper = function (e, ui) {
+        ui.children().each(function () {
+            $(this).width($(this).width());
+        });
+        return ui;
+    };
+    $("#QueuePreview ul.songlist").sortable({
+        helper: fixHelper
+    });
+    */
+    /* JQuery Layout Plugin - I don't think this is used anywhere
     function resizePageLayout() {
         var pageLayout = $("body").data("layout");
         if (pageLayout) pageLayout.resizeAll();
     };
-
-    //$( "#nav" ).tabs();
-    var pageLayoutOptions = {
-        name: 'pageLayout', // only for debugging
-        resizeWithWindowDelay: 250, 	// delay calling resizeAll when window is *still* resizing
-        //,	resizeWithWindowMaxDelay: 2000	// force resize every XX ms while window is being resized
-        //center__children: {},
-        //north__paneSelector: "#container",
-        center__paneSelector: "#container",
-        south__paneSelector: "#QueuePreview",
-        south__resizable: false, // No resize
-        //south__closable: false, // No close handle
-        //south__spacing_open: 0, // No resize bar
-        south__size: 145,
-        south__initClosed: true,
-        south__minWidth: 145,
-        south__maxWidth: 145
-    };
-
-    // create the page-layout, which will ALSO create the tabs-wrapper child-layout
-    var pageLayout = $("body").layout(pageLayoutOptions);
-
-    $scope.layoutThreeCol = {
-        east__size: .45,
-        east__minSize: 400,
-        east__maxSize: .5, // 50% of layout width
-        east__initClosed: false,
-        east__initHidden: false,
-        //center__size: 'auto',
-        center__minWidth: .35,
-        center__initClosed: false,
-        center__initHidden: false,
-        west__size: .2,
-        west__minSize: 200,
-        west__initClosed: false,
-        west__initHidden: false,
-        //stateManagement__enabled: true, // automatic cookie load & save enabled by default
-        showDebugMessages: true // log and/or display messages from debugging & testing code
-        //applyDefaultStyles: true
-    };
-
-    $scope.layoutTwoCol = {
-        center__size: .8,
-        center__minSize: 400,
-        center__maxSize: .5, // 50% of layout width
-        center__initClosed: false,
-        center__initHidden: false,
-        west__size: .2,
-        west__minSize: 200,
-        west__initClosed: false,
-        west__initHidden: false,
-        //stateManagement__enabled: true, // automatic cookie load & save enabled by default
-        showDebugMessages: true // log and/or display messages from debugging & testing code
-        //applyDefaultStyles: true
-    };
+    */
 
     // Global Functions
     window.onbeforeunload = function () {
-        if (!self.settings.Debug()) {
-            if (self.queue().length > 0) {
+        if (!globals.settings.Debug) {
+            if ($rootScope.queue.length > 0) {
                 return "You're about to end your session, are you sure?";
             }
         }
     }
 
+    $scope.dragStart = function (e, ui) {
+        ui.item.data('start', ui.item.index());
+    }
+    $scope.dragEnd = function (e, ui) {
+        var start = ui.item.data('start'),
+            end = ui.item.index();
+        $rootScope.queue.splice(end, 0,
+            $rootScope.queue.splice(start, 1)[0]);
+        $scope.$apply();
+    }
     $document.keydown(function (e) {
         $scope.scrollToIndex(e);
     });
@@ -279,17 +248,17 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
                 }
                 var el = '#' + key.toUpperCase();
                 if ($(el).length > 0) {
-                    $('#SubsonicArtists').stop().scrollTo(el, 400);
+                    $('#left-component').stop().scrollTo(el, 400);
                 }
             } else if (unicode == 39 || unicode == 176) { // right arrow
                 $rootScope.nextTrack();
             } else if (unicode == 37 || unicode == 177) { // back arrow
                 $rootScope.previousTrack();
-            } else if (unicode == 32 || unicode == 179 || unicode == 0179) { // spacebar
+            } else if (unicode == 32 || unicode == 179 || unicode.toString() == '0179') { // spacebar
                 player.playPauseSong();
                 return false;
             } else if (unicode == 36 && $('#tabLibrary').is(':visible')) { // home
-                $('#SubsonicArtists').stop().scrollTo('#MusicFolders', 400);
+                $('#left-component').stop().scrollTo('#MusicFolders', 400);
             }
             if (unicode == 189) { // dash - volume down
                 var volume = utils.getValue('Volume') ? parseFloat(utils.getValue('Volume')) : 1;
@@ -319,7 +288,7 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
     $scope.scrollToIndexName = function (index) {
         var el = '#' + index;
         if ($(el).length > 0) {
-            $('#SubsonicArtists').stop().scrollTo(el, 400);
+            $('#left-component').stop().scrollTo(el, 400);
         }
     };
     $scope.scrollToTop = function () {
@@ -330,6 +299,12 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
             $scope.selectedSongs.push(item);
             item.selected = true;
         });
+    }
+    $scope.playAll = function () {
+        $scope.selectAll();
+        $scope.addSongsToQueue();
+        var next = $rootScope.queue[0];
+        $rootScope.playSong(false, next);
     }
     $scope.selectNone = function () {
         angular.forEach($rootScope.song, function (item, key) {
@@ -343,7 +318,7 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
                 $scope.queue.push(item);
                 item.selected = false;
             });
-            $('body').layout().open('south');
+            $rootScope.showQueue();
             notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
             $scope.selectedSongs.length = 0;
         }
@@ -438,33 +413,14 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
                     globals.settings.ApiVersion = data["subsonic-response"].version;
                 } else {
                     if (typeof data["subsonic-response"].error != 'undefined') {
-                        alert(data["subsonic-response"].error.message);
+                        notifications.updateMessage(data["subsonic-response"].error.message);
                     }
                 }
             },
             error: function () {
-                alert('Unable to connect to Subsonic server');
+                notifications.updateMessage('Unable to connect to Subsonic server');
             }
         });
-    }
-    $scope.mapSong = function (data) {
-        var song = data;
-        var url, track, rating, starred, contenttype, suffix, description;
-        var specs = '', coverartthumb = '', coverartfull = '';
-        if (typeof song.coverArt != 'undefined') {
-            coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=60&id=' + song.coverArt;
-            coverartfull = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&id=' + song.coverArt;
-        }
-        if (typeof song.description == 'undefined') { description = ''; } else { description = song.description; }
-        if (typeof song.track == 'undefined') { track = '&nbsp;'; } else { track = song.track; }
-        if (typeof song.starred !== 'undefined') { starred = true; } else { starred = false; }
-        if (song.bitRate !== undefined) { specs += song.bitRate + ' Kbps'; }
-        if (song.transcodedSuffix !== undefined) { specs += ', transcoding:' + song.suffix + ' > ' + song.transcodedSuffix; } else { specs += ', ' + song.suffix; }
-        if (song.transcodedSuffix !== undefined) { suffix = song.transcodedSuffix; } else { suffix = song.suffix; }
-        if (suffix == 'ogg') { suffix = 'oga'; }
-        var salt = Math.floor(Math.random() * 100000);
-        url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.id + '&salt=' + salt;
-        return new model.Song(song.id, song.parent, track, song.title, song.artist, song.artistId, song.album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
     }
     $scope.addSongToQueue = function (data) {
         $rootScope.queue.push(data);
@@ -545,26 +501,26 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
                     }
                     if (action == 'add') {
                         angular.forEach(items, function (item, key) {
-                            $rootScope.queue.push($scope.mapSong(item));
+                            $rootScope.queue.push(utils.mapSong(item));
                         });
                         $scope.$apply();
-                        $('body').layout().open('south');
+                        $rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                     } else if (action == 'play') {
                         $rootScope.queue = [];
                         angular.forEach(items, function (item, key) {
-                            $rootScope.queue.push($scope.mapSong(item));
+                            $rootScope.queue.push(utils.mapSong(item));
                         });
                         var next = $rootScope.queue[0];
                         $scope.$apply(function () {
                             $rootScope.playSong(false, next);
                         });
-                        $('body').layout().open('south');
+                        $rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                     } else {
                         $rootScope.song = [];
                         angular.forEach(items, function (item, key) {
-                            $rootScope.song.push($scope.mapSong(item));
+                            $rootScope.song.push(utils.mapSong(item));
                         });
                         $scope.$apply();
                     }
@@ -593,13 +549,14 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
             }
         });
     }
-
-
+    $scope.toTrusted = function (html) {
+        return $sce.trustAsHtml(html);
+    }
 
     /* Launch on Startup */
     $scope.loadSettings();
     utils.switchTheme(globals.settings.Theme);
-    if ($scope.loggedIn) {
+    if ($scope.loggedIn()) {
         $scope.ping();
         $scope.getMusicFolders();
         if (globals.settings.SaveTrackPosition) {

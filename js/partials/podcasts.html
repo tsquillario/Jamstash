@@ -10,9 +10,9 @@
             <a href="" class="button" id="action_AddToQueue" title="Add To Queue" ng-click="addSongsToQueue()">+ Queue</a>
         </div>
         <div class="clear"></div>
-        <div id="LayoutContainer" class="section lgsection">
+        <div id="LayoutContainer" class="section lgsection split-pane fixed-left" split>
             <!-- Artist -->
-            <div class="ui-layout-west noselect hide" tabindex="0">
+            <div id="left-component" class="split-pane-component smcolumn noselect" tabindex="0">
                 <ul class="simplelist mainlist noselect">
                     <li class="index" id="podcasts">Podcasts</li>
                     <li class="item" ng-repeat="o in podcasts" ng-click="getPodcast(o.id, '')" ng-class="{ 'selected': o.id == selectedPodcast }">
@@ -23,8 +23,11 @@
                     </li>
                 </ul>
             </div>
+            <div class="split-pane-divider" id="my-divider"></div>
             <!-- Song -->
-            <div class="ui-layout-center noselect hide" ng-include src="'js/partials/songs.html'"></div>
+            <div id="right-component" class="split-pane-component lgcolumn noselect">
+                <ul class="songlist simplelist" ng-include src="'js/partials/songs.html'"></ul>
+            </div>
         </div>
     </div>
 <div class="clear"></div>

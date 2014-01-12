@@ -27,6 +27,7 @@ https://github.com/tsquillario/Jamstash/issues
 
 You will need a Subsonic server to be able to play your own music. Subsonic is a free, web-based media streamer, providing ubiquitous access to your music. Use it to share your music with friends, or to listen to your own music while at work. Please see http://www.subsonic.org
 
+* Getting Started https://github.com/tsquillario/Jamstash/wiki/Getting-Started
 * Twitter (Release Announcements): https://twitter.com/JamstashApp
 * Live Beta: http://jamstash.com/beta
 * Github Repo: https://github.com/tsquillario/Jamstash

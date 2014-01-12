@@ -1,7 +1,15 @@
 ﻿[
+{
+    "date": "1/12/2014", "version": "3.2",
+    "changes": [
+    { "text": "- Redesigned Queue, moved buttons" },
+    { "text": "- Added Play button to play current song list" },
+    { "text": "- Fixed drag & drop sorting, Artist list will refresh on Folder change" }
+    ]
+},
 { "date": "12/5/2013", "version": "3.1.2",
     "changes": [
-	{ "text": "- Improved linking between tabs, + Playlist fixed, " }	
+	{ "text": "- Improved linking between tabs, + Playlist fixed" }	
     ]
 },
 { "date": "10/31/2013", "version": "3.1.1",

@@ -116,7 +116,6 @@
                     //$rootScope.queue = [];
                     $rootScope.queue = items;
                     if ($rootScope.queue.length > 0) {
-                        //$('body').layout().open('south');
                         notifications.updateMessage($rootScope.queue.length + ' Saved Song(s)', true);
                     }
                     if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + $rootScope.queue.length + ' song(s)'); }
@@ -173,8 +172,8 @@
             }
             // End UnityShim
         }
-        $('#Queue').stop().scrollTo('#' + id, 400);
-        $('#QueuePreviewList').stop().scrollTo('#' + id, 400);
+        $('#QueuePreview').stop().scrollTo('#' + id, 400);
+        $rootScope.showQueue();
         var spechtml = '';
         var data = $(player1).data().jPlayer;
         for (i = 0; i < data.solutions.length; i++) {

@@ -14,9 +14,9 @@
             <a href="" class="button" id="action_RemoveSongs" title="Remove selected song(s) from playlist" ng-click="removeSelectedSongs()">Remove Song(s)</a>
         </div>
         <div class="clear"></div>
-        <div id="LayoutContainer" class="section lgsection">
+        <div id="LayoutContainer" class="section lgsection split-pane fixed-left" split>
             <!-- Playlists -->
-            <div class="ui-layout-west noselect hide" tabindex="0">
+            <div id="left-component" class="split-pane-component smcolumn noselect" tabindex="0">
                 <ul class="simplelist mainlist noselect">
                     <li class="index" id="auto">Auto Playlists</li>
                     <li class="item" ng-click="getStarred('', 'song')" ng-class="{'selected': selectedAutoPlaylist == 'starred'}">
@@ -51,7 +51,7 @@
                         <div class="title">{{o.name}}</div>
                     </li>
                 </ul>
-                <ul class="simplelist mainlist noselect" >
+                <ul class="simplelist mainlist noselect">
                     <li class="index" id="auto">My Playlists</li>
                     <li class="item" ng-repeat="o in playlists" ng-click="getPlaylist(o.id, '')" ng-class="{'selected': o.id == selectedPlaylist}">
                         <div class="itemactions">
@@ -60,7 +60,7 @@
                         <div class="title" title="{{'Songs: ' + o.songCount + ', Public: ' + o.public}}">{{o.name}}</div>
                     </li>
                 </ul>
-                <ul class="simplelist mainlist noselect" >
+                <ul class="simplelist mainlist noselect">
                     <li class="index" id="auto">Shared Playlists</li>
                     <li class="item" ng-repeat="o in playlistsPublic" ng-click="getPlaylist(o.id, '')" ng-class="{'selected': o.id == selectedPlaylist}">
                         <div class="itemactions">
@@ -70,8 +70,11 @@
                     </li>
                 </ul>
             </div>
+            <div class="split-pane-divider" id="my-divider"></div>
             <!-- Songs -->
-            <div class="ui-layout-center noselect hide" ng-include src="'js/partials/songs.html'"></div>
+            <div id="right-component" class="split-pane-component lgcolumn noselect">
+                <ul class="songlist simplelist" ng-include src="'js/partials/songs.html'"></ul>
+            </div>
         </div>
     </div>
 <div class="clear"></div>

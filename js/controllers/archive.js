@@ -1,6 +1,6 @@
 ﻿JamStash.controller('ArchiveCtrl',
 function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, globals, model, notifications, player, json) {
-    $("#LayoutContainer").layout($scope.layoutThreeCol);
+    //$("#left-component").layout($scope.layoutThreeCol);
 
     $scope.settings = globals.settings;
     $scope.itemType = 'archive';
@@ -166,6 +166,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
                     items = data["response"].docs;
                     //alert(JSON.stringify(data["response"]));
                     $scope.album = [];
+                    $rootScope.song = [];
                     angular.forEach(items, function (item, key) {
                         $scope.album.push(map(item));
                     });
@@ -180,7 +181,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
             }
         });
     };
-    $scope.mapSong = function (key, song, server, dir, identifier, coverart) {
+    utils.mapSong = function (key, song, server, dir, identifier, coverart) {
         var url, time, track, title, rating, starred, contenttype, suffix;
         var specs = ''
         if (song.format == 'VBR MP3') {
@@ -211,18 +212,18 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
                 var items = data.files;
                 if (action == 'add') {
                     angular.forEach(items, function (item, key) {
-                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
+                        var song = utils.mapSong(key, item, server, dir, identifier, coverart);
                         if (song) {
                             $rootScope.queue.push(song);
                         }
                     });
-                    $('body').layout().open('south'); 
+                    $rootScope.showQueue(); 
                     notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
                     $scope.$apply();
                 } else if (action == 'play') {
                     $rootScope.queue = [];
                     angular.forEach(items, function (item, key) {
-                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
+                        var song = utils.mapSong(key, item, server, dir, identifier, coverart);
                         if (song) {
                             $rootScope.queue.push(song);
                         }
@@ -231,12 +232,13 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
                     $scope.$apply(function () {
                         $rootScope.playSong(false, next);
                     });
-                    $('body').layout().open('south');
+                    $rootScope.showQueue();
                     notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
                 } else {
+                    $scope.album = [];
                     $rootScope.song = [];
                     angular.forEach(items, function (item, key) {
-                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
+                        var song = utils.mapSong(key, item, server, dir, identifier, coverart);
                         if (song) {
                             $rootScope.song.push(song);
                         }
@@ -252,7 +254,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
                 $scope.queue.push(item);
                 item.selected = false;
             });
-            $('body').layout().open('south');
+            $rootScope.showQueue();
             notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
         }
     }

@@ -1,6 +1,6 @@
 ﻿JamStash.controller('SubsonicCtrl',
 function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, utils, globals, model, notifications, player) {
-    $("#SubsonicAlbums").layout($scope.layoutThreeCol);
+    //$("#SubsonicAlbums").layout($scope.layoutThreeCol);
 
     $rootScope.song = [];
     //$scope.artistId = $routeParams.artistId;
@@ -20,27 +20,40 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         { id: "frequent", name: "Most Played" },
         { id: "recent", name: "Recently Played" }
     ];
-    $scope.DefaultSearchType = globals.settings.DefaultSearchType;
     $scope.selectedAutoAlbum;
     $scope.selectedArtist;
     $scope.selectedAlbum;
-    $scope.selectedSubsonicAlbumSort = globals.settings.DefaultSubsonicAlbumSort;
+    $scope.selectedSubsonicAlbumSort = 'default';
+    $scope.SubsonicSort = [];
     $scope.SubsonicAlbumSort = [
         { id: "default", name: "Default Sort" },
         { id: "artist", name: "Artist" },
         { id: "album", name: "Album" },
-        { id: "createdate desc", name: "Created Date - Desc" },
+        { id: "createdate desc", name: "Date Added" },
     ];
+    $scope.SubsonicSongSort = [
+        { id: "default", name: "Default Sort" },
+        { id: "track", name: "Track" },
+        { id: "artist", name: "Artist" },
+        { id: "album", name: "Album" },
+        { id: "createdate desc", name: "Date Added" },
+    ];
+    $scope.BreadCrumbs = [];
     $scope.$watch("selectedSubsonicAlbumSort", function (newValue, oldValue) {
         if (newValue !== oldValue) {
-            $scope.sortSubsonicAlbums(newValue);
+            if ($rootScope.song.length > 0) {
+                $scope.sortSubsonicSongs(newValue);
+            } else if ($scope.album.length > 0) {
+                $scope.sortSubsonicAlbums(newValue);
+            }
         }
     });
-    $scope.SearchType = globals.settings.DefaultSearchType;
-    $scope.SearchTypeLayout = [
-        { id: "song", name: "Song" },
-        { id: "album", name: "Album" },
-    ];
+    $rootScope.$watch("selectedMusicFolder", function (newValue, oldValue) {
+        if (newValue !== oldValue) {
+            utils.setValue('MusicFolders', angular.toJson(newValue), true);
+            $scope.getArtists(newValue.id);
+        }
+    });
     $scope.selectedLayout = globals.settings.DefaultLibraryLayout;
     //not sure how to just grab the layouts hash from the settings controller
     $scope.Layouts = [
@@ -123,6 +136,11 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
             }
         });
     };
+    $scope.refreshArtists = function (id) {
+        utils.setValue('MusicFolders', null, true);
+        $scope.getArtists();
+    };
+
     $scope.mapAlbum = function (data) {
         var album = data;
         var title, coverartthumb, coverartfull, starred;
@@ -140,10 +158,11 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         }
         return new model.Album(album.id, album.parent, title, album.artist, album.artistId, coverartthumb, coverartfull, $.format.date(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '', type);
     }
-    $scope.getAlbums = function (id) {
+    $scope.getAlbums = function (id, name) {
         $scope.selectedAutoAlbum = null;
         $scope.selectedArtist = id;
-        $scope.artistId = id;
+        $scope.BreadCrumbs = [];
+        $scope.BreadCrumbs.push({ 'type': 'artist', 'id': id, 'name': name });
         var url = globals.BaseURL() + '/getMusicDirectory.view?' + globals.BaseParams() + '&id=' + id;
         $.ajax({
             url: url,
@@ -165,13 +184,13 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                         if (item.isDir) {
                             $scope.album.push($scope.mapAlbum(item));
                         } else {
-                            $rootScope.song.push($scope.mapSong(item));
+                            $rootScope.song.push(utils.mapSong(item));
                         }
                     });
                     if ($scope.selectedSubsonicAlbumSort != "default") {
                         $scope.sortSubsonicAlbums($scope.selectedSubsonicAlbumSort);
                     }
-                    //$location.path('/library/' + id);
+                    $scope.SubsonicSort = $scope.SubsonicAlbumSort;
                     $scope.$apply();
                 } else {
                     notifications.updateMessage('No Albums Returned :(', true);
@@ -243,7 +262,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                         items[0] = data["subsonic-response"].album.song;
                     }
                     angular.forEach(items, function (item, key) {
-                        $rootScope.song.push($scope.mapSong(item));
+                        $rootScope.song.push(utils.mapSong(item));
                     });
                     $scope.$apply();
                 }
@@ -255,6 +274,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         var size, url;
         $scope.selectedArtist = null;
         $scope.selectedAutoAlbum = id;
+        $scope.BreadCrumbs = [];
         if (offset == 'next') {
             $scope.offset = $scope.offset + globals.settings.AutoAlbumSize;
         } else if (offset == 'prev') {
@@ -279,6 +299,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                         items[0] = data["subsonic-response"].albumList.album;
                     }
                     $scope.album = [];
+                    $rootScope.song = [];
                     angular.forEach(items, function (item, key) {
                         if (item.isDir) {
                             $scope.album.push($scope.mapAlbum(item));
@@ -286,6 +307,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                             $rootScope.song.push($scope.mapAlbum(item));
                         }
                     });
+                    $scope.SubsonicSort = $scope.SubsonicAlbumSort;
                     $scope.$apply();
                 } else {
                     notifications.updateMessage('No Albums Returned :(', true);
@@ -309,43 +331,53 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                     } else {
                         items[0] = data["subsonic-response"].directory.child;
                     }
-                    if (typeof data["subsonic-response"].directory.id != 'undefined') {
-                        //alert(data["subsonic-response"].directory.id);
-                        // Look at bringing back the breadcrumb
-                    }
-                    //alert(JSON.stringify(getMusicDirectory["subsonic-response"].directory.child));
                     if (action == 'add') {
                         angular.forEach(items, function (item, key) {
-                            $rootScope.queue.push($scope.mapSong(item));
+                            $rootScope.queue.push(utils.mapSong(item));
                         });
                         $scope.$apply();
-                        $('body').layout().open('south');
+                        $rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                     } else if (action == 'play') {
                         $rootScope.queue = [];
                         angular.forEach(items, function (item, key) {
-                            $rootScope.queue.push($scope.mapSong(item));
+                            $rootScope.queue.push(utils.mapSong(item));
                         });
                         var next = $rootScope.queue[0];
                         $scope.$apply(function () {
                             $rootScope.playSong(false, next);
                         });
-                        $('body').layout().open('south');
+                        $rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
+                    } else if (action == 'preview') {
+                        $scope.songpreview = [];
+                        angular.forEach(items, function (item, key) {
+                            if (!item.isDir) {
+                                $rootScope.songpreview.push(utils.mapSong(item));
+                            }
+                        });
+                        $scope.$apply();
                     } else {
+                        if (typeof data["subsonic-response"].directory.id != 'undefined') {
+                            var albumId = data["subsonic-response"].directory.id;
+                            var albumName = data["subsonic-response"].directory.name;
+                            if ($scope.BreadCrumbs.length > 0) { $scope.BreadCrumbs.splice(1, ($scope.BreadCrumbs.length - 1)) };
+                            $scope.BreadCrumbs.push({ 'type': 'album', 'id': albumId, 'name': albumName });
+                        }
                         $rootScope.song = [];
+                        $scope.album = [];
                         var albums = [];
                         angular.forEach(items, function (item, key) {
                             if (item.isDir) {
                                 albums.push($scope.mapAlbum(item));
                             } else {
-                                $rootScope.song.push($scope.mapSong(item));
+                                $rootScope.song.push(utils.mapSong(item));
                             }
                         });
                         if (albums.length > 0) {
                             $scope.album = albums;
                         }
-                        //$location.path('/library/0/' + id);
+                        $scope.SubsonicSort = $scope.SubsonicSongSort;
                         $scope.$apply();
                     }
                 } else {
@@ -367,8 +399,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                     if (data["subsonic-response"].searchResult2 !== "") {
                         var header;
                         var items = [];
-                        if (type === '0') {
-                            type = 'song'; //this could be done better if a way to share data between controllers was implemented
+                        if (type === 'song') {
                             if (data["subsonic-response"].searchResult2.song !== undefined) {
                                 if (data["subsonic-response"].searchResult2.song.length > 0) {
                                     items = data["subsonic-response"].searchResult2.song;
@@ -377,13 +408,12 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                                 }
                                 $rootScope.song = [];
                                 angular.forEach(items, function (item, key) {
-                                    $rootScope.song.push($scope.mapSong(item));
+                                    $rootScope.song.push(utils.mapSong(item));
                                 });
                                 $scope.$apply();
                             }
                         }
-                        if (type === '1') {
-                            type = 'album';
+                        if (type === 'album') {
                             if (data["subsonic-response"].searchResult2.album !== undefined) {
                                 if (data["subsonic-response"].searchResult2.album.length > 0) {
                                     items = data["subsonic-response"].searchResult2.album;
@@ -474,17 +504,13 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         return a.date < b.date ? 1 : -1;
     };
     $scope.sortArtistFunction = function (a, b) {
-        return a.artist.toLowerCase() > b.artist.toLowerCase() ? -1 : 1;
+        return a.artist.toLowerCase() < b.artist.toLowerCase() ? -1 : 1;
     };
     $scope.sortAlbumFunction = function (a, b) {
-        /*
-        if (a.name < b.name) //sort string ascending
-        return -1
-        if (a.name > b.name)
-        return 1
-        return 0
-        */
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+    };
+    $scope.sortTrackFunction = function (a, b) {
+        return parseInt(a.track) > parseInt(b.track) ? -1 : 1;
     };
     $scope.sortSubsonicAlbums = function (newValue) {
         if (typeof newValue != 'undefined') {
@@ -498,6 +524,25 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                     break;
                 case 'album':
                     $scope.album.sort($scope.sortAlbumFunction);
+                    break;
+            }
+        }
+    };
+    $scope.sortSubsonicSongs = function (newValue) {
+        if (typeof newValue != 'undefined') {
+            //alert(newValue);
+            switch (newValue) {
+                case 'createdate desc':
+                    $rootScope.song.sort($scope.sortDateFunction);
+                    break;
+                case 'artist':
+                    $rootScope.song.sort($scope.sortArtistFunction);
+                    break;
+                case 'album':
+                    $rootScope.song.sort($scope.sortAlbumFunction);
+                    break;
+                case 'track':
+                    $rootScope.song.sort($scope.sortTrackFunction);
                     break;
             }
         }

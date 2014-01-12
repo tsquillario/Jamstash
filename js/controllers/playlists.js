@@ -1,6 +1,6 @@
 ﻿JamStash.controller('PlaylistCtrl',
 function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, notifications) {
-    $("#LayoutContainer").layout($scope.layoutTwoCol);
+    //$("#left-component").layout($scope.layoutTwoCol);
 
     $rootScope.song = [];
     $scope.itemType = 'pl';
@@ -61,26 +61,27 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                     }
                     if (action == 'add') {
                         angular.forEach(items, function (item, key) {
-                            $rootScope.queue.push($scope.mapSong(item));
+                            $rootScope.queue.push(utils.mapSong(item));
                         });
                         $scope.$apply();
-                        $('body').layout().open('south');
+                        $rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                     } else if (action == 'play') {
                         $rootScope.queue = [];
                         angular.forEach(items, function (item, key) {
-                            $rootScope.queue.push($scope.mapSong(item));
+                            $rootScope.queue.push(utils.mapSong(item));
                         });
                         var next = $rootScope.queue[0];
                         $scope.$apply(function () {
                             $rootScope.playSong(false, next);
                         });
-                        $('body').layout().open('south');
+                        $rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                     } else {
+                        $scope.album = [];
                         $rootScope.song = [];
                         angular.forEach(items, function (item, key) {
-                            $rootScope.song.push($scope.mapSong(item));
+                            $rootScope.song.push(utils.mapSong(item));
                         });
                         $scope.$apply();
                     }
@@ -130,26 +131,26 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                                 }
                                 if (action == 'add') {
                                     angular.forEach(items, function (item, key) {
-                                        $rootScope.queue.push($scope.mapSong(item));
+                                        $rootScope.queue.push(utils.mapSong(item));
                                     });
                                     $scope.$apply();
-                                    $('body').layout().open('south');
+                                    $rootScope.showQueue();
                                     notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                                 } else if (action == 'play') {
                                     $rootScope.queue = [];
                                     angular.forEach(items, function (item, key) {
-                                        $rootScope.queue.push($scope.mapSong(item));
+                                        $rootScope.queue.push(utils.mapSong(item));
                                     });
                                     var next = $rootScope.queue[0];
                                     $scope.$apply(function () {
                                         $rootScope.playSong(false, next);
                                     });
-                                    $('body').layout().open('south');
+                                    $rootScope.showQueue();
                                     notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                                 } else {
                                     $rootScope.song = [];
                                     angular.forEach(items, function (item, key) {
-                                        $rootScope.song.push($scope.mapSong(item));
+                                        $rootScope.song.push(utils.mapSong(item));
                                     });
                                     $scope.$apply();
                                 }

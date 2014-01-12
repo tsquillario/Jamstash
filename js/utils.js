@@ -1,4 +1,4 @@
-JamStash.service('utils', function ($cookieStore) {
+JamStash.service('utils', function ($cookieStore, globals, model) {
     this.safeApply = function (fn) {
         var phase = this.$root.$$phase;
         if (phase == '$apply' || phase == '$digest') {
@@ -45,6 +45,26 @@ JamStash.service('utils', function ($cookieStore) {
         if (settings.Debug()) { console.log('HTML5::loadStorage not supported on your browser' + html.length + ' characters'); }
         }
         */
+    }
+    this.mapSong = function (data) {
+        var song = data;
+        var url, title, track, rating, starred, contenttype, suffix, description;
+        var specs = '', coverartthumb = '', coverartfull = '';
+        if (typeof song.coverArt != 'undefined') {
+            coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=60&id=' + song.coverArt;
+            coverartfull = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&id=' + song.coverArt;
+        }
+        if (typeof song.description == 'undefined') { description = ''; } else { description = song.description; }
+        if (typeof song.title == 'undefined') { title = '&nbsp;'; } else { title = song.title.toString(); }
+        if (typeof song.track == 'undefined') { track = '&nbsp;'; } else { track = song.track.toString(); }
+        if (typeof song.starred !== 'undefined') { starred = true; } else { starred = false; }
+        if (song.bitRate !== undefined) { specs += song.bitRate + ' Kbps'; }
+        if (song.transcodedSuffix !== undefined) { specs += ', transcoding:' + song.suffix + ' > ' + song.transcodedSuffix; } else { specs += ', ' + song.suffix; }
+        if (song.transcodedSuffix !== undefined) { suffix = song.transcodedSuffix; } else { suffix = song.suffix; }
+        if (suffix == 'ogg') { suffix = 'oga'; }
+        var salt = Math.floor(Math.random() * 100000);
+        url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.id + '&salt=' + salt;
+        return new model.Song(song.id, song.parent, track, title, song.artist, song.artistId, song.album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
     }
     this.confirmDelete = function (text) {
         var question = confirm(text);
@@ -131,6 +151,12 @@ JamStash.service('utils', function ($cookieStore) {
             secs = secs % times[i];
         }
         return time;
+    }
+    this.arrayObjectIndexOf = function (myArray, searchTerm, property) {
+        for (var i = 0, len = myArray.length; i < len; i++) {
+            if (myArray[i][property] === searchTerm) return i;
+        }
+        return -1;
     }
     this.logObjectProperties = function (obj) {
         $.each(obj, function (key, value) {

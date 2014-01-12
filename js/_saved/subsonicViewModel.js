@@ -172,7 +172,7 @@
             rescanLibrary: self.rescanLibrary,
             toggleAZ: self.toggleAZ,
             selectedSubsonicAlbumSort: self.selectedSubsonicAlbumSort,
-            SubsonicAlbumSort: self.SubsonicAlbumSort,
+            SubsonicSort: self.SubsonicSort,
             getPodcasts: self.getPodcasts,
             getPodcast: self.getPodcast,
             getPlaylists: self.getPlaylists,

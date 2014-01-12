@@ -168,6 +168,27 @@ span.apiversion
 {
     background: url('../images/favicon_32x32.png') no-repeat 0 1px;    
 }
+.pagetabcenter
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 66px;
+    height: 22px;
+    background: url('../images/favicon_32x32.png') no-repeat center center #f9f9f9;
+    border-top: 1px solid #C3C3C3;
+    border-right: 1px solid #C3C3C3;
+    border-left: 1px solid #C3C3C3;
+    cursor: pointer;
+    z-index: 200;
+}
+.pagetabcenter:hover
+{
+    height: 20px;
+    opacity: .8;
+}
 #sslogo
 {
     position: absolute;
@@ -197,6 +218,20 @@ span.apiversion
 .tabcontent
 {
     margin: 0;
+}
+.smcolumn 
+{
+    height: 100%;
+    overflow-y: scroll;
+    outline: none;
+    float: left;
+}
+.lgcolumn 
+{
+    height: 100%;
+    overflow-y: scroll;
+    outline: none;
+    float: left;
 }
 .lgsection
 {
@@ -472,8 +507,8 @@ ul.mainlist li.item a.add:hover
 }
 #BreadCrumb 
 {
-    float: right;
-    margin: 5px 0 0 0;
+    float: left;
+    margin: 13px 0 0 0;
     padding: 2px 8px;
     color: #AEAEA7;
     background: #f6f6f6;  
@@ -497,6 +532,10 @@ ul.mainlist li.item a.add:hover
 #BreadCrumbs a:hover
 {
   text-decoration: underline;
+}
+#BreadCrumbs .crumb 
+{
+    float: left;
 }
 #BreadHome a
 {
@@ -637,7 +676,7 @@ ul.songlist .albumgrid
     height: 230px;
     float: left;
     margin: 5px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.25);
 }
 ul.songlist .albumgrid .title
 {
@@ -825,6 +864,12 @@ ul.songlist li:hover
 {
     background-color: #EEF4FA;
 }
+.songpreview li {
+    list-style-type: none;
+    font-size: 14px;
+    padding: 8px;
+    border-bottom: 1px solid #f2f2f2;
+}
 .fillheight {
     position: absolute;
     /*top: 41px;*/
@@ -910,9 +955,17 @@ ul.songlist li:hover
 {
     height: 29px;
     /* width: 660px; */
-    margin: 5px 68px 0 0;
+    margin: 5px 205px 0 0;
     padding: 0 0 0 5px;
     float: right;
+}
+#globalactions 
+{
+    position: absolute;
+    top: 0px;
+    right: 65px;
+    height: 29px;
+    margin: 5px 0 0 0;
 }
 #search
 {
@@ -1071,33 +1124,23 @@ ul.songlist li:hover
     width: 100%; /* As wide as it's allowed */
 }
 #QueuePreview {
-    height: 150px;
+    height: 140px;
     width: 100%;
+    padding: 0;
+    margin: 0;
     position: absolute;
     bottom: 0;
-    z-index: 999;
-    display: none;
-    background: #ffffff;
-}
-#QueuePreview ul {
-    height: 135px;
-    padding: 4px;
-    margin: 0;
+    z-index: 100;
+    /*background: #5b5b4e; */
+    background: rgba(91, 91, 78, 0.4) ;
     list-style-type: none;
-    overflow-x: auto;
+    overflow-x: scroll;
     overflow-y: hidden;
     text-align: left;
-    white-space: nowrap;    
-    background: #5b5b4e; 
+    white-space: nowrap;   
+    display: none; 
 }
 #QueuePreview li {
-    height: 120px;
-}
-#QueuePreview .queueactions {
-    padding: 0 5px;
-    float: left;
-    border-right: 1px solid #cbcbcb;
-    height: 100%;
 }
 #QueuePreview li.selected {
     background-color: #D4E2F1;
@@ -1110,8 +1153,9 @@ ul.songlist li:hover
 }
 #QueuePreview .row {
     width: 92px;
+    height: 119px;
     display: inline-block;
-    margin: 0 1px;
+    margin: 1px 1px;
     padding: 4px 5px;
     font-size: 11px;
     text-align: center;
@@ -1754,4 +1798,20 @@ legend
 }
 .ui-layout-west {
     z-index: 900 !important;
+}
+
+
+.split-pane-divider {
+    background: #aaa;
+}
+#left-component {
+    width: 20em;
+}
+#my-divider {
+    left: 20em; /* Same as left component width */
+    width: 5px;
+}
+#right-component {
+    left: 20em;  /* Same as left component width */
+    margin-left: 5px;  /* Same as divider width */
 }

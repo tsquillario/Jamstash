@@ -1,6 +1,108 @@
 <div id="settings" class="tabcontent">
     <div class="section fullsection floatleft">
-        <form class="form" id="Settings" ng-include="'js/partials/settingsForm.html'"></form>
+
+        <form class="form" id="Settings">
+            <div class="subsection floatleft">
+                <h3 class="title">Login</h3>
+                <label for="Username">Username <span class="red">*</span></label><br />
+                <input type="text" id="Username" name="Username" class="large" ng-model="settings.Username" /><br />
+                <label for="Password">Password <span class="red">*</span></label><br />
+                <input type="password" id="Password" name="Password" class="large" ng-model="settings.Password" /><br />
+                <label for="Server">Server <span class="red">*</span> (<a href="" title="Connect to Demo Subsonic Server" ng-click="setupDemo()">Demo</a>)</label><br />
+                <input type="text" id="Server" name="Server" class="xlarge" title="Subsonic Server URL Ex: http://host:port/subsonic" ng-model="settings.Server" /><br />
+                <!--<a href="#" class="button" id="action_RequestURL" title="Request Permission for Server URL">Enable URL</a><br />-->
+                <label for="SubsonicVersion">Subsonic API: <span class="apiversion" id="SubsonicVersion">{{settings.ApiVersion}}</span></label><br />
+                <label for="SMStats">Audio State: <span id="SMStats"></span></label><br /><br />
+                <br />
+                <a id="action_Welcome" href="#welcome">Launch Welcome</a>
+                <div id="welcome"><h2>Welcome</h2></div>
+            </div>
+            <div class="subsection floatleft">
+                <h3 class="title">Options</h3>
+                <label for="Theme">Theme</label><br />
+                <select id="Theme" name="Theme" class="large" ng-model="settings.Theme" ng-options="o for o in Themes"></select><br />
+                <!--<label for="AutoFilter">Filter</label><br />
+        <input type="text" id="AutoFilter" name="AutoFilter" class="large" title="Comma separated list of albums for the AutoPilot Filter"/><br />-->
+                <label for="AutoAlbumSize">Auto Album Size</label><br />
+                <input type="text" id="AutoAlbumSize" name="AutoAlbumSize" class="large" title="Number of Albums to Get on the Music Library tab" ng-model="settings.AutoAlbumSize" /><br />
+                <label for="AutoPlaylistSize">Auto Playlist Size</label><br />
+                <input type="text" id="AutoPlaylistSize" name="AutoPlaylistSize" class="large" title="Number of Songs to Get on the Playlist tab" ng-model="settings.AutoPlaylistSize" /><br />
+                <label for="ApplicationName">Application Name</label><br />
+                <input type="text" id="ApplicationName" name="ApplicationName" class="large" title="Custom Player Name" ng-model="settings.ApplicationName" /><br />
+            </div>
+            <div class="subsection floatleft checkboxes">
+                <div class="checkboxes">
+                    <fieldset id="General">
+                        <legend class="aligncenter">General</legend>
+                        <div class="inputwrap"><input type="checkbox" id="AutoPlay" name="AutoPlay" value="1" title="When the Queue has ended, load random songs" ng-model="settings.AutoPlay" /></div>
+                        <label for="AutoPlay">Auto Play</label>
+                        <div class="clear"></div>
+                        <div class="inputwrap"><input type="checkbox" id="LoopQueue" name="LoopQueue" value="1" title="When the Queue has ended, start from beginning" ng-model="settings.LoopQueue" /></div>
+                        <label for="LoopQueue">Loop Queue</label>
+                        <div class="clear"></div>
+                        <div class="inputwrap"><input type="checkbox" id="HideAZ" name="HideAZ" value="1" title="Hide A-Z Artist Picker (Tablet/Touch friendly feature)" ng-model="settings.HideAZ" /></div>
+                        <label for="HideAZ">Hide A-Z</label>
+                        <div class="clear"></div>
+                        <div class="inputwrap"><input type="checkbox" id="ScrollTitle" name="ScrollTitle" value="1" title="Scroll the Title Once" ng-model="settings.ScrollTitle" /></div>
+                        <label for="ScrollTitle">Scroll Title</label>
+                        <div class="clear"></div>
+                        <label for="DefaultLibraryLayout">Default Library Layout</label>
+                        <div class="clear"></div>
+                        <select id="DefaultLibraryLayout" name="DefaultLibraryLayout" class="" ng-model="settings.DefaultLibraryLayout" ng-options="o.id as o.name for o in LibraryLayouts" title="AJAX Request Library Layout"></select>
+                        <div class="clear"></div>
+                    </fieldset>
+                    <div class="clear"></div>
+                    <fieldset id="HTML5">
+                        <legend class="aligncenter">HTML5 [Beta]</legend>
+                        <span>Notifications</span><br />
+                        <div class="clear"></div>
+                        <div class="inputwrap"><input type="checkbox" id="NotificationSong" name="NotificationSong" value="1" title="Enable Notifications When Tracks Change" ng-model="settings.NotificationSong" /></div>
+                        <label for="NotificationSong">Song Change</label>
+                        <div class="clear"></div>
+                        <div class="inputwrap"><input type="checkbox" id="NotificationNowPlaying" name="NotificationNowPlaying" value="1" title="Enable Notifications When Other Users Play Songs" ng-model="settings.NotificationNowPlaying" /></div>
+                        <label for="NotificationNowPlaying">Now Playing</label>
+                        <div class="clear"></div>
+                        <span>Local Storage</span><br />
+                        <div class="clear"></div>
+                        <div class="inputwrap"><input type="checkbox" id="SaveTrackPosition" name="SaveTrackPosition" value="1" title="Saves Play Queue & Track Position Periodically (Uses HTML5: localStorage)" ng-model="settings.SaveTrackPosition" /></div>
+                        <label for="SaveTrackPosition">Save Progress</label>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="subsection floatleft">
+                <div class="checkboxes">
+                    <fieldset id="Advanced">
+                        <legend class="aligncenter">Advanced</legend>
+                        <div class="inputwrap"><input type="checkbox" id="Debug" name="Debug" value="1" title="Enable Debug Mode (Events will be logged to the Javascript Console)" ng-model="settings.Debug" /></div>
+                        <label for="Debug">Debug Mode</label>
+                        <div class="clear"></div>
+                        <div class="inputwrap"><input type="checkbox" id="ForceFlash" name="ForceFlash" value="1" title="Force Flash Plugin for Audio (Option doesn't work with Chrome App)" ng-model="settings.ForceFlash" /></div>
+                        <label for="ForceFlash">Force Flash</label>
+                        <div class="clear"></div>
+                        <label for="Timeout">Timeout</label>
+                        <div class="clear"></div>
+                        <select id="Timeout" name="Timeout" class="" ng-model="settings.Timeout" ng-options="o.id as o.name for o in Timeouts" title="AJAX Request Timeout (Seconds)"></select>
+                        <div class="clear"></div>
+                        <label for="NotificationTimeout">Notification Timeout</label>
+                        <div class="clear"></div>
+                        <select id="NotificationTimeout" name="NotificationTimeout" class="" ng-model="settings.NotificationTimeout" ng-options="o.id as o.name for o in Timeouts" title="Notification Timeout (Seconds)"></select>
+                        <div class="clear"></div>
+                        <label for="Protocol">Protocol</label><br />
+                        <select id="Protocol" name="Protocol" class="" ng-model="settings.Protocol" ng-options="o for o in Protocols" title="Enable Cross-Domain AJAX Requests (Use if hosted in a different domain than Subsonic)"></select>
+                        <!--
+                <div class="clear"></div>
+                <label title="Export these settings to a file">Export Settings</label><br />
+                <ng-download data="settings" />
+                -->
+                    </fieldset>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <div class="submit">
+                <a href="" class="button" ng-click="save()" title="Save Settings">Save</a>
+            </div>
+        </form>
+
         <div class="subsection floatleft">
             <h3 class="title">Tips</h3>
             <ul class="preferences">
@@ -35,7 +137,7 @@
             <h3 class="title">Change Log</h3>
             <ul id="ChangeLog" class="preferences">
                 <li class="log" ng-repeat="o in changeLog"><span class="version">{{o.date + ' - ' + o.version}}</span>
-                    <span class="changes" ng-repeat="a in o.changes" ng-bind-html-unsafe="a.text"></span>
+                    <span class="changes" ng-repeat="a in o.changes" ng-bind-html="a.text"></span>
                 </li>
             </ul>
             <a href="" ng-click="changeLogShowMore()">Show More</a>
@@ -44,8 +146,9 @@
         <div class="subsection floatleft">
             <h3 class="title">Links</h3>
             <ul class="preferences">
-            <li>GitHub Repo - <a href="https://github.com/tsquillario/Jamstash" target="_blank">https://github.com/tsquillario/Jamstash</a></li>
+            <li>Report Issues - <a href="https://github.com/tsquillario/Jamstash" target="_blank">https://github.com/tsquillario/Jamstash</a></li>
             <li>Jamstash Chrome App - <a href="https://chrome.google.com/webstore/detail/jccdpflnecheidefpofmlblgebobbloc" target="_blank">Chrome Web Store</a></li>
+            <li>Beta Site - <a href="http://jamstash.com/beta" target="_blank">http://jamstash.com/beta</a></li>
             <li><a href="https://twitter.com/JamstashApp" target="_blank">Follow @JamstashApp</a>
             </ul>
             <h3 class="title">Thanks</h3>

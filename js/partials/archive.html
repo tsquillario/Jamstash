@@ -7,8 +7,8 @@
             <a href="" class="button" id="action_AddToQueue" title="Add To Queue" ng-click="addSongsToQueue()">+ Queue</a>
         </div>
         <div class="clear"></div>
-        <div id="LayoutContainer" class="section lgsection">
-            <div class="ui-layout-west noselect hide" tabindex="0">
+        <div id="LayoutContainer" class="section lgsection split-pane fixed-left" split>
+            <div id="left-component" class="split-pane-component smcolumn noselect" tabindex="0">
                 <!-- Artist -->
                 <select class="large" id="Collections" ng-disabled="!loadedCollection" ng-model="selectedCollection" ng-options="o for o in AllCollections">
                     <option value="">Select Collection</option>
@@ -27,48 +27,50 @@
                     </li>
                 </ul>
             </div>
+            <div class="split-pane-divider" id="my-divider"></div>
             <!-- Album -->
-            <div class="ui-layout-center">
+            <div id="right-component" class="split-pane-component lgcolumn">
                 <ul class="actionlist">
                     <li>
-                    <form class="form">
-                        <select ng-model="selectedArchiveAlbumSort" ng-options="o for o in ArchiveAlbumSort"></select>
-                        <select id="Years" ng-model="filter.Year" ng-options="o for o in Years">
-                            <option value="">[Year]</option>
-                        </select>
-                        <input type="text" id="Source" name="Source" class="sm" ng-model="filter.Source" placeholder="Source" title="Source"/>
-                        <input type="text" id="Description" name="Description" class="m" ng-model="filter.Description" placeholder="Description" title="Description"/>
-                        <a href="" class="button" ng-click="filterSave()">Go</a>&nbsp;
-                    </form>
+                        <form class="form">
+                            <select ng-model="selectedArchiveAlbumSort" ng-options="o for o in ArchiveAlbumSort"></select>
+                            <select id="Years" ng-model="filter.Year" ng-options="o for o in Years">
+                                <option value="">[Year]</option>
+                            </select>
+                            <input type="text" id="Source" name="Source" class="sm" ng-model="filter.Source" placeholder="Source" title="Source" />
+                            <input type="text" id="Description" name="Description" class="m" ng-model="filter.Description" placeholder="Description" title="Description" />
+                            <a href="" class="button" ng-click="filterSave()">Go</a>&nbsp;
+                        </form>
                     </li>
                 </ul>
                 <div class="clear"></div>
                 <ul class="simplelist songlist noselect">
-                    <li class="album" ng-repeat="o in album" id="{{o.id}}" parentid="{{o.parentid}}" ng-class="{'selected': selectedAlbum == o.id}" ng-click="getSongs(o.id, '')">
-                        <div id="{{'AlbumInfo' + $index}}" class="infolink">
-                            <a href="" class="hover" title="More Info..." ng-click="toggleSubmenu('#submenu_AlbumInfo' + $index, '#AlbumInfo' + $index, 'right', 10)" stop-event="click"><img src="images/info_gl_6x12.png" /></a>
-                        </div>
-                        <div id="{{'submenu_AlbumInfo' + $index}}" class="submenu_AlbumInfo submenu shadow" style="display: none;">
-                            <a href="" ng-href="{{o.url}}" title="{{o.url}}" target="_blank" stop-event="click">Source</a><br />
-                            <a href="" ng-href="{{settings.Url + o.artist + '/' + o.id}}" title="{{settings.Url + o.artist + '/' + o.id}}" target="_blank" stop-event="click">PermaStash</a>
-                        </div>
-                        <div class="itemactions">
-                            <a class="add" href="" title="Add To Play Queue" ng-click="getSongs(o.id, 'add')" stop-event="click"></a>
-                            <a class="play" href="" title="Play" ng-click="getSongs(o.id, 'play')" stop-event="click"></a>
-                            <a class="download" href="" title="Download"></a>
-                            <a href="" title="Favorite" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="updateFavorite(o)" stop-event="click"></a>
-                        </div>
-                        <div class="albumart"><img ng-src="{{o.coverart}}" src="images/albumdefault_50.jpg"></div>
-                        <div class="title">{{o.name}}</div>
-                        <div class="artist"><a href="" id="{{o.parentid}}" ng-click="getAlbums(o.artist, o.id)" stop-event="click">{{o.artist}}</a></div>
-                        <!--<div class="details">Created: {{o.date}}</div>-->
-                        <div class="description shadow" ng-show="selectedAlbum == o.id" ng-bind-html-unsafe="o.description"></div>
-                        <div class="clear"></div>
-                    </li>
+                    <div class="" ng-repeat="o in album" ng-switch on="o.type">
+                        <li class="album" id="{{o.id}}" parentid="{{o.parentid}}" ng-class="{'selected': selectedAlbum == o.id}" ng-click="getSongs(o.id, '')">
+                            <div id="{{'AlbumInfo' + $index}}" class="infolink">
+                                <a href="" class="hover" title="More Info..." ng-click="toggleSubmenu('#submenu_AlbumInfo' + $index, '#AlbumInfo' + $index, 'right', 10)" stop-event="click"><img src="images/info_gl_6x12.png" /></a>
+                            </div>
+                            <div id="{{'submenu_AlbumInfo' + $index}}" class="submenu_AlbumInfo submenu shadow" style="display: none;">
+                                <a href="" ng-href="{{o.url}}" title="{{o.url}}" target="_blank" stop-event="click">Source</a><br />
+                                <a href="" ng-href="{{settings.Url + o.artist + '/' + o.id}}" title="{{settings.Url + o.artist + '/' + o.id}}" target="_blank" stop-event="click">PermaStash</a>
+                            </div>
+                            <div class="itemactions">
+                                <a class="add" href="" title="Add To Play Queue" ng-click="getSongs(o.id, 'add')" stop-event="click"></a>
+                                <a class="play" href="" title="Play" ng-click="getSongs(o.id, 'play')" stop-event="click"></a>
+                                <a class="download" href="" title="Download"></a>
+                                <a href="" title="Favorite" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="updateFavorite(o)" stop-event="click"></a>
+                            </div>
+                            <div class="albumart"><img ng-src="{{o.coverart}}" src="images/albumdefault_50.jpg"></div>
+                            <div class="title">{{o.name}}</div>
+                            <div class="artist"><a href="" id="{{o.parentid}}" ng-click="getAlbums(o.artist, o.id)" stop-event="click">{{o.artist}}</a></div>
+                            <!--<div class="details">Created: {{o.date}}</div>-->
+                            <div class="description shadow" ng-show="selectedAlbum == o.id" ng-bind-html="o.description"></div>
+                            <div class="clear"></div>
+                        </li>
+                    </div>
+                    <div ng-include src="'js/partials/songs.html'"></div>
                 </ul>
             </div>
-            <!-- Song -->
-            <div class="ui-layout-east noselect hide" ng-include src="'js/partials/songs.html'"></div>
         </div>
     </div>
 <div class="clear"></div>

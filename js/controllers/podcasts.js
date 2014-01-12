@@ -1,6 +1,6 @@
 ﻿JamStash.controller('PodcastCtrl',
 function PodcastCtrl($scope, $rootScope, $location, utils, globals, model, notifications) {
-    $("#LayoutContainer").layout($scope.layoutTwoCol);
+    //$("#left-component").layout($scope.layoutTwoCol);
 
     $rootScope.song = [];
     $scope.podcasts = [];
@@ -75,7 +75,7 @@ function PodcastCtrl($scope, $rootScope, $location, utils, globals, model, notif
                                 }
                             });
                             $scope.$apply();
-                            $('body').layout().open('south');
+                            $rootScope.showQueue();
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else if (action == 'play') {
                             $rootScope.queue = [];
@@ -88,9 +88,10 @@ function PodcastCtrl($scope, $rootScope, $location, utils, globals, model, notif
                             $scope.$apply(function () {
                                 $rootScope.playSong(false, next);
                             });
-                            $('body').layout().open('south');
+                            $rootScope.showQueue();
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else {
+                            $scope.album = [];
                             $rootScope.song = [];
                             angular.forEach(items, function (item, key) {
                                 if (item.status != "skipped") {
