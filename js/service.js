@@ -1,4 +1,5 @@
 ﻿JamStash.service('model', function () {
+    // Figure out how to move this, circular dependency with utils
     secondsToTime = function (secs) {
         // secs = 4729
         var times = new Array(3600, 60, 1);
@@ -75,6 +76,22 @@
 });
 
 JamStash.service('globals', function () {
+    this.SearchTypes = [
+        { id: "song", name: "Song" },
+        { id: "album", name: "Album" },
+        { id: "artist", name: "Artist" },
+    ];
+    this.Layouts = [
+        { id: "grid", name: "Grid" },
+        { id: "list", name: "List" }
+    ];
+    this.AlbumSorts = [
+        { id: "default", name: "Default Sort" },
+        { id: "artist", name: "Artist" },
+        { id: "album", name: "Album" },
+        { id: "track", name: "Track" },
+        { id: "createdate desc", name: "Date Added" },
+    ];
     this.settings = {
         // Subsonic
         /* Demo Server
@@ -102,7 +119,9 @@ JamStash.service('globals', function () {
         SaveTrackPosition: false,
         ForceFlash: false,
         Theme: "Default",
-        DefaultLibraryLayout: "grid",
+        DefaultLibraryLayout: this.Layouts[0],
+        DefaultSearchType: this.SearchTypes[0],
+        DefaultAlbumSort: this.AlbumSorts[0],
         AutoPlay: false,
         LoopQueue: false,
         Repeat: false,
@@ -110,10 +129,10 @@ JamStash.service('globals', function () {
     };
     this.SavedCollections = [];
     this.SavedGenres = [];
+
     this.BaseURL = function () { return this.settings.Server + '/rest'; };
     this.BaseParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=' + this.settings.Protocol + '&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };
 });
-
 // Directives
 JamStash.directive('layout', function () {
     return {

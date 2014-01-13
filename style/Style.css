@@ -508,10 +508,9 @@ ul.mainlist li.item a.add:hover
 #BreadCrumb 
 {
     float: left;
-    margin: 13px 0 0 0;
-    padding: 2px 8px;
+    margin: 14px 0 0 0;
+    padding: 2px 0;
     color: #AEAEA7;
-    background: #f6f6f6;  
     border-radius: .4em;  
 }
 #BreadCrumb img
@@ -536,11 +535,6 @@ ul.mainlist li.item a.add:hover
 #BreadCrumbs .crumb 
 {
     float: left;
-}
-#BreadHome a
-{
-    padding: 0;
-    margin: 0;
 }
 
 #TrackContainer, #PodcastContainer

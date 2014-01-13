@@ -48,15 +48,11 @@
                         <div class="clear"></div>
                         <label for="DefaultLibraryLayout">Default Library Layout</label>
                         <div class="clear"></div>
-                        <select id="DefaultLibraryLayout" name="DefaultLibraryLayout" class="" ng-model="settings.DefaultLibraryLayout" ng-options="o.id as o.name for o in LibraryLayouts" title="AJAX Request Library Layout"></select>
+                        <select id="DefaultLibraryLayout" name="DefaultLibraryLayout" class="" ng-model="settings.DefaultLibraryLayout.id" ng-options="o.id as o.name for o in Layouts" title="Library Layout"></select>
                         <div class="clear"></div>
-						<label for="DefaultSubsonicAlbumSort">Default Album Sort Order</label>
-						<div class="clear"></div>
-						<select id="DefaultSubsonicAlbumSort" name="DefaultSubsonicAlbumSort" class="" ng-model="settings.DefaultSubsonicAlbumSort" ng-options="o.id as o.name for o in SubsonicAlbumSort" title="Subsonic Album Layout"></select>
-						<div class="clear"></div>
 						<label for="DefaultSearchType">Default Search Type</label>
 						<div class="clear"></div>
-						<select id="DefaultSearchType" name="DefaultSearchType" class="" ng-model="settings.DefaultSearchType" ng-options="o.id as o.name for o in SearchTypeLayout" title="Subsonic Album Layout"></select>
+                        <select id="DefaultSearchType" name="DefaultSearchType" class="" ng-model="settings.DefaultSearchType.id" ng-options="o.id as o.name for o in SearchTypes" title="Subsonic Album Layout"></select>
 						<div class="clear"></div>
                     </fieldset>
                     <div class="clear"></div>

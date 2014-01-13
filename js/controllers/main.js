@@ -8,7 +8,7 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
     $rootScope.Genres = [];
     $rootScope.selectedPlaylist = "";
     $rootScope.selectedAutoPlaylist = "";
-    $rootScope.selectedMusicFolder = "";
+    $rootScope.SelectedMusicFolder = "";
     $rootScope.unity;
     $rootScope.loggedIn = function () {
         if (globals.settings.Server != '' && globals.settings.Username != '' && globals.settings.Password != '') {
@@ -351,7 +351,7 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
                             }
                             i++;
                         });
-                        $rootScope.selectedMusicFolder = $rootScope.MusicFolders[index];
+                        $rootScope.SelectedMusicFolder = $rootScope.MusicFolders[index];
                     }
                     $scope.$apply();
                 }
@@ -482,9 +482,9 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         if (typeof folder == 'number' && folder != '' && folder != 'all') {
             //alert(folder);
             folderParams = '&musicFolderId=' + folder;
-        } else if (typeof $rootScope.selectedMusicFolder.id != 'undefined') {
-            //alert($rootScope.selectedMusicFolder.id);
-            folderParams = '&musicFolderId=' + $rootScope.selectedMusicFolder.id;
+        } else if (typeof $rootScope.SelectedMusicFolder.id != 'undefined') {
+            //alert($rootScope.SelectedMusicFolder.id);
+            folderParams = '&musicFolderId=' + $rootScope.SelectedMusicFolder.id;
         }
         $.ajax({
             url: globals.BaseURL() + '/getRandomSongs.view?' + globals.BaseParams() + '&size=' + size + genreParams + folderParams,

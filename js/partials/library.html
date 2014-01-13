@@ -7,10 +7,7 @@
         </div>
         <div id="search">
             <input type="text" id="Search" class="medium" title="Wildcards (*) supported" placeholder="Search..." ng-enter="search()"/>
-            <select id="SearchType" name="SearchType">
-                <option value="song">Song</option>
-                <option value="album">Album</option>
-            </select>
+            <select id="SearchType" name="SearchType" ng-model="SearchType.id" ng-options="o.id as o.name for o in SearchTypes"></select>
             <a href="" class="button" id="action_Search" title="Search" ng-click="search()"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
         </div>
         <div class="subactions">
@@ -30,7 +27,7 @@
                 <div id="AZIndex" ng-show="!settings.HideAZ" class="subactionsfixed">
                     <a href="" ng-click="toggleAZ()" stop-event="click">A-Z</a>
                 </div>
-                <select id="MusicFolders" class="folders" ng-model="$root.selectedMusicFolder" ng-options="o as o.name for o in MusicFolders">
+                <select id="MusicFolders" class="folders" ng-model="$root.SelectedMusicFolder" ng-options="o as o.name for o in MusicFolders">
                     <option value="">All Folders</option>
                 </select>
                 <ul id="AutoAlbumContainer" class="simplelist mainlist noselect">
@@ -64,11 +61,9 @@
                 <ul class="actionlist">
                     <li>
                         <form class="form">
-                            <select id="selectedSubsonicAlbumSort" ng-model="selectedSubsonicAlbumSort" ng-show="SubsonicSort.length" ng-options="o.id as o.name for o in SubsonicSort"></select>
-                            <!--<select id="selectedLayout" ng-model="selectedLayout" ng-options="o.id as o.name for o in Layouts"></select>-->
+                            <select id="SelectedAlbumSort" ng-model="SelectedAlbumSort.id" ng-show="AlbumSort.length" ng-options="o.id as o.name for o in AlbumSort"></select>
                         </form>
                         <div id="BreadCrumb">
-                            <a href="#" id="BreadHome"><img src="images/home_gl_12x12.png"></a>
                             <div id="BreadCrumbs" class="floatleft">
                                 <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'artist'}"><a ng-click="getAlbums(o.id, o.name)">{{o.name}}</a> &gt;</div>
                                 <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'album'}"><a ng-click="getSongs(o.id, '')">{{o.name}}</a> &gt;</div>
@@ -79,7 +74,7 @@
                 <div class="clear"></div>
                 <ul class="simplelist songlist noselect">
                     <div class="" ng-repeat="o in album" ng-switch on="o.type">
-                        <li class="album" ng-switch-when="byfolder" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': selectedLayout == 'grid'}" ng-click="getSongs(o.id, '')" parentid="{{o.parentid}}">
+                        <li class="album" ng-switch-when="byfolder" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': settings.DefaultLibraryLayout.id == 'grid'}" ng-click="getSongs(o.id, '')" parentid="{{o.parentid}}">
                             <div class="itemactions">
                                 <a class="add" href="" title="Add To Play Queue" ng-click="getSongs(o.id, 'add')" stop-event="click"></a>
                                 <a class="play" href="" title="Play" ng-click="getSongs(o.id, 'play')" stop-event="click"></a>
@@ -94,7 +89,7 @@
                             </div>
                             <div class="clear"></div>
                         </li>
-                        <li class="album" ng-switch-when="bytag" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': selectedLayout == 'grid'}" ng-click="getAlbumByTag(o.id)">
+                        <li class="album" ng-switch-when="bytag" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': settings.DefaultLibraryLayout.id == 'grid'}" ng-click="getAlbumByTag(o.id)">
                             <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
                             <div class="albuminfo">
                                 <div class="title" title="{{o.name}}" ng-bind-html-unsafe="o.name"></div>
