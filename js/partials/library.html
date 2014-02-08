@@ -44,14 +44,14 @@
                 <ul class="simplelist mainlist noselect" ng-show="shortcut.length">
                     <li class="index" title="Scroll to Top" data-bind="click: $root.scrollToTop"><a>Shortcuts</a></li>
                     <ul class="simplelist mainlist noselect" ng-repeat="o in shortcut">
-                        <li class="item" id="{{o.id}}" ng-click="getAlbums(o.id, o.name)" ng-class="{'selected': selectedArtist == o.id}"><span ng-bind-html-unsafe="o.name"></span></li>
+                        <li class="item" id="{{o.id}}" ng-click="getAlbums(o.id, o.name)" ng-class="{'selected': selectedArtist == o.id}"><span ng-bind-html="o.name"></span></li>
                     </ul>
                 </ul>
                 <!-- Artist -->
                 <ul class="simplelist mainlist noselect" ng-repeat="o in index">
                     <li class="index" title="Scroll to Top" id="{{o.name}}" ng-click="scrollToTop()"><a>{{o.name}}</a><span class="floatright">?</span></li>
                     <ul class="simplelist mainlist noselect">
-                        <li class="item" id="{{a.id}}" ng-repeat="a in o.artist" ng-class="{'selected': selectedArtist == a.id}" ng-click="getAlbums(a.id, a.name)"><a ng-href="" ng-bind-html-unsafe="a.name"></a></li>
+                        <li class="item" id="{{a.id}}" ng-repeat="a in o.artist" ng-class="{'selected': selectedArtist == a.id}" ng-click="getAlbums(a.id, a.name)"><a ng-href="" ng-bind-html="a.name"></a></li>
                     </ul>
                 </ul>
             </div>
@@ -84,16 +84,16 @@
                             </div>
                             <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
                             <div class="albuminfo">
-                                <div class="title" title="{{o.name}}" ng-bind-html-unsafe="o.name"></div>
-                                <div class="artist" title="{{o.artist}}"><a href="" id="{{o.parentid}}" ng-click="getAlbums(o.parentid, o.artist)" stop-event="click" ng-bind-html-unsafe="o.artist"></a></div>
+                                <div class="title" title="{{o.name}}" ng-bind-html="o.name"></div>
+                                <div class="artist" title="{{o.artist}}"><a href="" id="{{o.parentid}}" ng-click="getAlbums(o.parentid, o.artist)" stop-event="click" ng-bind-html="o.artist"></a></div>
                             </div>
                             <div class="clear"></div>
                         </li>
                         <li class="album" ng-switch-when="bytag" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': settings.DefaultLibraryLayout.id == 'grid'}" ng-click="getAlbumByTag(o.id)">
                             <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
                             <div class="albuminfo">
-                                <div class="title" title="{{o.name}}" ng-bind-html-unsafe="o.name"></div>
-                                <div class="artist" title="{{o.artist}}"><a href="" ng-click="getArtistByTag(o.artistId)" stop-event="click" ng-bind-html-unsafe="o.artist"></a></div>
+                                <div class="title" title="{{o.name}}" ng-bind-html="o.name"></div>
+                                <div class="artist" title="{{o.artist}}"><a href="" ng-click="getArtistByTag(o.artistId)" stop-event="click" ng-bind-html="o.artist"></a></div>
                             </div>
                             <div class="clear"></div>
                         </li>

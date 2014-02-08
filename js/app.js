@@ -1,5 +1,5 @@
 /* Declare app level module */
-var JamStash = angular.module('JamStash', ['ngCookies', 'ngSanitize']);
+var JamStash = angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize']);
 //var JamStash = angular.module('JamStash', ['ngCookies', 'ngRoute']);
 /*
 JamStash.config(function ($sceDelegateProvider) {
@@ -17,6 +17,7 @@ JamStash.config(function ($routeProvider) {
     $routeProvider
         .when('/index', { redirectTo: '/library' })
         .when('/settings', { templateUrl: 'js/partials/settings.html', controller: 'SettingsCtrl' })
+        .when('/queue', { templateUrl: 'js/partials/queue.html', controller: 'QueueCtrl' })
         .when('/library', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl' })
         .when('/library/:artistId', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl', reloadOnSearch: false })
         .when('/library/:artistId/:albumId', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl', reloadOnSearch: false })

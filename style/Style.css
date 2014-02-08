@@ -733,9 +733,6 @@ ul.songlist .row .album img
     padding: 2px;
     height: 25px;
 }
-ul.songlist .row .artist
-{
-}
 ul.songlist .row .itemactions
 {
     width: 20%; /* 20% */
@@ -757,11 +754,11 @@ ul.songlist .row .track
 }
 ul.songlist .row .title
 {
-    width: 25%; /* 50% */
+    width: 20%; /* 50% */
 }
 ul.songlist .row .albumblock
 {
-    width: 30%; /* 80% */
+    width: 25%; /* 80% */
 }
 ul.songlist .row .albumblock img
 {
@@ -771,8 +768,7 @@ ul.songlist .row .albumblock img
 }
 ul.songlist .row .artist    
 {
-    padding: 3px 0 0 5px;
-    font-size: 11px;
+    width: 15%;
 }
 ul.songlist .row .albumtext
 {
@@ -780,7 +776,7 @@ ul.songlist .row .albumtext
 }
 ul.songlist .row .time
 {
-    width: 10%; /* 90% */
+    width: 5%; /* 90% */
     text-align: right;
 }
 ul.songlist .row a.play
@@ -942,7 +938,7 @@ ul.songlist li:hover
 .actions
 {
     height: 30px;
-    margin: 6px 5px 0 280px;
+    margin: 6px 5px 0 320px;
     padding: 0 0 0 5px;
 }
 .subactions
@@ -1107,32 +1103,25 @@ ul.songlist li:hover
 
 #queue
 {
-    background: #fff;
-    border-top: 1px solid #cbcbcb;
-    border-bottom: 1px solid #cbcbcb;
-    margin: 4px 0;
-    height: 75px;
-    position: absolute;
-    bottom: 0; /* Sit it on the bottom */
-    left: 0;
-    width: 100%; /* As wide as it's allowed */
 }
+
 #QueuePreview {
-    height: 140px;
-    width: 100%;
-    padding: 0;
+    height: 131px;
+    width: 472px;
+    padding: 1px;
     margin: 0;
-    position: absolute;
-    bottom: 0;
-    z-index: 100;
+    z-index: 999;
     /*background: #5b5b4e; */
     background: rgba(91, 91, 78, 0.4) ;
     list-style-type: none;
-    overflow-x: scroll;
+    overflow-x: hidden;
     overflow-y: hidden;
     text-align: left;
     white-space: nowrap;   
-    display: none; 
+    position: absolute;
+    bottom: 6px;
+    left: 198px; 
+    display: none;
 }
 #QueuePreview li {
 }
@@ -1192,15 +1181,18 @@ ul.songlist li:hover
 /* Player Style */
 #player
 {
-    background: #fff;
     border-top: 1px solid #cbcbcb;
     border-bottom: 1px solid #cbcbcb;
     margin: 4px 0 0 0;
-    height: 75px;
+    /*height: 75px;*/
     position: absolute;
     bottom: 0; /* Sit it on the bottom */
     left: 0;
     width: 100%; /* As wide as it's allowed */
+    z-index: 100;
+}
+#playercontainer {
+    background: #fff;
 }
 #audiocontainer
 {
@@ -1302,7 +1294,7 @@ ul.songlist li:hover
 #songdetails
 {
     width: 322px;
-    margin: 2px 6px;
+    margin: 6px;
     float: left;
     cursor: pointer;     
     padding: 0;
@@ -1579,6 +1571,11 @@ a.button:active {
 a.buttonvertical {
     margin: 2px 0;
 }
+a.blockbutton {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
 a.selected {
     color: #333;
     border-color: #999;
@@ -1672,7 +1669,7 @@ input.large
 input.xlarge
 {
     border: 1px solid #DCDCDC;
-    width: 350px;
+    width: 260px;
     margin: 5px;
 }
 input.chat

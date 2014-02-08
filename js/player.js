@@ -172,8 +172,10 @@
             }
             // End UnityShim
         }
-        $('#QueuePreview').stop().scrollTo('#' + id, 400);
-        $rootScope.showQueue();
+        if ($rootScope.queue.length > 0) {
+            $('#QueuePreview').stop().scrollTo('#' + id, 400);
+            $rootScope.showQueue();
+        }
         var spechtml = '';
         var data = $(player1).data().jPlayer;
         for (i = 0; i < data.solutions.length; i++) {

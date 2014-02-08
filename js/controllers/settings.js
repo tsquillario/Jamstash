@@ -23,6 +23,10 @@ function SettingsCtrl($scope, $routeParams, $location, utils, globals, json, not
             $('#AZIndex').show();
         }
     });
+    $scope.reset = function () {
+        utils.setValue('Settings', null, true);
+        $scope.loadSettings();
+    }
     $scope.save = function () {
         if ($scope.settings.Password != '' && globals.settings.Password.substring(0, 4) != 'enc:') { $scope.settings.Password = 'enc:' + utils.HexEncode($scope.settings.Password); }
         if (globals.settings.NotificationSong) {

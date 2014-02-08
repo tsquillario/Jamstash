@@ -100,9 +100,9 @@ JamStash.service('globals', function () {
         Server: "http://subsonic.org/demo"),
         */
         Url: "http://Jamstash.com/beta/#/archive/",
-        Username: "tsquillario",
-        Password: "Elephant1!",
-        Server: "https://tsquillario.dyndns.org:8443/subsonic",
+        Username: "",
+        Password: "",
+        Server: "",
         Timeout: 10000,
         NotificationTimeout: 20000,
         Protocol: "jsonp",

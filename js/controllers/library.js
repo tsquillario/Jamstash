@@ -65,6 +65,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         });
     }
     $scope.mapArtist = function (data) {
+        var name = '';
         var artist = data.artist;
         var artists = [];
         if (artist.length > 0) {
@@ -72,7 +73,17 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         } else {
             artists[0] = artist;
         }
-        return new model.Index(data.name, artists);
+        angular.forEach(artists, function (item, key) {
+            if (typeof item.name !== 'undefined') { item.name = item.name.toString(); }
+        });
+        if (typeof data.name !== 'undefined') { name = data.name.toString(); }
+        return new model.Index(name, artists);
+    }
+    $scope.mapIndex = function (data) {
+        var name, id = '';
+        if (typeof data.id !== 'undefined') { id = data.id; }
+        if (typeof data.name !== 'undefined') { name = data.name.toString(); }
+        return new model.Artist(id, name);
     }
     $scope.mapPlaylist = function (data) {
         return new model.Artist(data.id, data.name);
@@ -117,7 +128,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                         items[0] = data["subsonic-response"].indexes.shortcut;
                     }
                     angular.forEach(items, function (item, key) {
-                        $scope.shortcut.push(item);
+                        $scope.shortcut.push($scope.mapIndex(item));
                     });
                 }
                 $scope.index = [];

@@ -35,6 +35,13 @@ span.apiversion
     border-top: 1px solid #1D1D1D;
     border-bottom: 1px solid #1D1D1D;
 }
+.pagetabcenter
+{
+    background-color: #333;
+    border-top: 1px solid #1a1a1a;
+    border-right: 1px solid #1a1a1a;
+    border-left: 1px solid #1a1a1a;
+}
 .smsection
 {
     background: none;
@@ -94,8 +101,11 @@ span.apiversion
 #player
 {
     background: #323232;
-    border-top: 1px solid #5A5A5A;
-    border-bottom: 1px solid #5A5A5A;
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+}
+#playercontainer {
+    background: #323232;
 }
 .vertshade {
     background: -webkit-gradient(linear, left top, right top, from(rgba(46, 46, 46, 0)), to(rgba(46, 46, 46, 1)));

@@ -10,6 +10,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
         }
     };
     this.setValue = function (key, value, notify) {
+        /*
         if (value !== null) {
             $cookieStore.put(key, value);
         } else {
@@ -17,34 +18,31 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
         }
         if (notify) {
         }
-        /* jQuery.cookies.js
-        try {
-        localStorage.setItem(key, value);
-        } catch (e) {
-        if (e == QUOTA_EXCEEDED_ERR) {
-        alert('Quota exceeded!');
-        }
-        }
         */
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch (e) {
+            if (globals.settings.Debug) { console.log(e); }
+        }
     }
     this.getValue = function (value) {
+        /*
         if ($cookieStore.get(value)) {
             return $cookieStore.get(value);
         } else {
             return false;
         }
-        /* jQuery.cookies.js
-        if (browserStorageCheck) {
-        var item = localStorage.getItem(value);
-        if (item != '' && item != undefined) {
-        return true;
-        } else {
-        return false;
-        }
-        } else {
-        if (settings.Debug()) { console.log('HTML5::loadStorage not supported on your browser' + html.length + ' characters'); }
-        }
         */
+        try {
+            var item = localStorage.getItem(value);
+            if (item != '' && typeof item != 'undefined') {
+                return JSON.parse(item);
+            } else {
+                return false;
+            }
+        } catch (e) {
+            if (globals.settings.Debug) { console.log(e); }
+        }
     }
     this.mapSong = function (data) {
         var song = data;

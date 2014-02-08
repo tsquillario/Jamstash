@@ -1,4 +1,16 @@
 ﻿[
+    {
+        "date": "2/7/2014", "version": "3.2.2",
+        "changes": [
+        { "text": "- Legacy version of <a href=\"http://jamstash.com/mini\" target=\"_blank\">MiniSub</a>" }
+        ]
+    },
+    {
+        "date": "2/2/2014", "version": "3.2.1",
+        "changes": [
+        { "text": "- Switched to HTML5 localStorage for Settings" }
+        ]
+    },
 {
     "date": "1/12/2014", "version": "3.2",
     "changes": [

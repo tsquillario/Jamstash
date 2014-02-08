@@ -14,8 +14,7 @@
                 <label for="SubsonicVersion">Subsonic API: <span class="apiversion" id="SubsonicVersion">{{settings.ApiVersion}}</span></label><br />
                 <label for="SMStats">Audio State: <span id="SMStats"></span></label><br /><br />
                 <br />
-                <a id="action_Welcome" href="#welcome">Launch Welcome</a>
-                <div id="welcome"><h2>Welcome</h2></div>
+                <!--<a id="action_Welcome" href="#welcome">Launch Welcome</a><div id="welcome"><h2>Welcome</h2></div>-->
             </div>
             <div class="subsection floatleft">
                 <h3 class="title">Options</h3>
@@ -103,6 +102,7 @@
             </div>
             <div class="clear"></div>
             <div class="submit">
+                <a href="" class="button" ng-click="reset()" title="Reset Settings (Except Server)">Reset</a>
                 <a href="" class="button" ng-click="save()" title="Save Settings">Save</a>
             </div>
         </form>

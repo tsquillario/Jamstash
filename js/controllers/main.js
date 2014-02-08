@@ -1,5 +1,5 @@
 ﻿JamStash.controller('AppCtrl',
-function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model, notifications, player) {
+function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, globals, model, notifications, player) {
     $rootScope.settings = globals.settings;
     $rootScope.song = [];
     $rootScope.queue = [];
@@ -17,6 +17,10 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
             return false;
         }
     }
+    $rootScope.totalDisplayed = 50;
+    $rootScope.loadMore = function () {
+        $scope.totalDisplayed += 50;
+    };
     /*
     $scope.playSong = function (loadonly, data) { 
     $scope.$apply(function () {
@@ -27,6 +31,11 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
 
     // Reads cookies and sets globals.settings values
     $scope.loadSettings = function () {
+        // Temporary Code to Convert Cookies added 2/2/2014
+        if ($cookieStore.get('Settings')) {
+            utils.setValue('Settings', $cookieStore.get('Settings'), false);
+            $cookieStore.remove('Settings');
+        }
         if (utils.getValue('Settings')) {
             $.each(utils.getValue('Settings'), function (k, v) {
                 if (v == 'false') { v = false; }
@@ -105,28 +114,22 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
             setTimeout(function () { if (submenu_active == false) $('div.submenu').stop().fadeOut(); }, 10000);
         }
     }
-    $rootScope.showQueue = function (show) {
-        var submenu = $(QueuePreview);
+    $rootScope.showQueue = function () {
+        var submenu = $('#QueuePreview');
         submenu.fadeIn(400);
-        setTimeout(function () { submenu.fadeOut(); }, 20000);
+        var timeout = globals.settings.Timeout;
+        setTimeout(function () { submenu.fadeOut(); }, timeout);
     }
-    $rootScope.hideQueue = function (show) {
+    $rootScope.hideQueue = function () {
+        var submenu = $('#QueuePreview');
         submenu.fadeOut();
     }
-    $scope.toggleQueue = function (show) {
-        var submenu = $(QueuePreview);
-        if (submenu.css('display') !== 'none') {
+    $scope.toggleQueue = function () {
+        var submenu = $('#QueuePreview');
+        if (submenu.css('display') == 'none') {
             $rootScope.showQueue();
         } else {
             $rootScope.hideQueue();
-        }
-    }
-    $scope.pinQueue = function () {
-        var submenu = $(QueuePreview);
-        if (submenu.css('display') !== 'none') {
-            submenu.fadeOut();
-        } else {
-            submenu.fadeIn(400);
         }
     }
     $("a.coverartfancy").fancybox({
@@ -301,6 +304,7 @@ function AppCtrl($scope, $rootScope, $document, $location, utils, globals, model
         });
     }
     $scope.playAll = function () {
+        $rootScope.queue = [];
         $scope.selectAll();
         $scope.addSongsToQueue();
         var next = $rootScope.queue[0];
