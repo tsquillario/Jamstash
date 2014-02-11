@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+    <head>
+        <title>asyncStorage.js</title>
+        <!-- https://github.com/WebReflection/wru -->
+        <script>document.write('<script src="../build/asyncStorage.max.js?' + Math.random() + '"><' + '/script>')</script>
+        <script>function wru(wru){var assert=wru.assert,async=wru.async,log=wru.log;
+
+// enojy your tests!
+
+var shared;
+
+wru.test([
+    {
+        name: "database creation",
+        test: function () {
+            asyncStorage.create("async_storage", async("database creation", function (db, length) {
+                assert("database created", shared = db);
+                assert("length available", typeof length == "number");
+                log(db.type);
+            }));
+        }
+    }, {
+        name: "db::setItem",
+        test: function () {
+            shared.removeItem("test", async(function (key, db) {
+                assert(key === "test");
+                shared.setItem("test", "whatever", async("set", function (value, key, db) {
+                    var currentLength = db.length;
+                    assert("correct value", value === "whatever");
+                    assert("correct key", key === "test");
+                    assert("db sent", db === shared);
+                    // it was not an update
+                    assert("length is OK", 0 < currentLength);
+                    shared.setItem("test", "something else", async("update", function (value, key, db) {
+                        var randomKey = Math.random();
+                        assert("correct value", value === "something else");
+                        assert("correct key", key === "test");
+                        assert("db sent", db === shared);
+                        // it was an update
+                        assert("correct length", db.length === currentLength);
+                        shared.setItem(randomKey, "ok", async("final", function (value, key, db) {
+                            assert("correct value", value === "ok");
+                            assert("correct key", key == randomKey);
+                            assert("correct length", db.length === currentLength + 1);
+                        }));
+                    }));
+                }));
+            }));
+        }
+    }, {
+        name: "db::getItem",
+        test: function () {
+            var randomKey = "_" + Math.random();
+            shared.getItem(randomKey, async("get unknown key", function (value, key, db) {
+                assert("no value", value === null);
+                assert("correct key", key === randomKey);
+                assert("db sent", db === shared);
+            }));
+            shared.getItem("test", async("get known key", function (value, key, db) {
+                assert("correct value", value === "something else");
+                assert("correct key", key === "test");
+                assert("db sent", db === shared);
+            }));
+        }
+    }, {
+        name: "db::key",
+        test: function () {
+            var
+                checkCompleted = async(function () {
+                    assert("everything is OK");
+                }),
+                keys = []
+            ;
+            for (var i = shared.length, initialLength = i, length = i + 5; i < length; ++i) {
+                keys.push("tmp_" + i);
+                shared.setItem("tmp_" + i, "removed later", function (value, key, db) {
+                    --i;
+                    if (i === initialLength) {
+                        for (var j = i, check = i; j < length; ++j) {
+                            if (db.key(j) === keys[j - i]) {
+                                ++check;
+                            }
+                        }
+                        if (check === length) {
+                            while (i < length) {
+                                db.removeItem("tmp_" + i++, function () {
+                                    keys.pop();
+                                    if (!keys.length) {
+                                        checkCompleted();
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }, {
+        name: "db::removeItem",
+        test: function () {
+            shared.removeItem("test", async(function (key, db) {
+                assert("db sent", db === shared);
+                assert("correct key", key === "test");
+            }));
+        }
+    }, {
+        name: "db::clear",
+        test: function () {
+            shared.clear(async(function (db, length) {
+                assert("db sent", db === shared);
+                assert("correct length", db.length === length);
+                assert("length is 0", !length);
+            }));
+        }
+    }
+]);
+
+
+
+        }</script>
+        
+        <!-- add other scripts here if necessary-->
+        
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+        <style type="text/css">
+#wru {
+    font-family: sans-serif;
+    font-size: 11pt;
+    border: 1px solid #333;
+}
+#wru div {
+    cursor: default;
+    padding: 0;
+    color: #000;
+}
+#wru div span,
+#wru div strong {
+    display: block;
+    padding: 4px;
+    margin: 0;
+}
+#wru div ul {
+    margin: 0;
+    padding-bottom: 4px;
+}
+#wru div.pass {
+    background: #90EE90;
+}
+#wru div.fail {
+    background: #FF6347;
+}
+#wru div.error {
+    background: #000;
+    color: #FFF;
+}
+        </style>
+    </head>
+    <body>
+        <div id="wru"></div>
+        <script>
+/*!
+(C) Andrea Giammarchi, @WebReflection - Mit Style License
+*/
+wru(function(Y){function j(){A=K.call(m);if(A){if(typeof A=="function"){A={name:A[S]||"anonymous",test:A}}(P=l(l(Z.node,"div"),"span"))[E]=((ag(A,S)&&A[S])||(ag(A,e)&&A[e])||Q)+i+i;a=[];u=[];T=[];ab={};b("setup");T[ah]||b("test");N||r()}else{t()}}function p(aj){try{return O.call(h,aj)}catch(ai){return h.createElement(aj)}}function l(ai,aj){return ai.appendChild(p(aj))}function g(ai){P[E]=x.call(P[E],0,-2)+i+ai}function t(){var aj=Z.node.insertBefore(p("div"),Z.node.firstChild),ak,ai;if(ad){ai="error";ak="There Are Errors: "+ad}else{if(C){ai="fail";ak=C+" Tests Failed"}else{ai="pass";ak="Passed "+s+" Tests"}}aj[E]="<strong>"+ak+"</strong>";aj.className=ai}function G(){var ai=this.lastChild.style;ai.display=ai.display=="none"?"block":"none"}function c(ai){P[E]+="<ul>"+D+v.call(ai,d+D)+d+"</ul>";(P.onclick=G).call(P)}function r(){f();s+=a[ah];C+=u[ah];ad+=T[ah];g("("+v.call([a[ah],M=u[ah],T[ah]],", ")+")");P=P.parentNode;T[ah]?c(T,W="error"):(M?c(u,W="fail"):W="pass");P.className=W;M=0;W=i;j()}function b(ai){if(ag(A,ai)){try{A[ai](ab)}catch(aj){aa.call(T,i+aj)}}}function ag(aj,ai){return q.call(aj,ai)}function w(){return F()<0.5?-1:1}function f(){if(R){H(R);R=0}b("teardown")}var Z={assert:function U(aj,ai){if(arguments[ah]==1){ai=aj;aj=Q}z=I;aa.call(ai?a:u,W+aj);return ai},async:function V(aj,am,ak,al){al=++N;if(typeof aj=="function"){ak=am;am=aj;aj="asynchronous test #"+al}ak=X(function(){al=0;aa.call(u,aj);--N||(R=X(r,0))},L(ak||y)||y);return function ai(){if(!al){return}z=ae;W=aj+": ";try{am.apply(this,arguments)}catch(an){z=I;aa.call(T,W+an)}W=i;if(z){H(ak);--N||(R=X(r,0))}}},test:function n(ai){m=J.apply(m,[ai]);Z.random&&af.call(m,w);N||j()}},I=true,ae=!I,y=100,i=" ",Q="unknown",ah="length",S="name",e="description",D="<li>",d="</li>",k="\\|/-",q=Z.hasOwnProperty,W=i,ac=W.charAt,x=W.slice,m=[],J=m.concat,v=m.join,aa=m.push,K=m.shift,af=m.sort,N=0,M=0,s=0,C=0,ad=0,R=0,E="innerHTML",h=Y.document,O=h.createElement,B,L,F,X,H,A,P,a,u,T,ab,z;B=Y.Math;L=B.abs;F=B.random;X=Y.setTimeout;H=Y.clearTimeout;Z.node=(h.getElementById("wru")||h.body||h.documentElement);Y.setInterval(function(){N&&g(ac.call(k,M++%4))},y);undefined;Z.log=function o(aj,ai){ai?alert(aj):(typeof console!="undefined")&&console.log(aj)};y*=y;Z.random=ae;return Z}(this));
+        </script>
+    </body>
+</html>

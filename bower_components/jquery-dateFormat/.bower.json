@@ -1,0 +1,15 @@
+{
+  "name": "jquery-dateFormat",
+  "homepage": "https://github.com/phstc/jquery-dateFormat",
+  "version": "1.0.0",
+  "_release": "1.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.0.0",
+    "commit": "c351f60d3571a04eb81979ccfd1699976291d8fc"
+  },
+  "_source": "git://github.com/phstc/jquery-dateFormat.git",
+  "_target": "~1.0.0",
+  "_originalSource": "phstc/jquery-dateFormat",
+  "_direct": true
+}

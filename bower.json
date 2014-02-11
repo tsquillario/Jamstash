@@ -1,0 +1,43 @@
+{
+  "name": "Jamstash",
+  "version": "3.2.2",
+  "homepage": "https://github.com/tsquillario/Jamstash",
+  "authors": [
+    "Emory P. <emory@onlyfor.us>",
+    "tsquillario <5qrlM45t3r@gmail.com>"
+  ],
+  "description": "Subsonic Music Server HTML5 Frontend",
+  "main": "index.html",
+  "keywords": [
+    "Music",
+    "Streaming",
+    "HTML5",
+    "Subsonic",
+    "Client",
+    "Frontend"
+  ],
+  "license": "GPLv2",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~1",
+    "angular": "~1.2.12",
+    "angular-resource": "~1.2.12",
+    "angular-cookies": "~1.2.12",
+    "angular-sanitize": "~1.2.12",
+    "angular-route": "~1.2.12",
+    "jplayer": "~2.5.4",
+    "fancybox": "~2.1.5",
+    "jquery.base64.js": "yckart/jquery.base64.js#~0.0.2",
+    "jquery-dateFormat": "phstc/jquery-dateFormat#~1.0.0",
+    "jquery.scrollTo": "~1.4.11",
+    "split-pane": "shagstrom/split-pane",
+    "jquery-ui": "~1.10.3"
+  }
+}

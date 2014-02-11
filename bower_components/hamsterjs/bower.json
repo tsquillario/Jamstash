@@ -1,0 +1,10 @@
+{
+  "name": "hamsterjs",
+  "version": "1.0.4",
+  "main": "hamster.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}

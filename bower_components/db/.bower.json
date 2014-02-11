@@ -1,0 +1,14 @@
+{
+  "name": "db",
+  "homepage": "https://github.com/WebReflection/db",
+  "_release": "f0d7924aa0",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "f0d7924aa0a559f6131d46b1b8923f21f7ca5f23"
+  },
+  "_source": "git://github.com/WebReflection/db.git",
+  "_target": "*",
+  "_originalSource": "WebReflection/db",
+  "_direct": true
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Frames</title>
+<link rel="stylesheet" href="../split-pane.css" />
+<!-- The style sheet below is not part of the split-pane plugin. Feel free to use it, or style things your own way. -->
+<link rel="stylesheet" href="pretty-split-pane.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="../split-pane.js"></script>
+
+<style type="text/css">
+
+	html, body {
+		height: 100%;
+		min-height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	#top-component {
+		bottom: 70%;
+		margin-bottom: 5px;
+		min-height: 5em;
+	}
+
+	#my-divider {
+		bottom: 70%;
+		height: 5px;
+	}
+
+	#bottom-component {
+		height: 70%;
+		min-height: 10em;
+	}
+
+</style>
+
+<script>
+	$(function() {
+		$('div.split-pane').splitPane();
+	});
+</script>
+
+<div class="split-pane-frame"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+	<div class="split-pane horizontal-percent">
+		<div class="split-pane-component" id="top-component">
+			<div class="decoration"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+				<p>This split pane component height is in percent. <code>min-height</code> (<code>5em</code> in this exampe) will be respected</p>
+				<p>Re-size the window and move the divider to see the effect!</p>
+			</div>
+		</div>
+		<div class="split-pane-divider" id="my-divider"></div>
+		<div class="split-pane-component" id="bottom-component">
+			<div class="decoration"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+				<p>This split pane component height is in percent. <code>min-height</code> (<code>10em</code> in this exampe) will be respected</p>
+			</div>
+		</div>
+	</div>
+</div>

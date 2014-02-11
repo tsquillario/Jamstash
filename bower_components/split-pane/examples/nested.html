@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Frames</title>
+<link rel="stylesheet" href="../split-pane.css" />
+<!-- The style sheet below is not part of the split-pane plugin. Feel free to use it, or style things your own way. -->
+<link rel="stylesheet" href="pretty-split-pane.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="../split-pane.js"></script>
+
+<style type="text/css">
+
+	html, body {
+		height: 100%;
+		min-height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	#top-component {
+		bottom: 20em;
+		margin-bottom: 5px;
+	}
+
+	#horizontal-divider {
+		bottom: 20em;
+		height: 5px;
+	}
+
+	#bottom-component {
+		height: 20em;
+	}
+
+	#left-component {
+		width: 10em;
+	}
+
+	#vertical-divider {
+		left: 10em;
+		width: 5px;
+	}
+
+	#right-component {
+		left: 10em;
+		margin-left: 5px;
+	}
+	
+	#top-component2 {
+		bottom: 50%;
+		margin-bottom: 5px;
+	}
+
+	#horizontal-divider2 {
+		bottom: 50%;
+		height: 5px;
+	}
+
+	#bottom-component2 {
+		height: 50%;
+	}
+
+	
+</style>
+
+<script>
+	$(function() {
+		$('div.split-pane').splitPane();
+	});
+</script>
+
+<div class="split-pane-frame"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+	<div class="split-pane fixed-bottom" id="split-pane-1">
+		<div class="split-pane-component" id="top-component">
+			<div class="decoration"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+				<p>Split panes can be nested. Re-size the browser window and drag the dividers to see the effect.</p>
+				<p>Look at the source of this resource to learn about setting them up.</p>
+			</div>
+		</div>
+		<div class="split-pane-divider" id="horizontal-divider"></div>
+		<div class="split-pane-component" id="bottom-component">
+			<div class="split-pane fixed-left" id="split-pane-2">
+				<div class="split-pane-component" id="left-component">
+					<div class="decoration"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+					</div>
+				</div>
+				<div class="split-pane-divider" id="vertical-divider"></div>
+				<div class="split-pane-component" id="right-component">
+					<div class="split-pane horizontal-percent">
+						<div class="split-pane-component" id="top-component2">
+							<div class="decoration"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+							</div>
+						</div>
+						<div class="split-pane-divider" id="horizontal-divider2"></div>
+						<div class="split-pane-component" id="bottom-component2">
+							<div class="decoration"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

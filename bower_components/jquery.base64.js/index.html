@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width'>
+
+    <link href='http://fonts.googleapis.com/css?family=Sanchez' rel='stylesheet'>
+    <style>
+        html, body {
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            height: 100%
+        }
+
+        body {
+            font-family: 'Sanchez', serif;
+            text-align: center;
+            background: whiteSmoke
+        }
+
+        h1 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: 0 -50px;
+            color: #e44;
+            z-index: 1;
+        }
+
+        form {
+            position: relative;
+            height: 100%;
+            text-align: left
+        }
+
+        label {
+            position: absolute;
+            top: 0;
+            color: #aaa;
+            z-index: 1
+        }
+
+        .encode {
+            left: 50%;
+            margin-left: -65px
+        }
+
+        .decode {right:0}
+
+
+        textarea {
+            font-family: 'Sanchez', serif;
+            width: 50%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            overflow: hidden;
+            border: none;
+            resize: none
+        }
+        #encode {
+            left: -0.5%;
+            right: 50%
+        }
+        #decode {
+            left: 50.5%;
+            right: 0
+        }
+        a {
+            display: inline-block;
+            margin: 6px 6px;
+            color: black;
+            text-decoration: none;
+            border-bottom: 1px dotted #0ae
+        }
+    </style>
+
+    <title>jquery.base64.js | Makes Base64 en & -decoding simpler as it is</title>
+</head>
+
+<body>
+    <h1>Base64</h1>
+
+    <form>
+        <label for="encode" class="encode">Encode</label>
+        <textarea id="encode">we &hearts; yckart</textarea>
+        <label for="decode" class="decode">Decode</label>
+        <textarea id="decode">d2Ug4pmlIHlja2FydA==</textarea>
+    </form>
+
+    <script src='http://code.jquery.com/jquery-1.9.1.min.js'></script>
+    <script src='jquery.base64.js'></script>
+    <script>
+        var dec = $('#decode'),
+            enc = $('#encode');
+
+        // you can set utf8 encoding and decoding via global option
+        // possible options:
+        // `utf8encode` - utf8 encoding only (default: `false`)
+        // `utf8decode` - utf8 decoding only (default: `false`)
+        // `raw` - both (default: `true`)
+        $.base64.utf8encode = true;
+
+        enc.keyup(function () {
+            dec.val($.base64.btoa(this.value));
+            // also possible:
+            // dec.val( $.base64('encode', this.value) );
+            // dec.val( $.base64.encode(this.value) );
+        });
+
+
+        dec.keyup(function () {
+            // note: you can pass a third parameter to use the utf8 en- / decode option
+            enc.val($.base64.atob(this.value, true));
+            // also possible:
+            // dec.val( $.base64('decode', this.value) );
+            // dec.val( $.base64.decode(this.value) );
+        });
+
+        $('textarea').on('focus blur', function () {
+            $(this).prev('label').stop().fadeToggle(200);
+        });
+    </script>
+</body>
+</html>

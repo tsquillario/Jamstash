@@ -1,0 +1,24 @@
+body {
+	font-family: arial;
+	font-size: 16pt;
+}
+
+div.split-pane-frame {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	padding: 5px;
+	background: silver;
+}
+
+div.decoration {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	border: 1px solid gray;
+	background: white;
+	width: 100%;
+	height: 100%;
+	padding: 0 1em;
+	overflow: auto;
+}
