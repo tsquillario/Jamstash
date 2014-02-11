@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Frames</title>
+<link rel="stylesheet" href="../split-pane.css" />
+<!-- The style sheet below is not part of the split-pane plugin. Feel free to use it, or style things your own way. -->
+<link rel="stylesheet" href="pretty-split-pane.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="../split-pane.js"></script>
+
+<style type="text/css">
+
+	html, body {
+		height: 100%;
+		min-height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	#top-component {
+		height: 10em;
+		min-height: 5em;
+	}
+
+	#my-divider {
+		top: 10em;
+		height: 5px;
+	}
+
+	#bottom-component {
+		top: 10em;
+		min-height: 8em;
+		margin-top: 5px;
+	}
+	
+</style>
+
+<script>
+	$(function() {
+		$('div.split-pane').splitPane();
+	});
+</script>
+
+<div class="split-pane-frame"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+	<div class="split-pane fixed-top">
+		<div class="split-pane-component" id="top-component">
+			<div class="decoration"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+				<p>
+					This split pane component is fixed: when re-sizing the browser window, it will
+					keep the same height.
+				</p>
+				<p>
+					You can, however, re-size this component by dragging the divider, and it will adjust if
+					the bottom component reaches it's <code>min-height</code> (<code>8em</code> in this example).
+				</p>
+			</div>
+		</div>
+		<div class="split-pane-divider" id="my-divider"></div>
+		<div class="split-pane-component" id="bottom-component">
+			<div class="decoration"><!-- This div is added for styling purposes only. It's not part of the split-pane plugin. -->
+				<p>This split pane component is dynamic: when re-sizing the browser window, height will adjust.</p>
+			</div>
+		</div>
+	</div>
+</div>

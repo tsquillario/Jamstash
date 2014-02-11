@@ -1,0 +1,35 @@
+{
+    "name": "base64",
+    "title": "jQuery Base64",
+    "description": "Makes Base64 en & -decoding simpler as it is.",
+    "keywords": [
+        "base",
+        "base64",
+        "encode",
+        "encoding",
+        "decode",
+        "decoding",
+        "cypher",
+        "cipher",
+        "yckart",
+        "yannick",
+        "albert"
+    ],
+    "version": "0.0.2",
+    "author": {
+        "name": "Yannick Albert",
+        "email": "mail@yckart.com",
+        "url": "https://github.com/yckart"
+    },
+    "licenses": [{
+        "type": "MIT",
+        "url": "http://yckart.com/mit/"
+    }],
+    "homepage": "http://yckart.github.com/jquery.base64.js",
+    "demo": "http://yckart.github.com/jquery.base64.js",
+    "docs": "https://github.com/yckart/jquery.base64.js",
+    "bugs": "https://github.com/yckart/jquery.base64.js/issues",
+    "dependencies": {
+        "jquery": ">=1.4"
+    }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "split-pane",
+  "homepage": "https://github.com/shagstrom/split-pane",
+  "_release": "e19b5d27fb",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "e19b5d27fb010444835dea393234ce4c60be6322"
+  },
+  "_source": "git://github.com/shagstrom/split-pane.git",
+  "_target": "*",
+  "_originalSource": "shagstrom/split-pane",
+  "_direct": true
+}
