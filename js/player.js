@@ -1,36 +1,31 @@
-﻿JamStash.service('player', function($rootScope, $window, utils, globals, model, notifications) {
+﻿JamStash.service('player', function ($rootScope, $window, utils, globals, model, notifications) {
     var player1 = '#playdeck_1';
     var player2 = '#playdeck_2';
     var scrobbled = false;
     var timerid = 0;
 
-    $rootScope.defaultPlay = function(data, event) {
+    $rootScope.defaultPlay = function (data, event) {
         if (typeof $(player1).data("jPlayer") == 'undefined') {
             $rootScope.nextTrack();
         }
-    };
-
-    $rootScope.nextTrack = function() {
+    }
+    $rootScope.nextTrack = function () {
         var next = getNextSong();
         if (next) {
             $rootScope.playSong(false, next);
         }
         //$(player1).jPlayer("stop");
         //$(player2).jPlayer("play");
-    };
-
-    $rootScope.previousTrack = function() {
+    }
+    $rootScope.previousTrack = function () {
         var next = getNextSong(true);
         if (next) {
             $rootScope.playSong(false, next);
         }
-    };
-
-    getNextSong = function(previous) {
+    }
+    getNextSong = function (previous) {
         var song;
-        if (globals.settings.Debug) {
-            console.log('Getting Next Song > ' + 'Queue length: ' + $rootScope.queue.length);
-        }
+        if (globals.settings.Debug) { console.log('Getting Next Song > ' + 'Queue length: ' + $rootScope.queue.length); }
         if ($rootScope.queue.length > 0) {
             angular.forEach($rootScope.queue, function(item, key) {
                 if (item.playing === true) {
@@ -45,9 +40,7 @@
                 next = $rootScope.queue[index + 1];
             }
             if (typeof next != 'undefined') {
-                if (globals.settings.Debug) {
-                    console.log('Next Song: ' + next.id);
-                }
+                if (globals.settings.Debug) { console.log('Next Song: ' + next.id); }
                 return next;
             } else {
                 return false;
@@ -55,26 +48,24 @@
         } else {
             return false;
         }
-    };
-
-    this.startSaveTrackPosition = function() {
+    }
+    this.startSaveTrackPosition = function () {
         if (globals.settings.SaveTrackPosition) {
-            if (timerid !== 0) {
+            if (timerid != 0) {
                 clearInterval(timerid);
             }
-            timerid = $window.setInterval(function() {
+            timerid = $window.setInterval(function () {
                 if (globals.settings.SaveTrackPosition) {
-                    saveTrackPosition();
+                    this.saveTrackPosition();
                 }
             }, 30000);
         }
-    };
-
-    saveTrackPosition = function() {
+    }
+    this.saveTrackPosition = function () {
         //var audio = typeof $(player1).data("jPlayer") != 'undefined' ? true : false;
         var audio = $(player1).data("jPlayer");
         if (typeof audio != 'undefined') {
-            if (audio.status.currentTime > 0 && audio.status.paused === false) {
+            if (audio.status.currentTime > 0 && audio.status.paused == false) {
                 var song;
                 angular.forEach($rootScope.queue, function(item, key) {
                     if (item.playing === true) {
@@ -83,7 +74,7 @@
                 });
                 if (song) {
                     var position = audio.status.currentTime;
-                    if (position !== null) {
+                    if (position != null) {
                         $('#action_SaveProgress').fadeTo("slow", 0).delay(500).fadeTo("slow", 1).delay(500).fadeTo("slow", 0).delay(500).fadeTo("slow", 1);
                         song.position = position;
                         // Save Queue
@@ -91,17 +82,13 @@
                             try {
                                 var songStr = angular.toJson(song);
                                 localStorage.setItem('CurrentSong', songStr);
-                                if (globals.settings.Debug) {
-                                    console.log('Saving Current Position: ' + songStr);
-                                }
+                                if (globals.settings.Debug) { console.log('Saving Current Position: ' + songStr); }
                                 var html = localStorage.getItem('CurrentQueue');
                                 if ($rootScope.queue.length > 0) {
                                     var current = $rootScope.queue;
                                     if (current != html) {
                                         localStorage.setItem('CurrentQueue', angular.toJson(current));
-                                        if (globals.settings.Debug) {
-                                            console.log('Saving Queue: ' + current.length + ' characters');
-                                        }
+                                        if (globals.settings.Debug) { console.log('Saving Queue: ' + current.length + ' characters'); }
                                     }
                                 }
                             } catch (e) {
@@ -110,17 +97,16 @@
                                 }
                             }
                         } else {
-                            if (globals.settings.Debug) {
-                                console.log('HTML5::loadStorage not supported on your browser');
-                            }
+                            if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser'); }
                         }
                     }
                 }
             }
+        } else {
+            if (globals.settings.Debug) { console.log('Saving Queue: No Audio Loaded'); }
         }
-    };
-
-    this.loadTrackPosition = function() {
+    }
+    this.loadTrackPosition = function () {
         if (utils.browserStorageCheck()) {
             // Load Saved Song
             var song = angular.fromJson(localStorage.getItem('CurrentSong'));
@@ -134,38 +120,26 @@
                     if ($rootScope.queue.length > 0) {
                         notifications.updateMessage($rootScope.queue.length + ' Saved Song(s)', true);
                     }
-                    if (globals.settings.Debug) {
-                        console.log('Play Queue Loaded From localStorage: ' + $rootScope.queue.length + ' song(s)');
-                    }
+                    if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + $rootScope.queue.length + ' song(s)'); }
                 }
             }
         } else {
-            if (globals.settings.Debug) {
-                console.log('HTML5::loadStorage not supported on your browser');
-            }
+            if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser'); }
         }
-    };
-
-    deleteCurrentQueue = function(data) {
+    }
+    this.deleteCurrentQueue = function (data) {
         if (utils.browserStorageCheck()) {
             localStorage.removeItem('CurrentQueue');
             utils.setValue('CurrentSong', null, false);
-            if (globals.settings.Debug) {
-                console.log('Removing Play Queue');
-            }
+            if (globals.settings.Debug) { console.log('Removing Play Queue'); }
         } else {
-            if (globals.settings.Debug) {
-                console.log('HTML5::loadStorage not supported on your browser, ' + html.length + ' characters');
-            }
+            if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser, ' + html.length + ' characters'); }
         }
-    };
-
-    $rootScope.playSong = function(loadonly, data) {
-        if (globals.settings.Debug) {
-            console.log('Play: ' + JSON.stringify(data, null, 2));
-        }
+    }
+    $rootScope.playSong = function (loadonly, data) {
+        if (globals.settings.Debug) { console.log('Play: ' + JSON.stringify(data, null, 2)); }
         angular.forEach($rootScope.queue, function(item, key) {
-            item.playing = false;
+            item.playing = false;        
         });
         data.playing = true;
         data.selected = false;
@@ -194,8 +168,7 @@
                 artist: artist,
                 favorite: false,
                 albumArt: coverartfull
-            };
-
+            }
             if ($rootScope.unity) {
                 $rootScope.unity.sendState(playerState);
             }
@@ -206,13 +179,13 @@
             $rootScope.showQueue();
         }
         var spechtml = '';
-        data = $(player1).data().jPlayer;
+        var data = $(player1).data().jPlayer;
         for (i = 0; i < data.solutions.length; i++) {
             var solution = data.solutions[i];
             if (data[solution].used) {
                 spechtml += "<strong class=\"codesyntax\">" + solution + "</strong> is";
                 spechtml += " currently being used with<strong>";
-                for (var format in data[solution].support) {
+                for (format in data[solution].support) {
                     if (data[solution].support[format]) {
                         spechtml += " <strong class=\"codesyntax\">" + format + "</strong>";
                     }
@@ -227,18 +200,17 @@
             notifications.showNotification(coverartthumb, utils.toHTML.un(title), utils.toHTML.un(artist + ' - ' + album), 'text', '#NextTrack');
         }
         if (globals.settings.ScrollTitle) {
-            title = utils.toHTML.un(artist) + ' - ' + utils.toHTML.un(title);
+            var title = utils.toHTML.un(artist) + ' - ' + utils.toHTML.un(title);
             utils.scrollTitle(title);
         } else {
             utils.setTitle(utils.toHTML.un(artist) + ' - ' + utils.toHTML.un(title));
         }
         //utils.safeApply();
-        if (!$rootScope.$root.$$phase) {
+        if(!$rootScope.$root.$$phase) {
             $rootScope.$apply();
         }
     };
-
-    $rootScope.loadjPlayer = function(el, url, suffix, loadonly, position) {
+    $rootScope.loadjPlayer = function (el, url, suffix, loadonly, position) {
         // jPlayer Setup
         var volume = 1;
         if (utils.getValue('Volume')) {
@@ -251,7 +223,7 @@
         //var salt = Math.floor(Math.random() * 100000);
         //url += '&salt=' + salt;
         $(el).jPlayer("destroy");
-        $.jPlayer.timeFormat.showHour = true;
+        $.jPlayer.timeFormat.showHour = true; 
         $(el).jPlayer({
             swfPath: "js/plugins/jplayer",
             wmode: "window",
@@ -272,7 +244,7 @@
                 currentTime: "#played",
                 duration: "#duration"
             },
-            ready: function() {
+            ready: function () {
                 console.log("File Suffix: " + suffix);
                 if (suffix == 'oga') {
                     $(this).jPlayer("setMedia", {
@@ -299,14 +271,12 @@
                     console.log('[jPlayer Options Info]');
                     utils.logObjectProperties($(el).data("jPlayer").options);
                 }
-            },
+		    },
             timeupdate: function(event) {
                 // Scrobble song once percentage is reached
                 var p = event.jPlayer.status.currentPercentAbsolute;
                 if (!scrobbled && p > 30) {
-                    if (globals.settings.Debug) {
-                        console.log('LAST.FM SCROBBLE - Percent Played: ' + p);
-                    }
+                    if (globals.settings.Debug) { console.log('LAST.FM SCROBBLE - Percent Played: ' + p); }
                     scrobbleSong(true);
                 }
             },
@@ -320,7 +290,7 @@
                     if (!getNextSong()) { // Action if we are at the last song in queue
                         if (globals.settings.LoopQueue) { // Loop to first track in queue if enabled
                             var next = $rootScope.queue[0];
-                            $rootScope.playSong(false, next);
+                            $rootScope.playSong(false, next);                
                         } else if (globals.settings.AutoPlay) { // Load more tracks if enabled
                             $rootScope.getRandomSongs('play', '', '');
                             notifications.updateMessage('Auto Play Activated...', true);
@@ -333,43 +303,38 @@
             error: function(event) {
                 var time = $(player1).data("jPlayer").status.currentTime;
                 $(player1).jPlayer("play", time);
-                if (globals.settings.Debug) {
-                    console.log("Error Type: " + event.jPlayer.error.type);
-                    console.log("Error Context: " + event.jPlayer.error.context);
-                    console.log("Error Message: " + event.jPlayer.error.message);
+                if (globals.settings.Debug) { 
+                    console.log("Error Type: " + event.jPlayer.error.type); 
+                    console.log("Error Context: " + event.jPlayer.error.context); 
+                    console.log("Error Message: " + event.jPlayer.error.message); 
                     console.log("Stream interrupted, retrying from position: " + time);
                 }
             }
         });
         return;
-    };
-
-    this.playPauseSong = function() {
+    }
+    this.playPauseSong = function () {
         if (typeof $(player1).data("jPlayer") != 'undefined') {
             if ($(player1).data("jPlayer").status.paused) {
                 $(player1).jPlayer("play");
             } else {
                 $(player1).jPlayer("pause");
             }
-        }
-    };
-
-    playVideo = function(id, bitrate) {
+        } 
+    }
+    playVideo = function (id, bitrate) {
         var w, h;
         bitrate = parseInt(bitrate);
-        if (bitrate <= 600) {
-            w = 320;
-            h = 240;
-        } else if (bitrate <= 1000) {
-            w = 480;
-            h = 360;
-        } else {
-            w = 640;
-            h = 480;
-        }
+        if (bitrate <= 600) { 
+            w = 320; h = 240; 
+        } else if (bitrate <= 1000) { 
+            w = 480; h = 360; 
+        } else { 
+            w = 640; h = 480; 
+        } 
         //$("#jPlayerSelector").jPlayer("option", "fullScreen", true);
         $("#videodeck").jPlayer({
-            ready: function() {
+		    ready: function () {
                 /*
                 $.fancybox({
                     autoSize: false,
@@ -378,44 +343,41 @@
                     content: $('#videodeck')
                 });
                 */
-                $(this).jPlayer("setMedia", {
-                    m4v: 'https://&id=' + id + '&salt=83132'
-                }).jPlayer("play");
+			    $(this).jPlayer("setMedia", {
+				    m4v: 'https://&id=' + id + '&salt=83132'
+			    }).jPlayer("play");
                 $('#videooverlay').show();
-            },
-            swfPath: "js/jplayer",
-            solution: "html, flash",
-            supplied: "m4v"
-        });
-    };
-
-    scrobbleSong = function(submission) {
+		    },
+		    swfPath: "js/jplayer",
+		    solution: "html, flash",
+		    supplied: "m4v"
+	    });
+    }
+    
+    scrobbleSong = function (submission) {
         if ($rootScope.loggedIn && submission) {
             var id = $rootScope.playingSong.id;
-            if (globals.settings.Debug) {
-                console.log('Scrobble Song: ' + id);
-            }
+            if (globals.settings.Debug) { console.log('Scrobble Song: ' + id); }
             $.ajax({
                 url: globals.BaseURL() + '/scrobble.view?' + globals.BaseParams() + '&id=' + id + "&submission=" + submission,
                 method: 'GET',
                 dataType: globals.settings.Protocol,
                 timeout: 10000,
-                success: function() {
+                success: function () {
                     scrobbled = true;
                 }
             });
         }
-    };
-
-    rateSong = function(songid, rating) {
+    }
+    rateSong = function (songid, rating) {
         $.ajax({
             url: baseURL + '/setRating.view?' + baseParams + '&id=' + songid + "&rating=" + rating,
             method: 'GET',
             dataType: protocol,
             timeout: 10000,
-            success: function() {
+            success: function () {
                 updateMessage('Rating Updated!', true);
             }
         });
-    };
+    }
 });

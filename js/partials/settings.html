@@ -86,10 +86,6 @@
                         <div class="clear"></div>
                         <select id="Timeout" name="Timeout" class="" ng-model="settings.Timeout" ng-options="o.id as o.name for o in Timeouts" title="AJAX Request Timeout (Seconds)"></select>
                         <div class="clear"></div>
-                        <label for="NotificationTimeout">Notification Timeout</label>
-                        <div class="clear"></div>
-                        <select id="NotificationTimeout" name="NotificationTimeout" class="" ng-model="settings.NotificationTimeout" ng-options="o.id as o.name for o in Timeouts" title="Notification Timeout (Seconds)"></select>
-                        <div class="clear"></div>
                         <label for="Protocol">Protocol</label><br />
                         <select id="Protocol" name="Protocol" class="" ng-model="settings.Protocol" ng-options="o for o in Protocols" title="Enable Cross-Domain AJAX Requests (Use if hosted in a different domain than Subsonic)"></select>
                         <!--

@@ -527,6 +527,7 @@ ul.mainlist li.item a.add:hover
     margin: 0 2px 0 6px;
     text-decoration: none;
     color: #829FC0;
+    font-size: 14px;
 }
 #BreadCrumbs a:hover
 {

@@ -2,6 +2,7 @@
     {
         "date": "2/7/2014", "version": "3.2.2",
         "changes": [
+        { "text": "- Bug fixes!" },
         { "text": "- Legacy version of <a href=\"http://jamstash.com/mini\" target=\"_blank\">MiniSub</a>" }
         ]
     },
