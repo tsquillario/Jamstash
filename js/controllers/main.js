@@ -3,23 +3,26 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
     $rootScope.settings = globals.settings;
     $rootScope.song = [];
     $rootScope.queue = [];
-    $rootScope.playingSong;
+    $rootScope.playingSong = null;
     $rootScope.MusicFolders = [];
     $rootScope.Genres = [];
     $rootScope.selectedPlaylist = "";
     $rootScope.selectedAutoPlaylist = "";
     $rootScope.SelectedMusicFolder = "";
-    $rootScope.unity;
+    $rootScope.unity = null;
     $rootScope.loggedIn = function () {
-        if (globals.settings.Server != '' && globals.settings.Username != '' && globals.settings.Password != '') {
+        if (globals.settings.Server !== '' && globals.settings.Username !== '' && globals.settings.Password !== '') {
             return true;
         } else {
             return false;
         }
-    }
+    };
     $rootScope.totalDisplayed = 50;
     $rootScope.loadMore = function () {
         $scope.totalDisplayed += 50;
+    };
+    $rootScope.go = function (path) {
+        $location.path(path);
     };
     /*
     $scope.playSong = function (loadonly, data) { 
@@ -46,7 +49,7 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
         if (utils.getValue("SavedCollections")) { globals.SavedCollections = utils.getValue("SavedCollections").split(","); }
         if (utils.getValue("SavedGenres")) { globals.SavedGenres = utils.getValue("SavedGenres").split(","); }
         if (globals.settings.Debug) { console.log('Settings: ' + JSON.stringify(globals.settings, null, 2)); }
-    }
+    };
     $scope.toggleSetting = function (setting) {
         var id = setting;
         if (globals.settings[id]) {
@@ -55,7 +58,7 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
             globals.settings[id] = true;
         }
         notifications.updateMessage(setting + ' : ' + globals.settings[id], true);
-    }
+    };
 
     $.ajaxSetup({
         'beforeSend': function () {
@@ -111,19 +114,19 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
                     submenu.css({ "left": (off.left - margin) + "px", "top": (off.top) + "px" }).fadeIn(400);
                     break;
             }
-            setTimeout(function () { if (submenu_active == false) $('div.submenu').stop().fadeOut(); }, 10000);
+            setTimeout(function () { if (submenu_active === false) $('div.submenu').stop().fadeOut(); }, 10000);
         }
-    }
+    };
     $rootScope.showQueue = function () {
         var submenu = $('#QueuePreview');
         submenu.fadeIn(400);
         var timeout = globals.settings.Timeout;
         setTimeout(function () { submenu.fadeOut(); }, timeout);
-    }
+    };
     $rootScope.hideQueue = function () {
         var submenu = $('#QueuePreview');
         submenu.fadeOut();
-    }
+    };
     $scope.toggleQueue = function () {
         var submenu = $('#QueuePreview');
         if (submenu.css('display') == 'none') {
@@ -131,7 +134,7 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
         } else {
             $rootScope.hideQueue();
         }
-    }
+    };
     $("a.coverartfancy").fancybox({
         beforeShow: function () {
             //this.title = $('#songdetails_artist').html();
@@ -209,18 +212,18 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
                 return "You're about to end your session, are you sure?";
             }
         }
-    }
+    };
 
     $scope.dragStart = function (e, ui) {
         ui.item.data('start', ui.item.index());
-    }
+    };
     $scope.dragEnd = function (e, ui) {
         var start = ui.item.data('start'),
             end = ui.item.index();
         $rootScope.queue.splice(end, 0,
             $rootScope.queue.splice(start, 1)[0]);
         $scope.$apply();
-    }
+    };
     $document.keydown(function (e) {
         $scope.scrollToIndex(e);
     });
@@ -265,8 +268,8 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
             }
             if (unicode == 189) { // dash - volume down
                 var volume = utils.getValue('Volume') ? parseFloat(utils.getValue('Volume')) : 1;
-                if (volume <= 1 && volume > 0 && source == '') {
-                    volume += -.1;
+                if (volume <= 1 && volume > 0 && source === '') {
+                    volume += -0.1;
                     $(player1).jPlayer({
                         volume: volume
                     });
@@ -276,8 +279,8 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
             }
             if (unicode == 187) { // equals - volume up
                 var volume = utils.getValue('Volume') ? parseFloat(utils.getValue('Volume')) : 1;
-                if (volume < 1 && volume >= 0 && source == '') {
-                    volume += .1;
+                if (volume < 1 && volume >= 0 && source ==- '') {
+                    volume += 0.1;
                     $(player1).jPlayer({
                         volume: volume
                     });
@@ -296,37 +299,37 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
     };
     $scope.scrollToTop = function () {
         $('#Artists').stop().scrollTo('#auto', 400);
-    }
+    };
     $scope.selectAll = function () {
         angular.forEach($rootScope.song, function (item, key) {
             $scope.selectedSongs.push(item);
             item.selected = true;
         });
-    }
+    };
     $scope.playAll = function () {
         $rootScope.queue = [];
         $scope.selectAll();
         $scope.addSongsToQueue();
         var next = $rootScope.queue[0];
         $rootScope.playSong(false, next);
-    }
+    };
     $scope.selectNone = function () {
         angular.forEach($rootScope.song, function (item, key) {
             $scope.selectedSongs = [];
             item.selected = false;
         });
-    }
+    };
     $scope.addSongsToQueue = function () {
         if ($scope.selectedSongs.length !== 0) {
             angular.forEach($scope.selectedSongs, function (item, key) {
                 $scope.queue.push(item);
                 item.selected = false;
             });
-            $rootScope.showQueue();
+            //$rootScope.showQueue();
             notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
             $scope.selectedSongs.length = 0;
         }
-    }
+    };
     $scope.isActive = function (route) {
         return route === $location.path();
     };
@@ -345,6 +348,10 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
                         folders[0] = data["subsonic-response"].musicFolders.musicFolder;
                     }
 
+                    folders.unshift({
+                        "id": -1,
+                        "name": "All Folders"
+                    });
                     $rootScope.MusicFolders = folders;
                     if (utils.getValue('MusicFolders')) {
                         var folder = angular.fromJson(utils.getValue('MusicFolders'));
@@ -356,12 +363,14 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
                             i++;
                         });
                         $rootScope.SelectedMusicFolder = $rootScope.MusicFolders[index];
+                    } else {
+                        $rootScope.SelectedMusicFolder = $rootScope.MusicFolders[0];
                     }
                     $scope.$apply();
                 }
             }
         });
-    }
+    };
     $scope.getGenres = function () {
         var genres = 'Acid Rock,Acoustic,Alt Country,Alt/Indie,Alternative & Punk,Alternative Metal,Alternative,AlternRock,Awesome,Bluegrass,Blues,Blues-Rock,Classic Hard Rock,Classic Rock,Comedy,Country,Country-Rock,Dance,Dance-Rock,Deep Funk,Easy Listening,Electronic,Electronica,Electronica/Dance,Folk,Folk/Rock,Funk,Grunge,Hard Rock,Heavy Metal,Holiday,House,Improg,Indie Rock,Indie,International,Irish,Jam Band,Jam,Jazz Fusion,Jazz,Latin,Live Albums,Metal,Music,Oldies,Other,Pop,Pop/Rock,Post Rock,Progressive Rock,Psychedelic Rock,Psychedelic,Punk,R&B,Rap & Hip-Hop,Reggae,Rock & Roll,Rock,Rock/Pop,Roots,Ska,Soft Rock,Soul,Southern Rock,Thrash Metal,Unknown,Vocal,World';
         $rootScope.Genres = genres.split(',');
@@ -386,7 +395,7 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
         }
         });
         */
-    }
+    };
     $scope.download = function (id) {
         $.ajax({
             url: globals.BaseURL() + '/getUser.view?' + globals.BaseParams() + '&username=' + globals.settings.Username,
@@ -395,9 +404,9 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
             timeout: globals.settings.Timeout,
             success: function (data) {
                 if (typeof data["subsonic-response"].error != 'undefined') {
-                    notifications.updateMessage('Error: ' + data["subsonic-response"].error.message, true);                    
+                    notifications.updateMessage('Error: ' + data["subsonic-response"].error.message, true);
                 } else {
-                    if (data["subsonic-response"].user.downloadRole == true) {
+                    if (data["subsonic-response"].user.downloadRole === true) {
                         $window.location.href = globals.BaseURL() + '/download.view?' + globals.BaseParams() + '&id=' + id;
                     } else {
                         notifications.updateMessage('You do not have permission to Download', true);
@@ -405,7 +414,7 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
                 }
             }
         });
-    }
+    };
     $scope.ping = function () {
         $.ajax({
             url: globals.BaseURL() + '/ping.view?' + globals.BaseParams(),
@@ -425,10 +434,10 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
                 notifications.updateMessage('Unable to connect to Subsonic server');
             }
         });
-    }
+    };
     $scope.addSongToQueue = function (data) {
         $rootScope.queue.push(data);
-    }
+    };
     $scope.queueRemoveSelected = function (data, event) {
         angular.forEach($scope.selectedSongs, function (item, key) {
             var index = $rootScope.queue.indexOf(item);
@@ -436,11 +445,11 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
                 $rootScope.queue.splice(index, 1);
             }
         });
-    }
+    };
     $scope.queueEmpty = function () {
         //self.selectedSongs([]);
         $rootScope.queue = [];
-    }
+    };
     $scope.queueTotal = function () {
         var total = 0;
         ko.utils.arrayForEach(self.queue(), function (item) {
@@ -451,10 +460,10 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
         } else {
             return '0 song(s), 00:00:00 total time';
         }
-    }
+    };
     $scope.queueShuffle = function () {
-        $rootScope.queue.sort(function () { return 0.5 - Math.random() });
-    }
+        $rootScope.queue.sort(function () { return 0.5 - Math.random(); });
+    };
     $scope.selectedSongs = [];
     $scope.selectSong = function (data) {
         var i = $scope.selectedSongs.indexOf(data);
@@ -466,24 +475,24 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
             data.selected = true;
         }
         //$scope.$apply();
-    }
+    };
     $rootScope.getRandomSongs = function (action, genre, folder) {
         if (globals.settings.Debug) { console.log('action:' + action + ', genre:' + genre + ', folder:' + folder); }
         var size = globals.settings.AutoPlaylistSize;
         $rootScope.selectedPlaylist = null;
         if (typeof folder == 'number') {
             $rootScope.selectedAutoPlaylist = folder;
-        } else if (genre != '') {
+        } else if (genre !== '') {
             $rootScope.selectedAutoPlaylist = genre;
         } else {
             $rootScope.selectedAutoPlaylist = 'random';
         }
         var genreParams = '';
-        if (genre != '' && genre != 'Random') {
+        if (genre !== '' && genre != 'Random') {
             genreParams = '&genre=' + genre;
         }
         folderParams = '';
-        if (typeof folder == 'number' && folder != '' && folder != 'all') {
+        if (typeof folder == 'number' && folder !== '' && folder != 'all') {
             //alert(folder);
             folderParams = '&musicFolderId=' + folder;
         } else if (typeof $rootScope.SelectedMusicFolder.id != 'undefined') {
@@ -508,7 +517,7 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
                             $rootScope.queue.push(utils.mapSong(item));
                         });
                         $scope.$apply();
-                        $rootScope.showQueue();
+                        //$rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                     } else if (action == 'play') {
                         $rootScope.queue = [];
@@ -519,7 +528,7 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
                         $scope.$apply(function () {
                             $rootScope.playSong(false, next);
                         });
-                        $rootScope.showQueue();
+                        //$rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                     } else {
                         $rootScope.song = [];
@@ -531,7 +540,7 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
                 }
             }
         });
-    }
+    };
     $scope.updateFavorite = function (item) {
         var id = item.id;
         var starred = item.starred;
@@ -552,10 +561,10 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
                 notifications.updateMessage('Favorite Updated!', true);
             }
         });
-    }
+    };
     $scope.toTrusted = function (html) {
         return $sce.trustAsHtml(html);
-    }
+    };
 
     /* Launch on Startup */
     $scope.loadSettings();

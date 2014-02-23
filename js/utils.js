@@ -24,7 +24,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
         } catch (e) {
             if (globals.settings.Debug) { console.log(e); }
         }
-    }
+    };
     this.getValue = function (value) {
         /*
         if ($cookieStore.get(value)) {
@@ -35,7 +35,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
         */
         try {
             var item = localStorage.getItem(value);
-            if (item != '' && typeof item != 'undefined') {
+            if (item !== '' && typeof item != 'undefined') {
                 return JSON.parse(item);
             } else {
                 return false;
@@ -43,7 +43,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
         } catch (e) {
             if (globals.settings.Debug) { console.log(e); }
         }
-    }
+    };
     this.mapSong = function (data) {
         var song = data;
         var url, title, track, rating, starred, contenttype, suffix, description;
@@ -66,7 +66,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
         var salt = Math.floor(Math.random() * 100000);
         url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.id + '&salt=' + salt;
         return new model.Song(song.id, song.parent, track, title, song.artist, song.artistId, song.album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
-    }
+    };
     this.confirmDelete = function (text) {
         var question = confirm(text);
         if (question) {
@@ -75,19 +75,19 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
         else {
             return false;
         }
-    }
+    };
     this.makeBaseAuth = function (user, password) {
         var tok = user + ':' + password;
         var hash = $.base64Encode(tok);
         return "Basic " + hash;
-    }
+    };
     this.HexEncode = function (n) {
         for (var u = "0123456789abcdef", i = [], r = [], t = 0; t < 256; t++)
             i[t] = u.charAt(t >> 4) + u.charAt(t & 15);
         for (t = 0; t < n.length; t++)
             r[t] = i[n.charCodeAt(t)];
-        return r.join("")
-    }
+        return r.join("");
+    };
     this.switchTheme = function (theme) {
         switch (theme.toLowerCase()) {
             case 'dark':
@@ -99,7 +99,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
             default:
                 break;
         }
-    }
+    };
     // HTML5
     this.browserStorageCheck = function () {
         if (typeof (localStorage) == 'undefined') {
@@ -107,7 +107,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
         } else {
             return true;
         }
-    }
+    };
     this.timeToSeconds = function (time) {
         var a = time.split(':'); // split it at the colons
         var seconds;
@@ -125,7 +125,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
                 break;
         }
         return seconds;
-    }
+    };
     this.secondsToTime = function (secs) {
         // secs = 4729
         var times = new Array(3600, 60, 1);
@@ -142,7 +142,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
             else if (tmp < 10) {
                 tmp = '0' + tmp;
             }
-            if (i == 0 && tmp == '00') {
+            if (i === 0 && tmp == '00') {
             } else {
                 time += tmp;
                 if (i < 2) {
@@ -152,13 +152,13 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
             secs = secs % times[i];
         }
         return time;
-    }
+    };
     this.arrayObjectIndexOf = function (myArray, searchTerm, property) {
         for (var i = 0, len = myArray.length; i < len; i++) {
             if (myArray[i][property] === searchTerm) return i;
         }
         return -1;
-    }
+    };
     this.logObjectProperties = function (obj) {
         $.each(obj, function (key, value) {
             var parent = key;
@@ -170,7 +170,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
                 console.log(key + ' : ' + value);
             }
         });
-    }
+    };
     this.clickButton = function (el) {
         var el = $(el);
         if (el) {
@@ -189,36 +189,37 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
                 }
             }
         }
-    }
+    };
     this.findKeyForCode = function (code) {
-        var map = { 'keymap': [
-	                { 'key': 'a', 'code': 65 },
-	                { 'key': 'b', 'code': 66 },
-	                { 'key': 'c', 'code': 67 },
-	                { 'key': 'd', 'code': 68 },
-	                { 'key': 'e', 'code': 69 },
-	                { 'key': 'f', 'code': 70 },
-	                { 'key': 'g', 'code': 71 },
-	                { 'key': 'h', 'code': 72 },
-	                { 'key': 'i', 'code': 73 },
-	                { 'key': 'j', 'code': 74 },
-	                { 'key': 'k', 'code': 75 },
-	                { 'key': 'l', 'code': 76 },
-	                { 'key': 'm', 'code': 77 },
-	                { 'key': 'n', 'code': 78 },
-	                { 'key': 'o', 'code': 79 },
-	                { 'key': 'p', 'code': 80 },
-	                { 'key': 'q', 'code': 81 },
-	                { 'key': 'r', 'code': 82 },
-	                { 'key': 's', 'code': 83 },
-	                { 'key': 't', 'code': 84 },
-	                { 'key': 'u', 'code': 85 },
-	                { 'key': 'v', 'code': 86 },
-	                { 'key': 'w', 'code': 87 },
-	                { 'key': 'x', 'code': 88 },
-	                { 'key': 'y', 'code': 89 },
-	                { 'key': 'z', 'code': 90 }
-                 ]
+        var map = {
+            'keymap': [
+            { 'key': 'a', 'code': 65 },
+            { 'key': 'b', 'code': 66 },
+            { 'key': 'c', 'code': 67 },
+            { 'key': 'd', 'code': 68 },
+            { 'key': 'e', 'code': 69 },
+            { 'key': 'f', 'code': 70 },
+            { 'key': 'g', 'code': 71 },
+            { 'key': 'h', 'code': 72 },
+            { 'key': 'i', 'code': 73 },
+            { 'key': 'j', 'code': 74 },
+            { 'key': 'k', 'code': 75 },
+            { 'key': 'l', 'code': 76 },
+            { 'key': 'm', 'code': 77 },
+            { 'key': 'n', 'code': 78 },
+            { 'key': 'o', 'code': 79 },
+            { 'key': 'p', 'code': 80 },
+            { 'key': 'q', 'code': 81 },
+            { 'key': 'r', 'code': 82 },
+            { 'key': 's', 'code': 83 },
+            { 'key': 't', 'code': 84 },
+            { 'key': 'u', 'code': 85 },
+            { 'key': 'v', 'code': 86 },
+            { 'key': 'w', 'code': 87 },
+            { 'key': 'x', 'code': 88 },
+            { 'key': 'y', 'code': 89 },
+            { 'key': 'z', 'code': 90 }
+            ]
         };
         var keyFound = 0;
         $.each(map.keymap, function (i, mapping) {
@@ -227,19 +228,19 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
             }
         });
         return keyFound;
-    }
+    };
     this.toHTML = {
         on: function (str) {
             var a = [],
         i = 0;
             for (; i < str.length; ) a[i] = str.charCodeAt(i++);
-            return "&#" + a.join(";&#") + ";"
+            return "&#" + a.join(";&#") + ";";
         },
         un: function (str) {
             return str.replace(/&#(x)?([^;]{1,5});?/g,
         function (a, b, c) {
-            return String.fromCharCode(parseInt(c, b ? 16 : 10))
-        })
+            return String.fromCharCode(parseInt(c, b ? 16 : 10));
+        });
         }
     };
     this.getParameterByName = function (name) {
@@ -247,21 +248,21 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
         var regexS = "[\\?&]" + name + "=([^&#]*)";
         var regex = new RegExp(regexS);
         var results = regex.exec(window.location.search);
-        if (results == null)
+        if (results === null)
             return "";
         else
             return decodeURIComponent(results[1].replace(/\+/g, " "));
-    }
+    };
     this.getPathFromUrl = function (url) {
         var strurl = url.toString();
         var u = strurl.substring(0, strurl.indexOf('?'));
-        return u
-    }
+        return u;
+    };
     this.setTitle = function (text) {
-        if (text != "") {
+        if (text !== "") {
             document.title = text;
         }
-    }
+    };
     var timer = 0;
     this.scrollTitle = function (text) {
         var shift = {
@@ -298,7 +299,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
         speed: 1200
         });
         */
-    }
+    };
     this.parseVersionString = function (str) {
         if (typeof (str) != 'string') { return false; }
         var x = str.split('.');
@@ -310,8 +311,8 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
             major: maj,
             minor: min,
             patch: pat
-        }
-    }
+        };
+    };
     this.checkVersion = function (runningVersion, minimumVersion) {
         if (runningVersion.major >= minimumVersion.major) {
             if (runningVersion.minor >= minimumVersion.minor) {
@@ -326,7 +327,7 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
         } else {
             return false;
         }
-    }
+    };
     this.checkVersionNewer = function (runningVersion, newVersion) {
         if (runningVersion.major < newVersion.major) {
             return true;
@@ -341,14 +342,14 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
                 }
             }
         }
-    }
+    };
     this.parseDate = function (date) {
         // input: "2012-09-23 20:00:00.0"
         var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         var parts = date.split(" ");
         var dateParts = parts[0].split("-");
         var month = parseInt(dateParts[1], 10) - 1;
-        var date = months[month] + " " + dateParts[2] + ", " + dateParts[0];
-        return date;
-    }
+        var newDate = months[month] + " " + dateParts[2] + ", " + dateParts[0];
+        return newDate;
+    };
 });

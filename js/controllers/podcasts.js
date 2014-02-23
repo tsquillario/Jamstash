@@ -4,7 +4,7 @@ function PodcastCtrl($scope, $rootScope, $location, utils, globals, model, notif
 
     $rootScope.song = [];
     $scope.podcasts = [];
-    $scope.selectedPodcast;
+    $scope.selectedPodcast = null;
     $scope.getPodcasts = function (refresh) {
         if (globals.settings.Debug) { console.log("LOAD PODCASTS"); }
         $.ajax({
@@ -25,7 +25,7 @@ function PodcastCtrl($scope, $rootScope, $location, utils, globals, model, notif
                 }
             }
         });
-    }
+    };
     $scope.getPodcast = function (id, action) {
         $scope.selectedPodcast = id;
         var map = function (data) {
@@ -46,7 +46,7 @@ function PodcastCtrl($scope, $rootScope, $location, utils, globals, model, notif
             var salt = Math.floor(Math.random() * 100000);
             url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.streamId + '&salt=' + salt;
             return new model.Song(song.streamId, song.parent, track, song.title, song.artist, song.artistId, song.album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
-        }
+        };
         $.ajax({
             url: globals.BaseURL() + '/getPodcasts.view?' + globals.BaseParams(),
             method: 'GET',
@@ -75,7 +75,7 @@ function PodcastCtrl($scope, $rootScope, $location, utils, globals, model, notif
                                 }
                             });
                             $scope.$apply();
-                            $rootScope.showQueue();
+                            //$rootScope.showQueue();
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else if (action == 'play') {
                             $rootScope.queue = [];
@@ -88,7 +88,7 @@ function PodcastCtrl($scope, $rootScope, $location, utils, globals, model, notif
                             $scope.$apply(function () {
                                 $rootScope.playSong(false, next);
                             });
-                            $rootScope.showQueue();
+                            //$rootScope.showQueue();
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else {
                             $scope.album = [];
@@ -104,7 +104,7 @@ function PodcastCtrl($scope, $rootScope, $location, utils, globals, model, notif
                 }
             }
         });
-    }
+    };
 
     /* Launch on Startup */
     $scope.getPodcasts();

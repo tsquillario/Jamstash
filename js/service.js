@@ -16,7 +16,7 @@
             else if (tmp < 10) {
                 tmp = '0' + tmp;
             }
-            if (i == 0 && tmp == '00') {
+            if (i === 0 && tmp == '00') {
             } else {
                 time += tmp;
                 if (i < 2) {
@@ -26,15 +26,15 @@
             secs = secs % times[i];
         }
         return time;
-    }
+    };
     this.Index = function (name, artist) {
         this.name = name;
         this.artist = artist;
-    }
+    };
     this.Artist = function (id, name) {
         this.id = id;
         this.name = name;
-    }
+    };
     this.Album = function (id, parentid, name, artist, artistId, coverartthumb, coverartfull, date, starred, description, url, type) {
         this.id = id;
         this.parentid = parentid;
@@ -48,7 +48,7 @@
         this.description = description;
         this.url = url;
         this.type = type;
-    }
+    };
     this.Song = function (id, parentid, track, name, artist, artistId, album, albumId, coverartthumb, coverartfull, duration, rating, starred, suffix, specs, url, position, description) {
         this.id = id;
         this.parentid = parentid;
@@ -61,7 +61,7 @@
         this.coverartthumb = coverartthumb;
         this.coverartfull = coverartfull;
         this.duration = duration;
-        this.time = duration == '' ? '00:00' : secondsToTime(duration);
+        this.time = duration === '' ? '00:00' : secondsToTime(duration);
         this.rating = rating;
         this.starred = starred;
         this.suffix = suffix;
@@ -72,14 +72,14 @@
         this.playing = false;
         this.description = description;
         this.displayName = this.name + " - " + this.album + " - " + this.artist;
-    }
+    };
 });
 
 JamStash.service('globals', function () {
     this.SearchTypes = [
         { id: "song", name: "Song" },
         { id: "album", name: "Album" },
-        { id: "artist", name: "Artist" },
+        { id: "artist", name: "Artist" }
     ];
     this.Layouts = [
         { id: "grid", name: "Grid" },
@@ -90,7 +90,7 @@ JamStash.service('globals', function () {
         { id: "artist", name: "Artist" },
         { id: "album", name: "Album" },
         { id: "track", name: "Track" },
-        { id: "createdate desc", name: "Date Added" },
+        { id: "createdate desc", name: "Date Added" }
     ];
     this.settings = {
         // Subsonic
@@ -156,16 +156,16 @@ JamStash.directive('layout', function () {
             };
 
             var layoutThreeCol = {
-                east__size: .42,
+                east__size: 0.42,
                 east__minSize: 400,
-                east__maxSize: .5, // 50% of layout width
+                east__maxSize: 0.5, // 50% of layout width
                 east__initClosed: false,
                 east__initHidden: false,
                 //center__size: 'auto',
-                center__minWidth: .38,
+                center__minWidth: 0.38,
                 center__initClosed: false,
                 center__initHidden: false,
-                west__size: .2,
+                west__size: 0.2,
                 west__minSize: 200,
                 west__initClosed: false,
                 west__initHidden: false,
@@ -175,12 +175,12 @@ JamStash.directive('layout', function () {
             };
 
             var layoutTwoCol = {
-                center__size: .8,
+                center__size: 0.8,
                 center__minSize: 400,
-                center__maxSize: .5, // 50% of layout width
+                center__maxSize: 0.5, // 50% of layout width
                 center__initClosed: false,
                 center__initHidden: false,
-                west__size: .2,
+                west__size: 0.2,
                 west__minSize: 200,
                 west__initClosed: false,
                 west__initHidden: false,
@@ -301,8 +301,8 @@ JamStash.directive('songpreview', function ($compile, subsonic) {
                 //compiled($scope);
             });
         }
-    }
-})
+    };
+});
 JamStash.directive('stopEvent', function () {
     return {
         restrict: 'A',
@@ -358,7 +358,7 @@ JamStash.factory('json', function ($http) { // Deferred loading
         getChangeLog: function (callback) {
             $http.get('js/json_changelog.js').success(callback);
         }
-    }
+    };
 });
 JamStash.factory('template', function ($http, $compile, $http, $templateCache) { // Deferred loading
     return {
@@ -372,7 +372,7 @@ JamStash.factory('template', function ($http, $compile, $http, $templateCache) {
             templateUrl = 'js/partials/songs.html';
             $http.get(templateUrl, { cache: $templateCache }).success(callback);
         }
-    }
+    };
 });
 JamStash.factory('subsonic', function ($http, globals, utils) {
     return {
@@ -392,36 +392,36 @@ JamStash.factory('subsonic', function ($http, globals, utils) {
             */
             $http.get(url).success(function (data) {
                 var items = [];
-                    var song = [];
-                    if (typeof data["subsonic-response"].directory.child != 'undefined') {
-                        if (data["subsonic-response"].directory.child.length > 0) {
-                            items = data["subsonic-response"].directory.child;
-                        } else {
-                            items[0] = data["subsonic-response"].directory.child;
-                        }
-                        angular.forEach(items, function (item, key) {
-                            if (!item.isDir) {
-                                song.push(utils.mapSong(item));
-                            }
-                        });
-                        callback(song);
+                var song = [];
+                if (typeof data["subsonic-response"].directory.child != 'undefined') {
+                    if (data["subsonic-response"].directory.child.length > 0) {
+                        items = data["subsonic-response"].directory.child;
+                    } else {
+                        items[0] = data["subsonic-response"].directory.child;
                     }
+                    angular.forEach(items, function (item, key) {
+                        if (!item.isDir) {
+                            song.push(utils.mapSong(item));
+                        }
+                    });
+                    callback(song);
+                }
             });
         }
-    }
+    };
 });
 
 /* Filters */
 JamStash.filter('capitalize', function () {
     return function (input, scope) {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
-    }
+    };
 });
 
 JamStash.service('notifications', function ($rootScope, globals) {
     var msgIndex = 1;
     this.updateMessage = function (msg, autohide) {
-        if (msg != '') {
+        if (msg !== '') {
             var id = msgIndex;
             $('#messages').append('<span id=\"msg_' + id + '\" class="message">' + msg + '</span>');
             $('#messages').fadeIn();
@@ -438,16 +438,16 @@ JamStash.service('notifications', function ($rootScope, globals) {
             });
             msgIndex++;
         }
-    }
+    };
     this.requestPermissionIfRequired = function () {
         if (!this.hasNotificationPermission() && (window.webkitNotifications)) {
             window.webkitNotifications.requestPermission();
         }
-    }
+    };
     this.hasNotificationPermission = function () {
-        return !!(window.webkitNotifications) && (window.webkitNotifications.checkPermission() == 0);
-    }
-    var notifications = new Array();
+        return !!(window.webkitNotifications) && (window.webkitNotifications.checkPermission() === 0);
+    };
+    var notifications = [];
     this.showNotification = function (pic, title, text, type, bind) {
         if (this.hasNotificationPermission()) {
             //closeAllNotifications()
@@ -457,12 +457,12 @@ JamStash.service('notifications', function ($rootScope, globals) {
             } else if (type == 'html') {
                 popup = window.webkitNotifications.createHTMLNotification(text);
             }
-            if (bind = '#NextTrack') {
+            if (bind == '#NextTrack') {
                 popup.addEventListener('click', function (bind) {
                     //$(bind).click();
                     $rootScope.nextTrack();
                     this.cancel();
-                })
+                });
             }
             notifications.push(popup);
             setTimeout(function (notWin) {
@@ -472,10 +472,10 @@ JamStash.service('notifications', function ($rootScope, globals) {
         } else {
             console.log("showNotification: No Permission");
         }
-    }
+    };
     this.closeAllNotifications = function () {
         for (notification in notifications) {
             notifications[notification].cancel();
         }
-    }
+    };
 });

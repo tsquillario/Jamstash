@@ -3,12 +3,11 @@
     var player2 = '#playdeck_2';
     var scrobbled = false;
     var timerid = 0;
-
     $rootScope.defaultPlay = function (data, event) {
         if (typeof $(player1).data("jPlayer") == 'undefined') {
             $rootScope.nextTrack();
         }
-    }
+    };
     $rootScope.nextTrack = function () {
         var next = getNextSong();
         if (next) {
@@ -16,18 +15,18 @@
         }
         //$(player1).jPlayer("stop");
         //$(player2).jPlayer("play");
-    }
+    };
     $rootScope.previousTrack = function () {
         var next = getNextSong(true);
         if (next) {
             $rootScope.playSong(false, next);
         }
-    }
+    };
     getNextSong = function (previous) {
         var song;
         if (globals.settings.Debug) { console.log('Getting Next Song > ' + 'Queue length: ' + $rootScope.queue.length); }
         if ($rootScope.queue.length > 0) {
-            angular.forEach($rootScope.queue, function(item, key) {
+            angular.forEach($rootScope.queue, function (item, key) {
                 if (item.playing === true) {
                     song = item;
                 }
@@ -48,10 +47,10 @@
         } else {
             return false;
         }
-    }
+    };
     this.startSaveTrackPosition = function () {
         if (globals.settings.SaveTrackPosition) {
-            if (timerid != 0) {
+            if (timerid !== 0) {
                 clearInterval(timerid);
             }
             timerid = $window.setInterval(function () {
@@ -60,21 +59,21 @@
                 }
             }, 30000);
         }
-    }
+    };
     this.saveTrackPosition = function () {
         //var audio = typeof $(player1).data("jPlayer") != 'undefined' ? true : false;
         var audio = $(player1).data("jPlayer");
         if (typeof audio != 'undefined') {
-            if (audio.status.currentTime > 0 && audio.status.paused == false) {
+            if (audio.status.currentTime > 0 && audio.status.paused === false) {
                 var song;
-                angular.forEach($rootScope.queue, function(item, key) {
+                angular.forEach($rootScope.queue, function (item, key) {
                     if (item.playing === true) {
                         song = item;
                     }
                 });
                 if (song) {
                     var position = audio.status.currentTime;
-                    if (position != null) {
+                    if (position !== null) {
                         $('#action_SaveProgress').fadeTo("slow", 0).delay(500).fadeTo("slow", 1).delay(500).fadeTo("slow", 0).delay(500).fadeTo("slow", 1);
                         song.position = position;
                         // Save Queue
@@ -105,7 +104,7 @@
         } else {
             if (globals.settings.Debug) { console.log('Saving Queue: No Audio Loaded'); }
         }
-    }
+    };
     this.loadTrackPosition = function () {
         if (utils.browserStorageCheck()) {
             // Load Saved Song
@@ -126,7 +125,7 @@
         } else {
             if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser'); }
         }
-    }
+    };
     this.deleteCurrentQueue = function (data) {
         if (utils.browserStorageCheck()) {
             localStorage.removeItem('CurrentQueue');
@@ -135,7 +134,7 @@
         } else {
             if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser, ' + html.length + ' characters'); }
         }
-    }
+    };
     $rootScope.playSong = function (loadonly, data) {
         if (globals.settings.Debug) { console.log('Play: ' + JSON.stringify(data, null, 2)); }
         angular.forEach($rootScope.queue, function(item, key) {
@@ -168,7 +167,7 @@
                 artist: artist,
                 favorite: false,
                 albumArt: coverartfull
-            }
+            };
             if ($rootScope.unity) {
                 $rootScope.unity.sendState(playerState);
             }
@@ -176,7 +175,7 @@
         }
         if ($rootScope.queue.length > 0) {
             $('#QueuePreview').stop().scrollTo('#' + id, 400);
-            $rootScope.showQueue();
+            //$rootScope.showQueue();
         }
         var spechtml = '';
         var data = $(player1).data().jPlayer;
@@ -185,11 +184,11 @@
             if (data[solution].used) {
                 spechtml += "<strong class=\"codesyntax\">" + solution + "</strong> is";
                 spechtml += " currently being used with<strong>";
-                for (format in data[solution].support) {
+                angular.forEach(data[solution].support, function (format) {
                     if (data[solution].support[format]) {
                         spechtml += " <strong class=\"codesyntax\">" + format + "</strong>";
                     }
-                }
+                });
                 spechtml += "</strong> support";
             }
         }
@@ -200,8 +199,7 @@
             notifications.showNotification(coverartthumb, utils.toHTML.un(title), utils.toHTML.un(artist + ' - ' + album), 'text', '#NextTrack');
         }
         if (globals.settings.ScrollTitle) {
-            var title = utils.toHTML.un(artist) + ' - ' + utils.toHTML.un(title);
-            utils.scrollTitle(title);
+            utils.scrollTitle(utils.toHTML.un(artist) + ' - ' + utils.toHTML.un(title));
         } else {
             utils.setTitle(utils.toHTML.un(artist) + ' - ' + utils.toHTML.un(title));
         }
@@ -223,7 +221,7 @@
         //var salt = Math.floor(Math.random() * 100000);
         //url += '&salt=' + salt;
         $(el).jPlayer("destroy");
-        $.jPlayer.timeFormat.showHour = true; 
+        $.jPlayer.timeFormat.showHour = true;
         $(el).jPlayer({
             swfPath: "js/plugins/jplayer",
             wmode: "window",
@@ -248,11 +246,11 @@
                 console.log("File Suffix: " + suffix);
                 if (suffix == 'oga') {
                     $(this).jPlayer("setMedia", {
-                        oga: url,
+                        oga: url
                     });
                 } else if (suffix == 'mp3') {
                     $(this).jPlayer("setMedia", {
-                        mp3: url,
+                        mp3: url
                     });
                 }
                 if (!loadonly) { // Start playing
@@ -271,8 +269,8 @@
                     console.log('[jPlayer Options Info]');
                     utils.logObjectProperties($(el).data("jPlayer").options);
                 }
-		    },
-            timeupdate: function(event) {
+            },
+            timeupdate: function (event) {
                 // Scrobble song once percentage is reached
                 var p = event.jPlayer.status.currentPercentAbsolute;
                 if (!scrobbled && p > 30) {
@@ -280,17 +278,17 @@
                     scrobbleSong(true);
                 }
             },
-            volumechange: function(event) {
+            volumechange: function (event) {
                 utils.setValue('Volume', event.jPlayer.options.volume, true);
             },
-            ended: function(event) {
+            ended: function (event) {
                 if (globals.settings.Repeat) { // Repeat current track if enabled
                     $(this).jPlayer("play");
                 } else {
                     if (!getNextSong()) { // Action if we are at the last song in queue
                         if (globals.settings.LoopQueue) { // Loop to first track in queue if enabled
                             var next = $rootScope.queue[0];
-                            $rootScope.playSong(false, next);                
+                            $rootScope.playSong(false, next);
                         } else if (globals.settings.AutoPlay) { // Load more tracks if enabled
                             $rootScope.getRandomSongs('play', '', '');
                             notifications.updateMessage('Auto Play Activated...', true);
@@ -300,19 +298,19 @@
                     }
                 }
             },
-            error: function(event) {
+            error: function (event) {
                 var time = $(player1).data("jPlayer").status.currentTime;
                 $(player1).jPlayer("play", time);
-                if (globals.settings.Debug) { 
-                    console.log("Error Type: " + event.jPlayer.error.type); 
-                    console.log("Error Context: " + event.jPlayer.error.context); 
-                    console.log("Error Message: " + event.jPlayer.error.message); 
+                if (globals.settings.Debug) {
+                    console.log("Error Type: " + event.jPlayer.error.type);
+                    console.log("Error Context: " + event.jPlayer.error.context);
+                    console.log("Error Message: " + event.jPlayer.error.message);
                     console.log("Stream interrupted, retrying from position: " + time);
                 }
             }
         });
         return;
-    }
+    };
     this.playPauseSong = function () {
         if (typeof $(player1).data("jPlayer") != 'undefined') {
             if ($(player1).data("jPlayer").status.paused) {
@@ -320,21 +318,21 @@
             } else {
                 $(player1).jPlayer("pause");
             }
-        } 
-    }
+        }
+    };
     playVideo = function (id, bitrate) {
         var w, h;
         bitrate = parseInt(bitrate);
-        if (bitrate <= 600) { 
-            w = 320; h = 240; 
-        } else if (bitrate <= 1000) { 
-            w = 480; h = 360; 
-        } else { 
-            w = 640; h = 480; 
-        } 
+        if (bitrate <= 600) {
+            w = 320; h = 240;
+        } else if (bitrate <= 1000) {
+            w = 480; h = 360;
+        } else {
+            w = 640; h = 480;
+        }
         //$("#jPlayerSelector").jPlayer("option", "fullScreen", true);
         $("#videodeck").jPlayer({
-		    ready: function () {
+            ready: function () {
                 /*
                 $.fancybox({
                     autoSize: false,
@@ -343,17 +341,16 @@
                     content: $('#videodeck')
                 });
                 */
-			    $(this).jPlayer("setMedia", {
-				    m4v: 'https://&id=' + id + '&salt=83132'
-			    }).jPlayer("play");
+                $(this).jPlayer("setMedia", {
+                    m4v: 'https://&id=' + id + '&salt=83132'
+                }).jPlayer("play");
                 $('#videooverlay').show();
-		    },
-		    swfPath: "js/jplayer",
-		    solution: "html, flash",
-		    supplied: "m4v"
-	    });
-    }
-    
+            },
+            swfPath: "js/jplayer",
+            solution: "html, flash",
+            supplied: "m4v"
+        });
+    };
     scrobbleSong = function (submission) {
         if ($rootScope.loggedIn && submission) {
             var id = $rootScope.playingSong.id;
@@ -368,7 +365,7 @@
                 }
             });
         }
-    }
+    };
     rateSong = function (songid, rating) {
         $.ajax({
             url: baseURL + '/setRating.view?' + baseParams + '&id=' + songid + "&rating=" + rating,
@@ -379,5 +376,5 @@
                 updateMessage('Rating Updated!', true);
             }
         });
-    }
+    };
 });

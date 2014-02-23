@@ -7,7 +7,7 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
     $scope.playlists = [];
     $scope.playlistsPublic = [];
     $scope.playlistsGenre = globals.SavedGenres;
-    $scope.selectedGenre;
+    $scope.selectedGenre = null;
     $scope.$watch("selectedGenre", function (newValue, oldValue) {
         if (newValue !== oldValue) {
             globals.SavedGenres.push(newValue);
@@ -41,7 +41,7 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                 }
             }
         });
-    }
+    };
     $scope.getPlaylist = function (id, action) {
         $rootScope.selectedAutoPlaylist = null;
         $rootScope.selectedPlaylist = id;
@@ -64,7 +64,7 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                             $rootScope.queue.push(utils.mapSong(item));
                         });
                         $scope.$apply();
-                        $rootScope.showQueue();
+                        //$rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                     } else if (action == 'play') {
                         $rootScope.queue = [];
@@ -75,7 +75,7 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                         $scope.$apply(function () {
                             $rootScope.playSong(false, next);
                         });
-                        $rootScope.showQueue();
+                        //$rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                     } else {
                         $scope.album = [];
@@ -90,7 +90,7 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                 }
             }
         });
-    }
+    };
     $scope.getStarred = function (action, type) {
         var size = globals.settings.AutoPlaylistSize;
         $rootScope.selectedPlaylist = null;
@@ -134,7 +134,7 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                                         $rootScope.queue.push(utils.mapSong(item));
                                     });
                                     $scope.$apply();
-                                    $rootScope.showQueue();
+                                    //$rootScope.showQueue();
                                     notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                                 } else if (action == 'play') {
                                     $rootScope.queue = [];
@@ -145,7 +145,7 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                                     $scope.$apply(function () {
                                         $rootScope.playSong(false, next);
                                     });
-                                    $rootScope.showQueue();
+                                    //$rootScope.showQueue();
                                     notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                                 } else {
                                     $rootScope.song = [];
@@ -162,10 +162,10 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                 }
             }
         });
-    }
+    };
     $scope.newPlaylist = function (data, event) {
         var reply = prompt("Choose a name for your new playlist.", "");
-        if (reply != 'null' && reply != null && reply != '') {
+        if (reply != 'null' && reply !== null && reply !== '') {
             $.ajax({
                 url: globals.BaseURL() + '/createPlaylist.view?' + globals.BaseParams() + '&name=' + reply,
                 method: 'GET',
@@ -176,9 +176,9 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                 }
             });
         }
-    }
+    };
     $scope.deletePlaylist = function () {
-        if ($rootScope.selectedPlaylist != null) {
+        if ($rootScope.selectedPlaylist !== null) {
             var id = $rootScope.selectedPlaylist;
             if (utils.confirmDelete('Are you sure you want to delete the selected playlist?')) {
                 $.ajax({
@@ -192,9 +192,9 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                 });
             }
         }
-    }
+    };
     $scope.savePlaylist = function () {
-        if ($rootScope.selectedPlaylist() != null) {
+        if ($rootScope.selectedPlaylist() !== null) {
             var id = $rootScope.selectedPlaylist().id();
             var songs = [];
             ko.utils.arrayForEach($rootScope.song(), function (item) {
@@ -215,12 +215,12 @@ function PlaylistCtrl($scope, $rootScope, $location, utils, globals, model, noti
                 });
             }
         }
-    }
+    };
     $scope.removeSelectedSongs = function (data, event) {
         ko.utils.arrayForEach($scope.selectedSongs(), function (item) {
             $rootScope.song.remove(item);
         });
-    }
+    };
     /* End Playlists */
 
     /* Launch on Startup */

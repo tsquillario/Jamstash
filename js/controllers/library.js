@@ -20,9 +20,9 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         { id: "frequent", name: "Most Played" },
         { id: "recent", name: "Recently Played" }
     ];
-    $scope.selectedAutoAlbum;
-    $scope.selectedArtist;
-    $scope.selectedAlbum;
+    $scope.selectedAutoAlbum = null;
+    $scope.selectedArtist = null;
+    $scope.selectedAlbum = null;
     $scope.SelectedAlbumSort = globals.settings.DefaultAlbumSort;
     $scope.AlbumSort = globals.AlbumSorts;
     $scope.BreadCrumbs = [];
@@ -36,7 +36,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                     if (obj.id == newValue) {
                         return index;
                     }
-                })
+                });
                 globals.settings.DefaultAlbumSort = globals.AlbumSorts[indexes];
             }
         }
@@ -56,14 +56,14 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
             dataType: globals.settings.Protocol,
             timeout: globals.settings.Timeout,
             success: function (data) {
-                if (data["subsonic-response"].user.adminRole == true) {
+                if (data["subsonic-response"].user.adminRole === true) {
                     $.get(globals.settings.Server + '/musicFolderSettings.view?scanNow');
                 } else {
                     alert('You are not logged in as an admin user!');
                 }
             }
         });
-    }
+    };
     $scope.mapArtist = function (data) {
         var name = '';
         var artist = data.artist;
@@ -78,18 +78,18 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         });
         if (typeof data.name !== 'undefined') { name = data.name.toString(); }
         return new model.Index(name, artists);
-    }
+    };
     $scope.mapIndex = function (data) {
         var name, id = '';
         if (typeof data.id !== 'undefined') { id = data.id; }
         if (typeof data.name !== 'undefined') { name = data.name.toString(); }
         return new model.Artist(id, name);
-    }
+    };
     $scope.mapPlaylist = function (data) {
         return new model.Artist(data.id, data.name);
-    }
+    };
     $scope.getArtists = function (id) {
-        var url, id;
+        var url;
         if (utils.getValue('MusicFolders')) {
             var folder = angular.fromJson(utils.getValue('MusicFolders'));
             id = folder.id;
@@ -155,12 +155,12 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         if (typeof album.title !== 'undefined') { title = album.title; } else { title = album.name; }
         var type;
         if (album.isDir) {
-            type = 'byfolder';            
+            type = 'byfolder';
         } else {
             type = 'bytag';
         }
         return new model.Album(album.id, album.parent, title, album.artist, album.artistId, coverartthumb, coverartfull, $.format.date(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '', type);
-    }
+    };
     $scope.getAlbums = function (id, name) {
         $scope.selectedAutoAlbum = null;
         $scope.selectedArtist = id;
@@ -340,7 +340,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                             $rootScope.queue.push(utils.mapSong(item));
                         });
                         $scope.$apply();
-                        $rootScope.showQueue();
+                        //$rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                     } else if (action == 'play') {
                         $rootScope.queue = [];
@@ -351,7 +351,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                         $scope.$apply(function () {
                             $rootScope.playSong(false, next);
                         });
-                        $rootScope.showQueue();
+                        //$rootScope.showQueue();
                         notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                     } else if (action == 'preview') {
                         $scope.songpreview = [];
@@ -365,7 +365,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                         if (typeof data["subsonic-response"].directory.id != 'undefined') {
                             var albumId = data["subsonic-response"].directory.id;
                             var albumName = data["subsonic-response"].directory.name;
-                            if ($scope.BreadCrumbs.length > 0) { $scope.BreadCrumbs.splice(1, ($scope.BreadCrumbs.length - 1)) };
+                            if ($scope.BreadCrumbs.length > 0) { $scope.BreadCrumbs.splice(1, ($scope.BreadCrumbs.length - 1)); }
                             $scope.BreadCrumbs.push({ 'type': 'album', 'id': albumId, 'name': albumName });
                         }
                         $rootScope.song = [];
@@ -394,7 +394,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
     };
     $scope.search = function () {
         var query = $('#Search').val();
-        if (query != '') {
+        if (query !== '') {
             var type = $('#SearchType').val();
             $.ajax({
                 url: globals.BaseURL() + '/search2.view?' + globals.BaseParams() + '&query=' + query,
@@ -455,10 +455,10 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
             });
             //$('#Search').val("");
         }
-    }
+    };
     $scope.toggleAZ = function (event) {
         $scope.toggleSubmenu('#submenu_AZIndex', '#AZIndex', 'right', 44);
-    }
+    };
     $scope.loadPlaylistsForMenu = function (data, event) {
         $.ajax({
             url: globals.BaseURL() + '/getPlaylists.view?' + globals.BaseParams(),
@@ -494,7 +494,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                 */
             }
         });
-    }
+    };
     $scope.addToPlaylist = function (id) {
         var songs = [];
         if ($scope.selectedSongs.length !== 0) {
@@ -518,7 +518,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                 });
             }
         }
-    }
+    };
     $scope.sortDateFunction = function (a, b) {
         return a.date < b.date ? 1 : -1;
     };

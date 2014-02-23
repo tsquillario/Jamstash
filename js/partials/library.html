@@ -21,14 +21,11 @@
             </div>
         </div>
         <div id="SubsonicAlbums" class="section lgsection split-pane fixed-left" split>
-            <!--<div id="SubsonicAlbums" class="section lgsection" layout state="bodyState" ng-init="bodyState = 3">-->
-            <!--<div id="SubsonicAlbums" class="section lgsection">-->
             <div id="left-component" class="split-pane-component smcolumn noselect" tabindex="0">
                 <div id="AZIndex" ng-show="!settings.HideAZ" class="subactionsfixed">
                     <a href="" ng-click="toggleAZ()" stop-event="click">A-Z</a>
                 </div>
-                <select id="MusicFolders" class="folders" ng-model="$root.SelectedMusicFolder" ng-options="o as o.name for o in MusicFolders">
-                    <option value="">All Folders</option>
+                <select id="MusicFolders" class="folders" ng-model="$root.SelectedMusicFolder" ng-options="o.name for o in MusicFolders">
                 </select>
                 <ul id="AutoAlbumContainer" class="simplelist mainlist noselect">
                     <li class="index" id="auto">Auto Albums</li>

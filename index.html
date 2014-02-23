@@ -109,7 +109,7 @@
                         <a class="button" id="PauseTrack" title="Play/Pause" style="display: none;"><img src="images/pause_24x32.png" /></a>
                         <a class="button" id="NextTrack" title="Next Track" ng-click="nextTrack()"><img src="images/last_24x24.png" /></a>
                     </div>
-                    <div id="songdetails" ng-click="toggleQueue()">
+                    <div id="songdetails" ng-click="go('/queue')">
                         <div id="coverart"><a class="coverartfancy" href="{{playingSong.coverartfull}}"><img ng-src="{{playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" alt="" /></a></div>
                         <ul>
                             <li class="song" id="{{playingSong.id}}" ng-bind-html="playingSong.name"></li>

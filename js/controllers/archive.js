@@ -8,8 +8,8 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
     $scope.Protocol = 'jsonp';
     $scope.artist = [];
     $scope.album = [];
-    $scope.selectedArtist;
-    $scope.selectedAlbum;
+    $scope.selectedArtist = null;
+    $scope.selectedAlbum = null;
     $scope.selectedSongs = [];
     $scope.SavedCollections = globals.SavedCollections;
     $scope.AllCollections = [];
@@ -25,18 +25,18 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
         });
         */
         globals.SavedCollections = $scope.SavedCollections;
-    }
+    };
     $scope.addSavedCollection = function (newValue) {
         if ($scope.SavedCollections.indexOf(newValue) == -1) {
             $scope.SavedCollections.push(newValue);
             $scope.writeSavedCollection();
         }
-    }
+    };
     $scope.deleteSavedCollection = function (index) {
         $scope.SavedCollections.splice(index, 1);
         $scope.writeSavedCollection();
-    }
-    $scope.selectedCollection;
+    };
+    $scope.selectedCollection = null;
     $scope.$watch("selectedCollection", function (newValue, oldValue) {
         if (newValue !== oldValue) {
             $scope.addSavedCollection(newValue);
@@ -49,7 +49,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
                 $scope.SavedCollections.push(item);
             }
         });
-    }
+    };
     $scope.archiveUrl = 'https://archive.org/';
 
     /* Filter */
@@ -71,7 +71,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
         'publicdate asc',
         'stars desc',
         'stars asc'
-        ],
+    ];
     $scope.$watch("selectedArchiveAlbumSort", function (newValue, oldValue) {
         if (utils.getValue('AlbumSort') != newValue) {
             if (typeof newValue != 'undefined') {
@@ -90,8 +90,8 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
             years.push(startYear++);
         }
         return years;
-    }
-    $scope.Years = $scope.getYears(),
+    };
+    $scope.Years = $scope.getYears();
     $scope.filter = {
         Year: "",
         Source: "",
@@ -101,7 +101,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
         if ($scope.selectedArtist) {
             $scope.getAlbums('', '');
         }
-    }
+    };
     /* End Filter */
 
     /*
@@ -116,7 +116,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
     */
     $scope.getAlbums = function (name, identifier) {
         var url = $scope.archiveUrl + 'advancedsearch.php?q=';
-        if (name != '') {
+        if (name !== '') {
             $scope.selectedArtist = name;
             url += 'collection:(' + name + ') AND format:(MP3)';
         } else if ($scope.selectedArtist) {
@@ -138,7 +138,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
             description += typeof song.avg_rating != 'undefined' ? '<b>Rating</b>: ' + song.avg_rating + '<br />' : '';
             description += typeof song.downloads != 'undefined' ? '<b>Downloads</b>: ' + song.downloads + '<br />' : '';
             return new model.Album(song.identifier, null, song.title, song.collection[0], '', coverartthumb, coverartfull, $.format.date(new Date(song.publicdate), "yyyy-MM-dd h:mm a"), starred, description, url);
-        }
+        };
         if ($scope.filter.Source) {
             url += ' AND source:(' + $scope.filter.Source + ')';
         }
@@ -162,8 +162,8 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
             timeout: globals.settings.Timeout,
             success: function (data) {
                 var items = [];
-                if (data["response"].docs.length > 0) {
-                    items = data["response"].docs;
+                if (data.response.docs.length > 0) {
+                    items = data.response.docs;
                     //alert(JSON.stringify(data["response"]));
                     $scope.album = [];
                     $rootScope.song = [];
@@ -183,7 +183,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
     };
     utils.mapSong = function (key, song, server, dir, identifier, coverart) {
         var url, time, track, title, rating, starred, contenttype, suffix;
-        var specs = ''
+        var specs = '';
         if (song.format == 'VBR MP3') {
             url = 'http://' + server + dir + key;
             if (typeof song.bitrate == 'undefined' || typeof song.format == 'undefined') { specs = '&nbsp;'; } else { specs = song.bitrate + 'kbps, ' + song.format.toLowerCase(); }
@@ -217,7 +217,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
                             $rootScope.queue.push(song);
                         }
                     });
-                    $rootScope.showQueue(); 
+                    //$rootScope.showQueue(); 
                     notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
                     $scope.$apply();
                 } else if (action == 'play') {
@@ -232,7 +232,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
                     $scope.$apply(function () {
                         $rootScope.playSong(false, next);
                     });
-                    $rootScope.showQueue();
+                    //$rootScope.showQueue();
                     notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
                 } else {
                     $scope.album = [];
@@ -254,25 +254,25 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
                 $scope.queue.push(item);
                 item.selected = false;
             });
-            $rootScope.showQueue();
+            //$rootScope.showQueue();
             notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
         }
-    }
+    };
     $scope.scrollToTop = function () {
         $('#Artists').stop().scrollTo('#auto', 400);
-    }
+    };
     $scope.selectAll = function () {
         angular.forEach($rootScope.song, function (item, key) {
             $scope.selectedSongs.push(item);
             item.selected = true;
         });
-    }
+    };
     $scope.selectNone = function () {
         angular.forEach($rootScope.song, function (item, key) {
             $scope.selectedSongs = [];
             item.selected = false;
         });
-    }
+    };
 
     /* Launch on Startup */
     if ($routeParams.artist) {

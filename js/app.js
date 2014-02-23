@@ -32,7 +32,7 @@ JamStash.config(function ($routeProvider) {
     $rootScope.$on("$locationChangeStart", function (event, next, current) {
         $rootScope.loggedIn = false;
         var path = $location.path().replace(/^\/([^\/]*).*$/, '$1');
-        if (globals.settings.Username != "" && globals.settings.Password != "" && globals.settings.Server != "" && path != 'archive') {
+        if (globals.settings.Username !== "" && globals.settings.Password !== "" && globals.settings.Server !== "" && path != 'archive') {
             $rootScope.loggedIn = true;
         }
         if (!$rootScope.loggedIn && (path != 'settings' && path != 'archive')) {
