@@ -1,5 +1,5 @@
 ﻿JamStash.controller('AppCtrl',
-function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, globals, model, notifications, player) {
+function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore, utils, globals, model, notifications, player) {
     $rootScope.settings = globals.settings;
     $rootScope.song = [];
     $rootScope.queue = [];
@@ -313,6 +313,17 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
         var next = $rootScope.queue[0];
         $rootScope.playSong(false, next);
     };
+    $scope.playFrom = function (index) {
+        var from = $rootScope.song.slice(index,$rootScope.song.length);
+        angular.forEach(from, function (item, key) {
+            $scope.selectedSongs.push(item);
+            item.selected = true;
+        });
+        $rootScope.queue = [];
+        $scope.addSongsToQueue();
+        var next = $rootScope.queue[0];
+        $rootScope.playSong(false, next);
+    };
     $scope.selectNone = function () {
         angular.forEach($rootScope.song, function (item, key) {
             $scope.selectedSongs = [];
@@ -330,6 +341,10 @@ function AppCtrl($scope, $rootScope, $document, $location, $cookieStore, utils, 
             $scope.selectedSongs.length = 0;
         }
     };
+    $scope.removeSong = function (item) {
+        var index = $rootScope.song.indexOf(item)
+        $rootScope.song.splice(index, 1);
+    }
     $scope.isActive = function (route) {
         return route === $location.path();
     };

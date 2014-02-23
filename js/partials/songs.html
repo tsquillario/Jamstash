@@ -1,8 +1,9 @@
 ﻿<li class="row song" ng-repeat="o in song | limitTo:totalDisplayed" ng-click="selectSong(o)" ng-dblclick="playSong(false, o)" ng-class="{'selected': o.selected, 'playing': o.playing}" data-bind="attr: { id: id, title: description }">
     <div class="itemactions">
-        <a class="add" href="" title="Add To Play Queue" ng-click="addSongToQueue(o)" stop-event="click"></a>
-        <a class="remove" href="" title="Remove"></a>
-        <a class="play" href="" title="Play" ng-click="playSong(false, o)" stop-event="click"></a><a class="download" href="" title="Download"></a>
+        <a class="add" href="" title="Add To Queue" ng-click="addSongToQueue(o)" stop-event="click"></a>
+        <a class="remove" href="" title="Remove From Queue"></a>
+        <a class="play" href="" title="Start Playing From This Song" ng-click="playFrom($index)" stop-event="click"></a>
+        <a class="download" href="" title="Download Song" ng-click="download(o.id)"></a>
         <a href="" title="Favorite" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="updateFavorite(o)" stop-event="click"></a>
         <div class="clear"></div>
     </div>
