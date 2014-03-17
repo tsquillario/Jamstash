@@ -210,42 +210,47 @@ JamStash.service('notifications', function ($rootScope, globals) {
         }
     }
     this.requestPermissionIfRequired = function () {
-        if (!this.hasNotificationPermission() && (window.webkitNotifications)) {
-            window.webkitNotifications.requestPermission();
+        if (window.Notify.isSupported() && window.Notify.needsPermission()) {
+            window.Notify.requestPermission();
         }
     }
     this.hasNotificationPermission = function () {
-        return !!(window.webkitNotifications) && (window.webkitNotifications.checkPermission() == 0);
+        return (window.Notify.needsPermission() === false);
+    }
+    this.hasNotificationSupport = function () {
+        return window.Notify.isSupported();
     }
     var notifications = new Array();
+    
     this.showNotification = function (pic, title, text, type, bind) {
         if (this.hasNotificationPermission()) {
             //closeAllNotifications()
-            var popup;
-            if (type == 'text') {
-                popup = window.webkitNotifications.createNotification(pic, title, text);
-            } else if (type == 'html') {
-                popup = window.webkitNotifications.createHTMLNotification(text);
-            }
+            var settings = {}
             if (bind = '#NextTrack') {
-                popup.addEventListener('click', function (bind) {
-                    //$(bind).click();
+                settings.notifyClick = function() {
                     $rootScope.nextTrack();
-                    this.cancel();
-                })
+                    this.close();
+                };
             }
-            notifications.push(popup);
+            if (type == 'text') {
+                settings.body = text;
+                settings.icon = pic;
+            } else if (type == 'html') {
+                settings.body = text;
+            }
+            var notification = new Notify(title, settings);
+            notifications.push(notification);
             setTimeout(function (notWin) {
-                notWin.cancel();
-            }, globals.settings.NotificationTimeout, popup);
-            popup.show();
+                notWin.close();
+            }, globals.settings.NotificationTimeout, notification);
+            notification.show();
         } else {
             console.log("showNotification: No Permission");
         }
     }
     this.closeAllNotifications = function () {
         for (notification in notifications) {
-            notifications[notification].cancel();
+            notifications[notification].close();
         }
     }
 });
