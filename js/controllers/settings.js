@@ -29,13 +29,13 @@ function SettingsCtrl($scope, $routeParams, $location, utils, globals, json, not
         if ($scope.settings.Password != '' && globals.settings.Password.substring(0, 4) != 'enc:') { $scope.settings.Password = 'enc:' + utils.HexEncode($scope.settings.Password); }
         if (globals.settings.NotificationSong) {
             notifications.requestPermissionIfRequired();
-            if (!notifications.hasNotificationPermission()) {
+            if (!notifications.hasNotificationSupport()) {
                 alert('HTML5 Notifications are not available for your current browser, Sorry :(');
             }
         }
         if (globals.settings.NotificationNowPlaying) {
             notifications.requestPermissionIfRequired();
-            if (!notifications.hasNotificationPermission()) {
+            if (!notifications.hasNotificationSupport()) {
                 alert('HTML5 Notifications are not available for your current browser, Sorry :(');
             }
         }
