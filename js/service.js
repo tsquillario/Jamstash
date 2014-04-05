@@ -145,7 +145,7 @@ JamStash.service('notifications', function ($rootScope, globals) {
             if (autohide) {
                 setTimeout(function () {
                     $(el).fadeOut(function () { $(this).remove(); });
-                }, globals.settings.NotificationTimeout);
+                }, globals.settings.Timeout);
             } else {
                 $(el).click(function () {
                     $(el).fadeOut(function () { $(this).remove(); });
@@ -188,7 +188,7 @@ JamStash.service('notifications', function ($rootScope, globals) {
             notifications.push(notification);
             setTimeout(function (notWin) {
                 notWin.close();
-            }, globals.settings.NotificationTimeout, notification);
+            }, globals.settings.Timeout, notification);
             notification.show();
         } else {
             console.log("showNotification: No Permission");

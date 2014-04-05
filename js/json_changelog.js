@@ -2,7 +2,8 @@
     {
         "date": "3/29/2014", "version": "3.3",
         "changes": [
-        { "text": "- Queue opens in modal window, feels easier to use. Other bug fixes." }
+        { "text": "- Queue opens in modal window, feels easier to use. Other bug fixes." },
+        { "text": "- Notifications support in Firefox via <a href=\"https://github.com/alexgibson/notify.js\" target=\"_blank\">Notify.js</a>. Thanks to jerbob92 <a href=\"https://github.com/tsquillario/Jamstash/pull/160\" target=\"_blank\">https://github.com/tsquillario/Jamstash/pull/160</a>" }
         ]
     },
     {

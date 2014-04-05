@@ -15,7 +15,6 @@ JamStash.service('globals', function (utils) {
         Password: "",
         Server: "",
         Timeout: 10000,
-        NotificationTimeout: 20000,
         Protocol: "jsonp",
         ApplicationName: "Jamstash",
         ApiVersion: "1.6.0",
