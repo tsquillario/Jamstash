@@ -8,6 +8,7 @@ What?
 
 Features
 * HTML5 Audio with Flash fallback (provided by the jPlayer library)
+* HTML5 Notifications
 * Flexible Layout (will scale to whatever size your browser window is)
 * Keyboard shortcuts (back, forward, play/pause, skip to artist, media keys)
 * Playlist support (create new, add to existing, delete)
