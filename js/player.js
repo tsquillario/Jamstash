@@ -1,5 +1,5 @@
 ﻿JamStash.service('player', function ($rootScope, $window, utils, globals, model, notifications) {
-    var player1 = '#playdeck_1';
+    var player1 = globals.Player1;
     var player2 = '#playdeck_2';
     var scrobbled = false;
     var timerid = 0;
@@ -13,8 +13,6 @@
         if (next) {
             $rootScope.playSong(false, next);
         }
-        //$(player1).jPlayer("stop");
-        //$(player2).jPlayer("play");
     };
     $rootScope.previousTrack = function () {
         var next = getNextSong(true);

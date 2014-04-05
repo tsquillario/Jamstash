@@ -128,6 +128,7 @@ JamStash.service('globals', function () {
     };
     this.SavedCollections = [];
     this.SavedGenres = [];
+    this.Player1 = '#playdeck_1';
 
     this.BaseURL = function () { return this.settings.Server + '/rest'; };
     this.BaseParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=' + this.settings.Protocol + '&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };
@@ -360,6 +361,7 @@ JamStash.factory('json', function ($http) { // Deferred loading
         }
     };
 });
+/*
 JamStash.factory('template', function ($http, $compile, $http, $templateCache) { // Deferred loading
     return {
         getCollections: function (callback) {
@@ -374,6 +376,7 @@ JamStash.factory('template', function ($http, $compile, $http, $templateCache) {
         }
     };
 });
+*/
 JamStash.factory('subsonic', function ($http, globals, utils) {
     return {
         getSongTemplate: function (callback) {
@@ -415,6 +418,11 @@ JamStash.factory('subsonic', function ($http, globals, utils) {
 JamStash.filter('capitalize', function () {
     return function (input, scope) {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
+    };
+});
+JamStash.filter('musicfolder', function () {
+    return function (items, scope) {
+        return items.slice(1, items.length);
     };
 });
 

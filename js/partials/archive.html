@@ -69,7 +69,7 @@
                             <div class="clear"></div>
                         </li>
                     </div>
-                    <div ng-include src="'js/partials/songs.html'"></div>
+                    <div ng-if="song.length > 0" ng-include src="'js/partials/songs.html'"></div>
                 </ul>
             </div>
         </div>

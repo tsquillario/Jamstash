@@ -51,22 +51,19 @@
         <div id="header">
             <div id="messages"></div>
             <div id="loading"></div>
-            <a id="jslogo" title="Jamstash" href="#/queue"></a>
+            <a id="jslogo" title="Jamstash" class="showQueue" href=""></a>
             <a id="sslogo" target="_blank" ng-show="settings.Server" ng-href="{{settings.Server}}" title="{{settings.Server}}"></a>
             <div id="globalactions">
-                <a href="" class="button" title="Shuffle Queue" ng-click="queueShuffle()"><img src="images/fork_gd_11x12.png" /></a>
-                <a href="" class="button" id="action_Empty" title="Delete Queue" ng-click="queueEmpty()"><img src="images/trash_fill_gd_12x12.png" /></a>
-                <a href="" class="button" id="action_DeleteSelected" title="Delete Song(s) From Queue" ng-click="queueRemoveSelected()"><img src="images/minus_8x2.png" /></a>
-                <!--<a href="" class="button buttonvertical" id="action_QueueToPlaylist" title="Create Playlist From Queue"><img src="images/list_gd_12x11.png" /></a>-->
+                
             </div>
             <div id="nav">
                 <ul class="tabs">
-                    <li><a href="#/queue" class="first" title="Queue" class="active" ng-class="{'active': isActive('/queue')}"><img src="images/play_alt_gd_16x16.png"></a></li>
-                    <li><a href="#/library" title="Library" ng-class="{'active': isActive('/library')}"><img src="images/headphones_gd_16x14.png" /></a></li>
-                    <li><a href="#/playlists" title="Playlists" ng-class="{'active': isActive('/playlists')}"><img src="images/list_gd_16x14.png" /></a></li>
-                    <li><a href="#/podcasts" title="Podcasts" ng-class="{'active': isActive('/podcasts')}"><img src="images/rss_16x16.png" /></a></li>
-                    <li><a href="#/archive" class="" title="Archive.org - Live Music Archive" ng-class="{'active': isActive('/archive')}"><img src="images/archive_gd_16x16.png" /></a></li>
-                    <li><a href="#/settings" class="last" title="Settings" ng-class="{'active': isActive('/settings')}"><img src="images/cog_16x16.png" /></a></li>
+                    <li><a href="" class="first showQueue" id="action_Queue" title="Queue" class="active" ng-class="{'active': isActive('/queue')}"><img src="images/play_alt_gd_16x16.png"></a></li>
+                    <li><a href="#/library" id="action_Library" title="Library" ng-class="{'active': isActive('/library')}"><img src="images/headphones_gd_16x14.png" /></a></li>
+                    <li><a href="#/playlists" id="action_Playlists" title="Playlists" ng-class="{'active': isActive('/playlists')}"><img src="images/list_gd_16x14.png" /></a></li>
+                    <li><a href="#/podcasts" id="action_Podcasts" title="Podcasts" ng-class="{'active': isActive('/podcasts')}"><img src="images/rss_16x16.png" /></a></li>
+                    <li><a href="#/archive" id="action_Archive" class="" title="Archive.org - Live Music Archive" ng-class="{'active': isActive('/archive')}"><img src="images/archive_gd_16x16.png" /></a></li>
+                    <li><a href="#/settings" id="action_Settings" class="last" title="Settings" ng-class="{'active': isActive('/settings')}"><img src="images/cog_16x16.png" /></a></li>
                 </ul>
             </div>
         </div>
@@ -109,7 +106,7 @@
                         <a class="button" id="PauseTrack" title="Play/Pause" style="display: none;"><img src="images/pause_24x32.png" /></a>
                         <a class="button" id="NextTrack" title="Next Track" ng-click="nextTrack()"><img src="images/last_24x24.png" /></a>
                     </div>
-                    <div id="songdetails" ng-click="go('/queue')">
+                    <div id="songdetails">
                         <div id="coverart"><a class="coverartfancy" href="{{playingSong.coverartfull}}"><img ng-src="{{playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" alt="" /></a></div>
                         <ul>
                             <li class="song" id="{{playingSong.id}}" ng-bind-html="playingSong.name"></li>
@@ -151,7 +148,15 @@
         </div>
     </div> <!-- End container -->
     <div id="footer">
-        <!--<a id="action_OpenQueue" class="pagetabcenter shadow" title="Open Queue" ng-click="toggleQueue()"></a>-->
+        <ul id="showqueue" class="simplelist songlist noselect" style="width: 1200px;" ng-if="queue.length > 0">
+            <div class="queueactions">
+                <a href="" class="button" title="Shuffle Queue" ng-click="queueShuffle()">Shuffle</a>
+                <a href="" class="button" id="action_Empty" title="Delete Queue" ng-click="queueEmpty()">Empty</a>
+                <a href="" class="button" id="action_DeleteSelected" title="Remove Selected From Queue" ng-click="queueRemoveSelected()">Remove</a>
+                <!--<a href="" class="button buttonvertical" id="action_QueueToPlaylist" title="Create Playlist From Queue"><img src="images/list_gd_12x11.png" /></a>-->
+            </div>
+            <div ng-repeat="song in [queue]" ng-include src="'js/partials/songs.html'" sortable></div>
+        </ul>
     </div>
     <script>
         (function (i, s, o, g, r, a, m) {

@@ -181,7 +181,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
             }
         });
     };
-    utils.mapSong = function (key, song, server, dir, identifier, coverart) {
+    $scope.mapSong = function (key, song, server, dir, identifier, coverart) {
         var url, time, track, title, rating, starred, contenttype, suffix;
         var specs = '';
         if (song.format == 'VBR MP3') {
@@ -212,7 +212,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
                 var items = data.files;
                 if (action == 'add') {
                     angular.forEach(items, function (item, key) {
-                        var song = utils.mapSong(key, item, server, dir, identifier, coverart);
+                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
                         if (song) {
                             $rootScope.queue.push(song);
                         }
@@ -223,7 +223,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
                 } else if (action == 'play') {
                     $rootScope.queue = [];
                     angular.forEach(items, function (item, key) {
-                        var song = utils.mapSong(key, item, server, dir, identifier, coverart);
+                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
                         if (song) {
                             $rootScope.queue.push(song);
                         }
@@ -238,7 +238,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
                     $scope.album = [];
                     $rootScope.song = [];
                     angular.forEach(items, function (item, key) {
-                        var song = utils.mapSong(key, item, server, dir, identifier, coverart);
+                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
                         if (song) {
                             $rootScope.song.push(song);
                         }

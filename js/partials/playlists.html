@@ -44,7 +44,7 @@
                 </ul>
                 <ul class="simplelist mainlist noselect">
                     <li class="index" id="folder">Folder Playlists</li>
-                    <li class="item" ng-repeat="o in MusicFolders" ng-click="getRandomSongs('', '', o.id)" ng-class="{'selected': o.id == selectedAutoPlaylist}">
+                    <li class="item" ng-repeat="o in MusicFolders | musicfolder" ng-click=" getRandomSongs('', '' , o.id)" ng-class="{'selected': o.id == selectedAutoPlaylist}">
                         <div class="itemactions">
                             <a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add', '', o.id)" stop-event="click"></a><a class="play" href="" title="Play" ng-click="getRandomSongs('play', '', o.id)" stop-event="click"></a>
                         </div>
@@ -73,7 +73,7 @@
             <div class="split-pane-divider" id="my-divider"></div>
             <!-- Songs -->
             <div id="right-component" class="split-pane-component lgcolumn noselect">
-                <ul class="songlist simplelist" ng-include src="'js/partials/songs.html'"></ul>
+                <ul class="songlist simplelist" ng-if="song.length > 0" ng-include src="'js/partials/songs.html'"></ul>
             </div>
         </div>
     </div>

@@ -159,7 +159,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         } else {
             type = 'bytag';
         }
-        return new model.Album(album.id, album.parent, title, album.artist, album.artistId, coverartthumb, coverartfull, $.format.date(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '', type);
+        return new model.Album(album.id, album.parent, title, album.artist.toString(), album.artistId, coverartthumb, coverartfull, $.format.date(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '', type);
     };
     $scope.getAlbums = function (id, name) {
         $scope.selectedAutoAlbum = null;
@@ -255,7 +255,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                     $scope.album = [];
                     $rootScope.song = [];
 
-                    $scope.album.push($scope.mapAlbum(data["subsonic-response"].album));
+                    //$scope.album.push($scope.mapAlbum(data["subsonic-response"].album));
 
                     var items = [];
                     if (data["subsonic-response"].album.song.length > 0) {
@@ -412,6 +412,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                                 } else {
                                     items[0] = data["subsonic-response"].searchResult2.song;
                                 }
+                                $scope.album = [];
                                 $rootScope.song = [];
                                 angular.forEach(items, function (item, key) {
                                     $rootScope.song.push(utils.mapSong(item));
@@ -427,6 +428,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
                                     items[0] = data["subsonic-response"].searchResult2.album;
                                 }
                                 $scope.album = [];
+                                $rootScope.song = [];
                                 angular.forEach(items, function (item, key) {
                                     if (item.isDir) {
                                         $scope.album.push($scope.mapAlbum(item));

@@ -1,0 +1,22 @@
+﻿<li class="row song" ng-repeat="o in song | limitTo:totalDisplayed" ng-click="selectSong(o)" ng-dblclick="playSong(false, o)" ng-class="{'selected': o.selected, 'playing': o.playing}" data-bind="attr: { id: id, title: description }">
+    <div class="itemactions">
+        <a class="add" href="" title="Add To Queue" ng-click="addSongToQueue(o)" stop-event="click"></a>
+        <a class="remove" href="" title="Remove From Queue"></a>
+        <a class="play" href="" title="Start Playing From This Song" ng-click="playFrom($index)" stop-event="click"></a>
+        <a class="download" href="" title="Download Song" ng-click="download(o.id)"></a>
+        <a href="" title="Favorite" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="updateFavorite(o)" stop-event="click"></a>
+        <div class="clear"></div>
+    </div>
+    <div class="track floatleft" ng-bind-html="o.track"></div>
+    <div class="title floatleft" title="{{o.description}}" ng-bind-html="o.name"></div>
+    <span class="artist floatleft" ng-bind-html="o.artist"></span>
+    <div ng-show="o.album && itemType === 'ss'"><img src="{{o.coverartfull}}"><a class="albumblock floatleft" ng-bind-html="o.album" title="{{o.album}}"></a></div>
+    <div ng-show="o.album && itemType === 'pl'"><img src="{{o.coverartfull}}"><a ng-href="#/library/0/{{o.albumId}}" class="albumblock floatleft" stop-event="click" ng-bind-html="o.album" title="{{o.album}}"></a></div>
+    <a ng-href="#/archive/{{o.artist}}/{{o.parentid}}" class="albumblock floatleft" ng-show="o.album && itemType === 'archive'" stop-event="click" ng-bind-html="o.album" title="{{o.album}}"></a>
+    <div class="albumblock floatleft" ng-show="!o.album">&nbsp;</div>
+    <div class="time floatleft">{{o.time}}</div>
+    <div class="clear"></div>
+</li>
+<li class="row song" ng-show="song.length && (totalDisplayed < song.length)">
+    <a class="button blockbutton" ng-click="loadMore()">Load more</a>
+</li>

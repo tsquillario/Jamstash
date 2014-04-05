@@ -28,19 +28,25 @@ JamStash.config(function ($routeProvider) {
         .when('/archive/:artist/:album', { templateUrl: 'js/partials/archive.html', controller: 'ArchiveCtrl' })
         .otherwise({ redirectTo: '/index' });
 })
-.run(['$rootScope', '$location', 'globals', function ($rootScope, $location, globals) {
+.run(['$rootScope', '$location', 'globals', 'utils', function ($rootScope, $location, globals, utils) {
     $rootScope.$on("$locationChangeStart", function (event, next, current) {
         $rootScope.loggedIn = false;
         var path = $location.path().replace(/^\/([^\/]*).*$/, '$1');
         if (globals.settings.Username !== "" && globals.settings.Password !== "" && globals.settings.Server !== "" && path != 'archive') {
             $rootScope.loggedIn = true;
+            $.fancybox.close();
         }
         if (!$rootScope.loggedIn && (path != 'settings' && path != 'archive')) {
-            $location.path('/settings');
+            var url = '/settings';
+            $location.path(url);
         }
     });
 }]);
+
 /*
+JamStash.config(function ($locationProvider) {
+    $locationProvider.html5Mode(true);
+})
 JamStash.config(function ($httpProvider, globals) {
     $httpProvider.defaults.timeout = globals.settings.Timeout;
 })

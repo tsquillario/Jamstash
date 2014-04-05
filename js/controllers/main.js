@@ -118,14 +118,10 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
         }
     };
     $rootScope.showQueue = function () {
-        var submenu = $('#QueuePreview');
-        submenu.fadeIn(400);
-        var timeout = globals.settings.Timeout;
-        setTimeout(function () { submenu.fadeOut(); }, timeout);
+        $.fancybox.open();
     };
     $rootScope.hideQueue = function () {
-        var submenu = $('#QueuePreview');
-        submenu.fadeOut();
+        $.fancybox.close();
     };
     $scope.toggleQueue = function () {
         var submenu = $('#QueuePreview');
@@ -149,9 +145,18 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
         closeEffect: 'none'
     });
 
-    $('#action_Welcome').fancybox({
+    $('.showQueue').fancybox({
+        href: '#showqueue',
+        autoWidth: false,
+        width: '100%',
+        //margin: [50, 10, 50, 10], // top, right, bottom, left
         openEffect: 'none',
-        closeEffect: 'none'
+        closeEffect: 'none',
+        beforeLoad: function () {
+            if ($rootScope.queue == 0) {
+                this.close();
+            }
+        }
     });
 
     $('#audiocontainer .scrubber').mouseover(function (e) {
@@ -232,21 +237,19 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
         if (source != 'Search' && source != 'Source' && source != 'Description' && source != 'ChatMsg' && source != 'AutoPlaylists') {
             var unicode = e.charCode ? e.charCode : e.keyCode;
             if (globals.settings.Debug) { console.log('Keycode Triggered: ' + unicode); }
-            /*
-            if (unicode == 49) {
-            utils.changeTab('tabQueue');
+            if (unicode == 49) { // 1
+                $('#action_Queue').click();
             } else if (unicode == 50) {
-            utils.changeTab('tabLibrary');
+                $('#action_Library').click();
             } else if (unicode == 51) {
-            utils.changeTab('tabArchive');
+                $('#action_Playlists').click();
             } else if (unicode == 52) {
-            utils.changeTab('tabPlaylists');
+                $('#action_Podcasts').click();
             } else if (unicode == 53) {
-            utils.changeTab('tabPodcasts');
-            } else if (unicode == 54) {
-            utils.changeTab('tabSettings');
+                $('#action_Archive').click();
+            } else if (unicode == 54) { // 6
+                $('#action_Settings').click();
             }
-            */
             if (unicode >= 65 && unicode <= 90 && $('#tabLibrary').is(':visible')) { // a-z
                 var key = utils.findKeyForCode(unicode);
                 if (key == 'x' || key == 'y' || key == 'z') {
@@ -270,22 +273,22 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
                 var volume = utils.getValue('Volume') ? parseFloat(utils.getValue('Volume')) : 1;
                 if (volume <= 1 && volume > 0 && source === '') {
                     volume += -0.1;
-                    $(player1).jPlayer({
+                    $(globals.Player1).jPlayer({
                         volume: volume
                     });
                     utils.setValue('Volume', volume, true);
-                    //updateMessage('Volume: ' + Math.round(volume * 100) + '%');
+                    if (globals.settings.Debug) { console.log('Volume: ' + Math.round(volume * 100) + '%'); }
                 }
             }
             if (unicode == 187) { // equals - volume up
                 var volume = utils.getValue('Volume') ? parseFloat(utils.getValue('Volume')) : 1;
                 if (volume < 1 && volume >= 0 && source ==- '') {
                     volume += 0.1;
-                    $(player1).jPlayer({
+                    $(globals.Player1).jPlayer({
                         volume: volume
                     });
                     utils.setValue('Volume', volume, true);
-                    //updateMessage('Volume: ' + Math.round(volume * 100) + '%');
+                    if (globals.settings.Debug) { console.log('Volume: ' + Math.round(volume * 100) + '%'); }
                 }
             }
         }
@@ -464,6 +467,7 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
     $scope.queueEmpty = function () {
         //self.selectedSongs([]);
         $rootScope.queue = [];
+        $.fancybox.close();
     };
     $scope.queueTotal = function () {
         var total = 0;
@@ -510,7 +514,7 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
         if (typeof folder == 'number' && folder !== '' && folder != 'all') {
             //alert(folder);
             folderParams = '&musicFolderId=' + folder;
-        } else if (typeof $rootScope.SelectedMusicFolder.id != 'undefined') {
+        } else if (typeof $rootScope.SelectedMusicFolder.id != 'undefined' && $rootScope.SelectedMusicFolder.id >= 0) {
             //alert($rootScope.SelectedMusicFolder.id);
             folderParams = '&musicFolderId=' + $rootScope.SelectedMusicFolder.id;
         }

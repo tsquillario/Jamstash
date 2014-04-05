@@ -1,5 +1,17 @@
 ﻿[
     {
+        "date": "3/29/2014", "version": "3.3",
+        "changes": [
+        { "text": "- Queue opens in modal window, feels easier to use. Other bug fixes." }
+        ]
+    },
+    {
+        "date": "2/22/2014", "version": "3.2.3",
+        "changes": [
+        { "text": "- Usability tweaks, reticulated splines" }
+        ]
+    },
+    {
         "date": "2/7/2014", "version": "3.2.2",
         "changes": [
         { "text": "- Bug fixes!" },

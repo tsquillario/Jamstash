@@ -1,5 +1,5 @@
 ﻿JamStash.controller('SettingsCtrl',
-function SettingsCtrl($scope, $routeParams, $location, utils, globals, json, notifications, player) {
+function SettingsCtrl($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, player) {
     $scope.settings = globals.settings;
     $scope.Timeouts = [
         { id: 10000, name: 10 },
@@ -26,9 +26,9 @@ function SettingsCtrl($scope, $routeParams, $location, utils, globals, json, not
     $scope.reset = function () {
         utils.setValue('Settings', null, true);
         $scope.loadSettings();
-    }
+    };
     $scope.save = function () {
-        if ($scope.settings.Password != '' && globals.settings.Password.substring(0, 4) != 'enc:') { $scope.settings.Password = 'enc:' + utils.HexEncode($scope.settings.Password); }
+        if ($scope.settings.Password !== '' && globals.settings.Password.substring(0, 4) != 'enc:') { $scope.settings.Password = 'enc:' + utils.HexEncode($scope.settings.Password); }
         if ($scope.settings.NotificationSong) {
             notifications.requestPermissionIfRequired();
             if (!notifications.hasNotificationPermission()) {
@@ -52,7 +52,7 @@ function SettingsCtrl($scope, $routeParams, $location, utils, globals, json, not
         utils.setValue('Settings', $scope.settings, true);
         notifications.updateMessage('Settings Updated!', true);
         $scope.loadSettings();
-        if (globals.settings.Server != '' && globals.settings.Username != '' && globals.settings.Password != '') {
+        if (globals.settings.Server !== '' && globals.settings.Username !== '' && globals.settings.Password !== '') {
             $scope.ping();
         }
     };
@@ -64,7 +64,7 @@ function SettingsCtrl($scope, $routeParams, $location, utils, globals, json, not
         json.getChangeLog(function (data) {
             $scope.changeLog = data;
         });
-    }
+    };
     $scope.setupDemo = function () {
         var Username = "android-guest";
         var Password = "guest";
@@ -77,8 +77,17 @@ function SettingsCtrl($scope, $routeParams, $location, utils, globals, json, not
             //$scope.save();
             $location.url('/library');
         }
-    }
+    };
 
     /* Load on Startup */
+    // https://tsquillario.dyndns.org:8443/Jamstash/beta/#/settings?url=https://tsquillario.dyndns.org:8443/subsonic&u=tsquillario
+    if (typeof $location.search()['url'] != 'undefined' && $scope.settings.Server === '') {
+        if (globals.settings.Debug) { console.log("Setting Provided: " + $location.search()['url']); }
+        $scope.settings.Server = $location.search()['url'];
+    }
+    if (typeof $location.search()['u'] != 'undefined' && $scope.settings.Username === '') {
+        if (globals.settings.Debug) { console.log("Setting Provided: " + $location.search()['u']); }
+        $scope.settings.Username = $location.search()['u'];
+    }
     /* End Startup */
 });

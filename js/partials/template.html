@@ -39,7 +39,7 @@
                 </ul>
             </div>
             <!-- Song -->
-            <div class="ui-layout-east noselect hide" ng-include src="'js/partials/songs.html'"></div>
+            <div class="ui-layout-east noselect hide" ng-if="song.length > 0" ng-include src="'js/partials/songs.html'"></div>
         </div>
     </div>
 <div class="clear"></div>
