@@ -133,6 +133,74 @@ JamStash.service('globals', function () {
     this.BaseURL = function () { return this.settings.Server + '/rest'; };
     this.BaseParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=' + this.settings.Protocol + '&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };
 });
+JamStash.service('notifications', function ($rootScope, globals) {
+    var msgIndex = 1;
+    this.updateMessage = function (msg, autohide) {
+        if (msg != '') {
+            var id = msgIndex;
+            $('#messages').append('<span id=\"msg_' + id + '\" class="message">' + msg + '</span>');
+            $('#messages').fadeIn();
+            $("#messages").scrollTo('100%');
+            var el = '#msg_' + id;
+            if (autohide) {
+                setTimeout(function () {
+                    $(el).fadeOut(function () { $(this).remove(); });
+                }, globals.settings.NotificationTimeout);
+            } else {
+                $(el).click(function () {
+                    $(el).fadeOut(function () { $(this).remove(); });
+                    return false;
+                });
+            }
+            msgIndex++;
+        }
+    }
+    this.requestPermissionIfRequired = function () {
+        if (window.Notify.isSupported() && window.Notify.needsPermission()) {
+            window.Notify.requestPermission();
+        }
+    }
+    this.hasNotificationPermission = function () {
+        return (window.Notify.needsPermission() === false);
+    }
+    this.hasNotificationSupport = function () {
+        return window.Notify.isSupported();
+    }
+    var notifications = new Array();
+
+    this.showNotification = function (pic, title, text, type, bind) {
+        if (this.hasNotificationPermission()) {
+            //closeAllNotifications()
+            var settings = {}
+            if (bind = '#NextTrack') {
+                settings.notifyClick = function () {
+                    $rootScope.nextTrack();
+                    this.close();
+                };
+            }
+            if (type == 'text') {
+                settings.body = text;
+                settings.icon = pic;
+            } else if (type == 'html') {
+                settings.body = text;
+            }
+            var notification = new Notify(title, settings);
+            notifications.push(notification);
+            setTimeout(function (notWin) {
+                notWin.close();
+            }, globals.settings.NotificationTimeout, notification);
+            notification.show();
+        } else {
+            console.log("showNotification: No Permission");
+        }
+    }
+    this.closeAllNotifications = function () {
+        for (notification in notifications) {
+            notifications[notification].close();
+        }
+    }
+});
+
 // Directives
 JamStash.directive('layout', function () {
     return {
@@ -349,6 +417,30 @@ JamStash.directive('ngDownload', function ($compile) {
         }
     };
 });
+JamStash.directive('stopEvent', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attr) {
+            element.bind(attr.stopEvent, function (e) {
+                e.stopPropagation();
+            });
+        }
+    };
+});
+JamStash.directive('ngEnter', function () {
+    return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+            if (event.which === 13) {
+                scope.$apply(function () {
+                    scope.$eval(attrs.ngEnter);
+                });
+
+                event.preventDefault();
+            }
+        });
+    };
+});
+
 
 /* Factory */
 JamStash.factory('json', function ($http) { // Deferred loading
@@ -413,6 +505,16 @@ JamStash.factory('subsonic', function ($http, globals, utils) {
         }
     };
 });
+JamStash.factory('json', function ($http) { // Deferred loading
+    return {
+        getCollections: function (callback) {
+            $http.get('js/json_collections.js').success(callback);
+        },
+        getChangeLog: function (callback) {
+            $http.get('js/json_changelog.js').success(callback);
+        }
+    }
+});
 
 /* Filters */
 JamStash.filter('capitalize', function () {
@@ -425,65 +527,10 @@ JamStash.filter('musicfolder', function () {
         return items.slice(1, items.length);
     };
 });
-
-JamStash.service('notifications', function ($rootScope, globals) {
-    var msgIndex = 1;
-    this.updateMessage = function (msg, autohide) {
-        if (msg !== '') {
-            var id = msgIndex;
-            $('#messages').append('<span id=\"msg_' + id + '\" class="message">' + msg + '</span>');
-            $('#messages').fadeIn();
-            $("#messages").scrollTo('100%');
-            var el = '#msg_' + id;
-            if (autohide) {
-                setTimeout(function () {
-                    $(el).fadeOut(function () { $(this).remove(); });
-                }, globals.settings.Timeout);
-            }
-            $(el).click(function () {
-                $(el).fadeOut(function () { $(this).remove(); });
-                return false;
-            });
-            msgIndex++;
-        }
-    };
-    this.requestPermissionIfRequired = function () {
-        if (!this.hasNotificationPermission() && (window.webkitNotifications)) {
-            window.webkitNotifications.requestPermission();
-        }
-    };
-    this.hasNotificationPermission = function () {
-        return !!(window.webkitNotifications) && (window.webkitNotifications.checkPermission() === 0);
-    };
-    var notifications = [];
-    this.showNotification = function (pic, title, text, type, bind) {
-        if (this.hasNotificationPermission()) {
-            //closeAllNotifications()
-            var popup;
-            if (type == 'text') {
-                popup = window.webkitNotifications.createNotification(pic, title, text);
-            } else if (type == 'html') {
-                popup = window.webkitNotifications.createHTMLNotification(text);
-            }
-            if (bind == '#NextTrack') {
-                popup.addEventListener('click', function (bind) {
-                    //$(bind).click();
-                    $rootScope.nextTrack();
-                    this.cancel();
-                });
-            }
-            notifications.push(popup);
-            setTimeout(function (notWin) {
-                notWin.cancel();
-            }, globals.settings.Timeout, popup);
-            popup.show();
-        } else {
-            console.log("showNotification: No Permission");
-        }
-    };
-    this.closeAllNotifications = function () {
-        for (notification in notifications) {
-            notifications[notification].cancel();
-        }
-    };
+JamStash.filter('capitalize', function () {
+    return function (input, scope) {
+        return input.substring(0, 1).toUpperCase() + input.substring(1);
+    }
 });
+
+
