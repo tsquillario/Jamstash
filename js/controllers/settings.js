@@ -29,6 +29,7 @@ function SettingsCtrl($rootScope, $scope, $routeParams, $location, utils, global
     };
     $scope.save = function () {
         if ($scope.settings.Password !== '' && globals.settings.Password.substring(0, 4) != 'enc:') { $scope.settings.Password = 'enc:' + utils.HexEncode($scope.settings.Password); }
+        if ($scope.settings.Server.indexOf('http://') != 0 && $scope.settings.Server.indexOf('https://') != 0) { $scope.settings.Server = 'http://' + $scope.settings.Server; }
         if ($scope.settings.NotificationSong) {
             notifications.requestPermissionIfRequired();
             if (!notifications.hasNotificationSupport()) {
@@ -68,7 +69,7 @@ function SettingsCtrl($rootScope, $scope, $routeParams, $location, utils, global
     $scope.setupDemo = function () {
         var Username = "android-guest";
         var Password = "guest";
-        var Server = "http://subsonic.org/demo";
+        var Server = "http://demo.subsonic.org";
         var Tab = "tabLibrary";
         if (utils.confirmDelete("Do you want to connect to the Subsonic Demo server?")) {
             globals.settings.Username = Username;
@@ -80,7 +81,6 @@ function SettingsCtrl($rootScope, $scope, $routeParams, $location, utils, global
     };
 
     /* Load on Startup */
-    // https://tsquillario.dyndns.org:8443/Jamstash/beta/#/settings?url=https://tsquillario.dyndns.org:8443/subsonic&u=tsquillario
     if (typeof $location.search()['url'] != 'undefined' && $scope.settings.Server === '') {
         if (globals.settings.Debug) { console.log("Setting Provided: " + $location.search()['url']); }
         $scope.settings.Server = $location.search()['url'];

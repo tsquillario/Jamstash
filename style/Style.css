@@ -714,7 +714,6 @@ ul.songlist .row
     cursor: pointer;
     border-bottom: 1px solid #EFEFEF;
     line-height: 30px;
-    font-size: 12px;
 }
 ul.songlist .row a
 {
@@ -960,10 +959,6 @@ ul.songlist li:hover
     padding: 0 0 0 5px;
     float: right;
 }
-.queueactions {
-    padding: 0 0 5px 0;
-    text-align: left;
-}
 #globalactions 
 {
     position: absolute;
@@ -1116,9 +1111,17 @@ ul.songlist li:hover
 {
 }
 
-#showqueue {
+#queue {
     width: 1200px;
     display: none;
+}
+#queue .songlist {
+    padding: 35px 0 0 0;
+}
+.queueactions {
+    padding: 0;
+    text-align: left;
+    position: fixed;
 }
 
 /* Player Style */

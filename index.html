@@ -103,8 +103,8 @@
                 <div id="playerleft" class="floatleft">
                     <div class="playeractions floatleft">
                         <a class="button" id="PreviousTrack" title="Previous Track" ng-click="previousTrack()"><img src="images/first_24x24.png" /></a>
-                        <a class="button" id="PlayTrack" title="Play/Pause" ng-click="defaultPlay()"><img src="images/play_24x32.png" /></a>
-                        <a class="button" id="PauseTrack" title="Play/Pause" style="display: none;"><img src="images/pause_24x32.png" /></a>
+                        <a class="button PlayTrack" title="Play/Pause" ng-click="defaultPlay()"><img src="images/play_24x32.png" /></a>
+                        <a class="button PauseTrack" title="Play/Pause" style="display: none;"><img src="images/pause_24x32.png" /></a>
                         <a class="button" id="NextTrack" title="Next Track" ng-click="nextTrack()"><img src="images/last_24x24.png" /></a>
                     </div>
                     <div id="songdetails">
@@ -148,15 +148,19 @@
             </div>
         </div>
     </div> <!-- End container -->
-    <div id="footer">
-        <ul id="showqueue" class="simplelist songlist noselect" style="width: 1200px;" ng-if="queue.length > 0">
-            <div class="queueactions">
-                <a href="" class="button" title="Shuffle Queue" ng-click="queueShuffle()">Shuffle</a>
-                <a href="" class="button" id="action_Empty" title="Delete Queue" ng-click="queueEmpty()">Empty</a>
-                <a href="" class="button" id="action_DeleteSelected" title="Remove Selected From Queue" ng-click="queueRemoveSelected()">Remove</a>
-                <!--<a href="" class="button buttonvertical" id="action_QueueToPlaylist" title="Create Playlist From Queue"><img src="images/list_gd_12x11.png" /></a>-->
-            </div>
-            <div ng-repeat="song in [queue]" ng-include src="'js/partials/songs.html'" sortable></div>
+    <div id="queue">
+        <div class="queueactions">
+            <!--<a href="" class="button buttonvertical" id="action_QueueToPlaylist" title="Create Playlist From Queue"><img src="images/list_gd_12x11.png" /></a>-->
+            <a class="button" id="PreviousTrack" title="Previous Track" ng-click="previousTrack()"><img src="images/first_12x12.png" /></a>
+            <a class="button PlayTrack" title="Play/Pause" ng-click="defaultPlay()"><img src="images/play_12x16.png" /></a>
+            <a class="button PauseTrack" title="Play/Pause" style="display: none;"><img src="images/pause_12x16.png" /></a>
+            <a class="button" id="NextTrack" title="Next Track" ng-click="nextTrack()"><img src="images/last_12x12.png" /></a>
+            <a class="button" title="Shuffle Queue" ng-click="queueShuffle()">Shuffle</a>
+            <a class="button" id="action_Empty" title="Delete Queue" ng-click="queueEmpty()">Empty</a>
+            <a class="button" id="action_DeleteSelected" title="Remove Selected From Queue" ng-click="queueRemoveSelected()">Remove</a>
+        </div>
+        <ul class="simplelist songlist noselect" style="width: 1200px;" ng-if="queue.length > 0">
+            <div ng-repeat="song in [queue]" class="songs" ng-include src="'js/partials/songs.html'" sortable></div>
         </ul>
     </div>
     <script>

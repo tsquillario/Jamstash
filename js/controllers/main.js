@@ -146,7 +146,7 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
     });
 
     $('.showQueue').fancybox({
-        href: '#showqueue',
+        href: '#queue',
         autoWidth: false,
         width: '100%',
         //margin: [50, 10, 50, 10], // top, right, bottom, left
@@ -318,14 +318,17 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
     };
     $scope.playFrom = function (index) {
         var from = $rootScope.song.slice(index,$rootScope.song.length);
+        $scope.selectedSongs = [];
         angular.forEach(from, function (item, key) {
             $scope.selectedSongs.push(item);
             item.selected = true;
         });
-        $rootScope.queue = [];
-        $scope.addSongsToQueue();
-        var next = $rootScope.queue[0];
-        $rootScope.playSong(false, next);
+        if ($scope.selectedSongs.length > 0) {
+            $rootScope.queue = [];
+            $scope.addSongsToQueue();
+            var next = $rootScope.queue[0];
+            $rootScope.playSong(false, next);
+        }
     };
     $scope.selectNone = function () {
         angular.forEach($rootScope.song, function (item, key) {
@@ -336,7 +339,7 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
     $scope.addSongsToQueue = function () {
         if ($scope.selectedSongs.length !== 0) {
             angular.forEach($scope.selectedSongs, function (item, key) {
-                $scope.queue.push(item);
+                $rootScope.queue.push(item);
                 item.selected = false;
             });
             //$rootScope.showQueue();
@@ -344,10 +347,14 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             $scope.selectedSongs.length = 0;
         }
     };
+    $scope.removeSongFromQueue = function (item) {
+        var index = $rootScope.queue.indexOf(item)
+        $rootScope.queue.splice(index, 1);
+    }
     $scope.removeSong = function (item) {
         var index = $rootScope.song.indexOf(item)
         $rootScope.song.splice(index, 1);
-    }
+    };
     $scope.isActive = function (route) {
         return route === $location.path();
     };
