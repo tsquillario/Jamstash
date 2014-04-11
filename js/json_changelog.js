@@ -1,5 +1,11 @@
 ﻿[
     {
+        "date": "4/11/2014", "version": "3.3.1",
+        "changes": [
+        { "text": "- Added player controls to queue, fixed song actions" }
+        ]
+    },
+    {
         "date": "3/29/2014", "version": "3.3",
         "changes": [
         { "text": "- Queue opens in modal window, feels easier to use. Other bug fixes." },

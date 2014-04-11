@@ -228,10 +228,10 @@
             volume: volume,
             errorAlerts: false,
             warningAlerts: false,
-            cssSelectorAncestor: "#player",
+            cssSelectorAncestor: "",
             cssSelector: {
-                play: "#PlayTrack",
-                pause: "#PauseTrack",
+                play: ".PlayTrack",
+                pause: ".PauseTrack",
                 seekBar: "#audiocontainer .scrubber",
                 playBar: "#audiocontainer .progress",
                 mute: "#action_Mute",
