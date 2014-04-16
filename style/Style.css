@@ -743,7 +743,7 @@ ul.songlist .row img
 }
 ul.songlist .row .itemactions
 {
-    width: 20%; /* 20% */
+    width: 15%;
     float: left;
     padding: 6px 0 0 16px;
 }
@@ -762,7 +762,7 @@ ul.songlist .row .track
 }
 ul.songlist .row .title
 {
-    width: 20%; /* 50% */
+    width: 25%;
 }
 ul.songlist .row .albumblock
 {
@@ -779,6 +779,7 @@ ul.songlist .row .albumblock img
 ul.songlist .row .artist    
 {
     width: 15%;
+    padding: 0 10px 0 0;
 }
 ul.songlist .row .albumtext
 {
@@ -1503,6 +1504,7 @@ a.button {
     border-radius: 2px;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
+    cursor: pointer;
 }
 a.button:hover {
     color: #333;
