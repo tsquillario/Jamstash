@@ -234,7 +234,7 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
     });
     $scope.scrollToIndex = function (e) {
         var source = e.target.id;
-        if (source != 'Search' && source != 'Source' && source != 'Description' && source != 'ChatMsg' && source != 'AutoPlaylists') {
+        if (e.target.tagName.toUpperCase() != 'INPUT') {
             var unicode = e.charCode ? e.charCode : e.keyCode;
             if (globals.settings.Debug) { console.log('Keycode Triggered: ' + unicode); }
             if (unicode == 49) { // 1
