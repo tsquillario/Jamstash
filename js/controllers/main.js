@@ -69,23 +69,6 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
         }
     });
 
-
-    $(".coverartfancy").on("click", "a", function () {
-        $("a.coverartfancy").fancybox({
-            beforeShow: function () {
-                //this.title = $('#songdetails_artist').html();
-            },
-            afterLoad: function () {
-                //this.inner.prepend( '<h1>1. My custom title</h1>' );
-                //this.content = '<h1>2. My custom title</h1>';
-            },
-            hideOnContentClick: true,
-            type: 'image',
-            openEffect: 'none',
-            closeEffect: 'none'
-        });
-    });
-
     var submenu_active = false;
     $('div.submenu').mouseenter(function () {
         submenu_active = true;
@@ -131,6 +114,23 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             $rootScope.hideQueue();
         }
     };
+    /*
+    $(document).on("click", "a[name=coverartfancy]", function () {
+        $.fancybox({
+            beforeShow: function () {
+                //this.title = $('#songdetails_artist').html();
+            },
+            afterLoad: function () {
+                //this.inner.prepend( '<h1>1. My custom title</h1>' );
+                //this.content = '<h1>2. My custom title</h1>';
+            },
+            hideOnContentClick: true,
+            type: 'image',
+            openEffect: 'none',
+            closeEffect: 'none'
+        });
+    });
+    */
     $("a.coverartfancy").fancybox({
         beforeShow: function () {
             //this.title = $('#songdetails_artist').html();
@@ -144,7 +144,6 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
         openEffect: 'none',
         closeEffect: 'none'
     });
-
     $('.showQueue').fancybox({
         href: '#queue',
         autoWidth: false,
@@ -156,6 +155,9 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             if ($rootScope.queue == 0) {
                 this.close();
             }
+        },
+        helpers: {
+            title: null
         }
     });
 
