@@ -229,30 +229,13 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         });
     };
     $scope.getAlbumByTag = function (id) { // Gets Album by ID3 tag
-        $.ajax({
-            url: globals.BaseURL() + '/getAlbum.view?' + globals.BaseParams() + '&id=' + id,
-            method: 'GET',
-            dataType: globals.settings.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function (data) {
-                if (typeof data["subsonic-response"].album != 'undefined') {
-                    subsonic.content.album = [];
-                    subsonic.song = [];
-
-                    //subsonic.content.album.push(map.mapAlbum(data["subsonic-response"].album));
-
-                    var items = [];
-                    if (data["subsonic-response"].album.song.length > 0) {
-                        items = data["subsonic-response"].album.song;
-                    } else {
-                        items[0] = data["subsonic-response"].album.song;
-                    }
-                    angular.forEach(items, function (item, key) {
-                        subsonic.song.push(map.mapSong(item));
-                    });
-                    $scope.$apply();
-                }
-            }
+        subsonic.getAlbumByTag(id).then(function (data) {
+            $scope.album = data.album;
+            $scope.song = data.song;
+            $scope.BreadCrumbs = data.breadcrumb;
+            $scope.selectedAutoAlbum = data.selectedAutoAlbum;
+            $scope.selectedArtist = data.selectedArtist;
+            $scope.selectedPlaylist = data.selectedPlaylist;
         });
     };
     $scope.search = function () {

@@ -695,10 +695,37 @@ JamStash.factory('subsonic', function ($rootScope, $http, $q, globals, utils, ma
                         if (SelectedAlbumSort.id != "default") {
                             sortSubsonicAlbums(SelectedAlbumSort.id);
                         }
-                        deferred.resolve(content);
                     } else {
                         notifications.updateMessage('No Albums Returned :(', true);
                     }
+                    deferred.resolve(content);
+                }
+            });
+            return deferred.promise;
+        },
+        getAlbumByTag: function (id) { // Gets Album by ID3 tag
+            var deferred = $q.defer();
+            $.ajax({
+                url: globals.BaseURL() + '/getAlbum.view?' + globals.BaseParams() + '&id=' + id,
+                method: 'GET',
+                dataType: globals.settings.Protocol,
+                timeout: globals.settings.Timeout,
+                success: function (data) {
+                    if (typeof data["subsonic-response"].album != 'undefined') {
+                        content.album = [];
+                        content.song = [];
+
+                        var items = [];
+                        if (data["subsonic-response"].album.song.length > 0) {
+                            items = data["subsonic-response"].album.song;
+                        } else {
+                            items[0] = data["subsonic-response"].album.song;
+                        }
+                        angular.forEach(items, function (item, key) {
+                            content.song.push(map.mapSong(item));
+                        });
+                    }
+                    deferred.resolve(content);
                 }
             });
             return deferred.promise;

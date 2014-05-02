@@ -356,6 +356,9 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
     $scope.isActive = function (route) {
         return route === $location.path();
     };
+    $rootScope.getSplitPosition = function (scope, elm) {
+        alert(elm.getBoundingClientRect().left);
+    };
     $scope.getMusicFolders = function () {
         $.ajax({
             url: globals.BaseURL() + '/getMusicFolders.view?' + globals.BaseParams(),
