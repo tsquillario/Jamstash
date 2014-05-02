@@ -1,5 +1,11 @@
 ﻿[
     {
+        "date": "5/2/2014", "version": "3.4",
+        "changes": [
+        { "text": "- Tab state saved, consolidated Subsonic artists, playlist and podcasts" }
+        ]
+    },
+    {
         "date": "4/11/2014", "version": "3.3.1",
         "changes": [
         { "text": "- Added player controls to queue, fixed song actions" }
