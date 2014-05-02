@@ -6,8 +6,7 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
     $rootScope.playingSong = null;
     $rootScope.MusicFolders = [];
     $rootScope.Genres = [];
-    $rootScope.selectedPlaylist = "";
-    $rootScope.selectedAutoPlaylist = "";
+    
     $rootScope.SelectedMusicFolder = "";
     $rootScope.unity = null;
     $rootScope.loggedIn = function () {
@@ -244,13 +243,11 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             } else if (unicode == 50) {
                 $('#action_Library').click();
             } else if (unicode == 51) {
-                $('#action_Playlists').click();
-            } else if (unicode == 52) {
-                $('#action_Podcasts').click();
-            } else if (unicode == 53) {
                 $('#action_Archive').click();
-            } else if (unicode == 54) { // 6
+            } else if (unicode == 52) {
                 $('#action_Settings').click();
+            } else if (unicode == 53) {
+            } else if (unicode == 54) { // 6
             }
             if (unicode >= 65 && unicode <= 90 && $('#tabLibrary').is(':visible')) { // a-z
                 var key = utils.findKeyForCode(unicode);
@@ -305,21 +302,27 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
     $scope.scrollToTop = function () {
         $('#Artists').stop().scrollTo('#auto', 400);
     };
-    $scope.selectAll = function () {
-        angular.forEach($rootScope.song, function (item, key) {
+    $rootScope.selectAll = function (songs) {
+        angular.forEach(songs, function (item, key) {
             $scope.selectedSongs.push(item);
             item.selected = true;
         });
     };
-    $scope.playAll = function () {
+    $rootScope.selectNone = function (songs) {
+        angular.forEach(songs, function (item, key) {
+            $scope.selectedSongs = [];
+            item.selected = false;
+        });
+    };
+    $rootScope.playAll = function (songs) {
         $rootScope.queue = [];
-        $scope.selectAll();
-        $scope.addSongsToQueue();
+        $rootScope.selectAll(songs);
+        $rootScope.addSongsToQueue();
         var next = $rootScope.queue[0];
         $rootScope.playSong(false, next);
     };
-    $scope.playFrom = function (index) {
-        var from = $rootScope.song.slice(index,$rootScope.song.length);
+    $rootScope.playFrom = function (index, songs) {
+        var from = songs.slice(index,songs.length);
         $scope.selectedSongs = [];
         angular.forEach(from, function (item, key) {
             $scope.selectedSongs.push(item);
@@ -327,36 +330,29 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
         });
         if ($scope.selectedSongs.length > 0) {
             $rootScope.queue = [];
-            $scope.addSongsToQueue();
+            $rootScope.addSongsToQueue();
             var next = $rootScope.queue[0];
             $rootScope.playSong(false, next);
         }
     };
-    $scope.selectNone = function () {
-        angular.forEach($rootScope.song, function (item, key) {
-            $scope.selectedSongs = [];
-            item.selected = false;
-        });
-    };
-    $scope.addSongsToQueue = function () {
+    $rootScope.addSongsToQueue = function () {
         if ($scope.selectedSongs.length !== 0) {
             angular.forEach($scope.selectedSongs, function (item, key) {
                 $rootScope.queue.push(item);
                 item.selected = false;
             });
-            //$rootScope.showQueue();
             notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
             $scope.selectedSongs.length = 0;
         }
+    };
+    $rootScope.removeSong = function (item, songs) {
+        var index = songs.indexOf(item)
+        songs.splice(index, 1);
     };
     $scope.removeSongFromQueue = function (item) {
         var index = $rootScope.queue.indexOf(item)
         $rootScope.queue.splice(index, 1);
     }
-    $scope.removeSong = function (item) {
-        var index = $rootScope.song.indexOf(item)
-        $rootScope.song.splice(index, 1);
-    };
     $scope.isActive = function (route) {
         return route === $location.path();
     };
@@ -397,31 +393,6 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
                 }
             }
         });
-    };
-    $scope.getGenres = function () {
-        var genres = 'Acid Rock,Acoustic,Alt Country,Alt/Indie,Alternative & Punk,Alternative Metal,Alternative,AlternRock,Awesome,Bluegrass,Blues,Blues-Rock,Classic Hard Rock,Classic Rock,Comedy,Country,Country-Rock,Dance,Dance-Rock,Deep Funk,Easy Listening,Electronic,Electronica,Electronica/Dance,Folk,Folk/Rock,Funk,Grunge,Hard Rock,Heavy Metal,Holiday,House,Improg,Indie Rock,Indie,International,Irish,Jam Band,Jam,Jazz Fusion,Jazz,Latin,Live Albums,Metal,Music,Oldies,Other,Pop,Pop/Rock,Post Rock,Progressive Rock,Psychedelic Rock,Psychedelic,Punk,R&B,Rap & Hip-Hop,Reggae,Rock & Roll,Rock,Rock/Pop,Roots,Ska,Soft Rock,Soul,Southern Rock,Thrash Metal,Unknown,Vocal,World';
-        $rootScope.Genres = genres.split(',');
-        /* This is broken in version 4.8, unable to convert XML to JSON
-        $.ajax({
-        url: globals.BaseURL() + '/getGenres.view?' + globals.BaseParams(),
-        method: 'GET',
-        dataType: globals.settings.Protocol,
-        timeout: globals.settings.Timeout,
-        success: function (data) {
-        if (typeof data["subsonic-response"].genres != 'undefined') {
-        var items = [];
-        if (data["subsonic-response"].genres.length > 0) {
-        items = data["subsonic-response"].genres;
-        } else {
-        items[0] = data["subsonic-response"].genres;
-        }
-
-        $rootScope.Genres = items;
-        $scope.$apply();
-        }
-        }
-        });
-        */
     };
     $scope.download = function (id) {
         $.ajax({
@@ -502,72 +473,6 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             $scope.selectedSongs.push(data);
             data.selected = true;
         }
-        //$scope.$apply();
-    };
-    $rootScope.getRandomSongs = function (action, genre, folder) {
-        if (globals.settings.Debug) { console.log('action:' + action + ', genre:' + genre + ', folder:' + folder); }
-        var size = globals.settings.AutoPlaylistSize;
-        $rootScope.selectedPlaylist = null;
-        if (typeof folder == 'number') {
-            $rootScope.selectedAutoPlaylist = folder;
-        } else if (genre !== '') {
-            $rootScope.selectedAutoPlaylist = genre;
-        } else {
-            $rootScope.selectedAutoPlaylist = 'random';
-        }
-        var genreParams = '';
-        if (genre !== '' && genre != 'Random') {
-            genreParams = '&genre=' + genre;
-        }
-        folderParams = '';
-        if (typeof folder == 'number' && folder !== '' && folder != 'all') {
-            //alert(folder);
-            folderParams = '&musicFolderId=' + folder;
-        } else if (typeof $rootScope.SelectedMusicFolder.id != 'undefined' && $rootScope.SelectedMusicFolder.id >= 0) {
-            //alert($rootScope.SelectedMusicFolder.id);
-            folderParams = '&musicFolderId=' + $rootScope.SelectedMusicFolder.id;
-        }
-        $.ajax({
-            url: globals.BaseURL() + '/getRandomSongs.view?' + globals.BaseParams() + '&size=' + size + genreParams + folderParams,
-            method: 'GET',
-            dataType: globals.settings.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function (data) {
-                if (typeof data["subsonic-response"].randomSongs.song != 'undefined') {
-                    var items = [];
-                    if (data["subsonic-response"].randomSongs.song.length > 0) {
-                        items = data["subsonic-response"].randomSongs.song;
-                    } else {
-                        items[0] = data["subsonic-response"].randomSongs.song;
-                    }
-                    if (action == 'add') {
-                        angular.forEach(items, function (item, key) {
-                            $rootScope.queue.push(utils.mapSong(item));
-                        });
-                        $scope.$apply();
-                        //$rootScope.showQueue();
-                        notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                    } else if (action == 'play') {
-                        $rootScope.queue = [];
-                        angular.forEach(items, function (item, key) {
-                            $rootScope.queue.push(utils.mapSong(item));
-                        });
-                        var next = $rootScope.queue[0];
-                        $scope.$apply(function () {
-                            $rootScope.playSong(false, next);
-                        });
-                        //$rootScope.showQueue();
-                        notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                    } else {
-                        $rootScope.song = [];
-                        angular.forEach(items, function (item, key) {
-                            $rootScope.song.push(utils.mapSong(item));
-                        });
-                        $scope.$apply();
-                    }
-                }
-            }
-        });
     };
     $scope.updateFavorite = function (item) {
         var id = item.id;

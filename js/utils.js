@@ -44,29 +44,17 @@ JamStash.service('utils', function ($cookieStore, globals, model) {
             if (globals.settings.Debug) { console.log(e); }
         }
     };
-    this.mapSong = function (data) {
-        var song = data;
-        var url, title, artist, track, rating, starred, contenttype, suffix, description;
-        var specs = '', coverartthumb = '', coverartfull = '';
-        if (typeof song.coverArt != 'undefined') {
-            coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=60&id=' + song.coverArt;
-            coverartfull = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&id=' + song.coverArt;
-        } else {
-            coverartthumb = 'images/albumdefault_60.jpg';
-            coverartfull = 'images/albumdefault_160.jpg';
-        }
-        if (typeof song.description == 'undefined') { description = ''; } else { description = song.description; }
-        if (typeof song.artist == 'undefined') { artist = '&nbsp;'; } else { artist = song.artist.toString(); }
-        if (typeof song.title == 'undefined') { title = '&nbsp;'; } else { title = song.title.toString(); }
-        if (typeof song.track == 'undefined') { track = '&nbsp;'; } else { track = song.track.toString(); }
-        if (typeof song.starred !== 'undefined') { starred = true; } else { starred = false; }
-        if (song.bitRate !== undefined) { specs += song.bitRate + ' Kbps'; }
-        if (song.transcodedSuffix !== undefined) { specs += ', transcoding:' + song.suffix + ' > ' + song.transcodedSuffix; } else { specs += ', ' + song.suffix; }
-        if (song.transcodedSuffix !== undefined) { suffix = song.transcodedSuffix; } else { suffix = song.suffix; }
-        if (suffix == 'ogg') { suffix = 'oga'; }
-        var salt = Math.floor(Math.random() * 100000);
-        url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.id + '&salt=' + salt;
-        return new model.Song(song.id, song.parent, track, title, artist, song.artistId, song.album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
+    this.sortDateFunction = function (a, b) {
+        return a.date < b.date ? 1 : -1;
+    };
+    this.sortArtistFunction = function (a, b) {
+        return a.artist.toLowerCase() < b.artist.toLowerCase() ? -1 : 1;
+    };
+    this.sortAlbumFunction = function (a, b) {
+        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+    };
+    this.sortTrackFunction = function (a, b) {
+        return parseInt(a.track) > parseInt(b.track) ? -1 : 1;
     };
     this.confirmDelete = function (text) {
         var question = confirm(text);

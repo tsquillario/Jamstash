@@ -463,6 +463,23 @@ ul.simplelist li.index a
 {
     color: #A7A7A7;
 }
+ul.simplelist li.heading
+{
+    background: #F0F0F0;
+    border-left: 1px solid #DDDDDD;
+    border-bottom: 1px solid #DDDDDD;
+    color: #A7A7A7;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0px 4px 2px 4px;
+    padding: 8px 4px;
+}
+ul.simplelist li.heading a
+{
+    color: #7EA8D5;
+    font-variant: small-caps;
+    font-size: 15px;
+}
 ul.mainlist
 {
     padding: 0 4px;
@@ -471,6 +488,10 @@ ul.mainlist li.selected
 {
     color: #f2f2f2;
     background-color: #528AC6;
+}
+ul.mainlist li.selected a
+{
+    color: #f2f2f2;
 }
 ul.mainlist li.item a.play
 {
@@ -539,7 +560,7 @@ ul.mainlist li.item a.add:hover
     float: left;
 }
 
-#TrackContainer, #PodcastContainer
+#TrackContainer
 {
     margin: 5px 5px 5px 0;
     width: 60%;

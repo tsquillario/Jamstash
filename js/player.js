@@ -18,6 +18,8 @@
         var next = getNextSong(true);
         if (next) {
             $rootScope.playSong(false, next);
+        } else {
+            $rootScope.restartSong();
         }
     };
     getNextSong = function (previous) {
@@ -132,6 +134,10 @@
         } else {
             if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser, ' + html.length + ' characters'); }
         }
+    };
+    $rootScope.restartSong = function (loadonly, data) {
+        var audio = $(player1).data("jPlayer");
+        audio.play(0);
     };
     $rootScope.playSong = function (loadonly, data) {
         if (globals.settings.Debug) { console.log('Play: ' + JSON.stringify(data, null, 2)); }

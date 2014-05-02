@@ -1,7 +1,5 @@
 ﻿JamStash.controller('ArchiveCtrl',
 function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, globals, model, notifications, player, json) {
-    //$("#left-component").layout($scope.layoutThreeCol);
-
     $scope.settings = globals.settings;
     $scope.itemType = 'archive';
     $rootScope.song = [];
@@ -20,10 +18,6 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
     });
     $scope.writeSavedCollection = function () {
         utils.setValue('SavedCollections', $scope.SavedCollections.join(), false);
-        /*
-        $scope.$apply(function () {
-        });
-        */
         globals.SavedCollections = $scope.SavedCollections;
     };
     $scope.addSavedCollection = function (newValue) {
