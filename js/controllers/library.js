@@ -30,6 +30,8 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
             $scope.showIndex = false;
         } else {
             $scope.showIndex = true;
+            $scope.showPlaylist = false;
+            $scope.showPodcast = false;
         }
         $scope.saveDefaultSection('index');
     };
@@ -44,6 +46,8 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
             $scope.showPlaylist = false;
         } else {
             $scope.showPlaylist = true;
+            $scope.showIndex = false;
+            $scope.showPodcast = false;
         }
         $scope.saveDefaultSection('playlist');
     };
@@ -58,6 +62,8 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
             $scope.showPodcast = false;
         } else {
             $scope.showPodcast = true;
+            $scope.showPlaylist = false;
+            $scope.showIndex = false;
         }
         $scope.saveDefaultSection('podcast');
     };
