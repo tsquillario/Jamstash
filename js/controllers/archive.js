@@ -1,5 +1,5 @@
 ﻿JamStash.controller('ArchiveCtrl',
-function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, globals, model, notifications, player, json) {
+function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, globals, model, notifications, player, archive, json) {
     $scope.settings = globals.settings;
     $scope.itemType = 'archive';
     $rootScope.song = [];
@@ -12,10 +12,13 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
     $scope.SavedCollections = globals.SavedCollections;
     $scope.AllCollections = [];
     $scope.loadedCollection = false;
+    /*
     json.getCollections(function (data) {
         $scope.AllCollections = data;
         $scope.loadedCollection = true;
     });
+    */
+
     $scope.writeSavedCollection = function () {
         utils.setValue('SavedCollections', $scope.SavedCollections.join(), false);
         globals.SavedCollections = $scope.SavedCollections;
@@ -44,7 +47,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
             }
         });
     };
-    $scope.archiveUrl = 'https://archive.org/';
+    $scope.archiveUrl = globals.archiveUrl;
 
     /* Filter */
     $scope.selectedArchiveAlbumSort = "date desc";
@@ -98,6 +101,15 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
     };
     /* End Filter */
 
+    $scope.getCollections = function (all) {
+        var query = $('#Collections').val();
+        if (all || query.length >= 3) {
+            archive.getCollections(query).then(function (data) {
+                $scope.AllCollections = data.artist;
+                $scope.loadedCollection = true;
+            });
+        }
+    };
     /*
     $scope.getArtists = function (data) {
     var map = function (data) {
@@ -269,6 +281,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
     };
 
     /* Launch on Startup */
+    //$scope.getCollections();
     if ($routeParams.artist) {
         if ($routeParams.album) {
             //collection:(GreenskyBluegrass) AND format:(MP3) AND identifier:(gsbg2013-09-20.flac16)

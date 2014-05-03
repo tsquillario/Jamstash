@@ -11,9 +11,12 @@
         <div id="LayoutContainer" class="section lgsection split-pane fixed-left" split>
             <div id="left-component" class="split-pane-component smcolumn noselect" tabindex="0">
                 <!-- Artist -->
+                <!--
                 <select class="large" id="Collections" ng-disabled="!loadedCollection" ng-model="selectedCollection" ng-options="o for o in AllCollections">
                     <option value="">Select Collection</option>
-                </select>
+                </select>-->
+                <input type="text" id="Collections" name="Collections" class="large" title="" placeholder="Search..." ng-enter="getCollections()" />
+                <a href="" class="button" title="Search" ng-click="getCollections()"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
                 <a href="" title="Load Example Collections?" ng-click="setupDemoCollections()">?</a>
                 <ul class="simplelist mainlist noselect">
                     <li class="item" ng-repeat="o in SavedCollections" ng-click="getAlbums(o)" ng-class="{ 'selected': selectedArtist == o }">
@@ -23,6 +26,14 @@
                         </div>
                         <div id="{{'submenu_ArtistInfo' + $index}}" class="submenu_ArtistInfo submenu shadow" style="display: none;">
                             <a href="" ng-href="{{settings.Url + o}}" title="{{settings.Url + o}}" target="_blank" stop-event="click">PermaStash</a>
+                        </div>
+                        <span>{{o}}</span>
+                    </li>
+                </ul>
+                <ul class="simplelist mainlist noselect">
+                    <li class="item" ng-repeat="o in AllCollections" ng-click="getAlbums(o)" ng-class="{ 'selected': selectedArtist == o }">
+                        <div class="infolink">
+                            <a href="" class="hover" title="Save Collection" ng-click="addSavedCollection(o)" stop-event="click"> <img src="images/pin_gl_12x12.png" /> </a>
                         </div>
                         <span>{{o}}</span>
                     </li>

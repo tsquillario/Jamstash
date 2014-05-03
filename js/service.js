@@ -129,6 +129,7 @@ JamStash.service('globals', function () {
     this.SavedCollections = [];
     this.SavedGenres = [];
     this.Player1 = '#playdeck_1';
+    this.archiveUrl = 'https://archive.org/';
 
     this.BaseURL = function () { return this.settings.Server + '/rest'; };
     this.BaseParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=' + this.settings.Protocol + '&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };
@@ -1250,6 +1251,54 @@ JamStash.factory('subsonic', function ($rootScope, $http, $q, globals, utils, ma
             return deferred.promise;
         }
         // End subsonic
+    };
+});
+
+JamStash.factory('archive', function ($rootScope, $http, $q, globals, utils, map, notifications) {
+    var index = { shortcuts: [], artists: [] };
+    var content = {
+        artist: [],
+        album: [],
+        song: [],
+        breadcrumb: [],
+        selectedArtist: null,
+        selectedAlbum: null,
+        selectedGenre: null
+    };
+    var offset = 0;
+
+    return {
+        getCollections: function (query) {
+            var deferred = $q.defer();
+            if (globals.settings.Debug) { console.log("LOAD ARCHIVE.ORG COLLECTIONS"); }
+            var url = globals.archiveUrl + 'advancedsearch.php?q=';
+            if (query !== '') {
+                url += 'collection:(etree) AND mediatype:(collection) AND identifier:(' + query + ')';
+            } else {
+                url += 'collection:(etree) AND mediatype:(collection)';
+            }
+            url += '&fl[]=identifier&sort[]=&sort[]=&sort[]=&rows=50&page=1&output=json';
+            $.ajax({
+                url: url,
+                method: 'GET',
+                dataType: globals.settings.Protocol,
+                timeout: globals.settings.Timeout,
+                success: function (data) {
+                    if (data.response.docs.length > 0) {
+                        items = data.response.docs;
+                        //alert(JSON.stringify(data["response"]));
+                        content.artist = [];
+                        angular.forEach(items, function (item, key) {
+                            content.artist.push(item.identifier);
+                        });
+                    } else {
+                        notifications.updateMessage("Sorry :(", true);
+                    }
+                    deferred.resolve(content);
+                }
+            });
+            return deferred.promise;
+        }
     };
 });
 

@@ -273,6 +273,9 @@ span.apiversion
     font-size: 10px;
     margin: 0 5px;
 }
+.leftsubsection {
+    border-top: 1px solid #DDDDDD;
+}
 .loading
 {
     display: none;
@@ -526,6 +529,32 @@ ul.mainlist li.item a.add
 ul.mainlist li.item a.add:hover
 {
     background: url('../images/plus_8x8.png') no-repeat 6px center #DEECFB;
+}
+ul.tablist
+{
+	list-style-type: none;
+	margin: 5px 0 0 5px;
+	padding: 0;
+}
+ul.tablist li
+{
+    float: left;
+    background: #F0F0F0;
+    border-top: 1px solid #DDDDDD;
+    border-left: 1px solid #DDDDDD;
+    border-right: 1px solid #DDDDDD;
+    color: #A7A7A7;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0 2px 0 0;
+    padding: 8px 4px;
+}
+ul.tablist li a
+{
+    color: #7EA8D5;
+    font-variant: small-caps;
+    font-size: 15px;
+    text-decoration: none;
 }
 #BreadCrumb 
 {
