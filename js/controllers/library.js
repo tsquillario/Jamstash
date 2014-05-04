@@ -1,5 +1,5 @@
 ﻿JamStash.controller('SubsonicCtrl',
-function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, utils, globals, model, map, subsonic, notifications, player) {
+function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, $http, utils, globals, model, map, subsonic, notifications, player) {
     //$("#SubsonicAlbums").layout($scope.layoutThreeCol);
 
     //subsonic.song = [];

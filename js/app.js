@@ -35,7 +35,7 @@ JamStash.service('globals', function (utils) {
         Repeat: false,
         Debug: false
     };
-    this.SavedCollections = [];
+    this.DefaultCollection = [];
     this.SavedGenres = [];
     this.BaseURL = function () { return this.settings.Server + '/rest'; };
     this.BaseParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=' + this.settings.Protocol + '&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };

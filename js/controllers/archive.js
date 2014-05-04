@@ -10,15 +10,23 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
     $scope.selectedAlbum = null;
     $scope.selectedSongs = [];
     $scope.SavedCollections = globals.SavedCollections;
-    $scope.AllCollections = [];
+    $scope.AllArtists = [];
     $scope.loadedCollection = false;
     /*
-    json.getCollections(function (data) {
-        $scope.AllCollections = data;
-        $scope.loadedCollection = true;
+    $scope.getCollections = function (query) {
+        json.getCollections(query).then(function (data) {
+            $scope.AllCollections = data;
+            $scope.loadedCollection = true;
+        });
+    };
+    $scope.selectedCollection = globals.DefaultCollection;
+    $scope.$watch("selectedCollection", function (newValue, oldValue) {
+        if (newValue !== oldValue) {
+            utils.setValue('DefaultCollection', newValue, false);
+            globals.DefaultCollection = newValue;
+        }
     });
     */
-
     $scope.writeSavedCollection = function () {
         utils.setValue('SavedCollections', $scope.SavedCollections.join(), false);
         globals.SavedCollections = $scope.SavedCollections;
@@ -33,12 +41,6 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
         $scope.SavedCollections.splice(index, 1);
         $scope.writeSavedCollection();
     };
-    $scope.selectedCollection = null;
-    $scope.$watch("selectedCollection", function (newValue, oldValue) {
-        if (newValue !== oldValue) {
-            $scope.addSavedCollection(newValue);
-        }
-    });
     $scope.setupDemoCollections = function () {
         var demo = ["YonderMountainStringBand", "GreenskyBluegrass"];
         angular.forEach(demo, function (item, key) {
@@ -50,7 +52,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
     $scope.archiveUrl = globals.archiveUrl;
 
     /* Filter */
-    $scope.selectedArchiveAlbumSort = "date desc";
+    $scope.selectedArchiveAlbumSort = globals.settings.DefaultArchiveAlbumSort;
     $scope.ArchiveAlbumSort = [
         'addeddate desc',
         'addeddate asc',
@@ -73,10 +75,10 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
         if (utils.getValue('AlbumSort') != newValue) {
             if (typeof newValue != 'undefined') {
                 utils.setValue('AlbumSort', newValue, true);
+                globals.settings.DefaultArchiveAlbumSort = newValue;
             } else {
                 utils.setValue('AlbumSort', null, true);
             }
-            //alert(newValue);
             $scope.getAlbums('');
         }
     });
@@ -101,186 +103,52 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
     };
     /* End Filter */
 
-    $scope.getCollections = function (all) {
-        var query = $('#Collections').val();
+    $scope.getArtists = function (all) {
+        var query = $('#Artists').val();
+        var collection = $('#Collections option:selected').text();
         if (all || query.length >= 3) {
-            archive.getCollections(query).then(function (data) {
-                $scope.AllCollections = data.artist;
+            archive.getArtists(query, collection).then(function (data) {
+                $scope.AllArtists = data.artist;
                 $scope.loadedCollection = true;
             });
         }
     };
-    /*
-    $scope.getArtists = function (data) {
-    var map = function (data) {
-    return new model.Artist('', data);
-    };
-    angular.forEach($scope.SavedCollections, function (item, key) {
-    $scope.artist.push(map(item));
-    });
-    };
-    */
-    $scope.getAlbums = function (name, identifier) {
-        var url = $scope.archiveUrl + 'advancedsearch.php?q=';
-        if (name !== '') {
-            $scope.selectedArtist = name;
-            url += 'collection:(' + name + ') AND format:(MP3)';
-        } else if ($scope.selectedArtist) {
-            url += 'collection:(' + $scope.selectedArtist + ') AND format:(MP3)';
-        } else {
-            url += 'identifier:(' + identifier + ')';
-        }
-        var map = function (data) {
-            var song = data;
-            var coverartthumb, coverartfull, starred;
-            var url = $scope.archiveUrl + 'details/' + song.identifier;
-            coverartthumb = 'images/albumdefault_50.jpg';
-            coverartfull = 'images/albumdefault_160.jpg';
-            if (parseInt(song.avg_rating) == 5) { starred = true; } else { starred = false; }
-            //var description = '<b>Details</b><br />';
-            var description = '<b>Source</b>: ' + song.source + '<br />';
-            description += '<b>Date</b>: ' + song.date + '<br />';
-            description += typeof song.publisher != 'undefined' ? '<b>Transferer</b>: ' + song.publisher + '<br />' : '';
-            description += typeof song.avg_rating != 'undefined' ? '<b>Rating</b>: ' + song.avg_rating + '<br />' : '';
-            description += typeof song.downloads != 'undefined' ? '<b>Downloads</b>: ' + song.downloads + '<br />' : '';
-            return new model.Album(song.identifier, null, song.title, song.collection[0], '', coverartthumb, coverartfull, $.format.date(new Date(song.publicdate), "yyyy-MM-dd h:mm a"), starred, description, url);
-        };
-        if ($scope.filter.Source) {
-            url += ' AND source:(' + $scope.filter.Source + ')';
-        }
-        if ($scope.filter.Year) {
-            if (parseInt($scope.filter.Year)) {
-                url += ' AND year:(' + $scope.filter.Year + ')';
-            }
-        }
-        if ($scope.filter.Description) {
-            url += ' AND description:(' + $scope.filter.Description + ')';
-        }
-        if ($scope.selectedArchiveAlbumSort) {
-            url += '&sort[]=' + $scope.selectedArchiveAlbumSort;
-        }
-        url += '&fl[]=avg_rating,collection,date,description,downloads,headerImage,identifier,publisher,publicdate,source,subject,title,year';
-        url += '&rows=50&page=1&output=json';
-        $.ajax({
-            url: url,
-            method: 'GET',
-            dataType: $scope.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function (data) {
-                var items = [];
-                if (data.response.docs.length > 0) {
-                    items = data.response.docs;
-                    //alert(JSON.stringify(data["response"]));
-                    $scope.album = [];
-                    $rootScope.song = [];
-                    angular.forEach(items, function (item, key) {
-                        $scope.album.push(map(item));
-                    });
-                    $scope.$apply();
-                    notifications.updateMessage($scope.album.length, true);
-                } else {
-                    notifications.updateMessage("Sorry :(", true);
-                }
-            },
-            error: function () {
-                alert('Archive.org service down :(');
-            }
+    $scope.getAlbums = function (name) {
+        archive.getAlbums(name, $scope.filter).then(function (data) {
+            $scope.song = data.song;
+            $scope.album = data.album;
+            $scope.selectedArtist = data.selectedArtist;
         });
     };
-    $scope.mapSong = function (key, song, server, dir, identifier, coverart) {
-        var url, time, track, title, rating, starred, contenttype, suffix;
-        var specs = '';
-        if (song.format == 'VBR MP3') {
-            url = 'http://' + server + dir + key;
-            if (typeof song.bitrate == 'undefined' || typeof song.format == 'undefined') { specs = '&nbsp;'; } else { specs = song.bitrate + 'kbps, ' + song.format.toLowerCase(); }
-            if (typeof song.track == 'undefined') { track = '&nbsp;'; } else { track = song.track; }
-            if (typeof song.title == 'undefined') { title = '&nbsp;'; } else { title = song.title; }
-            if (typeof song.length == 'undefined') { time = '&nbsp;'; } else { time = utils.timeToSeconds(song.length); }
-            return new model.Song(song.md5, identifier, song.track, title, song.creator, '', song.album, '', coverart, coverart, time, '', '', 'mp3', specs, url, 0, '');
-        }
-    };
+    
     $scope.getSongs = function (id, action) {
-        $scope.selectedAlbum = id;
-        var url = $scope.archiveUrl + 'details/' + id + '?output=json';
-        $.ajax({
-            url: url,
-            method: 'GET',
-            dataType: $scope.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function (data) {
-                var coverart = '';
-                var server = data.server;
-                var dir = data.dir;
-                var identifier = data.metadata.identifier[0];
-                if (typeof data.misc.image != 'undefined') {
-                    coverart = data.misc.image;
-                }
-                var items = data.files;
-                if (action == 'add') {
-                    angular.forEach(items, function (item, key) {
-                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
-                        if (song) {
-                            $rootScope.queue.push(song);
-                        }
-                    });
-                    //$rootScope.showQueue(); 
-                    notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
-                    $scope.$apply();
-                } else if (action == 'play') {
-                    $rootScope.queue = [];
-                    angular.forEach(items, function (item, key) {
-                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
-                        if (song) {
-                            $rootScope.queue.push(song);
-                        }
-                    });
-                    var next = $rootScope.queue[0];
-                    $scope.$apply(function () {
-                        $rootScope.playSong(false, next);
-                    });
-                    //$rootScope.showQueue();
-                    notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
-                } else {
-                    $scope.album = [];
-                    $rootScope.song = [];
-                    angular.forEach(items, function (item, key) {
-                        var song = $scope.mapSong(key, item, server, dir, identifier, coverart);
-                        if (song) {
-                            $rootScope.song.push(song);
-                        }
-                    });
-                    $scope.$apply();
-                }
-            }
+        archive.getSongs(id, action).then(function (data) {
+            $scope.song = data.song;
+            $scope.album = data.album;
+            $scope.selectedAlbum = data.selectedAlbum;
         });
-    };
-    $scope.addSongsToQueue = function () {
-        if ($scope.selectedSongs.length > 0) {
-            angular.forEach($scope.selectedSongs, function (item, key) {
-                $scope.queue.push(item);
-                item.selected = false;
-            });
-            //$rootScope.showQueue();
-            notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
-        }
     };
     $scope.scrollToTop = function () {
         $('#Artists').stop().scrollTo('#auto', 400);
     };
     $scope.selectAll = function () {
-        angular.forEach($rootScope.song, function (item, key) {
-            $scope.selectedSongs.push(item);
-            item.selected = true;
-        });
+        $rootScope.selectAll($scope.song);
     };
     $scope.selectNone = function () {
-        angular.forEach($rootScope.song, function (item, key) {
-            $scope.selectedSongs = [];
-            item.selected = false;
-        });
+        $rootScope.selectNone($scope.song);
+    };
+    $scope.playAll = function () {
+        $rootScope.playAll($scope.song);
+    };
+    $scope.playFrom = function (index) {
+        $rootScope.playFrom(index, $scope.song);
+    };
+    $scope.removeSong = function (item) {
+        $rootScope.removeSong(item, $scope.song);
     };
 
     /* Launch on Startup */
+    //$scope.getArtists();
     //$scope.getCollections();
     if ($routeParams.artist) {
         if ($routeParams.album) {

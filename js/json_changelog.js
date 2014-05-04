@@ -1,8 +1,9 @@
 ﻿[
     {
-        "date": "5/2/2014", "version": "3.4",
+        "date": "5/4/2014", "version": "3.4.1",
         "changes": [
-        { "text": "- Tab state saved, consolidated Subsonic artists, playlist and podcasts" }
+        { "text": "- Tab state saved, consolidated Subsonic artists, playlist and podcasts" },
+        { "text": "- Archive.org tab, expanded Collection search" }
         ]
     },
     {

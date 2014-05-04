@@ -1689,6 +1689,10 @@ select
     margin: 5px;
     border: 1px solid #d6d6d6;
 }
+select.m
+{
+    width: 100px;
+}
 select.large
 {
     width: 192px;

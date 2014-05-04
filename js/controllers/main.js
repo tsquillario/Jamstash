@@ -46,6 +46,7 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             });
         }
         if (utils.getValue("SavedCollections")) { globals.SavedCollections = utils.getValue("SavedCollections").split(","); }
+        if (utils.getValue("DefaultCollection")) { globals.DefaultCollection = utils.getValue("DefaultCollection"); }
         if (utils.getValue("SavedGenres")) { globals.SavedGenres = utils.getValue("SavedGenres").split(","); }
         if (globals.settings.Debug) { console.log('Settings: ' + JSON.stringify(globals.settings, null, 2)); }
     };
