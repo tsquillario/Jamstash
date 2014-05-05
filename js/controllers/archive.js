@@ -1,5 +1,5 @@
 ﻿JamStash.controller('ArchiveCtrl',
-function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, globals, model, notifications, player, archive, json) {
+function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, $timeout, utils, globals, model, notifications, player, archive, json) {
     $scope.settings = globals.settings;
     $scope.itemType = 'archive';
     $rootScope.song = [];
@@ -35,6 +35,8 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
         if ($scope.SavedCollections.indexOf(newValue) == -1) {
             $scope.SavedCollections.push(newValue);
             $scope.writeSavedCollection();
+            var index = $scope.AllArtists.indexOf(newValue);
+            $scope.AllArtists.splice(index, 1);
         }
     };
     $scope.deleteSavedCollection = function (index) {
@@ -79,7 +81,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
             } else {
                 utils.setValue('AlbumSort', null, true);
             }
-            $scope.getAlbums('');
+            $scope.getAlbums($scope.selectedArtist);
         }
     });
     $scope.getYears = function (startYear) {
@@ -98,7 +100,7 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
     };
     $scope.filterSave = function () {
         if ($scope.selectedArtist) {
-            $scope.getAlbums('', '');
+            $scope.getAlbums($scope.selectedArtist, $scope.filter);
         }
     };
     /* End Filter */
@@ -118,14 +120,23 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
             $scope.song = data.song;
             $scope.album = data.album;
             $scope.selectedArtist = data.selectedArtist;
+            $scope.BreadCrumbs = data.breadcrumb;
         });
     };
-    
     $scope.getSongs = function (id, action) {
         archive.getSongs(id, action).then(function (data) {
-            $scope.song = data.song;
             $scope.album = data.album;
+            $scope.song = data.song;
             $scope.selectedAlbum = data.selectedAlbum;
+            $scope.BreadCrumbs = data.breadcrumb;
+            //$rootScope.showSongs();
+            //alert($("#songs").html())
+            //utils.safeApply();
+            $timeout(
+                function () {
+                    $.fancybox.update();
+                }
+            );
         });
     };
     $scope.scrollToTop = function () {
@@ -149,13 +160,13 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, utils, 
 
     /* Launch on Startup */
     //$scope.getArtists();
-    //$scope.getCollections();
+    $scope.getAlbums();
     if ($routeParams.artist) {
         if ($routeParams.album) {
             //collection:(GreenskyBluegrass) AND format:(MP3) AND identifier:(gsbg2013-09-20.flac16)
-            $scope.getAlbums('', $routeParams.album);
+            $scope.getSongs($routeParams.album);
         } else {
-            $scope.getAlbums($routeParams.artist, '');
+            $scope.getAlbums($routeParams.artist);
         }
         $scope.addSavedCollection($routeParams.artist);
     }

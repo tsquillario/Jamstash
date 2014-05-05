@@ -1341,110 +1341,122 @@ JamStash.factory('archive', function ($rootScope, $http, $q, $sce, globals, mode
         },
         getAlbums: function (name, filter) {
             var deferred = $q.defer();
-            var url = globals.archiveUrl + 'advancedsearch.php?q=';
-            if (name !== '') {
-                content.selectedArtist = name;
-                url += 'collection:(' + name + ') AND format:(MP3)';
-            } else if (content.selectedArtist) {
-                name = content.selectedArtist;
-                url += 'collection:(' + content.selectedArtist + ') AND format:(MP3)';
-            } else {
-                url += 'collection:(' + name + ')';
-            }
-            
-            if (filter.Source) {
-                url += ' AND source:(' + filter.Source + ')';
-            }
-            if (filter.Year) {
-                if (parseInt(filter.Year)) {
-                    url += ' AND year:(' + filter.Year + ')';
+            if (name) {
+                var url = globals.archiveUrl + 'advancedsearch.php?q=';
+                if (name !== '') {
+                    content.selectedArtist = name;
+                    url += 'collection:(' + name + ') AND format:(MP3)';
+                } else if (content.selectedArtist) {
+                    name = content.selectedArtist;
+                    url += 'collection:(' + content.selectedArtist + ') AND format:(MP3)';
+                } else {
+                    url += 'collection:(' + name + ')';
                 }
-            }
-            if (filter.Description) {
-                url += ' AND description:(' + filter.Description + ')';
-            }
-            if (content.selectedArtist) {
-                url += '&sort[]=' + globals.settings.DefaultArchiveAlbumSort;
-            }
-            url += '&fl[]=avg_rating,collection,date,description,downloads,headerImage,identifier,publisher,publicdate,source,subject,title,year';
-            url += '&rows=50&page=1&output=json';
-            $.ajax({
-                url: url,
-                method: 'GET',
-                dataType: globals.settings.Protocol,
-                timeout: globals.settings.Timeout,
-                success: function (data) {
-                    var items = [];
-                    if (data.response.docs.length > 0) {
-                        items = data.response.docs;
-                        //alert(JSON.stringify(data["response"]));
-                        content.album = [];
-                        content.song = [];
-                        angular.forEach(items, function (item, key) {
-                            content.album.push(mapAlbum(item));
-                        });
-                        notifications.updateMessage(content.album.length, true);
-                    } else {
-                        notifications.updateMessage("Sorry :(", true);
+                content.breadcrumb = [];
+                content.breadcrumb.push({ 'type': 'artist', 'id': name, 'name': name });
+
+                if (filter.Source) {
+                    url += ' AND source:(' + filter.Source + ')';
+                }
+                if (filter.Year) {
+                    if (parseInt(filter.Year)) {
+                        url += ' AND year:(' + filter.Year + ')';
                     }
-                    deferred.resolve(content);
-                },
-                error: function () {
-                    notifications.updateMessage('Archive.org service down :(');
                 }
-            });
+                if (filter.Description) {
+                    url += ' AND description:(' + filter.Description + ')';
+                }
+                if (content.selectedArtist) {
+                    url += '&sort[]=' + globals.settings.DefaultArchiveAlbumSort;
+                }
+                url += '&fl[]=avg_rating,collection,date,description,downloads,headerImage,identifier,publisher,publicdate,source,subject,title,year';
+                url += '&rows=50&page=1&output=json';
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    dataType: globals.settings.Protocol,
+                    timeout: globals.settings.Timeout,
+                    success: function (data) {
+                        var items = [];
+                        if (data.response.docs.length > 0) {
+                            items = data.response.docs;
+                            //alert(JSON.stringify(data["response"]));
+                            content.album = [];
+                            content.song = [];
+                            angular.forEach(items, function (item, key) {
+                                content.album.push(mapAlbum(item));
+                            });
+                            notifications.updateMessage(content.album.length, true);
+                        } else {
+                            notifications.updateMessage("Sorry :(", true);
+                        }
+                        deferred.resolve(content);
+                    },
+                    error: function () {
+                        notifications.updateMessage('Archive.org service down :(');
+                    }
+                });
+            } else {
+                deferred.resolve(content);
+            }
             return deferred.promise;
         },
         getSongs: function (id, action) {
             var deferred = $q.defer();
-            content.selectedAlbum = id;
-            var url = globals.archiveUrl + 'details/' + id + '?output=json';
-            $.ajax({
-                url: url,
-                method: 'GET',
-                dataType: globals.settings.Protocol,
-                timeout: globals.settings.Timeout,
-                success: function (data) {
-                    var coverart = '';
-                    var server = data.server;
-                    var dir = data.dir;
-                    var identifier = data.metadata.identifier[0];
-                    if (typeof data.misc.image != 'undefined') {
-                        coverart = data.misc.image;
+            if (id) {
+                content.selectedAlbum = id;
+                if (content.breadcrumb.length > 0) { content.breadcrumb.splice(1, (content.breadcrumb.length - 1)); }
+                content.breadcrumb.push({ 'type': 'album', 'id': id, 'name': id });
+                var url = globals.archiveUrl + 'details/' + id + '?output=json';
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    dataType: globals.settings.Protocol,
+                    timeout: globals.settings.Timeout,
+                    success: function (data) {
+                        var coverart = '';
+                        var server = data.server;
+                        var dir = data.dir;
+                        var identifier = data.metadata.identifier[0];
+                        if (typeof data.misc.image != 'undefined') {
+                            coverart = data.misc.image;
+                        }
+                        var items = data.files;
+                        if (action == 'add') {
+                            angular.forEach(items, function (item, key) {
+                                var song = mapSong(key, item, server, dir, identifier, coverart);
+                                if (song) {
+                                    $rootScope.queue.push(song);
+                                }
+                            });
+                            notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
+                        } else if (action == 'play') {
+                            $rootScope.queue = [];
+                            angular.forEach(items, function (item, key) {
+                                var song = mapSong(key, item, server, dir, identifier, coverart);
+                                if (song) {
+                                    $rootScope.queue.push(song);
+                                }
+                            });
+                            var next = $rootScope.queue[0];
+                            $rootScope.playSong(false, next);
+                            notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
+                        } else {
+                            content.album = [];
+                            content.song = [];
+                            angular.forEach(items, function (item, key) {
+                                var song = mapSong(key, item, server, dir, identifier, coverart);
+                                if (song) {
+                                    content.song.push(song);
+                                }
+                            });
+                        }
+                        deferred.resolve(content);
                     }
-                    var items = data.files;
-                    if (action == 'add') {
-                        angular.forEach(items, function (item, key) {
-                            var song = mapSong(key, item, server, dir, identifier, coverart);
-                            if (song) {
-                                $rootScope.queue.push(song);
-                            }
-                        });
-                        notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
-                    } else if (action == 'play') {
-                        $rootScope.queue = [];
-                        angular.forEach(items, function (item, key) {
-                            var song = mapSong(key, item, server, dir, identifier, coverart);
-                            if (song) {
-                                $rootScope.queue.push(song);
-                            }
-                        });
-                        var next = $rootScope.queue[0];
-                        $rootScope.playSong(false, next);
-                        notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
-                    } else {
-                        content.album = [];
-                        content.song = [];
-                        angular.forEach(items, function (item, key) {
-                            var song = mapSong(key, item, server, dir, identifier, coverart);
-                            if (song) {
-                                content.song.push(song);
-                            }
-                        });
-                    }
-                    deferred.resolve(content);
-                }
-            });
+                });
+            } else {
+                deferred.resolve(content);
+            }
             return deferred.promise;
         }
     };
