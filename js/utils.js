@@ -1,6 +1,6 @@
-JamStash.service('utils', function ($cookieStore, globals, model) {
+JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
     this.safeApply = function (fn) {
-        var phase = this.$root.$$phase;
+        var phase = $rootScope.$root.$$phase;
         if (phase == '$apply' || phase == '$digest') {
             if (fn && (typeof (fn) === 'function')) {
                 fn();

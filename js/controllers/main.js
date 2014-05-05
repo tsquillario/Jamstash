@@ -160,6 +160,38 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             title: null
         }
     });
+    /*
+    $('.showSongs').fancybox({
+        href: '#songs',
+        autoWidth: false,
+        width: '100%',
+        //margin: [50, 10, 50, 10], // top, right, bottom, left
+        openEffect: 'none',
+        closeEffect: 'none',
+        beforeLoad: function () {
+            if ($rootScope.queue == 0) {
+                //this.close();
+            }
+        },
+        helpers: {
+            title: null
+        }
+    });
+    $rootScope.showSongs = function () {
+        alert($("#songs").html())
+        $.fancybox({
+            type: 'inline',  
+            content: $("#songs").html(),
+            autoWidth: false,
+            width: '100%',
+            transitionIn: 'elastic',  
+            transitionOut: 'elastic',
+            helpers: {
+                title: null
+            }
+        });
+    }
+    */
 
     $('#audiocontainer .scrubber').mouseover(function (e) {
         $('.audiojs .scrubber').stop().animate({ height: '8px' });
@@ -507,8 +539,7 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
     $scope.loadSettings();
     utils.switchTheme(globals.settings.Theme);
     if ($scope.loggedIn()) {
-        $scope.ping();
-        $scope.getMusicFolders();
+        //$scope.ping();
         if (globals.settings.SaveTrackPosition) {
             player.loadTrackPosition();
             player.startSaveTrackPosition();
