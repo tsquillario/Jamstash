@@ -159,7 +159,7 @@ function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, util
         } else {
             type = 'bytag';
         }
-        return new model.Album(album.id, album.parent, title, album.artist.toString(), album.artistId, coverartthumb, coverartfull, $.format.date(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '', type);
+        return new model.Album(album.id, album.parent, title, album.artist ? album.artist.toString() : '', album.artistId, coverartthumb, coverartfull, $.format.date(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '', type);
     };
     $scope.getAlbums = function (id, name) {
         $scope.selectedAutoAlbum = null;
