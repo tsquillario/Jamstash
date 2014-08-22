@@ -10,7 +10,7 @@ JamStash.service('globals', function (utils) {
         Password: "guest"),
         Server: "http://subsonic.org/demo"),
         */
-        Url: "http://Jamstash.com/beta/#/archive/",
+        Url: "http://beta.jamstash.com/#/archive/", 
         Username: "",
         Password: "",
         Server: "",

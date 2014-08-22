@@ -51,7 +51,6 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, $timeou
             }
         });
     };
-    $scope.archiveUrl = globals.archiveUrl;
 
     /* Filter */
     $scope.selectedArchiveAlbumSort = globals.settings.DefaultArchiveAlbumSort;

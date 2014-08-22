@@ -1,5 +1,11 @@
 ﻿[
     {
+        "date": "7/28/2014", "version": "3.4.2",
+        "changes": [
+        { "text": "- jPlayer updated to 2.6.3 & patched for <a href=\"https://github.com/happyworm/jPlayer/issues/223\" target=\"_blank\">https://github.com/happyworm/jPlayer/issues/223</a>" }
+        ]
+    },
+    {
         "date": "5/4/2014", "version": "3.4.1",
         "changes": [
         { "text": "- Tab state saved, consolidated Subsonic artists, playlist and podcasts" },

@@ -221,6 +221,7 @@
         if (globals.settings.ForceFlash) {
             audioSolution = "flash,html";
         }
+        if (globals.settings.Debug) { console.log('Setting Audio Solution: ' + audioSolution); }
         //var salt = Math.floor(Math.random() * 100000);
         //url += '&salt=' + salt;
         $(el).jPlayer("destroy");

@@ -492,10 +492,6 @@ ul.mainlist li.selected
     color: #f2f2f2;
     background-color: #528AC6;
 }
-ul.mainlist li.selected a
-{
-    color: #f2f2f2;
-}
 ul.mainlist li.item a.play
 {
     width: 20px;
@@ -529,6 +525,16 @@ ul.mainlist li.item a.add
 ul.mainlist li.item a.add:hover
 {
     background: url('../images/plus_8x8.png') no-repeat 6px center #DEECFB;
+}
+ul.mainlist li.item .submenu a {
+    color: #7EA8D5;
+    text-decoration: none;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 11px;
+}
+ul.mainlist li.item .submenu a:hover {
+    text-decoration: underline;
 }
 ul.tablist
 {
