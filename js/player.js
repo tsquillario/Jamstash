@@ -260,6 +260,10 @@
                     $(this).jPlayer("setMedia", {
                         mp3: url
                     });
+                } else if (suffix == 'm4a') {
+                    $(this).jPlayer("setMedia", {
+                        m4a: url
+                    });
                 }
                 if (!loadonly) { // Start playing
                     $(this).jPlayer("play");
