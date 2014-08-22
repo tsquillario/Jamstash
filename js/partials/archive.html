@@ -62,7 +62,7 @@
                 <ul class="simplelist songlist noselect">
                     <li class="album showSongs" ng-repeat="o in album" ng-switch on="o.type" ng-class="{'selected': selectedAlbum == o.id}" ng-click="getSongs(o.id, '')">
                         <div id="{{'AlbumInfo' + $index}}" class="infolink">
-                            <a href="" class="hover" title="More Info..." ng-click="toggleSubmenu('#submenu_AlbumInfo' + $index, '#AlbumInfo' + $index, 'right', 10)" stop-event="click"><img src="images/info_gl_6x12.png" /></a>
+                            <a href="" class="hover" title="More Info..." ng-click="toggleSubmenu('#submenu_AlbumInfo' + $index, '#AlbumInfo' + $index, 'left', 90)" stop-event="click"><img src="images/info_gl_6x12.png" /></a>
                         </div>
                         <div id="{{'submenu_AlbumInfo' + $index}}" class="submenu_AlbumInfo submenu shadow" style="display: none;">
                             <a href="" ng-href="{{o.url}}" title="{{o.url}}" target="_blank" stop-event="click">Source</a><br />

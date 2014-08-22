@@ -42,13 +42,17 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             $.each(utils.getValue('Settings'), function (k, v) {
                 if (v == 'false') { v = false; }
                 if (v == 'true') { v = true; }
-                globals.settings[k] = v;
+                var exclude = ['Url'];
+                var idx = exclude.indexOf(k);
+                if (idx === -1) {
+                    globals.settings[k] = v;
+                }
             });
         }
         if (utils.getValue("SavedCollections")) { globals.SavedCollections = utils.getValue("SavedCollections").split(","); }
         if (utils.getValue("DefaultCollection")) { globals.DefaultCollection = utils.getValue("DefaultCollection"); }
         if (utils.getValue("SavedGenres")) { globals.SavedGenres = utils.getValue("SavedGenres").split(","); }
-        if (globals.settings.Debug) { console.log('Settings: ' + JSON.stringify(globals.settings, null, 2)); }
+        if (globals.settings.Debug) { console.log('Loaded Settings: ' + JSON.stringify(globals.settings, null, 2)); }
     };
     $scope.toggleSetting = function (setting) {
         var id = setting;
