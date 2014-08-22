@@ -252,6 +252,10 @@
                     $(this).jPlayer("setMedia", {
                         oga: url
                     });
+				} else if (suffix == 'm4a') {
+					$(this).jPlayer("setMedia", {
+						m4a: url
+					});
                 } else if (suffix == 'mp3') {
                     $(this).jPlayer("setMedia", {
                         mp3: url
