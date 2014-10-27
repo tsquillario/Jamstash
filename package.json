@@ -1,0 +1,40 @@
+{
+  "name": "Jamstash",
+  "version": "3.4.2",
+  "description": "HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming",
+  "author": "Trevor Squillario",
+  "license": "MIT",
+  "homepage": "http://jamstash.com",
+  "keywords": [
+    "subsonic",
+    "archive.org",
+    "music"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsquillario/Jamstash.git"
+  },
+  "main": "index.html",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-karma": "^0.9.0",
+    "karma": "^0.12.24",
+    "karma-chrome-launcher": "^0.1.5",
+    "karma-jasmine": "^0.1.5",
+    "karma-phantomjs-launcher": "^0.1.4"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "bugs": {
+    "url": "https://github.com/tsquillario/Jamstash/issues"
+  },
+  "private": true
+}

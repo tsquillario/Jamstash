@@ -1,7 +1,7 @@
 {
   "name": "jamstash",
-  "description": "HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming",
   "version": "3.4.2",
+  "description": "HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming",
   "authors": [
     {
       "name:": "Trevor Squillario",
@@ -9,14 +9,12 @@
     }
   ],
   "homepage": "http://jamstash.com",
-  "keywords": "subsonic, archive.org, music",
+  "keywords": ["subsonic", "archive.org", "music"],
   "repository": {
     "type": "git",
     "url": "https://github.com/tsquillario/Jamstash.git"
   },
-  "main": [
-    "index.html"
-  ],
+  "main": "index.html",
   "dependencies": {
     "angular": "~1.2.0",
     "angular-route": "~1.2.0",
