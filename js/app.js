@@ -2,44 +2,6 @@
 var JamStash = angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize']);
 //var JamStash = angular.module('JamStash', ['ngCookies', 'ngRoute']);
 
-JamStash.service('globals', function (utils) {
-    this.settings = {
-        // Subsonic
-        /* Demo Server
-        Username: "android-guest"),
-        Password: "guest"),
-        Server: "http://subsonic.org/demo"),
-        */
-        Url: "http://beta.jamstash.com/#/archive/", 
-        Username: "",
-        Password: "",
-        Server: "",
-        Timeout: 10000,
-        Protocol: "jsonp",
-        ApplicationName: "Jamstash",
-        ApiVersion: "1.6.0",
-        AutoPlaylists: "",
-        AutoPlaylistSize: 25,
-        AutoAlbumSize: 15,
-        // General
-        HideAZ: false,
-        ScrollTitle: true,
-        NotificationSong: true,
-        NotificationNowPlaying: false,
-        SaveTrackPosition: false,
-        ForceFlash: false,
-        Theme: "Default",
-        DefaultLibraryLayout: "grid",
-        AutoPlay: false,
-        LoopQueue: false,
-        Repeat: false,
-        Debug: false
-    };
-    this.DefaultCollection = [];
-    this.SavedGenres = [];
-    this.BaseURL = function () { return this.settings.Server + '/rest'; };
-    this.BaseParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=' + this.settings.Protocol + '&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };
-});
 /*
 JamStash.config(function ($sceDelegateProvider) {
     $sceDelegateProvider.resourceUrlWhitelist(['/^\s*(https?|file|ms-appx):/', 'self']);
