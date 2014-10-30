@@ -1,4 +1,8 @@
-﻿JamStash.controller('PodcastCtrl',
+﻿'use strict';
+
+var jamstash = angular.module('JamStash');
+
+jamstash.controller('PodcastCtrl',
 function PodcastCtrl($scope, $rootScope, $location, utils, globals, model, notifications) {
     $rootScope.song = [];
     

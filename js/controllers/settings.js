@@ -1,4 +1,8 @@
-﻿JamStash.controller('SettingsCtrl',
+﻿'use strict';
+
+var jamstash = angular.module('JamStash');
+
+jamstash.controller('SettingsCtrl',
 function SettingsCtrl($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, player) {
     $scope.settings = globals.settings; /* See service.js */
     $scope.Timeouts = [

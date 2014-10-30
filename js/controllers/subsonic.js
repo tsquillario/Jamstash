@@ -1,8 +1,8 @@
 ﻿'use strict';
 
-var Jamstash = angular.module('JamStash');
+var jamstash = angular.module('JamStash');
 
-Jamstash.controller('SubsonicCtrl',
+jamstash.controller('SubsonicCtrl',
 function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, $http, utils, globals, model, map, subsonic, notifications) {
 
     $scope.settings = globals.settings;

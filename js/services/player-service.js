@@ -33,7 +33,7 @@ jamstash.service('player', function ($rootScope, $window, utils, globals, model,
             $rootScope.restartSong();
         }
     };
-    getNextSong = function (previous) {
+    this.getNextSong = function (previous) {
         var song;
         if (globals.settings.Debug) { console.log('Getting Next Song > ' + 'Queue length: ' + $rootScope.queue.length); }
         if ($rootScope.queue.length > 0) {
@@ -361,7 +361,7 @@ jamstash.service('player', function ($rootScope, $window, utils, globals, model,
             }
         }
     };
-    playVideo = function (id, bitrate) {
+    this.playVideo = function (id, bitrate) {
         var w, h;
         bitrate = parseInt(bitrate);
         if (bitrate <= 600) {
@@ -392,7 +392,7 @@ jamstash.service('player', function ($rootScope, $window, utils, globals, model,
             supplied: "m4v"
         });
     };
-    scrobbleSong = function (submission) {
+    this.scrobbleSong = function (submission) {
         if ($rootScope.loggedIn && submission) {
             var id = $rootScope.playingSong.id;
             if (globals.settings.Debug) { console.log('Scrobble Song: ' + id); }
@@ -407,7 +407,7 @@ jamstash.service('player', function ($rootScope, $window, utils, globals, model,
             });
         }
     };
-    rateSong = function (songid, rating) {
+    this.rateSong = function (songid, rating) {
         $.ajax({
             url: baseURL + '/setRating.view?' + baseParams + '&id=' + songid + "&rating=" + rating,
             method: 'GET',
