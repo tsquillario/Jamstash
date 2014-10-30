@@ -63,3 +63,14 @@ jamstash.service('globals', function () {
     this.BaseURL = function () { return this.settings.Server + '/rest'; };
     this.BaseParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=' + this.settings.Protocol + '&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };
 });
+
+jamstash.factory('json', function ($http) { // Deferred loading
+    return {
+        getCollections: function (callback) {
+            $http.get('js/json_collections.js').success(callback);
+        },
+        getChangeLog: function (callback) {
+            $http.get('js/json_changelog.js').success(callback);
+        }
+    };
+});

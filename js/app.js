@@ -1,61 +1,9 @@
+'use strict';
+
 /* Declare app level module */
-var JamStash = angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize']);
-//var JamStash = angular.module('JamStash', ['ngCookies', 'ngRoute']);
+var jamstash = angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize']);
 
-/*
-JamStash.config(function ($sceDelegateProvider) {
-    $sceDelegateProvider.resourceUrlWhitelist(['/^\s*(https?|file|ms-appx):/', 'self']);
-});
-
-// Given:
-// URL: http://server.com/index.html#/Chapter/1/Section/2?search=moby
-// Route: /Chapter/:chapterId/Section/:sectionId
-//
-// Then
-$routeParams ==> {chapterId:1, sectionId:2, search:'moby'}
-*/
-/*
-JamStash.config(function ($stateProvider) {
-    $stateProvider
-    .state('root', {
-        url: '',
-        views: {
-            'settings': {
-                url: '/settings',
-                templateUrl: 'js/partials/settings.html',
-                controller: 'SettingsCtrl'
-            },
-            'library': {
-                url: '/library',
-                templateUrl: 'js/partials/library.html',
-                controller: 'SubsonicCtrl'
-            }
-        }
-    })
-});
-
-JamStash.config(function ($stateProvider) {
-    $stateProvider
-        .state('root', {
-            url: '/',
-            templateUrl: 'js/partials/library.html',
-            controller: 'SubsonicCtrl'
-        })
-        .state('settings', {
-            url: '/settings',
-            templateUrl: 'js/partials/settings.html',
-            controller: 'SettingsCtrl'
-        })
-        .state('library', {
-            url: '/library',
-            templateUrl: 'js/partials/library.html',
-            controller: 'SubsonicCtrl'
-        });
-})
-
-*/
-
-JamStash.config(function ($routeProvider) {
+jamstash.config(function ($routeProvider) {
     $routeProvider
         .when('/index', { redirectTo: '/library' })
         .when('/settings', { templateUrl: 'js/partials/settings.html', controller: 'SettingsCtrl' })
@@ -69,9 +17,9 @@ JamStash.config(function ($routeProvider) {
         .when('/archive/:artist', { templateUrl: 'js/partials/archive.html', controller: 'ArchiveCtrl' })
         .when('/archive/:artist/:album', { templateUrl: 'js/partials/archive.html', controller: 'ArchiveCtrl' })
         .otherwise({ redirectTo: '/index' });
-})
+});
 
-JamStash.config(function ($httpProvider) {
+jamstash.config(function ($httpProvider) {
     $httpProvider.interceptors.push(function ($rootScope, $location, $q, globals) {
         return {
             'request': function (request) {
@@ -101,51 +49,3 @@ JamStash.config(function ($httpProvider) {
         };
     });
 });
-
-JamStash.service('model', function (utils) {
-    this.Index = function (name, artist) {
-        this.name = name;
-        this.artist = artist;
-    }
-    this.Artist = function (id, name) {
-        this.id = id;
-        this.name = name;
-    }
-    this.Album = function (id, parentid, name, artist, coverartthumb, coverartfull, date, starred, description, url) {
-        this.id = id;
-        this.parentid = parentid;
-        this.name = name;
-        this.artist = artist;
-        this.coverartthumb = coverartthumb;
-        this.coverartfull = coverartfull;
-        this.date = date;
-        this.starred = starred;
-        this.description = description;
-        this.url = url;
-    }
-    this.Song = function (id, parentid, track, name, artist, artistId, album, albumId, coverartthumb, coverartfull, duration, rating, starred, suffix, specs, url, position, description) {
-        this.id = id;
-        this.parentid = parentid;
-        this.track = track;
-        this.name = name;
-        this.artist = artist;
-        this.artistId = artistId;
-        this.album = album;
-        this.albumId = albumId;
-        this.coverartthumb = coverartthumb;
-        this.coverartfull = coverartfull;
-        this.duration = duration;
-        this.time = duration == '' ? '00:00' : utils.secondsToTime(duration);
-        this.rating = rating;
-        this.starred = starred;
-        this.suffix = suffix;
-        this.specs = specs;
-        this.url = url;
-        this.position = position;
-        this.selected = false;
-        this.playing = false;
-        this.description = description;
-        this.displayName = this.name + " - " + this.album + " - " + this.artist;
-    }
-});
-

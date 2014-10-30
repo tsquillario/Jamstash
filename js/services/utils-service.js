@@ -1,7 +1,11 @@
-JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
+'use strict';
+
+var jamstash = angular.module('JamStash');
+
+jamstash.service('utils', function ($rootScope, $cookieStore, globals) {
     this.safeApply = function (fn) {
         var phase = $rootScope.$root.$$phase;
-        if (phase == '$apply' || phase == '$digest') {
+        if (phase === '$apply' || phase === '$digest') {
             if (fn && (typeof (fn) === 'function')) {
                 fn();
             }
@@ -9,16 +13,7 @@ JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
             this.$apply(fn);
         }
     };
-    this.setValue = function (key, value, notify) {
-        /*
-        if (value !== null) {
-            $cookieStore.put(key, value);
-        } else {
-            $cookieStore.remove(key);
-        }
-        if (notify) {
-        }
-        */
+    this.setValue = function (key, value) {
         try {
             localStorage.setItem(key, JSON.stringify(value));
         } catch (e) {
@@ -26,16 +21,9 @@ JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
         }
     };
     this.getValue = function (value) {
-        /*
-        if ($cookieStore.get(value)) {
-            return $cookieStore.get(value);
-        } else {
-            return false;
-        }
-        */
         try {
             var item = localStorage.getItem(value);
-            if (item !== '' && typeof item != 'undefined') {
+            if (item !== '' && typeof item !== 'undefined') {
                 return JSON.parse(item);
             } else {
                 return false;
@@ -57,7 +45,7 @@ JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
         return parseInt(a.track) > parseInt(b.track) ? -1 : 1;
     };
     this.confirmDelete = function (text) {
-        var question = confirm(text);
+        var question = window.confirm(text);
         if (question) {
             return true;
         }
@@ -71,10 +59,12 @@ JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
         return "Basic " + hash;
     };
     this.HexEncode = function (n) {
-        for (var u = "0123456789abcdef", i = [], r = [], t = 0; t < 256; t++)
+        for (var u = "0123456789abcdef", i = [], r = [], t = 0; t < 256; t++) {
             i[t] = u.charAt(t >> 4) + u.charAt(t & 15);
-        for (t = 0; t < n.length; t++)
+        }
+        for (t = 0; t < n.length; t++) {
             r[t] = i[n.charCodeAt(t)];
+        }
         return r.join("");
     };
     this.switchTheme = function (theme) {
@@ -91,7 +81,7 @@ JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
     };
     // HTML5
     this.browserStorageCheck = function () {
-        if (typeof (localStorage) == 'undefined') {
+        if (typeof (localStorage) === 'undefined') {
             return false;
         } else {
             return true;
@@ -131,7 +121,7 @@ JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
             else if (tmp < 10) {
                 tmp = '0' + tmp;
             }
-            if (i === 0 && tmp == '00') {
+            if (i === 0 && tmp === '00') {
             } else {
                 time += tmp;
                 if (i < 2) {
@@ -144,7 +134,7 @@ JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
     };
     this.arrayObjectIndexOf = function (myArray, searchTerm, property) {
         for (var i = 0, len = myArray.length; i < len; i++) {
-            if (myArray[i][property] === searchTerm) return i;
+            if (myArray[i][property] === searchTerm) { return i; }
         }
         return -1;
     };
@@ -222,7 +212,7 @@ JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
         on: function (str) {
             var a = [],
         i = 0;
-            for (; i < str.length; ) a[i] = str.charCodeAt(i++);
+            for (; i < str.length; ) { a[i] = str.charCodeAt(i++); }
             return "&#" + a.join(";&#") + ";";
         },
         un: function (str) {
@@ -237,10 +227,11 @@ JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
         var regexS = "[\\?&]" + name + "=([^&#]*)";
         var regex = new RegExp(regexS);
         var results = regex.exec(window.location.search);
-        if (results === null)
+        if (results === null) {
             return "";
-        else
+        } else {
             return decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
     };
     this.getPathFromUrl = function (url) {
         var strurl = url.toString();
@@ -268,7 +259,7 @@ JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
             speed: 1200
         };
 
-        t = (opts.text || document.title).split("");
+        var t = (opts.text || document.title).split("");
         if (!t) {
             return;
         }
@@ -281,16 +272,9 @@ JamStash.service('utils', function ($rootScope, $cookieStore, globals, model) {
                 document.title = t.join("");
             }
         }, opts.speed);
-        /*
-        $.marqueeTitle({
-        text: text,
-        dir: "left",
-        speed: 1200
-        });
-        */
     };
     this.parseVersionString = function (str) {
-        if (typeof (str) != 'string') { return false; }
+        if (typeof (str) !== 'string') { return false; }
         var x = str.split('.');
         // parse from string or default to 0 if can't parse
         var maj = parseInt(x[0]) || 0;
