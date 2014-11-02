@@ -28,6 +28,11 @@
     "notify.js": "<=1.2.2",
     "jquery.scrollTo": "~1.4.5"
   },
+  "overrides": {
+    "fancybox": {
+      "main": ["source/jquery.fancybox.js", "source/jquery.fancybox.css"]
+    }
+  },
   "devDependencies": {
     "angular-mocks": "~1.2.0",
     "angular-scenario": "~1.2.0"
