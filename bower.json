@@ -37,5 +37,5 @@
     "node_modules"
   ],
   "private": true,
-  "appPath": "app"
+  "appPath": "."
 }
