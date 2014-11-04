@@ -427,7 +427,7 @@ Jamstash.factory('subsonic', function ($rootScope, $http, $q, globals, utils, ma
             if (genre !== '' && genre != 'Random') {
                 genreParams = '&genre=' + genre;
             }
-            folderParams = '';
+            var folderParams = '';
             if (typeof folder == 'number' && folder !== '' && folder != 'all') {
                 //alert(folder);
                 folderParams = '&musicFolderId=' + folder;
@@ -558,6 +558,30 @@ Jamstash.factory('subsonic', function ($rootScope, $http, $q, globals, utils, ma
         },
         getStarred: function (action, type) {
             var deferred = $q.defer();
+            // TODO: JMA: GET variant
+            $http.jsonp(globals.BaseURL() + '/getStarred.view?callback=JSON_CALLBACK&' + globals.BaseParams(),
+                {
+                    timeout: globals.settings.Timeout
+                })
+            .success(function(data, status) {
+                console.log("blu");
+                console.log(data);
+                if(data['subsonic-response'] !== undefined && data['subsonic-response'].status === 'ok') {
+                    console.log('green');
+                    // Return only first X starred songs
+                    var starredSongs = data['subsonic-response'].starred.song.slice(0, globals.settings.AutoPlaylistSize);
+                    deferred.resolve(starredSongs);
+                } else {
+                    deferred.reject();
+                }
+            }).error(function(data, status) {
+                deferred.reject();
+            });
+            return deferred.promise;
+        },
+/*
+        getStarred: function (action, type) {
+            var deferred = $q.defer();
             var size = globals.settings.AutoPlaylistSize;
             content.selectedPlaylist = null;
             content.selectedAutoPlaylist = 'starred';
@@ -621,11 +645,13 @@ Jamstash.factory('subsonic', function ($rootScope, $http, $q, globals, utils, ma
                                 break;
                         }
                     }
+                    console.log("getStarred: ", content);
                     deferred.resolve(content);
                 }
             });
             return deferred.promise;
         },
+*/
         newPlaylist: function (data, event) {
             var deferred = $q.defer();
             var reply = prompt("Choose a name for your new playlist.", "");

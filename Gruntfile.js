@@ -41,7 +41,7 @@ module.exports = function (grunt) {
         }
       },
       jsTest: {
-        files: ['test/**/*.js'],
+        files: ['test/**/*_test.js'],
         tasks: ['karma:continuous:run'], //'newer:jshint:test']
       },
       styles: {
@@ -52,14 +52,14 @@ module.exports = function (grunt) {
         files: ['Gruntfile.js']
       },
       livereload: {
-        options: {
-          livereload: '<%= connect.options.livereload %>'
-        },
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
           '.tmp/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
+      },
+      options: {
+        livereload: '<%= connect.options.livereload %>'
       }
     },
 
@@ -126,7 +126,7 @@ module.exports = function (grunt) {
         options: {
           jshintrc: 'test/.jshintrc'
         },
-        src: ['test/spec/{,*/}*.js']
+        src: ['test/{,*/}*.js']
       }
     },
 

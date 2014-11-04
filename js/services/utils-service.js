@@ -70,7 +70,7 @@ jamstash.service('utils', function ($rootScope, $cookieStore, globals) {
     this.switchTheme = function (theme) {
         switch (theme.toLowerCase()) {
             case 'dark':
-                $('link[data-name=theme]').attr('href', 'style/Dark.css');
+                $('link[data-name=theme]').attr('href', 'styles/Dark.css');
                 break;
             case 'default':
                 $('link[data-name=theme]').attr('href', '');
