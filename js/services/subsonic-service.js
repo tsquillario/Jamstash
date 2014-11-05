@@ -557,26 +557,57 @@ Jamstash.factory('subsonic', function ($rootScope, $http, $q, globals, utils, ma
             return deferred.promise;
         },
         getStarred: function (action, type) {
+            var exception = {reason: 'Error when contacting the Subsonic server.'};
             var deferred = $q.defer();
-            // TODO: JMA: GET variant
-            $http.jsonp(globals.BaseURL() + '/getStarred.view?callback=JSON_CALLBACK&' + globals.BaseParams(),
-                {
-                    timeout: globals.settings.Timeout
-                })
-            .success(function(data, status) {
-                console.log("blu");
-                console.log(data);
-                if(data['subsonic-response'] !== undefined && data['subsonic-response'].status === 'ok') {
-                    console.log('green');
-                    // Return only first X starred songs
-                    var starredSongs = data['subsonic-response'].starred.song.slice(0, globals.settings.AutoPlaylistSize);
-                    deferred.resolve(starredSongs);
+            var httpPromise;
+            if(globals.settings.Protocol === 'jsonp') {
+                httpPromise = $http.jsonp(globals.BaseURL() + '/getStarred.view?callback=JSON_CALLBACK&' + globals.BaseParams(),
+                    {
+                        timeout: globals.settings.Timeout,
+                        cache: true
+                    });
+            } else {
+                httpPromise = $http.get(globals.BaseURL() + '/getStarred.view?' + globals.BaseParams(),
+                    {
+                        timeout: globals.settings.Timeout,
+                        cache: true
+                    });
+            }
+            httpPromise.success(function(data, status) {
+                var subsonicResponse = (data['subsonic-response'] !== undefined) ? data['subsonic-response'] : {status: 'failed'};
+                if (subsonicResponse.status === 'ok') {
+                    if(angular.equals(subsonicResponse.starred, {})) {
+                        deferred.reject({reason: 'Nothing is starred on the Subsonic server.'});
+                    } else {
+                        deferred.resolve(subsonicResponse.starred);
+                    }
                 } else {
-                    deferred.reject();
+                    if(subsonicResponse.status === 'failed' && subsonicResponse.error !== undefined) {
+                        exception.subsonicError = subsonicResponse.error;
+                    }
+                    deferred.reject(exception);
                 }
             }).error(function(data, status) {
-                deferred.reject();
+                exception.httpError = status;
+                deferred.reject(exception);
             });
+            return deferred.promise;
+        },
+        getRandomStarredSongs: function() {
+            var deferred = $q.defer();
+
+            this.getStarred().then(function (data) {
+                if(data.song !== undefined) {
+                    // Return only first X starred songs
+                    var starredSongs = data.song.slice(0, globals.settings.AutoPlaylistSize);
+                    deferred.resolve(starredSongs);
+                } else {
+                    deferred.reject('No starred songs found on the Subsonic server.');
+                }
+            }, function (reason) {
+                deferred.reject(reason);
+            });
+
             return deferred.promise;
         },
 /*
