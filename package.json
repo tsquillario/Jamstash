@@ -1,9 +1,10 @@
 {
-  "name": "Jamstash",
+  "name": "jamstash",
   "version": "3.4.2",
   "description": "HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming",
   "author": "Trevor Squillario (https://github.com/tsquillario)",
   "contributors": [
+    "tsquillario (https://github.com/tsquillario)",
     "Hyzual (https://github.com/Hyzual)",
     "maletor (https://github.com/maletor)",
     "javaguirre (https://github.com/javaguirre)",
@@ -50,6 +51,7 @@
     "karma-jasmine": "^0.2.3",
     "karma-phantomjs-launcher": "^0.1.4",
     "load-grunt-tasks": "^1.0.0",
+    "sellout": "0.0.1",
     "time-grunt": "^1.0.0"
   },
   "engines": {

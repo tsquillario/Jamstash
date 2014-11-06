@@ -3,10 +3,15 @@
   "version": "3.4.2",
   "description": "HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming",
   "authors": [
-    {
-      "name:": "Trevor Squillario",
-      "email": "tsquillario@gmail.com"
-    }
+    "tsquillario (https://github.com/tsquillario)",
+    "Hyzual (https://github.com/Hyzual)",
+    "maletor (https://github.com/maletor)",
+    "javaguirre (https://github.com/javaguirre)",
+    "Concept211 (https://github.com/Concept211) ",
+    "jerbob92 (https://github.com/jerbob92)",
+    "kennyhwang (https://github.com/kennyhwang)",
+    "ioggstream (https://github.com/ioggstream)",
+    "x37v (https://github.com/x37v)"
   ],
   "homepage": "http://jamstash.com",
   "keywords": [
@@ -14,11 +19,12 @@
     "archive.org",
     "music"
   ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/tsquillario/Jamstash.git"
   },
-  "main": "index.html",
+  "main": "app/index.html",
   "dependencies": {
     "angular": "~1.2.0",
     "angular-route": "~1.2.0",
