@@ -1,7 +1,7 @@
 'use strict';
 
 /* Declare app level module */
-var jamstash = angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize']);
+var jamstash = angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize', 'angular-underscore/utils']);
 
 jamstash.config(function ($routeProvider) {
     $routeProvider

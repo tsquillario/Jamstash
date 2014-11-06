@@ -9,7 +9,11 @@
     }
   ],
   "homepage": "http://jamstash.com",
-  "keywords": ["subsonic", "archive.org", "music"],
+  "keywords": [
+    "subsonic",
+    "archive.org",
+    "music"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/tsquillario/Jamstash.git"
@@ -26,11 +30,16 @@
     "jplayer": "~2.6.3",
     "fancybox": "~2.1.4",
     "notify.js": "<=1.2.2",
-    "jquery.scrollTo": "~1.4.5"
+    "jquery.scrollTo": "~1.4.5",
+    "underscore": "~1.7.0",
+    "angular-underscore": "~0.5.0"
   },
   "overrides": {
     "fancybox": {
-      "main": ["source/jquery.fancybox.js", "source/jquery.fancybox.css"]
+      "main": [
+        "source/jquery.fancybox.js",
+        "source/jquery.fancybox.css"
+      ]
     }
   },
   "devDependencies": {
