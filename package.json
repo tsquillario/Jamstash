@@ -2,7 +2,17 @@
   "name": "Jamstash",
   "version": "3.4.2",
   "description": "HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming",
-  "author": "Trevor Squillario",
+  "author": "Trevor Squillario (https://github.com/tsquillario)",
+  "contributors": [
+    "Hyzual (https://github.com/Hyzual)",
+    "maletor (https://github.com/maletor)",
+    "javaguirre (https://github.com/javaguirre)",
+    "Concept211 (https://github.com/Concept211) ",
+    "jerbob92 (https://github.com/jerbob92)",
+    "kennyhwang (https://github.com/kennyhwang)",
+    "ioggstream (https://github.com/ioggstream)",
+    "x37v (https://github.com/x37v)"
+  ],
   "license": "MIT",
   "homepage": "http://jamstash.com",
   "keywords": [
@@ -14,10 +24,7 @@
     "type": "git",
     "url": "https://github.com/tsquillario/Jamstash.git"
   },
-  "main": "index.html",
-  "directories": {
-    "test": "test"
-  },
+  "main": "app/index.html",
   "dependencies": {},
   "devDependencies": {
     "grunt": "^0.4.5",

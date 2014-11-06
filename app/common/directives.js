@@ -45,7 +45,7 @@ jamstash.directive('fancybox', function ($compile) {
 jamstash.directive('songpreview', function ($compile, subsonic) {
     return {
         restrict: 'E',
-        templateUrl: 'js/partials/songs.html',
+        templateUrl: 'common/songs.html',
         replace: false,
         // pass these two names from attrs into the template scope
         scope: {

@@ -1,9 +1,9 @@
 /**
-* jamstash.globals Module
+* jamstash.settings Module
 *
 * Houses Jamstash's global settings and a few utility functions.
 */
-angular.module('jamstash.globals', [])
+angular.module('jamstash.settings', [])
 
 .service('globals', function () {
     'use strict';
@@ -74,10 +74,10 @@ angular.module('jamstash.globals', [])
 
     return {
         getCollections: function (callback) {
-            $http.get('js/json_collections.js').success(callback);
+            $http.get('archive/json_collections.js').success(callback);
         },
         getChangeLog: function (callback) {
-            $http.get('js/json_changelog.js').success(callback);
+            $http.get('common/json_changelog.js').success(callback);
         }
     };
 });

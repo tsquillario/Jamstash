@@ -11,7 +11,7 @@ module.exports = function(config) {
     autoWatch: true,
 
     // base path, that will be used to resolve files and exclude
-    basePath: '../',
+    basePath: '.',
 
     // testing framework to use (jasmine/mocha/qunit/...)
     frameworks: ['jasmine'],
@@ -32,12 +32,12 @@ module.exports = function(config) {
       'bower_components/jquery.scrollTo/jquery.scrollTo.js',
       'bower_components/underscore/underscore.js',
       'bower_components/angular-underscore/angular-underscore.js',
-      'js/**/*.js',
-      'test/**/*_test.js'
+      'app/**/*.js',
+      'app/**/*_test.js'
     ],
 
     // list of files / patterns to exclude
-    exclude: ['js/plugins/**/*.js'],
+    exclude: ['app/vendor/**/*.js'],
 
     // web server port
     port: 8080,

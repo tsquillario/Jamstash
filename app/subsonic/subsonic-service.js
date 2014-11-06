@@ -4,7 +4,7 @@
 * Provides access through $http to the Subsonic server's API.
 * Also offers more fine-grained functionality that is not part of Subsonic's API.
 */
-angular.module('jamstash.subsonic.service', ['jamstash.globals', 'jamstash.utils', 'jamstash.model',
+angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.utils', 'jamstash.model',
     'jamstash.notifications', 'angular-underscore/utils'])
 
 .factory('subsonic', function ($rootScope, $http, $q, globals, utils, map, notifications) {
