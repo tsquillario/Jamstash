@@ -1,9 +1,13 @@
-﻿'use strict';
+﻿/**
+* jamstash.subsonic Module
+*
+* Access the Subsonic server through the dedicated service
+*/
+angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
 
-var jamstash = angular.module('JamStash');
-
-jamstash.controller('SubsonicCtrl',
-function SubsonicCtrl($scope, $rootScope, $location, $window, $routeParams, $http, utils, globals, model, map, subsonic, notifications) {
+.controller('SubsonicCtrl',
+function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications) {
+    'use strict';
 
     $scope.settings = globals.settings;
     $scope.itemType = 'ss';

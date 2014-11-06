@@ -2,7 +2,7 @@
 
 /* Declare app level module */
 var jamstash = angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize',
-    'jamstash.subsonicService']);
+    'jamstash.subsonic.ctrl']);
 
 jamstash.config(function ($routeProvider) {
     $routeProvider

@@ -24,7 +24,7 @@ describe("Subsonic service -", function() {
 			}
 		};
 
-		module('jamstash.subsonicService', function ($provide) {
+		module('jamstash.subsonic.service', function ($provide) {
 			$provide.value('globals', mockGlobals);
 		});
 

@@ -4,7 +4,7 @@
 * Provides access through $http to the Subsonic server's API.
 * Also offers more fine-grained functionality that is not part of Subsonic's API.
 */
-angular.module('jamstash.subsonicService', ['jamstash.globals', 'jamstash.utils', 'jamstash.model',
+angular.module('jamstash.subsonic.service', ['jamstash.globals', 'jamstash.utils', 'jamstash.model',
     'jamstash.notifications', 'angular-underscore/utils'])
 
 .factory('subsonic', function ($rootScope, $http, $q, globals, utils, map, notifications) {
@@ -618,79 +618,6 @@ angular.module('jamstash.subsonicService', ['jamstash.globals', 'jamstash.utils'
 
             return deferred.promise;
         },
-/*
-        getStarred: function (action, type) {
-            var deferred = $q.defer();
-            var size = globals.settings.AutoPlaylistSize;
-            content.selectedPlaylist = null;
-            content.selectedAutoPlaylist = 'starred';
-            $.ajax({
-                url: globals.BaseURL() + '/getStarred.view?' + globals.BaseParams() + '&size=' + size,
-                method: 'GET',
-                dataType: globals.settings.Protocol,
-                timeout: globals.settings.Timeout,
-                success: function (data) {
-                    if (typeof data["subsonic-response"].starred !== 'undefined') {
-                        var items = [];
-                        switch (type) {
-                            case 'artist':
-                                if (typeof data["subsonic-response"].starred.artist !== 'undefined') {
-                                    if (data["subsonic-response"].starred.artist.length > 0) {
-                                        items = data["subsonic-response"].starred.artist;
-                                    } else {
-                                        items[0] = data["subsonic-response"].starred.artist;
-                                    }
-                                }
-                                break;
-                            case 'album':
-                                if (typeof data["subsonic-response"].starred.album !== 'undefined') {
-                                    if (data["subsonic-response"].starred.album.length > 0) {
-                                        items = data["subsonic-response"].starred.album;
-                                    } else {
-                                        items[0] = data["subsonic-response"].starred.album;
-                                    }
-                                }
-                                break;
-                            case 'song':
-                                if (typeof data["subsonic-response"].starred.song !== 'undefined') {
-                                    if (data["subsonic-response"].starred.song.length > 0) {
-                                        items = data["subsonic-response"].starred.song;
-                                    } else {
-                                        items[0] = data["subsonic-response"].starred.song;
-                                    }
-                                    if (action == 'add') {
-                                        angular.forEach(items, function (item, key) {
-                                            $rootScope.queue.push(map.mapSong(item));
-                                        });
-                                        notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                                    } else if (action == 'play') {
-                                        $rootScope.queue = [];
-                                        angular.forEach(items, function (item, key) {
-                                            $rootScope.queue.push(map.mapSong(item));
-                                        });
-                                        var next = $rootScope.queue[0];
-                                        $rootScope.playSong(false, next);
-                                        notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                                    } else {
-                                        content.album = [];
-                                        content.song = [];
-                                        angular.forEach(items, function (item, key) {
-                                            content.song.push(map.mapSong(item));
-                                        });
-                                    }
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    console.log("getStarred: ", content);
-                    deferred.resolve(content);
-                }
-            });
-            return deferred.promise;
-        },
-*/
         newPlaylist: function (data, event) {
             var deferred = $q.defer();
             var reply = prompt("Choose a name for your new playlist.", "");
