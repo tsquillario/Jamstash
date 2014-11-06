@@ -2,10 +2,12 @@ describe("globals service", function() {
     'use strict';
 
     var globals;
-    beforeEach(module('JamStash'));
-    beforeEach(inject(function(_globals_) {
-        globals = _globals_;
-    }));
+    beforeEach(function() {
+        module('JamStash');
+        inject(function (_globals_) {
+            globals = _globals_;
+        });
+    });
 
     it("Given 'http://subsonic.org/demo', when calling BaseURL() then I get 'http://subsonic.org/demo/rest'", function() {
         globals.settings.Server = "http://subsonic.org/demo";

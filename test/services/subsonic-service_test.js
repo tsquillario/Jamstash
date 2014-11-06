@@ -108,13 +108,18 @@ describe("subsonic service -", function() {
 		describe("Given that the global setting AutoPlaylist Size is 3", function() {
 
 			it("and given that I have more than 3 starred songs in my library, when getting random starred songs, the result should be limited to 3 starred songs", function() {
-				response["subsonic-response"].starred = {song: [{id: "11841"},{id: "12061"},{id: "17322"},{id: "1547"}]};
+				var library = [{id: "11841"},{id: "12061"},{id: "17322"},{id: "1547"},{id: "14785"}];
+				response["subsonic-response"].starred = {song: library};
 				mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
 				subsonic.getRandomStarredSongs().then(success);
 				mockBackend.flush();
 
-				expect(success).toHaveBeenCalledWith([{id: "11841"},{id: "12061"},{id: "17322"}]);
+				expect(success).toHaveBeenCalled();
+				var randomlyPickedSongs = success.calls.mostRecent().args[0];
+				for (var i = 0; i < randomlyPickedSongs.length; i++) {
+					expect(library).toContain(randomlyPickedSongs[i]);
+				}
 			});
 
 			it("and given that I have only 1 starred song in my library, when getting random starred songs, it returns my starred song", function() {
@@ -127,14 +132,15 @@ describe("subsonic service -", function() {
 				expect(success).toHaveBeenCalledWith([{id: "11841"}]);
 			});
 
-			it("and given that I don't have any starred song in my library, when getting random starred songs, it returns an empty array", function() {
+			it("and given that I don't have any starred song in my library, when getting random starred songs, it returns an error object with a message", function() {
 				response["subsonic-response"].starred = {song: []};
 				mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
-				subsonic.getRandomStarredSongs().then(success);
+				subsonic.getRandomStarredSongs().then(success, failure);
 				mockBackend.flush();
 
-				expect(success).toHaveBeenCalledWith([]);
+				expect(success).not.toHaveBeenCalled();
+				expect(failure).toHaveBeenCalledWith({reason: 'No starred songs found on the Subsonic server.'});
 			});
 		});
 	});

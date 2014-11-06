@@ -594,15 +594,16 @@ Jamstash.factory('subsonic', function ($rootScope, $http, $q, globals, utils, ma
             return deferred.promise;
         },
         getRandomStarredSongs: function() {
+            var exception = {reason: 'No starred songs found on the Subsonic server.'};
             var deferred = $q.defer();
 
             this.getStarred().then(function (data) {
-                if(data.song !== undefined) {
-                    // Return only first X starred songs
-                    var starredSongs = data.song.slice(0, globals.settings.AutoPlaylistSize);
-                    deferred.resolve(starredSongs);
+                if(data.song !== undefined && data.song.length > 0) {
+                    // Return random subarray of songs
+                    var randomSongs = [].concat(_.sample(data.song, globals.settings.AutoPlayListSize));
+                    deferred.resolve(randomSongs);
                 } else {
-                    deferred.reject('No starred songs found on the Subsonic server.');
+                    deferred.reject(exception);
                 }
             }, function (reason) {
                 deferred.reject(reason);
