@@ -1,8 +1,15 @@
-'use strict';
+/**
+* jamstash.subsonicService Module
+*
+* Provides access through $http to the Subsonic server's API.
+* Also offers more fine-grained functionality that is not part of Subsonic's API.
+*/
+angular.module('jamstash.subsonicService', ['jamstash.globals', 'jamstash.utils', 'jamstash.model',
+    'jamstash.notifications', 'angular-underscore/utils'])
 
-var Jamstash = angular.module('JamStash');
+.factory('subsonic', function ($rootScope, $http, $q, globals, utils, map, notifications) {
+    'use strict';
 
-Jamstash.factory('subsonic', function ($rootScope, $http, $q, globals, utils, map, notifications) {
     var index = { shortcuts: [], artists: [] };
     var content = {
         album: [],

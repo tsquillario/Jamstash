@@ -3,7 +3,7 @@ describe("globals service", function() {
 
     var globals;
     beforeEach(function() {
-        module('JamStash');
+        module('jamstash.globals');
         inject(function (_globals_) {
             globals = _globals_;
         });

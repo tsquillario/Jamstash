@@ -1,8 +1,14 @@
-'use strict';
+/**
+* jamstash.model Module
+*
+* Stores the Index, Artist, Album and Song model. Provides a mapping service that converts between subsonic's
+* representation and ours.
+*/
+angular.module('jamstash.model', ['jamstash.utils'])
 
-var jamstash = angular.module('JamStash');
+.service('model', function (utils) {
+    'use strict';
 
-jamstash.service('model', function (utils) {
     this.Index = function (name, artist) {
         this.name = name;
         this.artist = artist;
@@ -49,9 +55,11 @@ jamstash.service('model', function (utils) {
         this.description = description;
         this.displayName = this.name + " - " + this.album + " - " + this.artist;
     };
-});
+})
 
-jamstash.service('map', function ($http, globals, utils, model) {
+.service('map', function ($http, globals, utils, model) {
+    'use strict';
+
     this.mapArtist = function (data) {
         var name = '';
         var artist = data.artist;

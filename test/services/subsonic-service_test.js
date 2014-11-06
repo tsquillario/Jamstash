@@ -1,4 +1,4 @@
-describe("subsonic service -", function() {
+describe("Subsonic service -", function() {
 	'use strict';
 
 	var subsonic, mockBackend, mockGlobals;
@@ -24,7 +24,7 @@ describe("subsonic service -", function() {
 			}
 		};
 
-		module('JamStash', function ($provide) {
+		module('jamstash.subsonicService', function ($provide) {
 			$provide.value('globals', mockGlobals);
 		});
 

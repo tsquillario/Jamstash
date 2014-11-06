@@ -1,8 +1,13 @@
-'use strict';
+/**
+* jamstash.globals Module
+*
+* Houses Jamstash's global settings and a few utility functions.
+*/
+angular.module('jamstash.globals', [])
 
-var jamstash = angular.module('JamStash');
+.service('globals', function () {
+    'use strict';
 
-jamstash.service('globals', function () {
     this.SearchTypes = [
         { id: "song", name: "Song" },
         { id: "album", name: "Album" },
@@ -62,9 +67,11 @@ jamstash.service('globals', function () {
 
     this.BaseURL = function () { return this.settings.Server + '/rest'; };
     this.BaseParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=' + this.settings.Protocol + '&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };
-});
+})
 
-jamstash.factory('json', function ($http) { // Deferred loading
+.factory('json', function ($http) { // Deferred loading
+    'use strict';
+
     return {
         getCollections: function (callback) {
             $http.get('js/json_collections.js').success(callback);

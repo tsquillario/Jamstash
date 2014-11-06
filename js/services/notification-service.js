@@ -1,11 +1,15 @@
-'use strict';
+/**
+* jamstash.notifications Module
+*
+* Provides access to the notification UI.
+*/
+angular.module('jamstash.notifications', [])
+.service('notifications', function ($rootScope, globals) {
+    'use strict';
 
-var jamstash = angular.module('JamStash');
-
-jamstash.service('notifications', function ($rootScope, globals) {
     var msgIndex = 1;
     this.updateMessage = function (msg, autohide) {
-        if (msg != '') {
+        if (msg !== '') {
             var id = msgIndex;
             $('#messages').append('<span id=\"msg_' + id + '\" class="message">' + msg + '</span>');
             $('#messages').fadeIn();
@@ -23,34 +27,34 @@ jamstash.service('notifications', function ($rootScope, globals) {
             }
             msgIndex++;
         }
-    }
+    };
     this.requestPermissionIfRequired = function () {
         if (window.Notify.isSupported() && window.Notify.needsPermission()) {
             window.Notify.requestPermission();
         }
-    }
+    };
     this.hasNotificationPermission = function () {
         return (window.Notify.needsPermission() === false);
-    }
+    };
     this.hasNotificationSupport = function () {
         return window.Notify.isSupported();
-    }
-    var notifications = new Array();
+    };
+    var notifications = [];
 
     this.showNotification = function (pic, title, text, type, bind) {
         if (this.hasNotificationPermission()) {
             //closeAllNotifications()
-            var settings = {}
+            var settings = {};
             if (bind = '#NextTrack') {
                 settings.notifyClick = function () {
                     $rootScope.nextTrack();
                     this.close();
                 };
             }
-            if (type == 'text') {
+            if (type === 'text') {
                 settings.body = text;
                 settings.icon = pic;
-            } else if (type == 'html') {
+            } else if (type === 'html') {
                 settings.body = text;
             }
             var notification = new Notify(title, settings);
@@ -62,10 +66,10 @@ jamstash.service('notifications', function ($rootScope, globals) {
         } else {
             console.log("showNotification: No Permission");
         }
-    }
+    };
     this.closeAllNotifications = function () {
-        for (notification in notifications) {
+        for (var notification in notifications) {
             notifications[notification].close();
         }
-    }
+    };
 });

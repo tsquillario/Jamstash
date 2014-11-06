@@ -1,8 +1,13 @@
-'use strict';
+/**
+* jamstash.utils Module
+*
+* Provides generally useful functions, like sorts, date-related functions, localStorage access, etc.
+*/
+angular.module('jamstash.utils', ['jamstash.globals'])
 
-var jamstash = angular.module('JamStash');
+.service('utils', function ($rootScope, globals) {
+    'use strict';
 
-jamstash.service('utils', function ($rootScope, $cookieStore, globals) {
     this.safeApply = function (fn) {
         var phase = $rootScope.$root.$$phase;
         if (phase === '$apply' || phase === '$digest') {
