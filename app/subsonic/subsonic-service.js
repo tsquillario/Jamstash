@@ -607,7 +607,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             this.getStarred().then(function (data) {
                 if(data.song !== undefined && data.song.length > 0) {
                     // Return random subarray of songs
-                    var randomSongs = [].concat(_.sample(data.song, globals.settings.AutoPlayListSize));
+                    var randomSongs = [].concat(_.sample(data.song, globals.settings.AutoPlaylistSize));
                     deferred.resolve(randomSongs);
                 } else {
                     deferred.reject(exception);

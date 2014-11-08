@@ -270,6 +270,34 @@ function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, sub
             $scope.selectedPlaylist = data.selectedPlaylist;
         });
     };
+    $scope.getRandomStarredSongs = function (action) {
+        subsonic.getRandomStarredSongs()
+        .then(function (randomStarredSongs) {
+            if(action === 'display') {
+                $scope.song = randomStarredSongs;
+            } else if(action === 'play' || action === 'add') {
+                if (action === 'play') {
+                    $rootScope.queue = [];
+                    var first = map.mapSong(randomStarredSongs[0]);
+                    $rootScope.playSong(false, first);
+                }
+                for (var i = 0; i < randomStarredSongs.length; i++) {
+                    $rootScope.queue.push(map.mapSong(randomStarredSongs[i]));
+                }
+                notifications.updateMessage(randomStarredSongs.length + ' Song(s) Added to Queue', true);
+            }
+        }).catch(function (error) {
+            var errorNotif;
+            if (error.subsonicError !== undefined) {
+                errorNotif = error.reason + ' ' + error.subsonicError.message;
+            } else if (error.httpError !== undefined) {
+                errorNotif = error.reason + ' HTTP error ' + error.httpError;
+            } else {
+                errorNotif = error.reason;
+            }
+            notifications.updateMessage(errorNotif, true);
+        });
+    };
     $scope.getRandomSongs = function (action, genre, folder) {
         subsonic.getRandomSongs(action, genre, folder).then(function (data) {
             $scope.album = data.album;
