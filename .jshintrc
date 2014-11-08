@@ -30,7 +30,7 @@
     "it": false,
     "jasmine": false,
     "spyOn": false
-  }
+  },
   "browser": true,
   "node": true,
   "jquery": true

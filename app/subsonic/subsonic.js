@@ -374,7 +374,7 @@ function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, sub
     $scope.getGenres();
     $scope.getPodcasts();
     $scope.openDefaultSection();
-    $scope.getMusicFolders();
+    //TODO: JMA: $scope.getMusicFolders();
     if ($routeParams.artistId && $routeParams.albumId) {
         $scope.getAlbumByTag($routeParams.albumId);
     } else if ($routeParams.artistId) {
