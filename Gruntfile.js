@@ -109,6 +109,44 @@ module.exports = function (grunt) {
       }
     },
 
+    // Test settings
+    karma: {
+      options: {
+        configFile: './karma.conf.js',
+      },
+      unit: {
+        singleRun: true,
+        browsers: ['PhantomJS']
+      },
+      continuous: {
+        singleRun: false,
+        background: true
+      }
+    },
+
+    // Automatically inject Bower components into the app
+    wiredep: {
+      app: {
+        src: ['<%= yeoman.app %>/index.html'],
+        ignorePath: /\.\.\//
+      },
+      test: {
+        src: 'karma.conf.js',
+        fileTypes: {
+          js: {
+            block: /(([\s\t]*)\/\/\s*bower:*(\S*))(\n|\r|.)*?(\/\/\s*endbower)/gi,
+            detect: {
+                js: /'(.*\.js)'/gi
+            },
+            replace: {
+                js: '\'{{filePath}}\','
+            }
+          }
+        },
+        devDependencies: true
+      }
+    },
+
     // Make sure code styles are up to par and there are no obvious mistakes
     jshint: {
       options: {
@@ -138,29 +176,6 @@ module.exports = function (grunt) {
       }]
       },
       server: '.tmp'
-    },
-
-    // Automatically inject Bower components into the app
-    wiredep: {
-      app: {
-        src: ['<%= yeoman.app %>/index.html'],
-        ignorePath: /\.\.\//
-      },
-      test: {
-        src: 'karma.conf.js',
-        fileTypes: {
-          js: {
-            block: /(([\s\t]*)\/\/\s*bower:*(\S*))(\n|\r|.)*?(\/\/\s*endbower)/gi,
-            detect: {
-                js: /'(.*\.js)'/gi
-            },
-            replace: {
-                js: '\'{{filePath}}\','
-            }
-          }
-        },
-        devDependencies: true
-      }
     },
 
     // Reads HTML for usemin blocks to enable smart builds that automatically
@@ -200,6 +215,17 @@ module.exports = function (grunt) {
           '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
           '<%= yeoman.dist %>/styles/fonts/*'
         ]
+      }
+    },
+
+    imagemin: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.app %>/images',
+          src: '{,*/}*.{png,jpg,jpeg,gif}',
+          dest: '<%= yeoman.dist %>/images'
+        }]
       }
     },
 
@@ -246,7 +272,6 @@ module.exports = function (grunt) {
           '*.{ico,png,txt}',
           '.htaccess',
           '**/*.html',
-          'images/{,*/}*.{png,jpg,jpeg,gif}',
           '**/*.json',
           'styles/{,*/}*.css'
           ]
@@ -278,22 +303,10 @@ module.exports = function (grunt) {
       ],
       test: [
         'copy:styles'
+      ],
+      dist: [
+        'imagemin'
       ]
-    },
-
-    // Test settings
-    karma: {
-      options: {
-        configFile: './karma.conf.js',
-      },
-      unit: {
-        singleRun: true,
-        browsers: ['PhantomJS']
-      },
-      continuous: {
-        singleRun: false,
-        background: true
-      }
     }
   });
 
@@ -324,6 +337,7 @@ module.exports = function (grunt) {
     'clean:dist',
     'wiredep:app',
     'useminPrepare',
+    'concurrent:dist',
     'concat',
     'ngAnnotate',
     'copy:dist',
