@@ -60,6 +60,17 @@
             }, 30000);
         }
     };
+	this.toggleMute = function () {
+        //var audio = typeof $(player1).data("jPlayer") != 'undefined' ? true : false;
+        var audio = $(player1).data("jPlayer");
+        if (typeof audio != 'undefined') {
+			if (audio.options.muted) {
+				audio.options.muted = false;
+			} else {
+				audio.options.muted = true;
+			}
+		}
+	}
     this.saveTrackPosition = function () {
         //var audio = typeof $(player1).data("jPlayer") != 'undefined' ? true : false;
         var audio = $(player1).data("jPlayer");
@@ -162,41 +173,48 @@
         $('#playermiddle').css('visibility', 'visible');
         $('#songdetails').css('visibility', 'visible');
 
-        $rootScope.loadjPlayer(player1, url, suffix, loadonly, position);
-        if (!loadonly) {
-            // Sway.fm UnityShim
-            var playerState = {
-                playing: true,
-                title: title,
-                artist: artist,
-                favorite: false,
-                albumArt: coverartfull
-            };
-            if ($rootScope.unity) {
-                $rootScope.unity.sendState(playerState);
-            }
-            // End UnityShim
-        }
-        if ($rootScope.queue.length > 0) {
+		$rootScope.loadjPlayer(player1, url, suffix, loadonly, position);
+		if (globals.settings.Jukebox) { 
+			$rootScope.addToJukebox(id);
+			
+		}
+		
+		if (!loadonly) {
+			// Sway.fm UnityShim
+			var playerState = {
+				playing: true,
+				title: title,
+				artist: artist,
+				favorite: false,
+				albumArt: coverartfull
+			};
+			if ($rootScope.unity) {
+				$rootScope.unity.sendState(playerState);
+			}
+			// End UnityShim
+		}
+		
+		var spechtml = '';
+		var data = $(player1).data().jPlayer;
+		for (i = 0; i < data.solutions.length; i++) {
+			var solution = data.solutions[i];
+			if (data[solution].used) {
+				spechtml += "<strong class=\"codesyntax\">" + solution + "</strong> is";
+				spechtml += " currently being used with<strong>";
+				angular.forEach(data[solution].support, function (format) {
+					if (data[solution].support[format]) {
+						spechtml += " <strong class=\"codesyntax\">" + format + "</strong>";
+					}
+				});
+				spechtml += "</strong> support";
+			}
+		}
+		$('#SMStats').html(spechtml);
+        scrobbled = false;
+		
+		if ($rootScope.queue.length > 0) {
             $('#queue').stop().scrollTo('#' + id, 400);
         }
-        var spechtml = '';
-        var data = $(player1).data().jPlayer;
-        for (i = 0; i < data.solutions.length; i++) {
-            var solution = data.solutions[i];
-            if (data[solution].used) {
-                spechtml += "<strong class=\"codesyntax\">" + solution + "</strong> is";
-                spechtml += " currently being used with<strong>";
-                angular.forEach(data[solution].support, function (format) {
-                    if (data[solution].support[format]) {
-                        spechtml += " <strong class=\"codesyntax\">" + format + "</strong>";
-                    }
-                });
-                spechtml += "</strong> support";
-            }
-        }
-        $('#SMStats').html(spechtml);
-        scrobbled = false;
 
         if (globals.settings.NotificationSong && !loadonly) {
             notifications.showNotification(coverartthumb, utils.toHTML.un(title), utils.toHTML.un(artist + ' - ' + album), 'text', '#NextTrack');
@@ -224,6 +242,8 @@
         if (globals.settings.Debug) { console.log('Setting Audio Solution: ' + audioSolution); }
         //var salt = Math.floor(Math.random() * 100000);
         //url += '&salt=' + salt;
+		var muted = false;
+		if (globals.settings.Jukebox) { muted = true;}
         $(el).jPlayer("destroy");
         $.jPlayer.timeFormat.showHour = true;
         $(el).jPlayer({
@@ -232,6 +252,7 @@
             solution: audioSolution,
             supplied: suffix,
             volume: volume,
+			muted: muted,
             errorAlerts: false,
             warningAlerts: false,
             cssSelectorAncestor: "",
@@ -259,10 +280,6 @@
                 } else if (suffix == 'mp3') {
                     $(this).jPlayer("setMedia", {
                         mp3: url
-                    });
-                } else if (suffix == 'm4a') {
-                    $(this).jPlayer("setMedia", {
-                        m4a: url
                     });
                 }
                 if (!loadonly) { // Start playing

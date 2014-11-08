@@ -1,4 +1,13 @@
 ﻿[
+	{
+        "date": "10/18/2014", "version": "4.0.1",
+        "changes": [
+		{ "text": "- Moved Queue to the right side. You don't have to click to see it now!" },
+        { "text": "- Style refresh, thanks to <a href=\"https://twitter.com/erase_me\" target=\"_blank\">@erase_me</a> for the CSS magic :)" },
+		{ "text": "- Fixed \"Rescan Library\" button" },
+		{ "text": "- Jukebox support added [Beta]" }
+        ]
+    },
     {
         "date": "7/28/2014", "version": "3.4.2",
         "changes": [

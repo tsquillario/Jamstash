@@ -122,7 +122,8 @@ JamStash.service('globals', function () {
         DefaultSearchType: this.SearchTypes[0],
         DefaultAlbumSort: this.AlbumSorts[0],
         DefaultArchiveAlbumSort: "date desc",
-        AutoPlay: false,
+		Jukebox: false,
+		AutoPlay: false,
         LoopQueue: false,
         Repeat: false,
         Debug: false
@@ -215,6 +216,7 @@ JamStash.directive('sortable', function () {
         }
     };
 });
+/*
 JamStash.directive('split', function () {
     return {
         link: function (scope, elm, attrs) {
@@ -222,6 +224,7 @@ JamStash.directive('split', function () {
         }
     };
 });
+*/
 JamStash.directive('fancybox', function ($compile) {
     return {
         restrict: 'A',
@@ -406,7 +409,7 @@ JamStash.service('map', function ($http, globals, utils, model) {
         var url, title, artist, track, rating, starred, contenttype, suffix, description;
         var specs = '', coverartthumb = '', coverartfull = '';
         if (typeof song.coverArt != 'undefined') {
-            coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=60&id=' + song.coverArt;
+            coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=30&id=' + song.coverArt;
             coverartfull = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&id=' + song.coverArt;
         } else {
             coverartthumb = 'images/albumdefault_60.jpg';
@@ -1250,7 +1253,7 @@ JamStash.factory('subsonic', function ($rootScope, $http, $q, globals, utils, ma
                 }
             });
             return deferred.promise;
-        }
+        },
         // End subsonic
     };
 });

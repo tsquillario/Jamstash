@@ -204,7 +204,9 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
         $('.audiojs .scrubber').stop().animate({ height: '4px' });
     });
 
-    $('.message').on('click', function () { $(this).remove(); });
+	$(document).on("click", ".message", function(){
+	   $(this).remove();
+	});
 
     // Sway.fm Unity Plugin
     $rootScope.unity = UnityMusicShim();
@@ -337,7 +339,7 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
         }
     };
     $scope.scrollToTop = function () {
-        $('#Artists').stop().scrollTo('#auto', 400);
+        $('#left-component').stop().scrollTo('#MusicFolders', 400);
     };
     $rootScope.selectAll = function (songs) {
         angular.forEach(songs, function (item, key) {
@@ -381,6 +383,9 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
             $scope.selectedSongs.length = 0;
         }
+    };
+	$scope.addSongToQueue = function (data) {
+        $rootScope.queue.push(data);
     };
     $rootScope.removeSong = function (item, songs) {
         var index = songs.indexOf(item)
@@ -473,9 +478,6 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             }
         });
     };
-    $scope.addSongToQueue = function (data) {
-        $rootScope.queue.push(data);
-    };
     $scope.queueRemoveSelected = function (data, event) {
         angular.forEach($scope.selectedSongs, function (item, key) {
             var index = $rootScope.queue.indexOf(item);
@@ -514,6 +516,23 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             data.selected = true;
         }
     };
+	$rootScope.addToJukebox = function (id) {
+		if (globals.settings.Debug) { console.log("LOAD JUKEBOX"); }
+		$.ajax({
+			url: globals.BaseURL() + '/jukeboxControl.view?' + globals.BaseParams() + '&action=set&id=' + id,
+			method: 'GET',
+			dataType: globals.settings.Protocol,
+			timeout: globals.settings.Timeout,
+			success: function (data) {
+				/*
+				if (data["subsonic-response"].podcasts.channel !== undefined) {
+				}
+				deferred.resolve(podcasts);
+				*/
+				$.get(globals.BaseURL() + '/jukeboxControl.view?' + globals.BaseParams() + '&action=start');
+			}
+		});
+	};
     $scope.updateFavorite = function (item) {
         var id = item.id;
         var starred = item.starred;

@@ -1,6 +1,6 @@
 ﻿JamStash.controller('SettingsCtrl',
 function SettingsCtrl($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, player) {
-    $scope.settings = globals.settings;
+    $scope.settings = globals.settings; /* See service.js */
     $scope.Timeouts = [
         { id: 10000, name: 10 },
         { id: 20000, name: 20 },
