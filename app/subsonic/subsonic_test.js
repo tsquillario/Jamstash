@@ -43,7 +43,7 @@ describe("Subsonic controller", function() {
 
 		describe("given that my library contains 3 starred songs, ", function() {
 			var response = [
-				{id:"2548"},{id:"8986"},{id:"2986"}
+				{id:"2548"}, {id:"8986"}, {id:"2986"}
 			];
 
 			it("when displaying random starred songs, it sets the scope with the selected songs", function() {
@@ -52,7 +52,9 @@ describe("Subsonic controller", function() {
 				$rootScope.$apply();
 
 				expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
-				expect(scope.song).toEqual(response);
+				expect(scope.song).toEqual([
+					{id: "2548"}, {id: "8986"}, {id: "2986"}
+				]);
 			});
 
 			it("when adding random starred songs, it adds the selected songs to the queue and notifies the user", function() {

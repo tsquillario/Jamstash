@@ -33,7 +33,7 @@ jamstash.service('player', function ($rootScope, $window, utils, globals, model,
             $rootScope.restartSong();
         }
     };
-    this.getNextSong = function (previous) {
+    function getNextSong (previous) {
         var song;
         if (globals.settings.Debug) { console.log('Getting Next Song > ' + 'Queue length: ' + $rootScope.queue.length); }
         if ($rootScope.queue.length > 0) {
@@ -58,7 +58,22 @@ jamstash.service('player', function ($rootScope, $window, utils, globals, model,
         } else {
             return false;
         }
-    };
+    }
+    function internalScrobbleSong(submission) {
+        if ($rootScope.loggedIn && submission) {
+            var id = $rootScope.playingSong.id;
+            if (globals.settings.Debug) { console.log('Scrobble Song: ' + id); }
+            $.ajax({
+                url: globals.BaseURL() + '/scrobble.view?' + globals.BaseParams() + '&id=' + id + "&submission=" + submission,
+                method: 'GET',
+                dataType: globals.settings.Protocol,
+                timeout: 10000,
+                success: function () {
+                    scrobbled = true;
+                }
+            });
+        }
+    }
     this.startSaveTrackPosition = function () {
         if (globals.settings.SaveTrackPosition) {
             if (timerid !== 0) {
@@ -316,7 +331,7 @@ jamstash.service('player', function ($rootScope, $window, utils, globals, model,
                 var p = event.jPlayer.status.currentPercentAbsolute;
                 if (!scrobbled && p > 30) {
                     if (globals.settings.Debug) { console.log('LAST.FM SCROBBLE - Percent Played: ' + p); }
-                    scrobbleSong(true);
+                    internalScrobbleSong(true);
                 }
             },
             volumechange: function (event) {
@@ -392,21 +407,7 @@ jamstash.service('player', function ($rootScope, $window, utils, globals, model,
             supplied: "m4v"
         });
     };
-    this.scrobbleSong = function (submission) {
-        if ($rootScope.loggedIn && submission) {
-            var id = $rootScope.playingSong.id;
-            if (globals.settings.Debug) { console.log('Scrobble Song: ' + id); }
-            $.ajax({
-                url: globals.BaseURL() + '/scrobble.view?' + globals.BaseParams() + '&id=' + id + "&submission=" + submission,
-                method: 'GET',
-                dataType: globals.settings.Protocol,
-                timeout: 10000,
-                success: function () {
-                    scrobbled = true;
-                }
-            });
-        }
-    };
+    this.scrobbleSong = internalScrobbleSong;
     this.rateSong = function (songid, rating) {
         $.ajax({
             url: baseURL + '/setRating.view?' + baseParams + '&id=' + songid + "&rating=" + rating,

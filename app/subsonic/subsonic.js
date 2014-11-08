@@ -273,18 +273,21 @@ function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, sub
     $scope.getRandomStarredSongs = function (action) {
         subsonic.getRandomStarredSongs()
         .then(function (randomStarredSongs) {
-            if(action === 'display') {
-                $scope.song = randomStarredSongs;
-            } else if(action === 'play' || action === 'add') {
-                if (action === 'play') {
-                    $rootScope.queue = [];
-                    var first = map.mapSong(randomStarredSongs[0]);
-                    $rootScope.playSong(false, first);
-                }
-                for (var i = 0; i < randomStarredSongs.length; i++) {
-                    $rootScope.queue.push(map.mapSong(randomStarredSongs[i]));
-                }
-                notifications.updateMessage(randomStarredSongs.length + ' Song(s) Added to Queue', true);
+            var mappedSongs = [];
+            if (action === 'play') {
+                $rootScope.queue = [];
+                var first = map.mapSong(randomStarredSongs[0]);
+                $rootScope.playSong(false, first);
+            }
+            // Map regardless of the action
+            for (var i = 0; i < randomStarredSongs.length; i++) {
+                mappedSongs.push(map.mapSong(randomStarredSongs[i]));
+            }
+            if(action === 'play' || action === 'add') {
+                $rootScope.queue = $rootScope.queue.concat(mappedSongs);
+                notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);
+            } else if (action === 'display') {
+                $scope.song = mappedSongs;
             }
         }).catch(function (error) {
             var errorNotif;

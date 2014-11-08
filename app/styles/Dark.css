@@ -363,6 +363,10 @@ label
     background: #252525;
 }
 
+#queue {
+    color: #d6d469;
+}
+
 #QueuePreview {
     background-color: #222222;
 }
