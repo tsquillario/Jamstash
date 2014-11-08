@@ -1,8 +1,6 @@
 'use strict';
 
-var jamstash = angular.module('JamStash');
-
-jamstash.directive('sortable', function () {
+angular.module('JamStash').directive('sortable', function () {
     return {
         link: function (scope, elm, attrs) {
             elm.sortable({
@@ -12,17 +10,17 @@ jamstash.directive('sortable', function () {
             elm.disableSelection();
         }
     };
-});
+})
 /*
-jamstash.directive('split', function () {
+.directive('split', function () {
     return {
         link: function (scope, elm, attrs) {
             elm.splitPane();
         }
     };
-});
+})
 */
-jamstash.directive('fancybox', function ($compile) {
+.directive('fancybox', ['$compile', function($compile){
     return {
         restrict: 'A',
         replace: false,
@@ -41,8 +39,8 @@ jamstash.directive('fancybox', function ($compile) {
             };
         }
     };
-});
-jamstash.directive('songpreview', function ($compile, subsonic) {
+}])
+.directive('songpreview', ['$compile', 'subsonic', function ($compile, subsonic) {
     return {
         restrict: 'E',
         templateUrl: 'common/songs.html',
@@ -62,8 +60,8 @@ jamstash.directive('songpreview', function ($compile, subsonic) {
             });
         }
     };
-});
-jamstash.directive('stopEvent', function () {
+}])
+.directive('stopEvent', function () {
     return {
         restrict: 'A',
         link: function (scope, element, attr) {
@@ -72,8 +70,8 @@ jamstash.directive('stopEvent', function () {
             });
         }
     };
-});
-jamstash.directive('ngEnter', function () {
+})
+.directive('ngEnter', function () {
     return {
         scope: { onEnter: '&' },
         link: function (scope, element) {
@@ -86,8 +84,8 @@ jamstash.directive('ngEnter', function () {
             });
         }
     };
-});
-jamstash.directive('ngDownload', function ($compile) {
+})
+.directive('ngDownload', ['$compile', function ($compile) {
     return {
         restrict: 'E',
         scope: { data: '=' },
@@ -108,8 +106,8 @@ jamstash.directive('ngDownload', function ($compile) {
             });
         }
     };
-});
-jamstash.directive('stopEvent', function () {
+}])
+.directive('stopEvent', function () {
     return {
         restrict: 'A',
         link: function (scope, element, attr) {
@@ -118,8 +116,8 @@ jamstash.directive('stopEvent', function () {
             });
         }
     };
-});
-jamstash.directive('ngEnter', function () {
+})
+.directive('ngEnter', function () {
     return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {
             if (event.which === 13) {

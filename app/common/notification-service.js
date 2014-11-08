@@ -4,7 +4,8 @@
 * Provides access to the notification UI.
 */
 angular.module('jamstash.notifications', [])
-.service('notifications', function ($rootScope, globals) {
+
+.service('notifications', ['$rootScope', 'globals', function($rootScope, globals) {
     'use strict';
 
     var msgIndex = 1;
@@ -72,4 +73,4 @@ angular.module('jamstash.notifications', [])
             notifications[notification].close();
         }
     };
-});
+}]);

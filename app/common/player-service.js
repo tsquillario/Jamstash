@@ -1,8 +1,9 @@
-﻿'use strict';
+﻿angular.module('JamStash')
 
-var jamstash = angular.module('JamStash');
+.service('player', ['$rootScope', '$window', 'utils', 'globals', 'model', 'notifications',
+    function ($rootScope, $window, utils, globals, model, notifications) {
 
-jamstash.service('player', function ($rootScope, $window, utils, globals, model, notifications) {
+    'use strict';
     var player1 = globals.Player1;
     var player2 = '#playdeck_2';
     var scrobbled = false;
@@ -419,4 +420,4 @@ jamstash.service('player', function ($rootScope, $window, utils, globals, model,
             }
         });
     };
-});
+}]);

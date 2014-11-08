@@ -1,8 +1,7 @@
-'use strict';
+angular.module('JamStash').factory('archive', ['$rootScope, $http, $q, $sce, globals, model, utils, map, notifications',
+    function($rootScope, $http, $q, $sce, globals, model, utils, map, notifications) {
+    'use strict';
 
-var jamstash = angular.module('JamStash');
-
-jamstash.factory('archive', function ($rootScope, $http, $q, $sce, globals, model, utils, map, notifications) {
     var index = { shortcuts: [], artists: [] };
     var content = {
         artist: [],
@@ -207,4 +206,4 @@ jamstash.factory('archive', function ($rootScope, $http, $q, $sce, globals, mode
             return deferred.promise;
         }
     };
-});
+}]);

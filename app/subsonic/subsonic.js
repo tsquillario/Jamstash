@@ -5,8 +5,8 @@
 */
 angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
 
-.controller('SubsonicCtrl',
-function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications) {
+.controller('SubsonicCtrl', ['$scope', '$rootScope', '$routeParams', 'utils', 'globals', 'map', 'subsonic', 'notifications',
+    function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications) {
     'use strict';
 
     $scope.settings = globals.settings;
@@ -411,4 +411,4 @@ function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, sub
         $scope.getAlbums($routeParams.artistId);
     }
     /* End Startup */
-});
+}]);

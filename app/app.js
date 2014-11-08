@@ -1,10 +1,11 @@
-'use strict';
 
 /* Declare app level module */
-var jamstash = angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize',
-    'jamstash.subsonic.ctrl']);
+angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize',
+    'jamstash.subsonic.ctrl'])
 
-jamstash.config(function ($routeProvider) {
+.config(['$routeProvider',function($routeProvider) {
+    'use strict';
+
     $routeProvider
         .when('/index', { redirectTo: '/library' })
         .when('/settings', { templateUrl: 'settings/settings.html', controller: 'SettingsCtrl' })
@@ -17,10 +18,12 @@ jamstash.config(function ($routeProvider) {
         .when('/archive/:artist', { templateUrl: 'archive/archive.html', controller: 'ArchiveCtrl' })
         .when('/archive/:artist/:album', { templateUrl: 'archive/archive.html', controller: 'ArchiveCtrl' })
         .otherwise({ redirectTo: '/index' });
-});
+}])
 
-jamstash.config(function ($httpProvider) {
-    $httpProvider.interceptors.push(function ($rootScope, $location, $q, globals) {
+.config(['$httpProvider',function($httpProvider) {
+    'use strict';
+
+    $httpProvider.interceptors.push(['$rootScope', '$location', '$q', 'globals', function ($rootScope, $location, $q, globals) {
         return {
             'request': function (request) {
                 // if we're not logged-in to the AngularJS app, redirect to login page
@@ -47,5 +50,5 @@ jamstash.config(function ($httpProvider) {
                 return $q.reject(rejection);
             }
         };
-    });
-});
+    }]);
+}]);

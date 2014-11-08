@@ -1,9 +1,8 @@
-﻿'use strict';
+﻿angular.module('JamStash')
+.controller('ArchiveCtrl', ['$scope, $rootScope, $location, $routeParams, $http, $timeout, utils, globals, model, notifications, player, archive, json',
+    function($scope, $rootScope, $location, $routeParams, $http, $timeout, utils, globals, model, notifications, player, archive, json){
+    'use strict';
 
-var jamstash = angular.module('JamStash');
-
-jamstash.controller('ArchiveCtrl',
-function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, $timeout, utils, globals, model, notifications, player, archive, json) {
     $scope.settings = globals.settings;
     $scope.itemType = 'archive';
     $rootScope.song = [];
@@ -174,4 +173,4 @@ function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, $timeou
         $scope.addSavedCollection($routeParams.artist);
     }
     /* End Startup */
-});
+}]);

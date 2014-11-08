@@ -1,13 +1,11 @@
-﻿'use strict';
+﻿
+angular.module('JamStash')
 
-var jamstash = angular.module('JamStash');
-
-jamstash.controller('PodcastCtrl',
-function PodcastCtrl($scope, $rootScope, $location, utils, globals, model, notifications) {
+.controller('PodcastCtrl', ['$scope', '$rootScope', function PodcastCtrl($scope, $rootScope) {
+	'use strict';
     $rootScope.song = [];
-    
 
     /* Launch on Startup */
     $scope.getPodcasts();
     /* End Startup */
-});
+}]);

@@ -1,9 +1,8 @@
-﻿'use strict';
+﻿angular.module('JamStash')
+.controller('AppCtrl', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', 'utils', 'globals', 'model', 'notifications', 'player',
+    function($scope, $rootScope, $document, $window, $location, $cookieStore, utils, globals, model, notifications, player) {
+    'use strict';
 
-var jamstash = angular.module('JamStash');
-
-jamstash.controller('AppCtrl',
-function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore, utils, globals, model, notifications, player) {
     $rootScope.settings = globals.settings;
     $rootScope.song = [];
     $rootScope.queue = [];
@@ -92,7 +91,7 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
             submenu.fadeOut();
         } else {
             var el = $(pl);
-            off = el.offset();
+            var off = el.offset();
             width = el.width();
             height = el.height();
             switch (pos) {
@@ -497,7 +496,7 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
     };
     $scope.queueTotal = function () {
         var total = 0;
-        ko.utils.arrayForEach(self.queue(), function (item) {
+        utils.arrayForEach(self.queue(), function (item) {
             total += parseInt(item.duration());
         });
         if (self.queue().length > 0) {
@@ -584,4 +583,4 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
         }
     }
     /* End Startup */
-});
+}]);

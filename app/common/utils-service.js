@@ -5,7 +5,7 @@
 */
 angular.module('jamstash.utils', ['jamstash.settings'])
 
-.service('utils', function ($rootScope, globals) {
+.service('utils', ['$rootScope', 'globals', function ($rootScope, globals) {
     'use strict';
 
     this.safeApply = function (fn) {
@@ -330,4 +330,4 @@ angular.module('jamstash.utils', ['jamstash.settings'])
         var newDate = months[month] + " " + dateParts[2] + ", " + dateParts[0];
         return newDate;
     };
-});
+}]);

@@ -6,7 +6,7 @@
 */
 angular.module('jamstash.model', ['jamstash.utils'])
 
-.service('model', function (utils) {
+.service('model', ['utils', function(utils){
     'use strict';
 
     this.Index = function (name, artist) {
@@ -55,9 +55,9 @@ angular.module('jamstash.model', ['jamstash.utils'])
         this.description = description;
         this.displayName = this.name + " - " + this.album + " - " + this.artist;
     };
-})
+}])
 
-.service('map', function ($http, globals, utils, model) {
+.service('map', ['$http', 'globals', 'utils', 'model', function($http, globals, utils, model){
     'use strict';
 
     this.mapArtist = function (data) {
@@ -147,4 +147,4 @@ angular.module('jamstash.model', ['jamstash.utils'])
         url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.streamId + '&salt=' + salt;
         return new model.Song(song.streamId, song.parent, track, title, artist, song.artistId, album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
     };
-});
+}]);
