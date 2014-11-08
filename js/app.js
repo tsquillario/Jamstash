@@ -119,7 +119,11 @@ JamStash.config(function ($httpProvider) {
                 if (globals.settings.Username != "" && globals.settings.Password != "" && globals.settings.Server != "") {
                     $rootScope.loggedIn = true;
                 }
-                if (!$rootScope.loggedIn && $location.path() != '/settings' && $location.path() != '/archive') {
+				var path = '';
+				path = $location.path();
+				if (globals.settings.Debug) { console.log('Logged In: ' + $rootScope.loggedIn); }
+				if (globals.settings.Debug) { console.log('Current Path: ' + path); }
+                if (!$rootScope.loggedIn && path != '/settings' && path.search('archive') < 0) {
                     $location.path('/settings');
                 }
                 return request;

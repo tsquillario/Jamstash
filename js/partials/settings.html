@@ -30,7 +30,7 @@
             </div>
             <div class="subsection floatleft checkboxes">
                 <div class="checkboxes">
-                    <fieldset id="General">
+                    <fieldset>
                         <legend class="aligncenter">General</legend>
                         <div class="inputwrap"><input type="checkbox" id="AutoPlay" name="AutoPlay" value="1" title="When the Queue has ended, load random songs" ng-model="settings.AutoPlay" /></div>
                         <label for="AutoPlay">Auto Play</label>
@@ -71,9 +71,16 @@
                     </fieldset>
                 </div>
             </div>
-            <div class="subsection floatleft">
+			<div class="subsection floatleft">
                 <div class="checkboxes">
-                    <fieldset id="Advanced">
+                    <fieldset>
+                        <legend class="aligncenter">Jukebox</legend>
+                        <div class="inputwrap"><input type="checkbox" id="Jukebox" name="Jukebox" value="1" title="Enable Jukebox Mode [Beta]" ng-model="settings.Jukebox" /></div>
+                        <label for="Jukebox">Enable</label>
+                    </fieldset>
+                </div>
+                <div class="checkboxes">
+                    <fieldset>
                         <legend class="aligncenter">Advanced</legend>
                         <div class="inputwrap"><input type="checkbox" id="Debug" name="Debug" value="1" title="Enable Debug Mode (Events will be logged to the Javascript Console)" ng-model="settings.Debug" /></div>
                         <label for="Debug">Debug Mode</label>
