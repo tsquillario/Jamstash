@@ -244,6 +244,12 @@ span.apiversion
 	margin-left: 312px;
 	margin-right: 350px;
 }
+.colspacer {
+	height: 100px;
+	width: 100%;
+	display: block;
+	float: left;
+}
 .lgsection
 {
     height: 100%;

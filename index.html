@@ -80,6 +80,7 @@
 				<ul class="simplelist songlist noselect" ng-if="queue.length > 0">
 					<div ng-repeat="song in [queue] track by $index" class="songs" ng-include src="'js/partials/songs_lite.html'" sortable></div>
 				</ul>
+				<div class="colspacer"></div>
 			</div>
 			<!--
 			<div id="NowPlaying">
@@ -100,7 +101,7 @@
                     <div class="playeractions floatleft">
                         <a class="hover" id="PreviousTrack" title="Previous Track" ng-click="previousTrack()"><img src="images/first_alt_24x24.png" /></a>
                         <a class="hover PlayTrack" title="Play/Pause" ng-click="defaultPlay()"><img src="images/play_alt_24x32.png" /></a>
-                        <a class="hover PauseTrack" title="Play/Pause" style="display: none;"><img src="images/pause_alt_24x32.png" /></a>
+                        <a class="hover PauseTrack" title="Play/Pause" ng-click="defaultPlay()" style="display: none;"><img src="images/pause_alt_24x32.png" /></a>
                         <a class="hover" id="NextTrack" title="Next Track" ng-click="nextTrack()"><img src="images/last_alt_24x24.png" /></a>
                     </div>
                     <div id="songdetails">

@@ -533,6 +533,17 @@ function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore
 			}
 		});
 	};
+	$rootScope.sendToJukebox = function (action) {
+		if (globals.settings.Debug) { console.log("SEND JUKEBOX " + action); }
+		$.ajax({
+			url: globals.BaseURL() + '/jukeboxControl.view?' + globals.BaseParams() + '&action=' + action,
+			method: 'GET',
+			dataType: globals.settings.Protocol,
+			timeout: globals.settings.Timeout,
+			success: function (data) {
+			}
+		});
+	};
     $scope.updateFavorite = function (item) {
         var id = item.id;
         var starred = item.starred;

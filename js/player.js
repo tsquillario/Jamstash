@@ -7,6 +7,13 @@
         if (typeof $(player1).data("jPlayer") == 'undefined') {
             $rootScope.nextTrack();
         }
+		if (typeof $(player1).data("jPlayer") != 'undefined' && globals.settings.Jukebox) {
+            if ($(player1).data("jPlayer").status.paused) {
+               $rootScope.sendToJukebox('start');
+            } else {
+                $rootScope.sendToJukebox('stop');
+            }
+        }
     };
     $rootScope.nextTrack = function () {
         var next = getNextSong();
@@ -173,10 +180,11 @@
         $('#playermiddle').css('visibility', 'visible');
         $('#songdetails').css('visibility', 'visible');
 
-		$rootScope.loadjPlayer(player1, url, suffix, loadonly, position);
 		if (globals.settings.Jukebox) { 
 			$rootScope.addToJukebox(id);
-			
+			$rootScope.loadjPlayer(player1, url, suffix, true, position);
+		} else {
+			$rootScope.loadjPlayer(player1, url, suffix, loadonly, position);
 		}
 		
 		if (!loadonly) {
