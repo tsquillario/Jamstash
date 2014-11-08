@@ -35,14 +35,14 @@ module.exports = function (grunt) {
       },
       js: {
         files: ['<%= yeoman.app %>/**/*.js', '!<%= yeoman.app %>/**/*_test.js'],
-        tasks: ['karma:continuous:run'], //'newer:jshint:all'],
+        tasks: ['karma:continuous:run'],
         options: {
           livereload: '<%= connect.options.livereload %>'
         }
       },
       jsTest: {
         files: ['<%= yeoman.app %>/**/*_test.js'],
-        tasks: ['karma:continuous:run'], //'newer:jshint:test']
+        tasks: ['karma:continuous:run'],
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
@@ -92,7 +92,6 @@ module.exports = function (grunt) {
         middleware: function (connect) {
           return [
             connect.static('.tmp'),
-            //connect.static('test'),
             connect().use(
               '/bower_components',
               connect.static('./bower_components')
@@ -144,6 +143,21 @@ module.exports = function (grunt) {
       app: {
         src: ['<%= yeoman.app %>/index.html'],
         ignorePath: /\.\.\//
+      },
+      test: {
+        src: 'karma.conf.js',
+        fileTypes: {
+          js: {
+            block: /(([\s\t]*)\/\/\s*bower:*(\S*))(\n|\r|.)*?(\/\/\s*endbower)/gi,
+            detect: {
+                js: /'(.*\.js)'/gi
+            },
+            replace: {
+                js: '\'{{filePath}}\','
+            }
+          }
+        },
+        devDependencies: true
       }
     },
 
