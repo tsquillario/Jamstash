@@ -308,6 +308,24 @@ module.exports = function (grunt) {
       dist: [
         'imagemin'
       ]
+    },
+
+    // don't keep server passwords in source control
+    serverCredentials: grunt.file.readJSON('.ssh/serverCredentials.json'),
+    sftp: {
+      test: {
+        files: {
+          './': ['<%= yeoman.dist %>/{,*/}*', '!<%= yeoman.dist %>/.git*']
+        },
+        options: {
+          path: '/var/www/jamstash',
+          host: '<%= serverCredentials.host %>',
+          username: '<%= serverCredentials.username %>',
+          privateKey: grunt.file.read('.ssh/test-server-key'),
+          showProgress: true,
+          createDirectories: true
+        }
+      }
     }
 
   });
@@ -349,6 +367,13 @@ module.exports = function (grunt) {
     'usemin',
     'htmlmin'
   ]);
+
+  grunt.registerTask('deploy', 'Build and deploy to test server', function() {
+    return grunt.task.run([
+      'build',
+      'sftp:test'
+    ]);
+  });
 
   grunt.registerTask('default', [
     //'newer:jshint',
