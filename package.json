@@ -1,0 +1,68 @@
+{
+  "name": "jamstash",
+  "version": "4.1.0",
+  "description": "HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming",
+  "author": "Trevor Squillario (https://github.com/tsquillario)",
+  "contributors": [
+    "tsquillario (https://github.com/tsquillario)",
+    "maletor (https://github.com/maletor)",
+    "javaguirre (https://github.com/javaguirre)",
+    "Concept211 (https://github.com/Concept211) ",
+    "jerbob92 (https://github.com/jerbob92)",
+    "kennyhwang (https://github.com/kennyhwang)",
+    "ioggstream (https://github.com/ioggstream)",
+    "x37v (https://github.com/x37v)",
+    "Hyzual (https://github.com/Hyzual)"
+  ],
+  "license": "MIT",
+  "homepage": "http://jamstash.com",
+  "keywords": [
+    "subsonic",
+    "archive.org",
+    "music"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsquillario/Jamstash.git"
+  },
+  "main": "app/index.html",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-concurrent": "^1.0.0",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-connect": "^0.8.0",
+    "grunt-contrib-copy": "^0.7.0",
+    "grunt-contrib-cssmin": "^0.10.0",
+    "grunt-contrib-htmlmin": "^0.3.0",
+    "grunt-contrib-imagemin": "^0.9.1",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-uglify": "^0.6.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-filerev": "^2.1.1",
+    "grunt-karma": "^0.9.0",
+    "grunt-newer": "^0.8.0",
+    "grunt-ng-annotate": "^0.5.0",
+    "grunt-usemin": "^2.6.0",
+    "grunt-wiredep": "^1.9.0",
+    "jshint-stylish": "^1.0.0",
+    "karma": "^0.12.24",
+    "karma-chrome-launcher": "^0.1.5",
+    "karma-jasmine": "^0.2.3",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "load-grunt-tasks": "^1.0.0",
+    "sellout": "0.0.1",
+    "time-grunt": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "bugs": {
+    "url": "https://github.com/tsquillario/Jamstash/issues"
+  },
+  "private": true
+}

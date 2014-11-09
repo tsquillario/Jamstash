@@ -1,0 +1,15 @@
+{
+  "name": "jamstash",
+  "description": "HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming",
+  "version": "4.1.0",
+  "license": "MIT",
+  "keywords": [
+    "subsonic",
+    "archive.org",
+    "music"
+  ],
+  "scripts": [
+    "app/index.html"
+  ],
+  ".private": true
+}
