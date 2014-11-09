@@ -1,4 +1,11 @@
-angular.module('JamStash').factory('archive', ['$rootScope, $http, $q, $sce, globals, model, utils, map, notifications',
+/**
+* jamstash.archive.service Module
+*
+* Access Archive.org
+*/
+angular.module('jamstash.archive.service', ['jamstash.settings', 'jamstash.model', 'jamstash.notifications'])
+
+.factory('archive', ['$rootScope', '$http', '$q', '$sce', 'globals', 'model', 'utils', 'map', 'notifications',
     function($rootScope, $http, $q, $sce, globals, model, utils, map, notifications) {
     'use strict';
 
@@ -17,7 +24,7 @@ angular.module('JamStash').factory('archive', ['$rootScope, $http, $q, $sce, glo
 
     var mapAlbum = function (data) {
         var song = data;
-        var coverartthumb, coverartfull, starred, title, album, publisher, avg_rating, downloads, identifier;
+        var coverartthumb, coverartfull, starred, title, album, publisher, avg_rating, downloads, identifier, source, date;
         var url = globals.archiveUrl + 'details/' + song.identifier;
         coverartthumb = 'images/albumdefault_50.jpg';
         coverartfull = 'images/albumdefault_160.jpg';
@@ -71,7 +78,7 @@ angular.module('JamStash').factory('archive', ['$rootScope, $http, $q, $sce, glo
                 timeout: globals.settings.Timeout,
                 success: function (data) {
                     if (data.response.docs.length > 0) {
-                        items = data.response.docs;
+                        var items = data.response.docs;
                         //alert(JSON.stringify(data["response"]));
                         content.artist = [];
                         angular.forEach(items, function (item, key) {

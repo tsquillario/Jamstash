@@ -92,8 +92,8 @@
         } else {
             var el = $(pl);
             var off = el.offset();
-            width = el.width();
-            height = el.height();
+            var width = el.width();
+            var height = el.height();
             switch (pos) {
                 case 'right':
                     //show the menu to the right of placeholder
@@ -391,56 +391,18 @@
         $rootScope.queue.push(data);
     };
     $rootScope.removeSong = function (item, songs) {
-        var index = songs.indexOf(item)
+        var index = songs.indexOf(item);
         songs.splice(index, 1);
     };
     $scope.removeSongFromQueue = function (item) {
         var index = $rootScope.queue.indexOf(item)
         $rootScope.queue.splice(index, 1);
-    }
+    };
     $scope.isActive = function (route) {
         return route === $location.path();
     };
     $rootScope.getSplitPosition = function (scope, elm) {
-        alert(elm.getBoundingClientRect().left);
-    };
-    $scope.getMusicFolders = function () {
-        $.ajax({
-            url: globals.BaseURL() + '/getMusicFolders.view?' + globals.BaseParams(),
-            method: 'GET',
-            dataType: globals.settings.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function (data) {
-                if (data["subsonic-response"].musicFolders.musicFolder !== undefined) {
-                    var folders = [];
-                    if (data["subsonic-response"].musicFolders.musicFolder.length > 0) {
-                        folders = data["subsonic-response"].musicFolders.musicFolder;
-                    } else {
-                        folders[0] = data["subsonic-response"].musicFolders.musicFolder;
-                    }
-
-                    folders.unshift({
-                        "id": -1,
-                        "name": "All Folders"
-                    });
-                    $rootScope.MusicFolders = folders;
-                    if (utils.getValue('MusicFolders')) {
-                        var folder = angular.fromJson(utils.getValue('MusicFolders'));
-                        var i = 0, index = "";
-                        angular.forEach($rootScope.MusicFolders, function (item, key) {
-                            if (item.id == folder.id) {
-                                index = i;
-                            }
-                            i++;
-                        });
-                        $rootScope.SelectedMusicFolder = $rootScope.MusicFolders[index];
-                    } else {
-                        $rootScope.SelectedMusicFolder = $rootScope.MusicFolders[0];
-                    }
-                    $scope.$apply();
-                }
-            }
-        });
+        window.alert(elm.getBoundingClientRect().left);
     };
     $scope.download = function (id) {
         $.ajax({
