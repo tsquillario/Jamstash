@@ -117,9 +117,9 @@
 			<div id="PlaylistContainer" class="leftsubsection" ng-show="showPlaylist">
 				<ul class="simplelist mainlist noselect">
 					<li class="index" id="auto">Auto Playlists</li>
-					<li class="item" ng-click="getStarred('', 'song')" ng-class="{'selected': selectedAutoPlaylist == 'starred'}">
+					<li class="item" ng-click="getRandomStarredSongs('display')" ng-class="{'selected': selectedAutoPlaylist == 'starred'}">
 						<div class="itemactions">
-							<a class="add" href="" ng-click="getStarred('add', 'song')" title="Add To Play Queue" stop-event="click"></a><a class="play" href="" ng-click="getStarred('play', 'song')" title="Play" stop-event="click"></a>
+							<a class="add" href="" ng-click="getRandomStarredSongs('add')" title="Add To Play Queue" stop-event="click"></a><a class="play" href="" ng-click="getRandomStarredSongs('play')" title="Play" stop-event="click"></a>
 						</div>
 						<div class="title">Starred</div>
 					</li>

@@ -46,7 +46,14 @@ describe("Subsonic service -", function() {
 			var promise = subsonic.getStarred();
 			mockBackend.flush();
 
-			expect(promise).toBeResolvedWith({artist: [{id: 2245}], album: [{id: 1799},{id: 20987}], song: [{id: 2478},{id: 14726},{id: 742}]});
+			expect(promise).toBeResolvedWith({artist: [
+					{id: 2245}
+				], album: [
+					{id: 1799},{id: 20987}
+				], song: [
+					{id: 2478},{id: 14726},{id: 742}
+				]
+			});
 		});
 
 		it("Given that the global protocol setting is 'json' and given that I have 3 starred songs in my library, when getting everything starred, it uses GET and returns 3 starred songs", function() {
@@ -54,13 +61,17 @@ describe("Subsonic service -", function() {
 			mockGlobals.BaseParams = function() { return 'u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=json'; };
 			var getUrl = 'http://demo.subsonic.com/rest/getStarred.view?' +
 				'u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=json';
-			response["subsonic-response"].starred = {song: [{id: "2147"},{id:"9847"},{id:"214"}]};
+			response["subsonic-response"].starred = {song: [
+				{id: "2147"},{id:"9847"},{id:"214"}
+			]};
 			mockBackend.expectGET(getUrl).respond(200, JSON.stringify(response));
 
 			var promise = subsonic.getStarred();
 			mockBackend.flush();
 
-			expect(promise).toBeResolvedWith({song: [{id: "2147"},{id:"9847"},{id:"214"}]});
+			expect(promise).toBeResolvedWith({song: [
+				{id: "2147"},{id:"9847"},{id:"214"}]
+			});
 		});
 
 		it("Given that there is absolutely nothing starred in my library, when getting everything starred, it returns an error object with a message", function() {
@@ -86,7 +97,11 @@ describe("Subsonic service -", function() {
 			mockGlobals.BaseParams = function() { return 'u=Hyzual&v=1.10.2&c=Jamstash&f=jsonp';};
 			var missingPasswordUrl = 'http://demo.subsonic.com/rest/getStarred.view?'+
 				'callback=JSON_CALLBACK&u=Hyzual&v=1.10.2&c=Jamstash&f=jsonp';
-			var errorResponse = {"subsonic-response" : {"status" : "failed","version" : "1.10.2","error" : {"code" : 10,"message" : "Required parameter is missing."}}};
+			var errorResponse = {"subsonic-response" : {
+				"status" : "failed",
+				"version" : "1.10.2",
+				"error" : {"code" : 10,"message" : "Required parameter is missing."}
+			}};
 			mockBackend.whenJSONP(missingPasswordUrl).respond(200, errorResponse);
 
 			var promise = subsonic.getStarred();
@@ -100,7 +115,9 @@ describe("Subsonic service -", function() {
 		describe("Given that the global setting AutoPlaylist Size is 3", function() {
 
 			it("and given that I have more than 3 starred songs in my library, when getting random starred songs, the result should be limited to 3 starred songs", function() {
-				var library = [{id: "11841"},{id: "12061"},{id: "17322"},{id: "1547"},{id: "14785"}];
+				var library = [
+					{id: "11841"},{id: "12061"},{id: "17322"},{id: "1547"},{id: "14785"}
+				];
 				response["subsonic-response"].starred = {song: library};
 				mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
