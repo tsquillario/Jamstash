@@ -1,4 +1,10 @@
 ﻿[
+    {
+        "date": "11/9/2014", "version": "4.1.0",
+        "changes": [
+        { "text": "- Changed the \"Starred\" Auto Playlist so it selects random starred songs."}
+        ]
+    },
 	{
         "date": "10/18/2014", "version": "4.0.1",
         "changes": [
