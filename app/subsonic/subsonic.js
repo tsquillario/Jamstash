@@ -274,16 +274,15 @@ function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, sub
         subsonic.getRandomStarredSongs()
         .then(function (randomStarredSongs) {
             var mappedSongs = [];
-            if (action === 'play') {
-                $rootScope.queue = [];
-                var first = map.mapSong(randomStarredSongs[0]);
-                $rootScope.playSong(false, first);
-            }
             // Map regardless of the action
             for (var i = 0; i < randomStarredSongs.length; i++) {
                 mappedSongs.push(map.mapSong(randomStarredSongs[i]));
             }
-            if(action === 'play' || action === 'add') {
+            if(action === 'play') {
+                $rootScope.queue = [].concat(mappedSongs);
+                notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);
+                $rootScope.playSong(false, $rootScope.queue[0]);
+            } else if (action === 'add') {
                 $rootScope.queue = $rootScope.queue.concat(mappedSongs);
                 notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);
             } else if (action === 'display') {
