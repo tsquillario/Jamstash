@@ -404,7 +404,7 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
     $scope.getGenres();
     $scope.getPodcasts();
     $scope.openDefaultSection();
-    //TODO: JMA: $scope.getMusicFolders();
+    $scope.getMusicFolders();
     if ($routeParams.artistId && $routeParams.albumId) {
         $scope.getAlbumByTag($routeParams.albumId);
     } else if ($routeParams.artistId) {

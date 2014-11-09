@@ -340,7 +340,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                                 });
                                 if (albums.length > 0) {
                                     content.album = albums;
-                                    if ($scope.SelectedAlbumSort.id != "default") {
+                                    if ($rootScope.SelectedAlbumSort.id != "default") {
                                         sortSubsonicAlbums(SelectedAlbumSort.id);
                                     }
                                 }

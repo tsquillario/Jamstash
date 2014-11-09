@@ -33,7 +33,6 @@ module.exports = function(config) {
       'bower_components/underscore/underscore.js',
       'bower_components/angular-underscore/angular-underscore.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      'bower_components/angular-scenario/angular-scenario.js',
       'bower_components/jasmine-promise-matchers/dist/jasmine-promise-matchers.js',
       // endbower
       'app/**/*.js',

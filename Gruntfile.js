@@ -189,7 +189,7 @@ module.exports = function (grunt) {
           html: {
             steps: {
               js: ['concat', 'uglifyjs'],
-              css: ['cssmin']
+              // css: ['cssmin'] //Don't do anything about the CSS yet
             },
             post: {}
           }
@@ -283,7 +283,8 @@ module.exports = function (grunt) {
           src: [
             'bower_components/jplayer/skin/pink.flag/jplayer.pink.flag.css',
             'bower_components/jplayer/skin/pink.flag/*.{jpg,gif,png}',
-            'bower_components/fancybox/source/jquery.fancybox.css'
+            'bower_components/fancybox/source/jquery.fancybox.css',
+            'bower_components/fancybox/source/*.{png,gif}'
           ],
           dest: '<%= yeoman.dist %>'
         }]
@@ -342,7 +343,7 @@ module.exports = function (grunt) {
     'concat',
     'copy:dist',
     'ngAnnotate',
-    'cssmin',
+    //'cssmin',
     'uglify',
     'filerev',
     'usemin',

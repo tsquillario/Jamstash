@@ -224,7 +224,7 @@
 		
 		var spechtml = '';
 		var data = $(player1).data().jPlayer;
-		for (i = 0; i < data.solutions.length; i++) {
+		for (var i = 0; i < data.solutions.length; i++) {
 			var solution = data.solutions[i];
 			if (data[solution].used) {
 				spechtml += "<strong class=\"codesyntax\">" + solution + "</strong> is";
