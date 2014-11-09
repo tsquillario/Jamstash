@@ -54,7 +54,7 @@
 			<div class="header">Queue</div>
 			<div id="SideQueue">
 				<ul class="simplelist songlist noselect" ng-if="queue.length > 0">
-					<div ng-repeat="song in [queue] track by $index" class="songs" ng-include src="'js/partials/songs_lite.html'" sortable></div>
+					<div ng-repeat="song in [queue] track by $index" class="songs" ng-include src="'common/songs_lite.html'" sortable></div>
 				</ul>
 				<div class="colspacer"></div>
 			</div>
