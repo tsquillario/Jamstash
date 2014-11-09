@@ -308,6 +308,7 @@ module.exports = function (grunt) {
         'imagemin'
       ]
     }
+
   });
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
@@ -339,8 +340,8 @@ module.exports = function (grunt) {
     'useminPrepare',
     'concurrent:dist',
     'concat',
-    'ngAnnotate',
     'copy:dist',
+    'ngAnnotate',
     'cssmin',
     'uglify',
     'filerev',
