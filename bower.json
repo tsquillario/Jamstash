@@ -1,0 +1,46 @@
+{
+  "name": "jamstash",
+  "version": "3.4.2",
+  "description": "HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming",
+  "authors": [
+    {
+      "name:": "Trevor Squillario",
+      "email": "tsquillario@gmail.com"
+    }
+  ],
+  "homepage": "http://jamstash.com",
+  "keywords": ["subsonic", "archive.org", "music"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsquillario/Jamstash.git"
+  },
+  "main": "index.html",
+  "dependencies": {
+    "angular": "~1.2.0",
+    "angular-route": "~1.2.0",
+    "angular-sanitize": "~1.2.0",
+    "angular-cookies": "~1.2.0",
+    "angular-resource": "~1.2.0",
+    "jquery": "~2.0.3",
+    "jquery-ui": "~1.10.3",
+    "jplayer": "~2.6.3",
+    "fancybox": "~2.1.4",
+    "notify.js": "<=1.2.2",
+    "jquery.scrollTo": "~1.4.5"
+  },
+  "overrides": {
+    "fancybox": {
+      "main": ["source/jquery.fancybox.js", "source/jquery.fancybox.css"]
+    }
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.2.0",
+    "angular-scenario": "~1.2.0"
+  },
+  "ignore": [
+    "bower_components",
+    "node_modules"
+  ],
+  "private": true,
+  "appPath": "."
+}

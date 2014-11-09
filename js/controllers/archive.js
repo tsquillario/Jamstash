@@ -1,4 +1,8 @@
-﻿JamStash.controller('ArchiveCtrl',
+﻿'use strict';
+
+var jamstash = angular.module('JamStash');
+
+jamstash.controller('ArchiveCtrl',
 function ArchiveCtrl($scope, $rootScope, $location, $routeParams, $http, $timeout, utils, globals, model, notifications, player, archive, json) {
     $scope.settings = globals.settings;
     $scope.itemType = 'archive';

@@ -1,4 +1,8 @@
-﻿JamStash.controller('AppCtrl',
+﻿'use strict';
+
+var jamstash = angular.module('JamStash');
+
+jamstash.controller('AppCtrl',
 function AppCtrl($scope, $rootScope, $document, $window, $location, $cookieStore, utils, globals, model, notifications, player) {
     $rootScope.settings = globals.settings;
     $rootScope.song = [];
