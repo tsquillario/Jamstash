@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="bower_components/jplayer/skin/pink.flag/jplayer.pink.flag.css" />
     <link rel="stylesheet" href="bower_components/fancybox/source/jquery.fancybox.css" />
     <!-- endbower -->
-    <!--<link href="js/plugins/jquery-split-pane.css" rel="stylesheet" />-->
+    <!--<link href="vendor/jquery-split-pane.css" rel="stylesheet" />-->
 </head>
 <body ng-controller="AppCtrl">
     <div id="container">
@@ -54,7 +54,7 @@
 			<div class="header">Queue</div>
 			<div id="SideQueue">
 				<ul class="simplelist songlist noselect" ng-if="queue.length > 0">
-					<div ng-repeat="song in [queue] track by $index" class="songs" ng-include src="'js/partials/songs_lite.html'" sortable></div>
+					<div ng-repeat="song in [queue] track by $index" class="songs" ng-include src="'common/songs_lite.html'" sortable></div>
 				</ul>
 				<div class="colspacer"></div>
 			</div>
@@ -149,25 +149,25 @@
     <script src="bower_components/underscore/underscore.js"></script>
     <script src="bower_components/angular-underscore/angular-underscore.js"></script>
     <!-- endbower -->
-    <!--<script src="js/plugins/jquery-split-pane.js"></script>-->
-    <script src="js/plugins/jquery.base64.js" type="text/javascript"></script>
-    <script src="js/plugins/jquery.dateFormat-1.0.js" type="text/javascript"></script>
-    <script src="js/plugins/UnityShim.js" type="text/javascript"></script>
+    <!--<script src="vendor/jquery-split-pane.js"></script>-->
+    <script src="vendor/jquery.base64.js" type="text/javascript"></script>
+    <script src="vendor/jquery.dateFormat-1.0.js" type="text/javascript"></script>
+    <script src="vendor/UnityShim.js" type="text/javascript"></script>
     <!-- our scripts -->
-    <script src="js/app.js" type="text/javascript"></script>
-    <script src="js/services/globals-service.js" type="text/javascript"></script>
-    <script src="js/services/model-service.js" type="text/javascript"></script>
-    <script src="js/services/utils-service.js" type="text/javascript"></script>
-    <script src="js/services/notification-service.js" type="text/javascript"></script>
-    <script src="js/services/subsonic-service.js" type="text/javascript"></script>
-    <script src="js/services/archive-service.js" type="text/javascript"></script>
-    <script src="js/services/player-service.js" type="text/javascript"></script>
-    <script src="js/controllers/main.js" type="text/javascript"></script>
-    <script src="js/controllers/settings.js" type="text/javascript"></script>
-    <script src="js/controllers/subsonic.js" type="text/javascript"></script>
-    <script src="js/controllers/archive.js" type="text/javascript"></script>
-    <script src="js/controllers/queue.js"></script>
-    <script src="js/filters/filters.js"></script>
-    <script src="js/directives/directives.js"></script>
+    <script src="app.js" type="text/javascript"></script>
+    <script src="settings/settings-service.js" type="text/javascript"></script>
+    <script src="common/model-service.js" type="text/javascript"></script>
+    <script src="common/utils-service.js" type="text/javascript"></script>
+    <script src="common/notification-service.js" type="text/javascript"></script>
+    <script src="subsonic/subsonic-service.js" type="text/javascript"></script>
+    <script src="archive/archive-service.js" type="text/javascript"></script>
+    <script src="common/player-service.js" type="text/javascript"></script>
+    <script src="common/main-controller.js" type="text/javascript"></script>
+    <script src="settings/settings.js" type="text/javascript"></script>
+    <script src="subsonic/subsonic.js" type="text/javascript"></script>
+    <script src="archive/archive.js" type="text/javascript"></script>
+    <script src="queue/queue.js"></script>
+    <script src="common/filters.js"></script>
+    <script src="common/directives.js"></script>
 </body>
 </html>

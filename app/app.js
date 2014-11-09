@@ -1,21 +1,21 @@
 'use strict';
 
 /* Declare app level module */
-var jamstash = angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize', 'angular-underscore/utils']);
+var jamstash = angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize',
+    'jamstash.subsonic.ctrl']);
 
 jamstash.config(function ($routeProvider) {
     $routeProvider
         .when('/index', { redirectTo: '/library' })
-        .when('/settings', { templateUrl: 'js/partials/settings.html', controller: 'SettingsCtrl' })
-        .when('/queue', { templateUrl: 'js/partials/queue.html', controller: 'QueueCtrl' })
-        .when('/library', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl' })
-        .when('/library/:artistId', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl', reloadOnSearch: false })
-        .when('/library/:artistId/:albumId', { templateUrl: 'js/partials/library.html', controller: 'SubsonicCtrl', reloadOnSearch: false })
-        .when('/playlists', { templateUrl: 'js/partials/playlists.html', controller: 'PlaylistCtrl' })
-        .when('/podcasts', { templateUrl: 'js/partials/podcasts.html', controller: 'PodcastCtrl' })
-        .when('/archive', { templateUrl: 'js/partials/archive.html', controller: 'ArchiveCtrl' })
-        .when('/archive/:artist', { templateUrl: 'js/partials/archive.html', controller: 'ArchiveCtrl' })
-        .when('/archive/:artist/:album', { templateUrl: 'js/partials/archive.html', controller: 'ArchiveCtrl' })
+        .when('/settings', { templateUrl: 'settings/settings.html', controller: 'SettingsCtrl' })
+        .when('/queue', { templateUrl: 'queue/queue.html', controller: 'QueueCtrl' })
+        .when('/library', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicCtrl' })
+        .when('/library/:artistId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicCtrl', reloadOnSearch: false })
+        .when('/library/:artistId/:albumId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicCtrl', reloadOnSearch: false })
+        .when('/podcasts', { templateUrl: 'podcasts/podcasts.html', controller: 'PodcastCtrl' })
+        .when('/archive', { templateUrl: 'archive/archive.html', controller: 'ArchiveCtrl' })
+        .when('/archive/:artist', { templateUrl: 'archive/archive.html', controller: 'ArchiveCtrl' })
+        .when('/archive/:artist/:album', { templateUrl: 'archive/archive.html', controller: 'ArchiveCtrl' })
         .otherwise({ redirectTo: '/index' });
 });
 

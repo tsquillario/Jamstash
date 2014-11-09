@@ -1,10 +1,7 @@
-describe("subsonic service -", function() {
+describe("Subsonic service -", function() {
 	'use strict';
 
-	var subsonic, mockBackend, mockGlobals;
-	var response;
-	// Spies
-	var success, failure;
+	var subsonic, mockBackend, mockGlobals, response;
 
 	var url = 'http://demo.subsonic.com/rest/getStarred.view?'+
 			'callback=JSON_CALLBACK&u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=jsonp';
@@ -24,7 +21,7 @@ describe("subsonic service -", function() {
 			}
 		};
 
-		module('JamStash', function ($provide) {
+		module('jamstash.subsonic.service', function ($provide) {
 			$provide.value('globals', mockGlobals);
 		});
 
@@ -32,8 +29,6 @@ describe("subsonic service -", function() {
 			subsonic = _subsonic_;
 			mockBackend = $httpBackend;
 		});
-		success = jasmine.createSpy('success');
-		failure = jasmine.createSpy('failure');
 		response = {"subsonic-response": {status: "ok", version: "1.10.2"}};
 	});
 
@@ -48,10 +43,10 @@ describe("subsonic service -", function() {
 			response["subsonic-response"].starred = {artist: [{id: 2245}], album: [{id: 1799},{id: 20987}], song: [{id: 2478},{id: 14726},{id: 742}]};
 			mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
-			subsonic.getStarred().then(success);
+			var promise = subsonic.getStarred();
 			mockBackend.flush();
 
-			expect(success).toHaveBeenCalledWith({artist: [{id: 2245}], album: [{id: 1799},{id: 20987}], song: [{id: 2478},{id: 14726},{id: 742}]});
+			expect(promise).toBeResolvedWith({artist: [{id: 2245}], album: [{id: 1799},{id: 20987}], song: [{id: 2478},{id: 14726},{id: 742}]});
 		});
 
 		it("Given that the global protocol setting is 'json' and given that I have 3 starred songs in my library, when getting everything starred, it uses GET and returns 3 starred songs", function() {
@@ -62,31 +57,29 @@ describe("subsonic service -", function() {
 			response["subsonic-response"].starred = {song: [{id: "2147"},{id:"9847"},{id:"214"}]};
 			mockBackend.expectGET(getUrl).respond(200, JSON.stringify(response));
 
-			subsonic.getStarred().then(success);
+			var promise = subsonic.getStarred();
 			mockBackend.flush();
 
-			expect(success).toHaveBeenCalledWith({song: [{id: "2147"},{id:"9847"},{id:"214"}]});
+			expect(promise).toBeResolvedWith({song: [{id: "2147"},{id:"9847"},{id:"214"}]});
 		});
 
 		it("Given that there is absolutely nothing starred in my library, when getting everything starred, it returns an error object with a message", function() {
 			response["subsonic-response"].starred = {};
 			mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
-			subsonic.getStarred().then(success, failure);
+			var promise = subsonic.getStarred();
 			mockBackend.flush();
 
-			expect(success).not.toHaveBeenCalled();
-			expect(failure).toHaveBeenCalledWith({reason: 'Nothing is starred on the Subsonic server.'});
+			expect(promise).toBeRejectedWith({reason: 'Nothing is starred on the Subsonic server.'});
 		});
 
 		it("Given that the Subsonic server is not responding, when getting everything starred, it returns an error object with a message", function() {
 			mockBackend.whenJSONP(url).respond(503, 'Service Unavailable');
 
-			subsonic.getStarred().then(success, failure);
+			var promise = subsonic.getStarred();
 			mockBackend.flush();
 
-			expect(success).not.toHaveBeenCalled();
-			expect(failure).toHaveBeenCalledWith({reason: 'Error when contacting the Subsonic server.', httpError: 503});
+			expect(promise).toBeRejectedWith({reason: 'Error when contacting the Subsonic server.', httpError: 503});
 		});
 
 		it("Given a missing parameter, when getting the starred songs, it returns an error object with a message", function() {
@@ -96,11 +89,10 @@ describe("subsonic service -", function() {
 			var errorResponse = {"subsonic-response" : {"status" : "failed","version" : "1.10.2","error" : {"code" : 10,"message" : "Required parameter is missing."}}};
 			mockBackend.whenJSONP(missingPasswordUrl).respond(200, errorResponse);
 
-			subsonic.getStarred().then(success, failure);
+			var promise = subsonic.getStarred();
 			mockBackend.flush();
 
-			expect(success).not.toHaveBeenCalled();
-			expect(failure).toHaveBeenCalledWith({reason: 'Error when contacting the Subsonic server.', subsonicError: {code: 10, message:'Required parameter is missing.'}});
+			expect(promise).toBeRejectedWith({reason: 'Error when contacting the Subsonic server.', subsonicError: {code: 10, message:'Required parameter is missing.'}});
 		});
 	}); //end getStarred
 
@@ -112,9 +104,14 @@ describe("subsonic service -", function() {
 				response["subsonic-response"].starred = {song: library};
 				mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
-				subsonic.getRandomStarredSongs().then(success);
+				var promise = subsonic.getRandomStarredSongs();
+				// We create a spy in order to get the results of the promise
+				var success = jasmine.createSpy("success");
+				promise.then(success);
+
 				mockBackend.flush();
 
+				expect(promise).toBeResolved();
 				expect(success).toHaveBeenCalled();
 				var randomlyPickedSongs = success.calls.mostRecent().args[0];
 				for (var i = 0; i < randomlyPickedSongs.length; i++) {
@@ -126,21 +123,20 @@ describe("subsonic service -", function() {
 				response["subsonic-response"].starred = {song: [{id: "11841"}]};
 				mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
-				subsonic.getRandomStarredSongs().then(success);
+				var promise = subsonic.getRandomStarredSongs();
 				mockBackend.flush();
 
-				expect(success).toHaveBeenCalledWith([{id: "11841"}]);
+				expect(promise).toBeResolvedWith([{id: "11841"}]);
 			});
 
 			it("and given that I don't have any starred song in my library, when getting random starred songs, it returns an error object with a message", function() {
 				response["subsonic-response"].starred = {song: []};
 				mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
-				subsonic.getRandomStarredSongs().then(success, failure);
+				var promise = subsonic.getRandomStarredSongs();
 				mockBackend.flush();
 
-				expect(success).not.toHaveBeenCalled();
-				expect(failure).toHaveBeenCalledWith({reason: 'No starred songs found on the Subsonic server.'});
+				expect(promise).toBeRejectedWith({reason: 'No starred songs found on the Subsonic server.'});
 			});
 		});
 	});

@@ -34,14 +34,14 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= yeoman.app %>/js/{,*/}*.js'],
+        files: ['<%= yeoman.app %>/**/*.js', '!<%= yeoman.app %>/**/*_test.js'],
         tasks: ['karma:continuous:run'], //'newer:jshint:all'],
         options: {
           livereload: '<%= connect.options.livereload %>'
         }
       },
       jsTest: {
-        files: ['test/**/*_test.js'],
+        files: ['<%= yeoman.app %>/**/*_test.js'],
         tasks: ['karma:continuous:run'], //'newer:jshint:test']
       },
       styles: {
@@ -53,7 +53,7 @@ module.exports = function (grunt) {
       },
       livereload: {
         files: [
-          '<%= yeoman.app %>/{,*/}*.html',
+          '<%= yeoman.app %>/**/*.html',
           '.tmp/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
@@ -92,7 +92,7 @@ module.exports = function (grunt) {
         middleware: function (connect) {
           return [
             connect.static('.tmp'),
-            connect.static('test'),
+            //connect.static('test'),
             connect().use(
               '/bower_components',
               connect.static('./bower_components')
@@ -119,14 +119,8 @@ module.exports = function (grunt) {
       all: {
         src: [
           'Gruntfile.js',
-          '<%= yeoman.app %>/js/{,*/}*.js'
+          '<%= yeoman.app %>/**/*.js'
         ]
-      },
-      test: {
-        options: {
-          jshintrc: 'test/.jshintrc'
-        },
-        src: ['test/{,*/}*.js']
       }
     },
 
@@ -258,7 +252,7 @@ module.exports = function (grunt) {
     // Test settings
     karma: {
       options: {
-        configFile: 'test/karma.conf.js',
+        configFile: './karma.conf.js',
       },
       unit: {
         singleRun: true

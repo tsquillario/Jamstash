@@ -1,9 +1,9 @@
-describe("globals service", function() {
+describe("settings service", function() {
     'use strict';
 
     var globals;
     beforeEach(function() {
-        module('JamStash');
+        module('jamstash.settings');
         inject(function (_globals_) {
             globals = _globals_;
         });

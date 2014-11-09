@@ -2,10 +2,12 @@ describe("model service", function() {
 	'use strict';
 
 	var model;
-	beforeEach(module('JamStash'));
-	beforeEach(inject(function(_model_) {
-		model = _model_;
-	}));
+	beforeEach(function() {
+		module('jamstash.model');
+		inject(function (_model_) {
+			model = _model_;
+		});
+	});
 
 	it("given a name and artist, when calling Index() then the model name and artist are changed", function() {
 		model.Index("CoolAlbum", "HipArtist");
