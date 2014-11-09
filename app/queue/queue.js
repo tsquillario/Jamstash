@@ -1,11 +1,10 @@
-﻿'use strict';
+﻿angular.module('JamStash')
 
-var jamstash = angular.module('JamStash');
-
-jamstash.controller('QueueCtrl',
-function QueueCtrl($scope, $rootScope, $routeParams, $location, utils, globals, json, notifications) {
+.controller('QueueCtrl', ['$scope', '$rootScope', '$routeParams', '$location', 'utils', 'globals',
+	function QueueCtrl($scope, $rootScope, $routeParams, $location, utils, globals) {
+	'use strict';
     $scope.settings = globals.settings;
     $scope.song = $rootScope.queue;
     //angular.copy($rootScope.queue, $scope.song);
     $scope.itemType = 'pl';
-});
+}]);

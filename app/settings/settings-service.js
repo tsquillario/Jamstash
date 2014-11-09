@@ -69,15 +69,15 @@ angular.module('jamstash.settings', [])
     this.BaseParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=' + this.settings.Protocol + '&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };
 })
 
-.factory('json', function ($http) { // Deferred loading
+.factory('json', ['$http', function ($http) { // Deferred loading
     'use strict';
 
     return {
         getCollections: function (callback) {
-            $http.get('archive/json_collections.js').success(callback);
+            $http.get('archive/json_collections.json').success(callback);
         },
         getChangeLog: function (callback) {
-            $http.get('common/json_changelog.js').success(callback);
+            $http.get('common/json_changelog.json').success(callback);
         }
     };
-});
+}]);

@@ -1,8 +1,9 @@
-﻿'use strict';
+﻿angular.module('JamStash')
 
-var jamstash = angular.module('JamStash');
+.service('player', ['$rootScope', '$window', 'utils', 'globals', 'model', 'notifications',
+    function ($rootScope, $window, utils, globals, model, notifications) {
 
-jamstash.service('player', function ($rootScope, $window, utils, globals, model, notifications) {
+    'use strict';
     var player1 = globals.Player1;
     var player2 = '#playdeck_2';
     var scrobbled = false;
@@ -223,7 +224,7 @@ jamstash.service('player', function ($rootScope, $window, utils, globals, model,
 		
 		var spechtml = '';
 		var data = $(player1).data().jPlayer;
-		for (i = 0; i < data.solutions.length; i++) {
+		for (var i = 0; i < data.solutions.length; i++) {
 			var solution = data.solutions[i];
 			if (data[solution].used) {
 				spechtml += "<strong class=\"codesyntax\">" + solution + "</strong> is";
@@ -419,4 +420,4 @@ jamstash.service('player', function ($rootScope, $window, utils, globals, model,
             }
         });
     };
-});
+}]);

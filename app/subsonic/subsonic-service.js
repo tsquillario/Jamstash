@@ -7,7 +7,8 @@
 angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.utils', 'jamstash.model',
     'jamstash.notifications', 'angular-underscore/utils'])
 
-.factory('subsonic', function ($rootScope, $http, $q, globals, utils, map, notifications) {
+.factory('subsonic', ['$rootScope', '$http', '$q', 'globals', 'utils', 'map', 'notifications',
+    function ($rootScope, $http, $q, globals, utils, map, notifications) {
     'use strict';
 
     var index = { shortcuts: [], artists: [] };
@@ -339,7 +340,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                                 });
                                 if (albums.length > 0) {
                                     content.album = albums;
-                                    if ($scope.SelectedAlbumSort.id != "default") {
+                                    if ($rootScope.SelectedAlbumSort.id != "default") {
                                         sortSubsonicAlbums(SelectedAlbumSort.id);
                                     }
                                 }
@@ -795,4 +796,4 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
         }
         // End subsonic
     };
-});
+}]);

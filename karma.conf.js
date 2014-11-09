@@ -8,7 +8,7 @@ module.exports = function(config) {
 
   config.set({
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
+    autoWatch: false,
 
     // base path, that will be used to resolve files and exclude
     basePath: '.',
@@ -18,9 +18,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      // bower:
       'bower_components/jquery/jquery.js',
       'bower_components/angular/angular.js',
-      'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/angular-route/angular-route.js',
       'bower_components/angular-sanitize/angular-sanitize.js',
       'bower_components/angular-cookies/angular-cookies.js',
@@ -32,7 +32,9 @@ module.exports = function(config) {
       'bower_components/jquery.scrollTo/jquery.scrollTo.js',
       'bower_components/underscore/underscore.js',
       'bower_components/angular-underscore/angular-underscore.js',
-      'bower_components/jasmine-promise-matchers/src/main.js',
+      'bower_components/angular-mocks/angular-mocks.js',
+      'bower_components/jasmine-promise-matchers/dist/jasmine-promise-matchers.js',
+      // endbower
       'app/**/*.js',
       'app/**/*_test.js'
     ],
@@ -58,6 +60,7 @@ module.exports = function(config) {
     // Which plugins to enable
     plugins: [
       'karma-chrome-launcher',
+      'karma-phantomjs-launcher',
       'karma-jasmine'
     ],
 

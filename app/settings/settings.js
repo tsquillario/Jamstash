@@ -1,9 +1,8 @@
-﻿'use strict';
+﻿angular.module('JamStash')
 
-var jamstash = angular.module('JamStash');
-
-jamstash.controller('SettingsCtrl',
-function SettingsCtrl($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, player) {
+.controller('SettingsCtrl', ['$rootScope', '$scope', '$routeParams', '$location', 'utils', 'globals', 'json', 'notifications', 'player',
+    function ($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, player) {
+    'use strict';
     $scope.settings = globals.settings; /* See service.js */
     $scope.Timeouts = [
         { id: 10000, name: 10 },
@@ -94,4 +93,4 @@ function SettingsCtrl($rootScope, $scope, $routeParams, $location, utils, global
         $scope.settings.Username = $location.search()['u'];
     }
     /* End Startup */
-});
+}]);

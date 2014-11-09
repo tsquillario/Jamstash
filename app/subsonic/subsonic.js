@@ -5,8 +5,8 @@
 */
 angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
 
-.controller('SubsonicCtrl',
-function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications) {
+.controller('SubsonicCtrl', ['$scope', '$rootScope', '$routeParams', 'utils', 'globals', 'map', 'subsonic', 'notifications',
+    function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications) {
     'use strict';
 
     $scope.settings = globals.settings;
@@ -300,7 +300,7 @@ function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, sub
             notifications.updateMessage(errorNotif, true);
         });
     };
-    $scope.getRandomSongs = function (action, genre, folder) {
+    $rootScope.getRandomSongs = function (action, genre, folder) {
         subsonic.getRandomSongs(action, genre, folder).then(function (data) {
             $scope.album = data.album;
             $scope.song = data.song;
@@ -396,6 +396,44 @@ function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, sub
             $scope.selectedPodcast = data.selectedPodcast;
         });
     };
+    $scope.getMusicFolders = function () {
+        $.ajax({
+            url: globals.BaseURL() + '/getMusicFolders.view?' + globals.BaseParams(),
+            method: 'GET',
+            dataType: globals.settings.Protocol,
+            timeout: globals.settings.Timeout,
+            success: function (data) {
+                if (data["subsonic-response"].musicFolders.musicFolder !== undefined) {
+                    var folders = [];
+                    if (data["subsonic-response"].musicFolders.musicFolder.length > 0) {
+                        folders = data["subsonic-response"].musicFolders.musicFolder;
+                    } else {
+                        folders[0] = data["subsonic-response"].musicFolders.musicFolder;
+                    }
+
+                    folders.unshift({
+                        "id": -1,
+                        "name": "All Folders"
+                    });
+                    $rootScope.MusicFolders = folders;
+                    if (utils.getValue('MusicFolders')) {
+                        var folder = angular.fromJson(utils.getValue('MusicFolders'));
+                        var i = 0, index = "";
+                        angular.forEach($rootScope.MusicFolders, function (item, key) {
+                            if (item.id == folder.id) {
+                                index = i;
+                            }
+                            i++;
+                        });
+                        $rootScope.SelectedMusicFolder = $rootScope.MusicFolders[index];
+                    } else {
+                        $rootScope.SelectedMusicFolder = $rootScope.MusicFolders[0];
+                    }
+                    $scope.$apply();
+                }
+            }
+        });
+    };
 
     /* Launch on Startup */
     $scope.getArtists();
@@ -404,11 +442,11 @@ function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, sub
     $scope.getGenres();
     $scope.getPodcasts();
     $scope.openDefaultSection();
-    //TODO: JMA: $scope.getMusicFolders();
+    $scope.getMusicFolders();
     if ($routeParams.artistId && $routeParams.albumId) {
         $scope.getAlbumByTag($routeParams.albumId);
     } else if ($routeParams.artistId) {
         $scope.getAlbums($routeParams.artistId);
     }
     /* End Startup */
-});
+}]);
