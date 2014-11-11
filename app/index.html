@@ -9,10 +9,12 @@
     <link href="images/favicon_32x32.ico" rel="shortcut icon" />
     <link rel="icon" href="images/favicon_48x48.png" sizes="48x48"/>
     <link rel="icon" href="images/favicon_32x32.png" sizes="32x32"/>
+    <!-- build:css(.) styles/vendor.min.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/jplayer/skin/pink.flag/jplayer.pink.flag.css" />
     <link rel="stylesheet" href="bower_components/fancybox/source/jquery.fancybox.css" />
     <!-- endbower -->
+    <!-- endbuild -->
     <!--<link href="vendor/jquery-split-pane.css" rel="stylesheet" />-->
     <link href="styles/Style.css" rel="stylesheet" type="text/css" data-name="main" />
     <link href="" rel="stylesheet" type="text/css" data-name="theme" />
@@ -134,7 +136,7 @@
         ga('send', 'pageview');
 
     </script>-->
-    <!-- build:js(.) scripts/vendor.min.js -->
+    <!-- build:js({.,app}) scripts/vendor.min.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
@@ -151,8 +153,6 @@
     <script src="bower_components/angular-underscore/angular-underscore.js"></script>
     <!-- endbower -->
     <!--<script src="vendor/jquery-split-pane.js"></script>-->
-    <!-- endbuild -->
-    <!-- build:js(app) scripts/vendor2.min.js -->
     <script src="vendor/jquery.base64.js"></script>
     <script src="vendor/jquery.dateFormat-1.0.js"></script>
     <script src="vendor/UnityShim.js"></script>
