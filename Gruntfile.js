@@ -303,18 +303,40 @@ module.exports = function (grunt) {
       }
     },
 
-    // don't keep server passwords in source control
-    serverCredentials: grunt.file.readJSON('.ssh/serverCredentials.json'),
+    // SSH files used to clean and deploy using sftp on a test server.
+    // Be sure to .gitignore the .ssh/ folder !
+    // testServer should contain :
+    // {
+    //    "host": 'my-test-server.com',
+    //    "username": 'my-username-on-this-server',
+    //    "password": 'include-only-if-not-using-private-key-below'
+    // }
+    sshconfig: {
+      testServer: grunt.file.readJSON('.ssh/testServer.json')
+    },
+    // This is the private key for the username on the host defined in testServer.json
+    testServerKey: grunt.file.read('.ssh/test-server-key'),
+    // Removes everything at the deploy location to avoid filling up the server with revved files.
+    sshexec: {
+      cleanTest: {
+        command: 'rm -rf /var/www/jamstash/*',
+        options: {
+          config: 'testServer',
+          privateKey: '<%= testServerKey %>'
+        }
+      }
+    },
+    // Deploy with sftp to the test server
     sftp: {
       test: {
         files: {
-          './': ['<%= yeoman.dist %>/{,*/}*', '!<%= yeoman.dist %>/.git*']
+          './': ['<%= yeoman.dist %>/{,*/}*', '<%= yeoman.dist %>/.git*']
         },
         options: {
           path: '/var/www/jamstash',
-          host: '<%= serverCredentials.host %>',
-          username: '<%= serverCredentials.username %>',
-          privateKey: grunt.file.read('.ssh/test-server-key'),
+          srcBasePath: "dist/",
+          config: 'testServer',
+          privateKey: '<%= testServerKey %>',
           showProgress: true,
           createDirectories: true
         }
@@ -361,7 +383,7 @@ module.exports = function (grunt) {
   grunt.registerTask('deploy', 'Build and deploy to test server', function() {
     return grunt.task.run([
       'build',
-      //'sshexec:clean-test',
+      'sshexec:cleanTest',
       'sftp:test'
     ]);
   });
