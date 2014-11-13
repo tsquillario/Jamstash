@@ -286,6 +286,7 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
                 $rootScope.queue = $rootScope.queue.concat(mappedSongs);
                 notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);
             } else if (action === 'display') {
+                $scope.album = [];
                 $scope.song = mappedSongs;
             }
         }).catch(function (error) {
