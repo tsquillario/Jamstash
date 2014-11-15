@@ -246,12 +246,6 @@
         helper: fixHelper
     });
     */
-    /* JQuery Layout Plugin - I don't think this is used anywhere
-    function resizePageLayout() {
-        var pageLayout = $("body").data("layout");
-        if (pageLayout) pageLayout.resizeAll();
-    };
-    */
 
     // Global Functions
     window.onbeforeunload = function () {
