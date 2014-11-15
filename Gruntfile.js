@@ -111,11 +111,12 @@ module.exports = function (grunt) {
       },
       unit: {
         singleRun: true,
-        browsers: ['PhantomJS']
+        browsers: ['Chrome']
       },
       continuous: {
         singleRun: false,
-        background: true
+        background: true,
+        browsers: ['PhantomJS']
       }
     },
 
@@ -161,14 +162,14 @@ module.exports = function (grunt) {
     // Empties folders to start fresh
     clean: {
       dist: {
-      files: [{
-        dot: true,
-        src: [
-          '.tmp',
-          '<%= yeoman.dist %>/{,*/}*',
-          '!<%= yeoman.dist %>/.git*'
-        ]
-      }]
+        files: [{
+          dot: true,
+          src: [
+            '.tmp',
+            '<%= yeoman.dist %>/{,*/}*',
+            '!<%= yeoman.dist %>/.git*'
+          ]
+        }]
       }
     },
 
@@ -359,10 +360,8 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('test', [
-    //TODO: karma doesn't start. Why do we need connect:test ?
-    //'clean:server',
-    //'connect:test',
-    //'karma:unit'
+    'karma:unit',
+    'jshint'
   ]);
 
   grunt.registerTask('build', [
@@ -389,8 +388,7 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('default', [
-    //'jshint',
-    //'test',
+    'test',
     'build'
   ]);
 };
