@@ -3,9 +3,9 @@
 
 // # Globbing
 // for performance reasons we're only matching one level down:
-// 'test/spec/{,*/}*.js'
+// 'app/{,*/}*.js'
 // use this if you want to recursively match all subfolders:
-// 'test/spec/**/*.js'
+// 'app/**/*.js'
 
 module.exports = function (grunt) {
 
@@ -44,17 +44,13 @@ module.exports = function (grunt) {
         files: ['<%= yeoman.app %>/**/*_test.js'],
         tasks: ['karma:continuous:run'],
       },
-      styles: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles']
-      },
       gruntfile: {
         files: ['Gruntfile.js']
       },
       livereload: {
         files: [
           '<%= yeoman.app %>/**/*.html',
-          '.tmp/styles/{,*/}*.css',
+          '<%= yeoman.app %>/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       },
@@ -76,7 +72,6 @@ module.exports = function (grunt) {
           open: true,
           middleware: function (connect) {
             return [
-              connect.static('.tmp'),
               connect().use(
                 '/bower_components',
                 connect.static('./bower_components')
@@ -91,7 +86,6 @@ module.exports = function (grunt) {
         port: 9001,
         middleware: function (connect) {
           return [
-            connect.static('.tmp'),
             connect().use(
               '/bower_components',
               connect.static('./bower_components')
@@ -103,6 +97,7 @@ module.exports = function (grunt) {
       },
       dist: {
         options: {
+          port: 9002,
           open: true,
           base: '<%= yeoman.dist %>'
         }
@@ -116,11 +111,12 @@ module.exports = function (grunt) {
       },
       unit: {
         singleRun: true,
-        browsers: ['PhantomJS']
+        browsers: ['Chrome']
       },
       continuous: {
         singleRun: false,
-        background: true
+        background: true,
+        browsers: ['PhantomJS']
       }
     },
 
@@ -166,16 +162,15 @@ module.exports = function (grunt) {
     // Empties folders to start fresh
     clean: {
       dist: {
-      files: [{
-        dot: true,
-        src: [
-          '.tmp',
-          '<%= yeoman.dist %>/{,*/}*',
-          '!<%= yeoman.dist %>/.git*'
-        ]
-      }]
-      },
-      server: '.tmp'
+        files: [{
+          dot: true,
+          src: [
+            '.tmp',
+            '<%= yeoman.dist %>/{,*/}*',
+            '!<%= yeoman.dist %>/.git*'
+          ]
+        }]
+      }
     },
 
     // Reads HTML for usemin blocks to enable smart builds that automatically
@@ -189,7 +184,7 @@ module.exports = function (grunt) {
           html: {
             steps: {
               js: ['concat', 'uglifyjs'],
-              // css: ['cssmin'] //Don't do anything about the CSS yet
+              css: ['cssmin']
             },
             post: {}
           }
@@ -201,8 +196,17 @@ module.exports = function (grunt) {
     usemin: {
       html: ['<%= yeoman.dist %>/{,*/}*.html'],
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
+      js: ['<%= yeoman.dist %>/scripts/*.js'],
       options: {
-        assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/images']
+        assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/images', '<%= yeoman.dist %>/styles'],
+        patterns: {
+          js: [
+            [/(images\/albumdefault_50\.jpg)/, 'Replace javascript references to the album default image'],
+            [/(images\/albumdefault_60\.jpg)/, 'Replace javascript references to the album default image'],
+            [/(images\/albumdefault_160\.jpg)/, 'Replace javascript references to the album default image'],
+            [/(styles\/Dark\.css)/, 'Replace javascript references to the theme CSS']
+          ]
+        }
       }
     },
 
@@ -211,8 +215,9 @@ module.exports = function (grunt) {
       dist: {
         src: [
           '<%= yeoman.dist %>/scripts/{,*/}*.js',
-          // We don't rename any CSS because they are used in JS, either by us or by vendor...
           '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+          '<%= yeoman.dist %>/styles/{,*/}*.css',
+          '<%= yeoman.dist %>/styles/*.{png,jpg,jpeg,gif,webp,svg}', // images user by vendor plugins
           '<%= yeoman.dist %>/styles/fonts/*'
         ]
       }
@@ -225,6 +230,24 @@ module.exports = function (grunt) {
           cwd: '<%= yeoman.app %>/images',
           src: '{,*/}*.{png,jpg,jpeg,gif}',
           dest: '<%= yeoman.dist %>/images'
+        },
+        {
+          expand: true,
+          cwd: '.tmp/styles',
+          src: '*.{png,jpg,jpeg,gif}',
+          dest: '<%= yeoman.dist %>/styles'
+        }]
+      }
+    },
+
+    // Minify our CSS files but do not merge them, we still want to have two
+    cssmin: {
+      styles: {
+        files: [{
+          expand: true,
+          cwd: '.tmp/styles',
+          src: ['*.css', '!*.min.css'],
+          dest: '<%= yeoman.dist %>/styles',
         }]
       }
     },
@@ -247,19 +270,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // ng-annotate tries to make the code safe for minification automatically
-    // by using the Angular long form for dependency injection.
-    ngAnnotate: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/concat/scripts',
-          src: ['*.js', '!oldieshim.js'],
-          dest: '.tmp/concat/scripts'
-        }]
-      }
-    },
-
     // Copies remaining files to places other tasks can use
     copy: {
       dist: {
@@ -267,47 +277,71 @@ module.exports = function (grunt) {
           expand: true,
           dot: true,
           cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
           src: [
           '*.{ico,png,txt}',
           '.htaccess',
           '**/*.html',
-          '**/*.json',
-          'styles/{,*/}*.css'
-          ]
-        },
-        // Special copy for all the css files that I cannot rename...
-        {
-          expand: true,
-          cwd: '.',
-          src: [
-            'bower_components/jplayer/skin/pink.flag/jplayer.pink.flag.css',
-            'bower_components/jplayer/skin/pink.flag/*.{jpg,gif,png}',
-            'bower_components/fancybox/source/jquery.fancybox.css',
-            'bower_components/fancybox/source/*.{png,gif}'
+          '**/*.json'
           ],
           dest: '<%= yeoman.dist %>'
+        },
+        {
+          expand: true,
+          cwd: '<%= yeoman.app %>',
+          src: ['styles/{,*/}*.css'],
+          dest: '.tmp'
+        },
+        // Special copy for all the files expected by the plugins
+        {
+          expand: true,
+          flatten: true,
+          src: [
+            'bower_components/jplayer/skin/pink.flag/*.{jpg,gif,png}',
+            'bower_components/fancybox/source/*.{png,gif}'
+          ],
+          dest: '.tmp/styles'
         }]
-      },
-      styles: {
-        expand: true,
-        cwd: '<%= yeoman.app %>/styles',
-        src: '{,*/}*.css',
-        dest: '.tmp/styles/'
       }
     },
 
-    // Run some tasks in parallel to speed up the build process
-    concurrent: {
-      server: [
-        'copy:styles'
-      ],
-      test: [
-        'copy:styles'
-      ],
-      dist: [
-        'imagemin'
-      ]
+    // SSH files used to clean and deploy using sftp on a test server.
+    // Be sure to .gitignore the .ssh/ folder !
+    // testServer should contain :
+    // {
+    //    "host": 'my-test-server.com',
+    //    "username": 'my-username-on-this-server',
+    //    "password": 'include-only-if-not-using-private-key-below'
+    // }
+    sshconfig: {
+      testServer: grunt.file.readJSON('.ssh/testServer.json')
+    },
+    // This is the private key for the username on the host defined in testServer.json
+    testServerKey: grunt.file.read('.ssh/test-server-key'),
+    // Removes everything at the deploy location to avoid filling up the server with revved files.
+    sshexec: {
+      cleanTest: {
+        command: 'rm -rf /var/www/jamstash/*',
+        options: {
+          config: 'testServer',
+          privateKey: '<%= testServerKey %>'
+        }
+      }
+    },
+    // Deploy with sftp to the test server
+    sftp: {
+      test: {
+        files: {
+          './': ['<%= yeoman.dist %>/{,*/}*', '<%= yeoman.dist %>/.git*']
+        },
+        options: {
+          path: '/var/www/jamstash',
+          srcBasePath: "dist/",
+          config: 'testServer',
+          privateKey: '<%= testServerKey %>',
+          showProgress: true,
+          createDirectories: true
+        }
+      }
     }
 
   });
@@ -318,9 +352,7 @@ module.exports = function (grunt) {
     }
 
     grunt.task.run([
-        'clean:server',
         'wiredep',
-        'concurrent:server',
         'karma:continuous',
         'connect:livereload',
         'watch'
@@ -328,31 +360,35 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('test', [
-    //TODO: karma doesn't start. Why do we need connect:test ?
-    //'clean:server',
-    //'concurrent:test'
-    //'connect:test',
-    //'karma:unit'
+    'karma:unit',
+    'jshint'
   ]);
 
   grunt.registerTask('build', [
     'clean:dist',
     'wiredep:app',
     'useminPrepare',
-    'concurrent:dist',
-    'concat',
+    'concat:generated',
     'copy:dist',
-    'ngAnnotate',
-    //'cssmin',
-    'uglify',
+    'imagemin',
+    //'ngAnnotate',
+    'cssmin',
+    'uglify:generated',
     'filerev',
     'usemin',
     'htmlmin'
   ]);
 
+  grunt.registerTask('deploy', 'Build and deploy to test server', function() {
+    return grunt.task.run([
+      'build',
+      'sshexec:cleanTest',
+      'sftp:test'
+    ]);
+  });
+
   grunt.registerTask('default', [
-    //'newer:jshint',
-    //'test',
+    'test',
     'build'
   ]);
 };
