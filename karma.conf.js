@@ -42,6 +42,10 @@ module.exports = function(config) {
     // list of files / patterns to exclude
     exclude: ['app/vendor/**/*.js'],
 
+    preprocessors: {
+      'app/**/!(*_test).js': ['coverage']
+    },
+
     // web server port
     port: 8080,
 
@@ -61,7 +65,8 @@ module.exports = function(config) {
     plugins: [
       'karma-chrome-launcher',
       'karma-phantomjs-launcher',
-      'karma-jasmine'
+      'karma-jasmine',
+      'karma-coverage'
     ],
 
     // Continuous Integration mode
