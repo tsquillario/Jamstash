@@ -115,7 +115,8 @@ module.exports = function (grunt) {
       },
       unit: {
         singleRun: true,
-        browsers: ['Chrome']
+        browsers: ['Chrome'],
+        reporters: ['progress', 'coverage']
       },
       continuous: {
         singleRun: false,
