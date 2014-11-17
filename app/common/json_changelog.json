@@ -1,8 +1,9 @@
 ﻿[
     {
-        "date": "11/15/2014", "version": "4.2.0",
+        "date": "11/17/2014", "version": "4.2.1",
         "changes": [
-        { "text": "- Drag & drop sorting for all playlists."}
+        { "text": "- Drag & drop sorting for all playlists."},
+        { "text": "- Fixed deep nested albums not loading."}
         ]
     },
     {
@@ -75,7 +76,7 @@
 },
 { "date": "12/5/2013", "version": "3.1.2",
     "changes": [
-	{ "text": "- Improved linking between tabs, + Playlist fixed" }	
+	{ "text": "- Improved linking between tabs, + Playlist fixed" }
     ]
 },
 { "date": "10/31/2013", "version": "3.1.1",
@@ -97,7 +98,7 @@
 	{ "text": "- Switched to the jQuery UI Layout Plug-in <a href=\"http://layout.jquery-dev.net\" target=\"_blank\">http://layout.jquery-dev.net</a> for layout panes" }
     ]
 },
-{ "date": "4/15/2013", "version": "3.0.5", 
+{ "date": "4/15/2013", "version": "3.0.5",
     "changes": [
     { "text": "- <strike>Rewrite of code using <a href=\"http://requirejs.org\" target=\"_blank\">Require.js</a>, <a href=\"http://knockoutjs.com\" target=\"_blank\">Knockout.js</a> & <a href=\"http://sammyjs.org\" target=\"_blank\">Sammy.js</a> (Expect missing features/bugs)</strike>" },
     { "text": "- New name, new logo!" },
