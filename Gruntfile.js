@@ -21,6 +21,10 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
+  //Paths to ssh keys
+  var ssh_config = '.ssh/testServer.json';
+  var ssh_key = '.ssh/test-server-key';
+
   // Define the configuration for all the tasks
   grunt.initConfig({
 
@@ -313,10 +317,10 @@ module.exports = function (grunt) {
     //    "password": 'include-only-if-not-using-private-key-below'
     // }
     sshconfig: {
-      testServer: grunt.file.readJSON('.ssh/testServer.json')
+      testServer: grunt.file.exists(ssh_config) ? grunt.file.readJSON(ssh_config) : null
     },
     // This is the private key for the username on the host defined in testServer.json
-    testServerKey: grunt.file.read('.ssh/test-server-key'),
+    testServerKey: grunt.file.exists(ssh_key) ? grunt.file.read(ssh_key) : null,
     // Removes everything at the deploy location to avoid filling up the server with revved files.
     sshexec: {
       cleanTest: {
