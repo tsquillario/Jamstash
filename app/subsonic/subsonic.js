@@ -1,7 +1,8 @@
 ﻿/**
-* jamstash.subsonic Module
+* jamstash.subsonic.ctrl Module
 *
-* Access the Subsonic server through the dedicated service
+* Access and use the Subsonic Server. The Controller is in charge of relaying the Service's messages to the user through the
+* notifications.
 */
 angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
 
@@ -434,6 +435,17 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
                 }
             }
         });
+    };
+    /**
+     * Change the order of playlists through jQuery UI's sortable
+     */
+    $scope.dragStart = function (event, ui) {
+        ui.item.data('start', ui.item.index());
+    };
+    $scope.dragEnd = function (event, ui) {
+        var start = ui.item.data('start'),
+            end = ui.item.index();
+        $scope.song.splice(end, 0, $scope.song.splice(start, 1)[0]);
     };
 
     /* Launch on Startup */
