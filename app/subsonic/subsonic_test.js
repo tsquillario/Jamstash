@@ -122,5 +122,39 @@ describe("Subsonic controller", function() {
 		});
 	});
 
+	describe("reorders playlists by drag and drop - ", function() {
+		var mockUI;
+		beforeEach(function() {
+			scope.song = [{id: "1084"}, {id: "6810"}, {id: "214"}];
+			mockUI = {
+				item: {}
+			};
+		});
+
+		it("given a song in a list of songs, when I start dragging it, it records what its starting position in the list was", function() {
+			mockUI.item.index = jasmine.createSpy('index').and.returnValue('1');
+			mockUI.item.data = jasmine.createSpy('data');
+
+			scope.dragStart({}, mockUI);
+
+			expect(mockUI.item.index).toHaveBeenCalled();
+			expect(mockUI.item.data).toHaveBeenCalledWith('start', '1');
+		});
+
+		it("given a song in a list of songs that I started dragging, when I drop it, its position in the list of songs has changed", function() {
+			mockUI.item.index = jasmine.createSpy('index').and.returnValue('0');
+			mockUI.item.data = jasmine.createSpy('data').and.returnValue('1');
+
+			scope.dragEnd({}, mockUI);
+
+			expect(mockUI.item.index).toHaveBeenCalled();
+			expect(mockUI.item.data).toHaveBeenCalledWith('start');
+			// The second song should now be first
+			expect(scope.song).toEqual([
+				{id: "6810"}, {id: "1084"}, {id: "214"}
+			]);
+		});
+	});
+
 	//TODO: JMA: all starred
 });
