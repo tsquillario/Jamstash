@@ -244,6 +244,10 @@ span.apiversion
 	margin-left: 312px;
 	margin-right: 350px;
 }
+.lgcolumn_expanded
+{
+    margin-right: 0 !important;
+}
 .colspacer {
 	height: 100px;
 	width: 100%;

@@ -110,12 +110,12 @@
     $rootScope.showQueue = function () {
         //$.fancybox.open();
         $('#SideBar').css('display', '').fadeIn(400);
-        $('#right-component').css('margin-right', "350px");
+        $('#right-component').removeClass('lgcolumn_expanded');
     };
     $rootScope.hideQueue = function () {
         //$.fancybox.close();
         $('#SideBar').fadeOut();
-        $('#right-component').css('margin-right', '0px');
+        $('#right-component').addClass('lgcolumn_expanded');
     };
     $scope.toggleQueue = function () {
         if ($('#SideBar').css('display') == 'none') {
