@@ -108,14 +108,17 @@
         }
     };
     $rootScope.showQueue = function () {
-        $.fancybox.open();
+        //$.fancybox.open();
+        $('#SideBar').css('display', '').fadeIn(400);
+        $('#right-component').css('margin-right', "350px");
     };
     $rootScope.hideQueue = function () {
-        $.fancybox.close();
+        //$.fancybox.close();
+        $('#SideBar').fadeOut();
+        $('#right-component').css('margin-right', '0px');
     };
     $scope.toggleQueue = function () {
-        var submenu = $('#QueuePreview');
-        if (submenu.css('display') == 'none') {
+        if ($('#SideBar').css('display') == 'none') {
             $rootScope.showQueue();
         } else {
             $rootScope.hideQueue();
@@ -531,6 +534,11 @@
     /* Launch on Startup */
     $scope.loadSettings();
     utils.switchTheme(globals.settings.Theme);
+
+    if(!globals.settings.ShowQueue) {
+        $rootScope.hideQueue();
+    }
+
     if ($scope.loggedIn()) {
         //$scope.ping();
         if (globals.settings.SaveTrackPosition) {
