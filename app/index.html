@@ -27,7 +27,7 @@
             <a id="jslogo" title="Jamstash" class="showQueue" href=""></a>
             <a id="sslogo" target="_blank" ng-show="settings.Server" ng-href="{{settings.Server}}" title="{{settings.Server}}"></a>
             <div id="globalactions">
-                <a href="" class="button" id="action_ToggleSideBar" title="Toggle Side Bar"><img src="images/arrow_right_gl_8x8.png" /></a>
+                <a href="" class="button" id="action_ToggleSideBar" ng-click="toggleQueue()" title="Toggle Side Bar"><img src="images/arrow_right_gl_8x8.png" /></a>
             </div>
             <div id="nav">
                 <ul class="tabs">
