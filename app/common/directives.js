@@ -31,12 +31,6 @@ angular.module('JamStash').directive('sortable', function () {
                 $.fancybox.open(el);
                 compiled($scope);
             };
-            $scope.fancyboxOpenUrl = function () {
-                var el = angular.element(element.html()),
-                compiled = $compile(el);
-                $.fancybox.open(el);
-                compiled($scope);
-            };
         }
     };
 }])

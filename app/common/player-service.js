@@ -184,6 +184,11 @@
         });
         data.playing = true;
         data.selected = false;
+
+        if ($rootScope.playingSong != null && data.id != $rootScope.playingSong.id && $.fancybox.isOpen) {
+            utils.fancyboxOpenImage(data.coverartfull);
+        }
+
         $rootScope.playingSong = data;
 
         var id = data.id;
