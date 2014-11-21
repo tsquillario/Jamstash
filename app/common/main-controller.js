@@ -108,13 +108,11 @@
         }
     };
     $rootScope.showQueue = function () {
-        //$.fancybox.open();
-        $('#SideBar').css('display', '').fadeIn(400);
+        $('#SideBar').css('display', '');
         $('#right-component').removeClass('lgcolumn_expanded');
     };
     $rootScope.hideQueue = function () {
-        //$.fancybox.close();
-        $('#SideBar').fadeOut();
+        $('#SideBar').css('display', 'none');
         $('#right-component').addClass('lgcolumn_expanded');
     };
     $scope.toggleQueue = function () {
