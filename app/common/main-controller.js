@@ -108,10 +108,10 @@
         }
     };
     $rootScope.showQueue = function () {
-        $.fancybox.open();
+        // TO DO: Fix me
     };
     $rootScope.hideQueue = function () {
-        $.fancybox.close();
+        // TO DO: Fix me
     };
     $scope.toggleQueue = function () {
         var submenu = $('#QueuePreview');
@@ -121,84 +121,10 @@
             $rootScope.hideQueue();
         }
     };
-    /*
-    $(document).on("click", "a[name=coverartfancy]", function () {
-        $.fancybox({
-            beforeShow: function () {
-                //this.title = $('#songdetails_artist').html();
-            },
-            afterLoad: function () {
-                //this.inner.prepend( '<h1>1. My custom title</h1>' );
-                //this.content = '<h1>2. My custom title</h1>';
-            },
-            hideOnContentClick: true,
-            type: 'image',
-            openEffect: 'none',
-            closeEffect: 'none'
-        });
-    });
-    */
-    $("a.coverartfancy").fancybox({
-        beforeShow: function () {
-            //this.title = $('#songdetails_artist').html();
-        },
-        afterLoad: function () {
-            //this.inner.prepend( '<h1>1. My custom title</h1>' );
-            //this.content = '<h1>2. My custom title</h1>';
-        },
-        hideOnContentClick: true,
-        type: 'image',
-        openEffect: 'none',
-        closeEffect: 'none'
-    });
-    $('.showQueue').fancybox({
-        href: '#queue',
-        autoWidth: false,
-        width: '100%',
-        //margin: [50, 10, 50, 10], // top, right, bottom, left
-        openEffect: 'none',
-        closeEffect: 'none',
-        beforeLoad: function () {
-            if ($rootScope.queue == 0) {
-                this.close();
-            }
-        },
-        helpers: {
-            title: null
-        }
-    });
-    /*
-    $('.showSongs').fancybox({
-        href: '#songs',
-        autoWidth: false,
-        width: '100%',
-        //margin: [50, 10, 50, 10], // top, right, bottom, left
-        openEffect: 'none',
-        closeEffect: 'none',
-        beforeLoad: function () {
-            if ($rootScope.queue == 0) {
-                //this.close();
-            }
-        },
-        helpers: {
-            title: null
-        }
-    });
-    $rootScope.showSongs = function () {
-        alert($("#songs").html())
-        $.fancybox({
-            type: 'inline',  
-            content: $("#songs").html(),
-            autoWidth: false,
-            width: '100%',
-            transitionIn: 'elastic',  
-            transitionOut: 'elastic',
-            helpers: {
-                title: null
-            }
-        });
-    }
-    */
+
+    $scope.fancyboxOpenImage = function (url) {
+        utils.fancyboxOpenImage(url);
+    };
 
     $('#audiocontainer .scrubber').mouseover(function (e) {
         $('.audiojs .scrubber').stop().animate({ height: '8px' });

@@ -1,5 +1,11 @@
 ﻿[
     {
+        "date": "11/21/2014", "version": "4.2.3",
+        "changes": [
+        { "text": "- Album Art will change with song if Preview is already open."}
+        ]
+    },
+    {
         "date": "11/17/2014", "version": "4.2.1",
         "changes": [
         { "text": "- Drag & drop sorting for all playlists."},

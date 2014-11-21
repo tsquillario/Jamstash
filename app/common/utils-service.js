@@ -8,6 +8,22 @@ angular.module('jamstash.utils', ['jamstash.settings'])
 .service('utils', ['$rootScope', 'globals', function ($rootScope, globals) {
     'use strict';
 
+    this.fancyboxOpenImage = function (url) {
+        $.fancybox.open({
+            helpers : {
+                overlay : {
+                    css : {
+                        'background' : 'rgba(0, 0, 0, 0.15)'
+                    }
+                }
+            },
+            hideOnContentClick: true,
+            type: 'image',
+            openEffect: 'none',
+            closeEffect: 'none',
+            href: url
+        });
+    };
     this.safeApply = function (fn) {
         var phase = $rootScope.$root.$$phase;
         if (phase === '$apply' || phase === '$digest') {

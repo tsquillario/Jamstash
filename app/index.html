@@ -83,7 +83,7 @@
                         <a class="hover" id="NextTrack" title="Next Track" ng-click="nextTrack()"><img src="images/last_alt_24x24.png" /></a>
                     </div>
                     <div id="songdetails">
-                        <div id="coverart"><a class="coverartfancy" href="{{playingSong.coverartfull}}"><img ng-src="{{playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" alt="" /></a></div>
+                        <div id="coverart"><a ng-click="fancyboxOpenImage(playingSong.coverartfull)"><img ng-src="{{playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" alt="" /></a></div>
                         <ul>
                             <li class="song" id="{{playingSong.id}}" ng-bind-html="playingSong.name" title="{{playingSong.specs}}"></li>
                             <li class="album" ng-bind-html="playingSong.album"></li>
