@@ -1,4 +1,4 @@
-angular.module('JamStash')
+angular.module('jamstash.player.service', [])
 
 .service('player', ['$rootScope', '$window', 'utils', 'globals', 'model', 'notifications',
     function ($rootScope, $window, utils, globals, model, notifications) {
@@ -182,7 +182,7 @@ angular.module('JamStash')
     $rootScope.playSong = function (loadonly, data) {
         if (globals.settings.Debug) { console.log('Play: ' + JSON.stringify(data, null, 2)); }
         angular.forEach($rootScope.queue, function(item, key) {
-            item.playing = false;        
+            item.playing = false;
         });
         data.playing = true;
         data.selected = false;
@@ -207,13 +207,13 @@ angular.module('JamStash')
         $('#playermiddle').css('visibility', 'visible');
         $('#songdetails').css('visibility', 'visible');
 
-		if (globals.settings.Jukebox) { 
+		if (globals.settings.Jukebox) {
 			$rootScope.addToJukebox(id);
 			$rootScope.loadjPlayer(player1, url, suffix, true, position);
 		} else {
 			$rootScope.loadjPlayer(player1, url, suffix, loadonly, position);
 		}
-		
+
 		var spechtml = '';
 		var data = $(player1).data().jPlayer;
 		for (var i = 0; i < data.solutions.length; i++) {
@@ -231,7 +231,7 @@ angular.module('JamStash')
 		}
 		$('#SMStats').html(spechtml);
         scrobbled = false;
-		
+
 		if ($rootScope.queue.length > 0) {
             $('#queue').stop().scrollTo('#' + id, 400);
         }
