@@ -58,7 +58,8 @@ angular.module('jamstash.settings', [])
         AutoPlay: false,
         LoopQueue: false,
         Repeat: false,
-        Debug: false
+        Debug: false,
+        ShowQueue: true
     };
     this.SavedCollections = [];
     this.SavedGenres = [];
