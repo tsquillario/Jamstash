@@ -129,7 +129,8 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
             timeout: globals.settings.Timeout,
             success: function (data) {
                 if (data["subsonic-response"].user.adminRole === true) {
-                    $.get(globals.settings.Server + '/musicFolderSettings.view?scanNow');
+                    //$.get(globals.settings.Server + '/musicFolderSettings.view?scanNow');
+                    $.get(globals.settings.Server + '/musicFolderSettings.view?scanNow&' + globals.BaseParams());
                 } else {
                     alert('You are not logged in as an admin user!');
                 }
