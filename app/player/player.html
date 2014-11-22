@@ -2,17 +2,25 @@
     <div id="playercontainer">
         <div id="playerleft" class="floatleft">
             <div class="playeractions floatleft">
-                <a class="hover" id="PreviousTrack" title="Previous Track" ng-click="previousTrack()"><img src="images/first_alt_24x24.png" height="24" width="24" /></a>
-                <a class="hover PlayTrack" title="Play/Pause" ng-click="defaultPlay()"><img src="images/play_alt_24x24.png" height="24" width="24" /></a>
-                <a class="hover PauseTrack" title="Play/Pause" ng-click="defaultPlay()" style="display: none;"><img src="images/pause_alt_24x24.png" height="24" width="24" /></a>
-                <a class="hover" id="NextTrack" title="Next Track" ng-click="nextTrack()"><img src="images/last_alt_24x24.png" height="24" width="24" /></a>
+                <a class="hover" id="PreviousTrack" title="Previous Track" ng-click="previousTrack()">
+                    <img src="images/first_alt_24x24.png" height="24" width="24" alt="Previous track" />
+                </a>
+                <a class="hover PlayTrack" title="Play/Pause" ng-click="defaultPlay()">
+                    <img src="images/play_alt_24x24.png" height="24" width="24" alt="Play" />
+                </a>
+                <a class="hover PauseTrack" title="Play/Pause" ng-click="defaultPlay()" style="display: none;">
+                    <img src="images/pause_alt_24x24.png" height="24" width="24" alt="Pause" />
+                </a>
+                <a class="hover" id="NextTrack" title="Next Track" ng-click="nextTrack()">
+                    <img src="images/last_alt_24x24.png" height="24" width="24" alt="Next track" />
+                </a>
             </div>
             <div id="songdetails">
                 <div id="coverart">
 					<a ng-click="fancyboxOpenImage(playingSong.coverartfull)">
-						<img ng-src="{{playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" alt="" height="60" width="60" />
-					</a>
-				</div>
+                        <img ng-src="{{playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" height="60" width="60" />
+                    </a>
+                </div>
                 <ul>
                     <li class="song" id="{{playingSong.id}}" ng-bind-html="playingSong.name" title="{{playingSong.specs}}"></li>
                     <li class="album" ng-bind-html="playingSong.album"></li>

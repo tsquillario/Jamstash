@@ -1,4 +1,5 @@
-angular.module('jamstash.player.service', [])
+angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings', 'jamstash.model',
+    'jamstash.notifications'])
 
 .service('player', ['$rootScope', '$window', 'utils', 'globals', 'model', 'notifications',
     function ($rootScope, $window, utils, globals, model, notifications) {
@@ -20,7 +21,7 @@ angular.module('jamstash.player.service', [])
             }
         }
     };
-    $rootScope.nextTrack = function () {
+    this.nextTrack = function () {
         var next = getNextSong();
         if (next) {
             $rootScope.playSong(false, next);
@@ -215,7 +216,7 @@ angular.module('jamstash.player.service', [])
 		}
 
 		var spechtml = '';
-		var data = $(player1).data().jPlayer;
+		/*FIXME: var data = $(player1).data().jPlayer;
 		for (var i = 0; i < data.solutions.length; i++) {
 			var solution = data.solutions[i];
 			if (data[solution].used) {
@@ -228,7 +229,7 @@ angular.module('jamstash.player.service', [])
 				});
 				spechtml += "</strong> support";
 			}
-		}
+		}*/
 		$('#SMStats').html(spechtml);
         scrobbled = false;
 
