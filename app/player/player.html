@@ -1,27 +1,31 @@
-<div id="player">
+ <div id="player">
     <div id="playercontainer">
         <div id="playerleft" class="floatleft">
             <div class="playeractions floatleft">
-                <a class="hover" id="PreviousTrack" title="Previous Track" ng-click="previousTrack()"><img src="images/first_alt_24x24.png" /></a>
-                <a class="hover PlayTrack" title="Play/Pause" ng-click="defaultPlay()"><img src="images/play_alt_24x32.png" /></a>
-                <a class="hover PauseTrack" title="Play/Pause" ng-click="defaultPlay()" style="display: none;"><img src="images/pause_alt_24x32.png" /></a>
-                <a class="hover" id="NextTrack" title="Next Track" ng-click="nextTrack()"><img src="images/last_alt_24x24.png" /></a>
+                <a class="hover" id="PreviousTrack" title="Previous Track" ng-click="previousTrack()"><img src="images/first_alt_24x24.png" height="24" width="24" /></a>
+                <a class="hover PlayTrack" title="Play/Pause" ng-click="defaultPlay()"><img src="images/play_alt_24x24.png" height="24" width="24" /></a>
+                <a class="hover PauseTrack" title="Play/Pause" ng-click="defaultPlay()" style="display: none;"><img src="images/pause_alt_24x24.png" height="24" width="24" /></a>
+                <a class="hover" id="NextTrack" title="Next Track" ng-click="nextTrack()"><img src="images/last_alt_24x24.png" height="24" width="24" /></a>
             </div>
             <div id="songdetails">
-                <div id="coverart"><a ng-click="fancyboxOpenImage(playingSong.coverartfull)"><img ng-src="{{playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" alt="" /></a></div>
+                <div id="coverart">
+					<a ng-click="fancyboxOpenImage(playingSong.coverartfull)">
+						<img ng-src="{{playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" alt="" height="60" width="60" />
+					</a>
+				</div>
                 <ul>
                     <li class="song" id="{{playingSong.id}}" ng-bind-html="playingSong.name" title="{{playingSong.specs}}"></li>
                     <li class="album" ng-bind-html="playingSong.album"></li>
                 </ul>
-				<div id="songdetails_controls">
-					<a href="" class="jukebox" title="Jukebox Mode [Beta]" ng-click="toggleSetting('Jukebox')" ng-class="{'hoverSelected': !settings.Jukebox }"></a>
-					<a href="" class="loop" title="Repeat" ng-click="toggleSetting('Repeat')" ng-class="{'hoverSelected': !settings.Repeat }"></a>
-					<a href="" id="action_SaveProgress" class="lock" title="Save Track Position: On" ng-show="settings.SaveTrackPosition"></a>
-					<a title="Favorite" href="" ng-class="{'favorite': playingSong.starred, 'rate': !playingSong.starred}" ng-click="updateFavorite(playingSong)" stop-event="click"></a>
-					<a href="" id="action_Mute" class="mute" title="Mute"></a>
-					<a href="" id="action_UnMute" class="unmute" title="Unmute" style="display: none;"></a>
-					<!--<div class="jp-volume-bar"><div class="jp-volume-bar-value"></div></div><a href="" id="action_VolumeMax" class="volume" title="Max Volume"></a>-->
-				</div>
+                <div id="songdetails_controls">
+                    <a href="" class="jukebox" title="Jukebox Mode [Beta]" ng-click="toggleSetting('Jukebox')" ng-class="{'hoverSelected': !settings.Jukebox }"></a>
+                    <a href="" class="loop" title="Repeat" ng-click="toggleSetting('Repeat')" ng-class="{'hoverSelected': !settings.Repeat }"></a>
+                    <a href="" id="action_SaveProgress" class="lock" title="Save Track Position: On" ng-show="settings.SaveTrackPosition"></a>
+                    <a title="Favorite" href="" ng-class="{'favorite': playingSong.starred, 'rate': !playingSong.starred}" ng-click="updateFavorite(playingSong)" stop-event="click"></a>
+                    <a href="" id="action_Mute" class="mute" title="Mute"></a>
+                    <a href="" id="action_UnMute" class="unmute" title="Unmute" style="display: none;"></a>
+                    <!--<div class="jp-volume-bar"><div class="jp-volume-bar-value"></div></div><a href="" id="action_VolumeMax" class="volume" title="Max Volume"></a>-->
+                </div>
             </div>
             <div id="playdeck_1"></div>
             <div id="playdeck_2"></div>
