@@ -53,6 +53,11 @@
         if ($scope.settings.Theme) {
             utils.switchTheme(globals.settings.Theme);
         }
+        if($scope.settings.ShowQueue) {
+            $rootScope.showQueue();
+        } else {
+            $rootScope.hideQueue();
+        }
         utils.setValue('Settings', $scope.settings, true);
         notifications.updateMessage('Settings Updated!', true);
         $scope.loadSettings();

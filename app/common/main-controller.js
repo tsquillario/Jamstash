@@ -108,14 +108,15 @@
         }
     };
     $rootScope.showQueue = function () {
-        // TO DO: Fix me
+        $('#SideBar').css('display', '');
+        $('#right-component').removeClass('lgcolumn_expanded');
     };
     $rootScope.hideQueue = function () {
-        // TO DO: Fix me
+        $('#SideBar').css('display', 'none');
+        $('#right-component').addClass('lgcolumn_expanded');
     };
     $scope.toggleQueue = function () {
-        var submenu = $('#QueuePreview');
-        if (submenu.css('display') == 'none') {
+        if ($('#SideBar').css('display') == 'none') {
             $rootScope.showQueue();
         } else {
             $rootScope.hideQueue();
@@ -457,6 +458,11 @@
     /* Launch on Startup */
     $scope.loadSettings();
     utils.switchTheme(globals.settings.Theme);
+
+    if(!globals.settings.ShowQueue) {
+        $rootScope.hideQueue();
+    }
+
     if ($scope.loggedIn()) {
         //$scope.ping();
         if (globals.settings.SaveTrackPosition) {
