@@ -124,9 +124,11 @@
     };
     $rootScope.showArtists = function () {
         $('#left-component').css('display', '');
+        $('#right-component').removeClass('lgcolumn_expandedleft');
     };
     $rootScope.hideArtists = function () {
         $('#left-component').css('display', 'none');
+        $('#right-component').addClass('lgcolumn_expandedleft');
     };
     $scope.toggleArtists = function () {
         if ($('#left-component').css('display') == 'none') {

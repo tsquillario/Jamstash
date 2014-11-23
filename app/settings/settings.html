@@ -1,7 +1,7 @@
 <div id="settings" class="tabcontent">
     <div class="section fullsection floatleft">
 
-        <form class="form" id="Settings">
+        <form class="form" id="SettingsForm">
             <div class="subsection floatleft">
                 <h3 class="title">Login</h3>
                 <label for="Username">Username <span class="red">*</span></label><br />
@@ -11,12 +11,10 @@
                 <label for="Server">Server <span class="red">*</span> (<a href="" title="Connect to Demo Subsonic Server" ng-click="setupDemo()">Demo</a>)</label><br />
                 <input type="text" id="Server" name="Server" class="xlarge" title="Subsonic Server URL Ex: http://host:port" ng-model="settings.Server" /><br />
                 <!--<a href="#" class="button" id="action_RequestURL" title="Request Permission for Server URL">Enable URL</a><br />-->
-                <label for="SubsonicVersion">Subsonic API: <span class="apiversion" id="SubsonicVersion">{{settings.ApiVersion}}</span></label><br />
-                <label for="SMStats">Audio State: <span id="SMStats"></span></label><br /><br />
                 <br />
-            </div>
-            <div class="subsection floatleft">
                 <h3 class="title">Options</h3>
+                <label for="SubsonicVersion">Subsonic API: <span class="apiversion" id="SubsonicVersion">{{settings.ApiVersion}}</span></label><br />
+                <label for="SMStats">Audio State: <span id="SMStats"></span></label><br />
                 <label for="Theme">Theme</label><br />
                 <select id="Theme" name="Theme" class="large" ng-model="settings.Theme" ng-options="o for o in Themes"></select><br />
                 <!--<label for="AutoFilter">Filter</label><br />
@@ -73,8 +71,6 @@
                         <label for="SaveTrackPosition">Save Progress</label>
                     </fieldset>
                 </div>
-            </div>
-			<div class="subsection floatleft">
                 <div class="checkboxes">
                     <fieldset>
                         <legend class="aligncenter">Jukebox</legend>
@@ -142,17 +138,6 @@
                 <br />Not related to a Subsonic License!</small>
             </div>
         </div>
-        <div class="clear"></div>
-        <div class="subsection floatleft">
-            <h3 class="title">Change Log</h3>
-            <ul id="ChangeLog" class="preferences">
-                <li class="log" ng-repeat="o in changeLog"><span class="version">{{o.date + ' - ' + o.version}}</span>
-                    <span class="changes" ng-repeat="a in o.changes" ng-bind-html="a.text"></span>
-                </li>
-            </ul>
-            <a href="" ng-click="changeLogShowMore()">Show More</a>
-        </div>
-        <div class="clear"></div>
         <div class="subsection floatleft">
             <h3 class="title">Links</h3>
             <ul class="preferences">
@@ -167,6 +152,17 @@
             <li>Audio Library - <a href="http://jplayer.org" target="_blank">http://jplayer.org</a></li>
             </ul>
         </div>
+        <div class="clear"></div>
+        <div class="subsection floatleft">
+            <h3 class="title">Change Log</h3>
+            <ul id="ChangeLog" class="preferences">
+                <li class="log" ng-repeat="o in changeLog"><span class="version">{{o.date + ' - ' + o.version}}</span>
+                    <span class="changes" ng-repeat="a in o.changes" ng-bind-html="a.text"></span>
+                </li>
+            </ul>
+            <a href="" ng-click="changeLogShowMore()">Show More</a>
+        </div>
+        <div class="clear"></div>
     </div>
     <div class="clear"></div>
 </div>
