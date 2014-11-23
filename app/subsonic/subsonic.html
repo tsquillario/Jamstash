@@ -5,11 +5,6 @@
             <a href="" class="button" id="action_RefreshArtists" title="Refresh List" ng-click="refreshArtists()"><img class="pad" src="images/reload_9x11.png" /></a>
             <a href="" class="button" id="action_RescanLibrary" title="Rescan Library" ng-click="rescanLibrary()"><img class="pad" src="images/loop_alt1_gd_12x9.png" /></a>
         </div>
-        <div id="search">
-            <input type="text" id="Search" name="Search" class="medium" title="Wildcards (*) supported" placeholder="Search..." ng-enter="search()"/>
-            <select id="SearchType" name="SearchType" ng-model="SearchType.id" ng-options="o.id as o.name for o in SearchTypes"></select>
-            <a href="" class="button" id="action_Search" title="Search" ng-click="search()"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
-        </div>
         <div class="subactions">
             <div class="floatleft" ng-show="selectedPlaylist">
                 <label>Playlist Actions</label>
@@ -38,7 +33,7 @@
                         </form>
                         <div id="BreadCrumb">
                             <div id="BreadCrumbs" class="floatleft">
-                                <div class="crumb"><a ng-click="toggleArtists()">Artists</a> &gt;</div>
+                                <div class="crumb"><a ng-click="toggleArtists()" title="Toggle Artists">Artists</a> &gt;</div>
                                 <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'artist'}"><a ng-click="getAlbums(o.id, o.name)">{{o.name}}</a> &gt;</div>
                                 <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'album'}"><a ng-click="getSongs(o.id, '')">{{o.name}}</a> &gt;</div>
                             </div>
@@ -83,12 +78,21 @@
 				<li class="" ng-click="togglePlaylist()"><a href="">Playlists</a></li>
 				<li class="" ng-click="togglePodcast()"><a href="">Podcasts</a></li>
 			</ul>
+			<div class="leftactions">
+				<a href="" class="button" id="action_ToggleArtists" ng-click="toggleArtists()" title="Toggle Artists"><img src="images/arrow_right_gl_8x8.png" /></a>
+			</div>
 			<div class="clear"></div>
 			<div id="IndexContainer" class="leftsubsection" ng-show="showIndex">
 				<select id="MusicFolders" class="folders" ng-model="$root.SelectedMusicFolder" ng-options="o.name for o in MusicFolders"></select>
 				<div id="AZIndex" ng-show="!settings.HideAZ" class="subactionsfixed">
 					<a href="" ng-click="toggleAZ()" stop-event="click">A-Z</a>
 				</div>
+				<div id="search">
+		            <input type="text" id="Search" name="Search" class="medium" title="Wildcards (*) supported" placeholder="Search..." ng-enter="search()"/>
+		            <select id="SearchType" name="SearchType" ng-model="SearchType.id" ng-options="o.id as o.name for o in SearchTypes"></select>
+		            <a href="" class="button" id="action_Search" title="Search" ng-click="search()"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
+		        </div>
+		        <div class="clear"></div>
 				<ul id="AutoAlbumContainer" class="simplelist mainlist noselect">
 					<li class="index" id="auto">Auto Albums</li>
 					<li class="item" ng-repeat="o in AutoAlbums" id="{{o.id}}" ng-click="getAlbumListBy(o.id)" ng-class="{'selected': selectedAutoAlbum == o.id }">

@@ -1,4 +1,4 @@
-﻿angular.module('JamStash')
+angular.module('JamStash')
 
 .service('player', ['$rootScope', '$window', 'utils', 'globals', 'model', 'notifications',
     function ($rootScope, $window, utils, globals, model, notifications) {
@@ -210,21 +210,6 @@
 			$rootScope.loadjPlayer(player1, url, suffix, true, position);
 		} else {
 			$rootScope.loadjPlayer(player1, url, suffix, loadonly, position);
-		}
-		
-		if (!loadonly) {
-			// Sway.fm UnityShim
-			var playerState = {
-				playing: true,
-				title: title,
-				artist: artist,
-				favorite: false,
-				albumArt: coverartfull
-			};
-			if ($rootScope.unity) {
-				$rootScope.unity.sendState(playerState);
-			}
-			// End UnityShim
 		}
 		
 		var spechtml = '';
