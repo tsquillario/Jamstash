@@ -122,6 +122,19 @@
             $rootScope.hideQueue();
         }
     };
+    $rootScope.showArtists = function () {
+        $('#left-component').css('display', '');
+    };
+    $rootScope.hideArtists = function () {
+        $('#left-component').css('display', 'none');
+    };
+    $scope.toggleArtists = function () {
+        if ($('#left-component').css('display') == 'none') {
+            $rootScope.showArtists();
+        } else {
+            $rootScope.hideArtists();
+        }
+    };
 
     $scope.fancyboxOpenImage = function (url) {
         utils.fancyboxOpenImage(url);
@@ -137,42 +150,6 @@
 	$(document).on("click", ".message", function(){
 	   $(this).remove();
 	});
-
-    // Sway.fm Unity Plugin
-    $rootScope.unity = UnityMusicShim();
-    $rootScope.unity.setSupports({
-        playpause: true,
-        next: true,
-        previous: true
-    });
-    $rootScope.unity.setCallbackObject({
-        pause: function () {
-            if (globals.settings.Debug) { console.log("Unity: Recieved playpause command"); }
-            player.playPauseSong();
-        },
-        next: function () {
-            if (globals.settings.Debug) { console.log("Unity: Recieved next command"); }
-            $rootScope.nextTrack();
-        },
-        previous: function () {
-            if (globals.settings.Debug) { console.log("Unity: Recieved previous command"); }
-            $rootScope.previousTrack();
-        }
-    });
-
-
-    // JQuery UI Sortable - Drag and drop sorting
-    /*
-    var fixHelper = function (e, ui) {
-        ui.children().each(function () {
-            $(this).width($(this).width());
-        });
-        return ui;
-    };
-    $("#QueuePreview ul.songlist").sortable({
-        helper: fixHelper
-    });
-    */
 
     // Global Functions
     window.onbeforeunload = function () {

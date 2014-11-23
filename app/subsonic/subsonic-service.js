@@ -200,6 +200,12 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                             if (SelectedAlbumSort.id != "default") {
                                 sortSubsonicAlbums(SelectedAlbumSort.id);
                             }
+                            /* Find a better way to show/hide left
+                            var left = $('#left-component');
+                            if (left.css('display') != 'none') {
+                                $rootScope.hideArtists();
+                            }
+                            */
                         } else {
                             notifications.updateMessage('No Albums Returned :(', true);
                         }
