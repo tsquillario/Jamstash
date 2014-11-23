@@ -235,6 +235,7 @@ span.apiversion
 	top: 40px;
 	left: 0;
 	margin-bottom: -40px;
+    background: #fff;
 }
 .lgcolumn 
 {
@@ -745,25 +746,13 @@ ul.songlist .album a.play
 {
     background: url('../images/play_gl_6x8.png') no-repeat 7px center;
 }
-ul.songlist .album a.play:hover
-{
-    background: url('../images/play_6x8.png') no-repeat 7px center #DEECFB;
-}
 ul.songlist .album a.add
 {
     background: url('../images/plus_gl_8x8.png') no-repeat 6px center;
 }
-ul.songlist .album a.add:hover
-{
-    background: url('../images/plus_8x8.png') no-repeat 6px center #DEECFB;
-}
 ul.songlist .album a.download
 {
     background: url('../images/download_gl_9x12.png') no-repeat 5px center;
-}
-ul.songlist .album a.download:hover
-{
-    background: url('../images/download_gd_9x12.png') no-repeat 5px center #DEECFB;
 }
 ul.songlist .album a.remove
 {
@@ -772,10 +761,6 @@ ul.songlist .album a.remove
 ul.songlist .album a.rate
 {
 	background: url('../images/star_lgo_12x12.png') 4px center no-repeat;	
-}
-ul.songlist .album a.rate:hover
-{
-    background: url('../images/star_lg_12x12.png') 4px center no-repeat;
 }
 ul.songlist .album a.favorite
 {
@@ -1264,7 +1249,7 @@ ul.songlist li:hover
 {
     width: auto;
     height: 45px;
-    margin: 0;
+    margin: 0 10px 0 0;
     background: none;
     font-family: inherit;
     font-size: 10px;
@@ -1332,12 +1317,6 @@ ul.songlist li:hover
 {
     margin: 12px 9px 7px 20px;
 	width: 85px;
-}
-.playeractionssmall
-{
-    margin: 24px 8px 0 14px;
-    width: 50px;
-    float: right;
 }
 #playermiddle
 {

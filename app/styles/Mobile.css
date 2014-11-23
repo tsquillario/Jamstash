@@ -1,0 +1,48 @@
+/*@media only screen and (max-device-width: 680px) {*/
+@media only screen and (max-width: 600px) {
+
+	.smcolumn {
+		width: 100%;
+	}
+	.lgcolumn {
+		margin-left: 0;
+	}
+	#SideBar {
+		display: none;
+	}
+	ul.songlist li {
+    	font-size: 12px;
+    	padding: 2px 4px;
+	}
+	ul.songlist .row img {
+		display: none;
+	}
+	ul.songlist .row .artist {
+		padding-right: 5px;
+	}
+	ul.songlist .row .itemactions {
+		padding: 6px 10px 0 12px;
+	}
+	ul.songlist .albumgrid .itemactions {
+		width: auto;
+	}
+	ul.songlist .albumgrid .itemactions a {
+		padding: 6px 8px;
+		background-position: center center;
+	}
+	ul.songlist .albumgrid {
+		padding: 0px 0px 22px 0px;
+	}
+	ul.songlist .album a:hover {
+		background-position: center center;
+	}
+	#songdetails {
+		width: auto;
+	}
+	#songdetails ul {
+		width: 105px;
+	}
+	#songdetails_controls {
+		display: none;	
+	}
+}

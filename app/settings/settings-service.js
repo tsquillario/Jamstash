@@ -31,7 +31,7 @@ angular.module('jamstash.settings', [])
         Password: "guest"),
         Server: "http://subsonic.org/demo"),
         */
-        Url: "http://Jamstash.com/beta/#/archive/",
+        Url: "http://jamstash.com/#/archive/",
         Username: "",
         Password: "",
         Server: "",
