@@ -1,7 +1,7 @@
 
 /* Declare app level module */
 angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize',
-    'jamstash.subsonic.ctrl', 'jamstash.archive.ctrl', 'jamstash.player'])
+    'jamstash.subsonic.ctrl', 'jamstash.archive.ctrl', 'jamstash.player.ctrl'])
 
 .config(['$routeProvider',function($routeProvider) {
     'use strict';

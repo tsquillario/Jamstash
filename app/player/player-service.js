@@ -9,7 +9,7 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
     var player2 = '#playdeck_2';
     var scrobbled = false;
     var timerid = 0;
-    $rootScope.defaultPlay = function (data, event) {
+    this.defaultPlay = function (data, event) {
         if (typeof $(player1).data("jPlayer") == 'undefined') {
             $rootScope.nextTrack();
         }
@@ -27,7 +27,7 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
             $rootScope.playSong(false, next);
         }
     };
-    $rootScope.previousTrack = function () {
+    this.previousTrack = function () {
         var next = getNextSong(true);
         if (next) {
             $rootScope.playSong(false, next);
@@ -176,11 +176,11 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
             if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser, ' + html.length + ' characters'); }
         }
     };
-    $rootScope.restartSong = function (loadonly, data) {
+    this.restartSong = function (loadonly, data) {
         var audio = $(player1).data("jPlayer");
         audio.play(0);
     };
-    $rootScope.playSong = function (loadonly, data) {
+    this.playSong = function (loadonly, data) {
         if (globals.settings.Debug) { console.log('Play: ' + JSON.stringify(data, null, 2)); }
         angular.forEach($rootScope.queue, function(item, key) {
             item.playing = false;
@@ -413,4 +413,12 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
             }
         });
     };
+
+    // TODO: Hyz: Those are temporary. Remove them when no one else is calling them.
+    // The idea is to have them so while refactoring so we don't break anything
+    $rootScope.defaultPlay = this.defaultPlay;
+    $rootScope.nextTrack = this.nextTrack;
+    $rootScope.previousTrack = this.previousTrack;
+    $rootScope.restartSong = this.restartSong;
+    $rootScope.playSong = this.playSong;
 }]);
