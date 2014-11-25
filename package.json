@@ -49,10 +49,10 @@
     "karma": "^0.12.25",
     "karma-chrome-launcher": "^0.1.5",
     "karma-coverage": "^0.2.6",
+    "karma-growl-reporter": "^0.1.1",
     "karma-jasmine": "^0.3.0",
     "karma-phantomjs-launcher": "^0.1.4",
     "load-grunt-tasks": "^1.0.0",
-    "sellout": "0.0.1",
     "time-grunt": "^1.0.0"
   },
   "engines": {
