@@ -3,45 +3,20 @@
 *
 * Control the HTML5 player through jplayer.js
 */
-angular.module('jamstash.player', ['jamstash.player.service', 'jamstash.player.directive'])
+angular.module('jamstash.player.ctrl', ['jamstash.player.service', 'jamstash.player.directive'])
 
 .controller('PlayerCtrl', ['$scope', 'player', function($scope, player){
 	'use strict';
 
-    $scope.playingSong = {
-        id: '',
-        album: '',
-        name: '',
-        specs: '',
-        starred: '',
-        coverartfull: '',
-        coverartthumb: ''
-    };
-
     $scope.previousTrack = function () {
-
-    };
-
-    $scope.defaultPlay = function () {
-
+        player.previousTrack();
     };
 
     $scope.nextTrack = function () {
-
+        player.nextTrack();
     };
 
-    $scope.updateFavorite = function (song) {
-
+    $scope.defaultPlay = function () {
+        player.defaultPlay();
     };
-
-    $scope.toggleSetting = function (settingName) {
-
-    };
-
-    $scope.settings = {
-        SaveTrackPosition: '',
-        Jukebox: '',
-        Repeat: ''
-    };
-
 }]);
