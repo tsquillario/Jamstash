@@ -1,13 +1,13 @@
-﻿/**
+/**
 * jamstash.subsonic.ctrl Module
 *
 * Access and use the Subsonic Server. The Controller is in charge of relaying the Service's messages to the user through the
 * notifications.
 */
-angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
+angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service', 'jamstash.player.service'])
 
-.controller('SubsonicCtrl', ['$scope', '$rootScope', '$routeParams', 'utils', 'globals', 'map', 'subsonic', 'notifications',
-    function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications) {
+.controller('SubsonicCtrl', ['$scope', '$rootScope', '$routeParams', 'utils', 'globals', 'map', 'subsonic', 'notifications', 'player',
+    function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications, player) {
     'use strict';
 
     $scope.settings = globals.settings;
@@ -283,7 +283,7 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
             if(action === 'play') {
                 $rootScope.queue = [].concat(mappedSongs);
                 notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);
-                $rootScope.playSong(false, $rootScope.queue[0]);
+                player.playSong(false, $rootScope.queue[0]);
             } else if (action === 'add') {
                 $rootScope.queue = $rootScope.queue.concat(mappedSongs);
                 notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);
@@ -447,6 +447,9 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
         var start = ui.item.data('start'),
             end = ui.item.index();
         $scope.song.splice(end, 0, $scope.song.splice(start, 1)[0]);
+    };
+    $scope.playSong = function (loadonly, song) {
+        player.playSong(loadonly, song);
     };
 
     /* Launch on Startup */

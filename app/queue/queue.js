@@ -1,10 +1,14 @@
-﻿angular.module('JamStash')
+angular.module('jamstash.queue.ctrl', [])
 
-.controller('QueueCtrl', ['$scope', '$rootScope', '$routeParams', '$location', 'utils', 'globals',
-	function QueueCtrl($scope, $rootScope, $routeParams, $location, utils, globals) {
+.controller('QueueCtrl', ['$scope', '$rootScope', '$routeParams', '$location', 'utils', 'globals', 'player',
+	function QueueCtrl($scope, $rootScope, $routeParams, $location, utils, globals, player) {
 	'use strict';
     $scope.settings = globals.settings;
     $scope.song = $rootScope.queue;
     //angular.copy($rootScope.queue, $scope.song);
     $scope.itemType = 'pl';
+
+    $scope.playSong = function (loadonly, song) {
+        player.playSong(loadonly, song);
+    };
 }]);

@@ -5,10 +5,10 @@
 * Also offers more fine-grained functionality that is not part of Subsonic's API.
 */
 angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.utils', 'jamstash.model',
-    'jamstash.notifications', 'angular-underscore/utils'])
+    'jamstash.notifications', 'jamstash.player.service', 'angular-underscore/utils'])
 
-.factory('subsonic', ['$rootScope', '$http', '$q', 'globals', 'utils', 'map', 'notifications',
-    function ($rootScope, $http, $q, globals, utils, map, notifications) {
+.factory('subsonic', ['$rootScope', '$http', '$q', 'globals', 'utils', 'map', 'notifications', 'player',
+    function ($rootScope, $http, $q, globals, utils, map, notifications, player) {
     'use strict';
 
     var index = { shortcuts: [], artists: [] };
@@ -23,7 +23,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
         selectedArtist: null,
         selectedAlbum: null,
         selectedPlaylist: null,
-        selectedAutoPlaylist: null,    
+        selectedAutoPlaylist: null,
         selectedGenre: null,
         selectedPodcast: null
     };
@@ -68,7 +68,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             }
         }
     };
-    
+
     return {
         showIndex: $rootScope.showIndex,
         showPlaylist: showPlaylist,
@@ -82,7 +82,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 dataType: globals.settings.Protocol,
                 timeout: globals.settings.Timeout,
                 success: function (data) {
-                    
+
                 }
             });
             */
@@ -318,7 +318,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                                     $rootScope.queue.push(map.mapSong(item));
                                 });
                                 var next = $rootScope.queue[0];
-                                $rootScope.playSong(false, next);
+                                player.playSong(false, next);
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else {
                                 if (typeof data["subsonic-response"].directory.id != 'undefined') {
@@ -466,7 +466,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                                 $rootScope.queue.push(map.mapSong(item));
                             });
                             var next = $rootScope.queue[0];
-                            $rootScope.playSong(false, next);
+                            player.playSong(false, next);
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else {
                             content.album = [];
@@ -545,7 +545,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                                 $rootScope.queue.push(map.mapSong(item));
                             });
                             var next = $rootScope.queue[0];
-                            $rootScope.playSong(false, next);
+                            player.playSong(false, next);
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else {
                             content.album = [];
@@ -703,7 +703,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             } else {
             items[0] = data["subsonic-response"].genres;
             }
-    
+
             $rootScope.Genres = items;
             $scope.$apply();
             }
@@ -775,7 +775,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                                     }
                                 });
                                 var next = $rootScope.queue[0];
-                                $rootScope.playSong(false, next);
+                                player.playSong(false, next);
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else {
                                 content.album = [];

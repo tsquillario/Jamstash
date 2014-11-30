@@ -10,7 +10,7 @@
     $rootScope.MusicFolders = [];
     $rootScope.Genres = [];
     $rootScope.Messages = [];
-    
+
     $rootScope.SelectedMusicFolder = "";
     $rootScope.unity = null;
     $rootScope.loggedIn = function () {
@@ -27,13 +27,6 @@
     $rootScope.go = function (path) {
         $location.path(path);
     };
-    /*
-    $scope.playSong = function (loadonly, data) { 
-    $scope.$apply(function () {
-    $rootScope.playSong(loadonly, data);
-    });
-    }
-    */
 
     // Reads cookies and sets globals.settings values
     $scope.loadSettings = function () {
@@ -226,9 +219,9 @@
                     $('#left-component').stop().scrollTo(el, 400);
                 }
             } else if (unicode == 39 || unicode == 176) { // right arrow
-                $rootScope.nextTrack();
+                player.nextTrack();
             } else if (unicode == 37 || unicode == 177) { // back arrow
-                $rootScope.previousTrack();
+                player.previousTrack();
             } else if (unicode == 32 || unicode == 179 || unicode.toString() == '0179') { // spacebar
                 player.playPauseSong();
                 return false;
@@ -286,7 +279,7 @@
         $rootScope.selectAll(songs);
         $rootScope.addSongsToQueue();
         var next = $rootScope.queue[0];
-        $rootScope.playSong(false, next);
+        player.playSong(false, next);
     };
     $rootScope.playFrom = function (index, songs) {
         var from = songs.slice(index,songs.length);
@@ -299,7 +292,7 @@
             $rootScope.queue = [];
             $rootScope.addSongsToQueue();
             var next = $rootScope.queue[0];
-            $rootScope.playSong(false, next);
+            player.playSong(false, next);
         }
     };
     $rootScope.addSongsToQueue = function () {
@@ -417,6 +410,12 @@
 			}
 		});
 	};
+    // Hyz: I don't know yet how to remove the circular dependency between player-service
+    // and notification-service... So I'll keep this one there until I know.
+    $rootScope.nextTrack = function (loadonly, song) {
+        player.nextTrack(loadonly, song);
+    };
+
     $scope.updateFavorite = function (item) {
         var id = item.id;
         var starred = item.starred;
@@ -441,7 +440,27 @@
     $scope.toTrusted = function (html) {
         return $sce.trustAsHtml(html);
     };
-    
+
+    function loadTrackPosition() {
+        if (utils.browserStorageCheck()) {
+            // Load Saved Song
+            var song = angular.fromJson(localStorage.getItem('CurrentSong'));
+            if (song) {
+                player.playSong(true, song);
+                // Load Saved Queue
+                var items = angular.fromJson(localStorage.getItem('CurrentQueue'));
+                if (items) {
+                    $rootScope.queue = items;
+                    if ($rootScope.queue.length > 0) {
+                        notifications.updateMessage($rootScope.queue.length + ' Saved Song(s)', true);
+                    }
+                    if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + $rootScope.queue.length + ' song(s)'); }
+                }
+            }
+        } else {
+            if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser'); }
+        }
+    }
 
     /* Launch on Startup */
     $scope.loadSettings();
@@ -454,7 +473,7 @@
     if ($scope.loggedIn()) {
         //$scope.ping();
         if (globals.settings.SaveTrackPosition) {
-            player.loadTrackPosition();
+            loadTrackPosition();
             player.startSaveTrackPosition();
         }
     }
