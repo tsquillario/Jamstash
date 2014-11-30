@@ -1,7 +1,7 @@
-angular.module('jamstash.queue.ctrl', [])
+angular.module('jamstash.queue.ctrl', ['jamstash.player.service'])
 
-.controller('QueueCtrl', ['$scope', '$rootScope', '$routeParams', '$location', 'utils', 'globals', 'player',
-	function QueueCtrl($scope, $rootScope, $routeParams, $location, utils, globals, player) {
+.controller('QueueCtrl', ['$scope', '$rootScope', 'globals', 'player',
+	function QueueCtrl($scope, $rootScope, globals, player) {
 	'use strict';
     $scope.settings = globals.settings;
     $scope.song = $rootScope.queue;
