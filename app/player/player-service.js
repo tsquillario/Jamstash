@@ -9,32 +9,7 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
     var player2 = '#playdeck_2';
     var scrobbled = false;
     var timerid = 0;
-    this.defaultPlay = function (data, event) {
-        if (typeof $(player1).data("jPlayer") == 'undefined') {
-            $rootScope.nextTrack();
-        }
-		if (typeof $(player1).data("jPlayer") != 'undefined' && globals.settings.Jukebox) {
-            if ($(player1).data("jPlayer").status.paused) {
-               $rootScope.sendToJukebox('start');
-            } else {
-                $rootScope.sendToJukebox('stop');
-            }
-        }
-    };
-    this.nextTrack = function () {
-        var next = getNextSong();
-        if (next) {
-            $rootScope.playSong(false, next);
-        }
-    };
-    this.previousTrack = function () {
-        var next = getNextSong(true);
-        if (next) {
-            $rootScope.playSong(false, next);
-        } else {
-            $rootScope.restartSong();
-        }
-    };
+
     function getNextSong (previous) {
         var song;
         if (globals.settings.Debug) { console.log('Getting Next Song > ' + 'Queue length: ' + $rootScope.queue.length); }
@@ -63,6 +38,32 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
             return false;
         }
     }
+    this.nextTrack = function () {
+        var next = getNextSong();
+        if (next) {
+            this.playSong(false, next);
+        }
+    };
+    this.previousTrack = function () {
+        var next = getNextSong(true);
+        if (next) {
+            this.playSong(false, next);
+        } else {
+            this.restartSong();
+        }
+    };
+    this.defaultPlay = function (data, event) {
+        if (typeof $(player1).data("jPlayer") == 'undefined') {
+            this.nextTrack();
+        }
+        if (typeof $(player1).data("jPlayer") != 'undefined' && globals.settings.Jukebox) {
+            if ($(player1).data("jPlayer").status.paused) {
+               $rootScope.sendToJukebox('start');
+            } else {
+                $rootScope.sendToJukebox('stop');
+            }
+        }
+    };
     function internalScrobbleSong(submission) {
         if ($rootScope.loggedIn && submission) {
             var id = $rootScope.playingSong.id;
@@ -85,22 +86,22 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
             }
             timerid = $window.setInterval(function () {
                 if (globals.settings.SaveTrackPosition) {
-                    this.saveTrackPosition();
+                    $rootScope.saveTrackPosition();
                 }
             }, 30000);
         }
     };
-	this.toggleMute = function () {
+    this.toggleMute = function () {
         //var audio = typeof $(player1).data("jPlayer") != 'undefined' ? true : false;
         var audio = $(player1).data("jPlayer");
         if (typeof audio != 'undefined') {
-			if (audio.options.muted) {
-				audio.options.muted = false;
-			} else {
-				audio.options.muted = true;
-			}
-		}
-	}
+            if (audio.options.muted) {
+                audio.options.muted = false;
+            } else {
+                audio.options.muted = true;
+            }
+        }
+    };
     this.saveTrackPosition = function () {
         //var audio = typeof $(player1).data("jPlayer") != 'undefined' ? true : false;
         var audio = $(player1).data("jPlayer");
@@ -146,27 +147,7 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
             if (globals.settings.Debug) { console.log('Saving Queue: No Audio Loaded'); }
         }
     };
-    this.loadTrackPosition = function () {
-        if (utils.browserStorageCheck()) {
-            // Load Saved Song
-            var song = angular.fromJson(localStorage.getItem('CurrentSong'));
-            if (song) {
-                $rootScope.playSong(true, song);
-                // Load Saved Queue
-                var items = angular.fromJson(localStorage.getItem('CurrentQueue'));
-                if (items) {
-                    //$rootScope.queue = [];
-                    $rootScope.queue = items;
-                    if ($rootScope.queue.length > 0) {
-                        notifications.updateMessage($rootScope.queue.length + ' Saved Song(s)', true);
-                    }
-                    if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + $rootScope.queue.length + ' song(s)'); }
-                }
-            }
-        } else {
-            if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser'); }
-        }
-    };
+
     this.deleteCurrentQueue = function (data) {
         if (utils.browserStorageCheck()) {
             localStorage.removeItem('CurrentQueue');
@@ -181,6 +162,7 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
         audio.play(0);
     };
     this.playSong = function (loadonly, data) {
+        console.log('playSong');
         if (globals.settings.Debug) { console.log('Play: ' + JSON.stringify(data, null, 2)); }
         angular.forEach($rootScope.queue, function(item, key) {
             item.playing = false;
@@ -208,32 +190,35 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
         $('#playermiddle').css('visibility', 'visible');
         $('#songdetails').css('visibility', 'visible');
 
-		if (globals.settings.Jukebox) {
-			$rootScope.addToJukebox(id);
-			$rootScope.loadjPlayer(player1, url, suffix, true, position);
-		} else {
-			$rootScope.loadjPlayer(player1, url, suffix, loadonly, position);
-		}
+        if (globals.settings.Jukebox) {
+            $rootScope.addToJukebox(id);
+            this.loadjPlayer(player1, url, suffix, true, position);
+        } else {
+            this.loadjPlayer(player1, url, suffix, loadonly, position);
+        }
 
-		var spechtml = '';
-		/*FIXME: var data = $(player1).data().jPlayer;
-		for (var i = 0; i < data.solutions.length; i++) {
-			var solution = data.solutions[i];
-			if (data[solution].used) {
-				spechtml += "<strong class=\"codesyntax\">" + solution + "</strong> is";
-				spechtml += " currently being used with<strong>";
-				angular.forEach(data[solution].support, function (format) {
-					if (data[solution].support[format]) {
-						spechtml += " <strong class=\"codesyntax\">" + format + "</strong>";
-					}
-				});
-				spechtml += "</strong> support";
-			}
-		}*/
-		$('#SMStats').html(spechtml);
+        var spechtml = '';
+        var playerData = $(player1).data();
+        if(playerData !== null) {
+            var jplayerData = playerData.jPlayer;
+            for (var i = 0; i < jplayerData.solutions.length; i++) {
+                var solution = jplayerData.solutions[i];
+                if (jplayerData[solution].used) {
+                    spechtml += "<strong class=\"codesyntax\">" + solution + "</strong> is";
+                    spechtml += " currently being used with<strong>";
+                    angular.forEach(jplayerData[solution].support, function (format) {
+                        if (jplayerData[solution].support[format]) {
+                            spechtml += " <strong class=\"codesyntax\">" + format + "</strong>";
+                        }
+                    });
+                    spechtml += "</strong> support";
+                }
+            }
+        }
+        $('#SMStats').html(spechtml);
         scrobbled = false;
 
-		if ($rootScope.queue.length > 0) {
+        if ($rootScope.queue.length > 0) {
             $('#queue').stop().scrollTo('#' + id, 400);
         }
 
@@ -250,7 +235,7 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
             $rootScope.$apply();
         }
     };
-    $rootScope.loadjPlayer = function (el, url, suffix, loadonly, position) {
+    this.loadjPlayer = function (el, url, suffix, loadonly, position) {
         // jPlayer Setup
         var volume = 1;
         if (utils.getValue('Volume')) {
@@ -263,8 +248,8 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
         if (globals.settings.Debug) { console.log('Setting Audio Solution: ' + audioSolution); }
         //var salt = Math.floor(Math.random() * 100000);
         //url += '&salt=' + salt;
-		var muted = false;
-		if (globals.settings.Jukebox) { muted = true;}
+        var muted = false;
+        if (globals.settings.Jukebox) { muted = true;}
         $(el).jPlayer("destroy");
         $.jPlayer.timeFormat.showHour = true;
         $(el).jPlayer({
@@ -273,7 +258,7 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
             solution: audioSolution,
             supplied: suffix,
             volume: volume,
-			muted: muted,
+            muted: muted,
             errorAlerts: false,
             warningAlerts: false,
             cssSelectorAncestor: "",
@@ -294,10 +279,10 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
                     $(this).jPlayer("setMedia", {
                         oga: url
                     });
-				} else if (suffix == 'm4a') {
-					$(this).jPlayer("setMedia", {
-						m4a: url
-					});
+                } else if (suffix == 'm4a') {
+                    $(this).jPlayer("setMedia", {
+                        m4a: url
+                    });
                 } else if (suffix == 'mp3') {
                     $(this).jPlayer("setMedia", {
                         mp3: url
@@ -338,13 +323,13 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
                     if (!getNextSong()) { // Action if we are at the last song in queue
                         if (globals.settings.LoopQueue) { // Loop to first track in queue if enabled
                             var next = $rootScope.queue[0];
-                            $rootScope.playSong(false, next);
+                            this.playSong(false, next);
                         } else if (globals.settings.AutoPlay) { // Load more tracks if enabled
                             $rootScope.getRandomSongs('play', '', '');
                             notifications.updateMessage('Auto Play Activated...', true);
                         }
                     } else {
-                        $rootScope.nextTrack();
+                        this.nextTrack();
                     }
                 }
             },
@@ -413,12 +398,7 @@ angular.module('jamstash.player.service', ['jamstash.utils', 'jamstash.settings'
             }
         });
     };
-
-    // TODO: Hyz: Those are temporary. Remove them when no one else is calling them.
-    // The idea is to have them so while refactoring so we don't break anything
-    $rootScope.defaultPlay = this.defaultPlay;
-    $rootScope.nextTrack = this.nextTrack;
-    $rootScope.previousTrack = this.previousTrack;
-    $rootScope.restartSong = this.restartSong;
-    $rootScope.playSong = this.playSong;
+    // Hyz: have to maintain that in rootScope because I don't yet know how to call it any other way
+    // from setInterval
+    $rootScope.saveTrackPosition = this.saveTrackPosition;
 }]);

@@ -13,7 +13,6 @@ describe("Player service", function() {
 
     describe("Given that I have 3 songs in my playing queue", function() {
 
-        var stubPlaySong, stubRestartSong;
         beforeEach(function() {
             $rootScope.queue = [
                 {
@@ -33,15 +32,15 @@ describe("Player service", function() {
                     album: 'redux'
                 }
             ];
-            stubPlaySong = spyOn($rootScope, "playSong").and.stub();
-            stubRestartSong = spyOn($rootScope, "restartSong").and.stub();
+            spyOn(player, "playSong").and.stub();
+            spyOn(player, "restartSong").and.stub();
         });
 
         describe("when I call nextTrack", function() {
             it("and no song is playing, it plays the first song", function() {
                 player.nextTrack();
 
-                expect(stubPlaySong).toHaveBeenCalled();
+                expect(player.playSong).toHaveBeenCalled();
             });
 
             it("and the first song is playing, it plays the second song", function() {
@@ -49,7 +48,7 @@ describe("Player service", function() {
 
                 player.nextTrack();
 
-                expect(stubPlaySong).toHaveBeenCalled();
+                expect(player.playSong).toHaveBeenCalled();
             });
 
             it("and the last song is playing, it does nothing", function() {
@@ -57,7 +56,7 @@ describe("Player service", function() {
 
                 player.nextTrack();
 
-                expect(stubPlaySong).not.toHaveBeenCalled();
+                expect(player.playSong).not.toHaveBeenCalled();
             });
         });
 
@@ -65,7 +64,7 @@ describe("Player service", function() {
             it("and no song is playing, it plays the first song", function() {
                 player.previousTrack();
 
-                expect(stubRestartSong).toHaveBeenCalled();
+                expect(player.restartSong).toHaveBeenCalled();
             });
 
             it("and the first song is playing, it restarts the first song", function() {
@@ -73,7 +72,7 @@ describe("Player service", function() {
 
                 player.previousTrack();
 
-                expect(stubRestartSong).toHaveBeenCalled();
+                expect(player.restartSong).toHaveBeenCalled();
             });
 
             it("and the last song is playing, it plays the seconde song", function() {
@@ -81,7 +80,7 @@ describe("Player service", function() {
 
                 player.previousTrack();
 
-                expect(stubPlaySong).toHaveBeenCalled();
+                expect(player.playSong).toHaveBeenCalled();
             });
         });
     });

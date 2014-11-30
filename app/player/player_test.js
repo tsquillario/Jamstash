@@ -1,17 +1,16 @@
 describe("Player controller", function() {
 	'use strict';
 
-    var player, scope, deferred;
+    var player, scope;
 
     beforeEach(function() {
         module('jamstash.player.ctrl');
 
-        inject(function ($controller, $rootScope, _player_, $q) {
+        inject(function ($controller, $rootScope, _player_) {
             scope = $rootScope.$new();
             player = _player_;
 
             // Mock the functions of the services
-            deferred = $q.defer();
             spyOn(player, "nextTrack").and.stub();
             spyOn(player, "previousTrack").and.stub();
             spyOn(player, "defaultPlay").and.stub();

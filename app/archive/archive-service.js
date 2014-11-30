@@ -3,10 +3,11 @@
 *
 * Access Archive.org
 */
-angular.module('jamstash.archive.service', ['jamstash.settings', 'jamstash.model', 'jamstash.notifications'])
+angular.module('jamstash.archive.service', ['jamstash.settings', 'jamstash.model', 'jamstash.notifications',
+    'jamstash.player.service'])
 
-.factory('archive', ['$rootScope', '$http', '$q', '$sce', 'globals', 'model', 'utils', 'map', 'notifications',
-    function($rootScope, $http, $q, $sce, globals, model, utils, map, notifications) {
+.factory('archive', ['$rootScope', '$http', '$q', '$sce', 'globals', 'model', 'utils', 'map', 'notifications', 'player',
+    function($rootScope, $http, $q, $sce, globals, model, utils, map, notifications, player) {
     'use strict';
 
     var index = { shortcuts: [], artists: [] };
@@ -192,7 +193,7 @@ angular.module('jamstash.archive.service', ['jamstash.settings', 'jamstash.model
                                 }
                             });
                             var next = $rootScope.queue[0];
-                            $rootScope.playSong(false, next);
+                            player.playSong(false, next);
                             notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
                         } else {
                             content.album = [];
