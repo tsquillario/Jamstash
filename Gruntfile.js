@@ -86,18 +86,26 @@ module.exports = function (grunt) {
         }
       },
       test: {
-      options: {
-        port: 9001,
-        middleware: function (connect) {
-          return [
-            connect().use(
-              '/bower_components',
-              connect.static('./bower_components')
-            ),
-            connect.static(appConfig.app)
-          ];
+        options: {
+          port: 9001,
+          middleware: function (connect) {
+            return [
+              connect().use(
+                '/bower_components',
+                connect.static('./bower_components')
+              ),
+              connect.static(appConfig.app)
+            ];
+          }
         }
-      }
+      },
+      coverage: {
+        options: {
+          open: true,
+          port: 9003,
+          keepalive: true,
+          base: './coverage/'
+        }
       },
       dist: {
         options: {
@@ -121,7 +129,7 @@ module.exports = function (grunt) {
       continuous: {
         singleRun: false,
         background: true,
-        browsers: ['PhantomJS'],
+        browsers: ['Chrome'],
         reporters: ['progress', 'growl']
       }
     },
@@ -348,8 +356,16 @@ module.exports = function (grunt) {
           createDirectories: true
         }
       }
-    }
+    },
 
+    // Display notfifications when builds complete using Growl
+    notify: {
+      deploy: {
+        options: {
+          message: 'Jamstash deployed to test server'
+        }
+      }
+    }
   });
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
@@ -368,6 +384,11 @@ module.exports = function (grunt) {
   grunt.registerTask('test', [
     'karma:unit',
     'jshint'
+  ]);
+
+  grunt.registerTask('coverage', [
+    'karma:unit',
+    'connect:coverage'
   ]);
 
   grunt.registerTask('build', [
@@ -389,7 +410,8 @@ module.exports = function (grunt) {
     return grunt.task.run([
       'build',
       'sshexec:cleanTest',
-      'sftp:test'
+      'sftp:test',
+      'notify:deploy'
     ]);
   });
 
