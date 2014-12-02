@@ -46,6 +46,7 @@
     "grunt-ssh": "^0.12.0",
     "grunt-usemin": "^2.6.0",
     "grunt-wiredep": "^1.9.0",
+    "jit-grunt": "^0.9.0",
     "jshint-stylish": "^1.0.0",
     "karma": "^0.12.25",
     "karma-chrome-launcher": "^0.1.5",
@@ -53,7 +54,6 @@
     "karma-growl-reporter": "^0.1.1",
     "karma-jasmine": "^0.3.0",
     "karma-phantomjs-launcher": "^0.1.4",
-    "load-grunt-tasks": "^1.0.0",
     "time-grunt": "^1.0.0"
   },
   "engines": {

@@ -9,7 +9,8 @@
 
 module.exports = function (grunt) {
 
-  grunt.loadNpmTasks('grunt-karma');
+  // Lazy-load grunt tasks automatically
+  require('jit-grunt')(grunt);
 
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
@@ -368,9 +369,6 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function(target) {
-    // Load grunt tasks automatically
-    require('load-grunt-tasks')(grunt);
-
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
@@ -384,9 +382,6 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('test', 'Run unit tests and jshint', function() {
-    // Load grunt tasks automatically
-    require('load-grunt-tasks')(grunt);
-
     return grunt.task.run([
       'karma:unit',
       'jshint'
@@ -394,9 +389,6 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('coverage', 'Run unit tests and display test coverage results on browser', function() {
-    // Load grunt tasks automatically
-    require('load-grunt-tasks')(grunt);
-
     return grunt.task.run([
       'karma:unit',
       'connect:coverage'
@@ -404,9 +396,6 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('build', 'Concatenate all JS files, minify all JS, CSS, HTML and image files and version all static assets', function() {
-    // Load grunt tasks automatically
-    require('load-grunt-tasks')(grunt);
-
     return grunt.task.run([
       'clean:dist',
       'wiredep:app',
@@ -424,9 +413,6 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('deploy', 'Build and deploy to test server', function() {
-    // Load grunt tasks automatically
-    require('load-grunt-tasks')(grunt);
-
     return grunt.task.run([
       'build',
       'sshexec:cleanTest',
