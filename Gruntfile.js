@@ -9,8 +9,7 @@
 
 module.exports = function (grunt) {
 
-  // Load grunt tasks automatically
-  require('load-grunt-tasks')(grunt);
+  grunt.loadNpmTasks('grunt-karma');
 
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
@@ -368,7 +367,10 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
+  grunt.registerTask('serve', 'Compile then start a connect web server', function(target) {
+    // Load grunt tasks automatically
+    require('load-grunt-tasks')(grunt);
+
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
@@ -381,32 +383,50 @@ module.exports = function (grunt) {
       ]);
   });
 
-  grunt.registerTask('test', [
-    'karma:unit',
-    'jshint'
-  ]);
+  grunt.registerTask('test', 'Run unit tests and jshint', function() {
+    // Load grunt tasks automatically
+    require('load-grunt-tasks')(grunt);
 
-  grunt.registerTask('coverage', [
-    'karma:unit',
-    'connect:coverage'
-  ]);
+    return grunt.task.run([
+      'karma:unit',
+      'jshint'
+    ]);
+  });
 
-  grunt.registerTask('build', [
-    'clean:dist',
-    'wiredep:app',
-    'useminPrepare',
-    'concat:generated',
-    'copy:dist',
-    'imagemin',
-    //'ngAnnotate',
-    'cssmin',
-    'uglify:generated',
-    'filerev',
-    'usemin',
-    'htmlmin'
-  ]);
+  grunt.registerTask('coverage', 'Run unit tests and display test coverage results on browser', function() {
+    // Load grunt tasks automatically
+    require('load-grunt-tasks')(grunt);
+
+    return grunt.task.run([
+      'karma:unit',
+      'connect:coverage'
+    ]);
+  });
+
+  grunt.registerTask('build', 'Concatenate all JS files, minify all JS, CSS, HTML and image files and version all static assets', function() {
+    // Load grunt tasks automatically
+    require('load-grunt-tasks')(grunt);
+
+    return grunt.task.run([
+      'clean:dist',
+      'wiredep:app',
+      'useminPrepare',
+      'concat:generated',
+      'copy:dist',
+      'imagemin',
+      //'ngAnnotate',
+      'cssmin',
+      'uglify:generated',
+      'filerev',
+      'usemin',
+      'htmlmin'
+    ]);
+  });
 
   grunt.registerTask('deploy', 'Build and deploy to test server', function() {
+    // Load grunt tasks automatically
+    require('load-grunt-tasks')(grunt);
+
     return grunt.task.run([
       'build',
       'sshexec:cleanTest',
