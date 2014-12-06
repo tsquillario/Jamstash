@@ -285,7 +285,7 @@ span.apiversion
 	height: 100%;
 	overflow-y: auto;
     width: 350px;
-    background: none repeat scroll 0 0 #fcfcfc;
+    background: rgba(255, 255, 255, 0.94);
     border-left: 1px solid #ddd;
     position: absolute;
     top: 41px;
@@ -967,7 +967,7 @@ ul.songlist .row a.remove:hover
     background: url('../images/minus_8x2.png') no-repeat 6px center #DEECFB;
 }
 ul.songlist li:nth-child(odd) { background-color:#f7f7f7; }
-ul.songlist li:nth-child(even) { background-color:#fff; }
+ul.songlist li:nth-child(even) { background-color:none; }
 ul.songlist li.playing
 {
     background-image: url('../images/play_alt_gd_16x16.png');
@@ -1140,6 +1140,7 @@ ul.songlist li:hover
 }
 #SideQueue
 {
+
 }
 #SideQueue .row {
 	display: block;

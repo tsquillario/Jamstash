@@ -41,6 +41,8 @@ angular.module('JamStash')
             angular.forEach($rootScope.queue, function (item, key) {
                 if (item.playing === true) {
                     song = item;
+                } else {
+                    item.playing = false;
                 }
             });
             var index = $rootScope.queue.indexOf(song);
