@@ -65,6 +65,8 @@ angular.module('jamstash.settings', [])
     this.SavedGenres = [];
     this.Player1 = '#playdeck_1';
     this.archiveUrl = 'https://archive.org/';
+    this.ChangeLog = null;
+    this.Messages = [];
 
     this.BaseURL = function () { return this.settings.Server + '/rest'; };
     this.BaseParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=' + this.settings.Protocol + '&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };

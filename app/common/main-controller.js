@@ -9,6 +9,7 @@
     $rootScope.playingSong = null;
     $rootScope.MusicFolders = [];
     $rootScope.Genres = [];
+    $rootScope.Messages = [];
     
     $rootScope.SelectedMusicFolder = "";
     $rootScope.unity = null;
@@ -301,6 +302,9 @@
     $scope.isActive = function (route) {
         return route === $location.path();
     };
+    $rootScope.reloadRoute = function (reload) {
+        utils.reloadRoute(reload);
+    };
     $rootScope.getSplitPosition = function (scope, elm) {
         window.alert(elm.getBoundingClientRect().left);
     };
@@ -433,6 +437,7 @@
     $scope.toTrusted = function (html) {
         return $sce.trustAsHtml(html);
     };
+    
 
     /* Launch on Startup */
     $scope.loadSettings();

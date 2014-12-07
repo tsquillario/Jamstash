@@ -872,7 +872,7 @@ ul.songlist .row .itemactions
 {
     /*width: 15%;*/
     float: left;
-    padding: 6px 10px 0 6px;
+    padding: 6px 10px 0 15px;
 }
 ul.songlist .row .itemactions a
 {

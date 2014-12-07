@@ -23,7 +23,9 @@
 <body ng-controller="AppCtrl">
     <div id="container">
         <div id="header">
-            <div id="messages"></div>
+            <div id="messages">
+                <span id="msg_{{$index}}" class="message" ng-repeat="item in Messages track by $index" ng-bind-html="item"></span>
+            </div>
             <div id="loading"></div>
             <a id="jslogo" title="Jamstash" class="showQueue" href=""></a>
             <a id="sslogo" target="_blank" ng-show="settings.Server" ng-href="{{settings.Server}}" title="{{settings.Server}}"></a>

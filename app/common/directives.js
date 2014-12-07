@@ -11,15 +11,6 @@ angular.module('JamStash').directive('sortable', function () {
         }
     };
 })
-/*
-.directive('split', function () {
-    return {
-        link: function (scope, elm, attrs) {
-            elm.splitPane();
-        }
-    };
-})
-*/
 .directive('fancybox', ['$compile', function($compile){
     return {
         restrict: 'A',
@@ -122,5 +113,23 @@ angular.module('JamStash').directive('sortable', function () {
                 event.preventDefault();
             }
         });
+    };
+})
+.directive("ngMsgs", function() {
+    /* Not Using */
+    return {
+        restrict: 'E',
+        transclude : false,
+        scope: {
+             msgs: "="
+          },
+        template: '<span id="msg_{{$index}}" class="message">{{ item }}</span>',
+        link: function (scope, elm, attrs) {
+            scope.$watch(scope.Messages, function () {
+                var content = $compile((template)(scope));
+                elm.append(content);
+                $(elm).parent().fadeIn();
+            });
+        }
     };
 });

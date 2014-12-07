@@ -337,6 +337,13 @@ angular.module('jamstash.utils', ['jamstash.settings'])
             }
         }
     };
+    this.reloadRoute = function (date) {
+        if (reload) {
+            $window.location.reload();
+        } else {
+            $route.reload();
+        }
+    };
     this.parseDate = function (date) {
         // input: "2012-09-23 20:00:00.0"
         var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

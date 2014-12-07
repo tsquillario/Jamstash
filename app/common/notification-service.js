@@ -11,11 +11,8 @@ angular.module('jamstash.notifications', [])
     var msgIndex = 1;
     this.updateMessage = function (msg, autohide) {
         if (msg !== '') {
-            var id = msgIndex;
-            $('#messages').append('<span id=\"msg_' + id + '\" class="message">' + msg + '</span>');
+            $rootScope.Messages.push(msg);
             $('#messages').fadeIn();
-            $("#messages").scrollTo('100%');
-            var el = '#msg_' + id;
             if (autohide) {
                 setTimeout(function () {
                     $(el).fadeOut(function () { $(this).remove(); });
@@ -26,7 +23,6 @@ angular.module('jamstash.notifications', [])
                     return false;
                 });
             }
-            msgIndex++;
         }
     };
     this.requestPermissionIfRequired = function () {

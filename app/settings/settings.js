@@ -67,7 +67,16 @@
     };
     json.getChangeLog(function (data) {
         $scope.changeLog = data.slice(0, 10);
-        //notifications.updateMessage('Latest Version: ' + $scope.changeLog[0].version, true);
+        globals.ChangeLog = data;
+        var newVersion = $scope.changeLog[0].version;
+        if (!utils.getValue('JamstashVersion')) {
+            utils.setValue('JamstashVersion', newVersion);
+        }
+        var oldVersion = utils.getValue('JamstashVersion');
+        if (utils.checkVersionNewer(oldVersion, newVersion)) {
+            utils.setValue('JamstashVersion', newVersion);
+            notifications.updateMessage('Version ' + oldVersion + ' to ' + newVersion, true);
+        }
     });
     $scope.changeLogShowMore = function () {
         json.getChangeLog(function (data) {

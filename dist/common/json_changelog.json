@@ -1,7 +1,14 @@
 ﻿[
+    {   
+        "date": "12/6/2014", "version": "4.2.4",
+        "changes": [
+        { "text": "- Double click plays album, Single click to select song. Other bug fixes."}
+        ]
+    },
     {
         "date": "11/21/2014", "version": "4.2.3",
         "changes": [
+        { "text": "- Responsive design upgrades for mobile & smaller screens!"},
         { "text": "- Album Art will change with song if Preview is already open."},
         { "text": "- Removed Sway.fm, try <a href=\"https://github.com/borismus/keysocket\" target=\"_blank\">key-socket-media-keys</a> Chrome Extension for Media Key support."}
         ]
