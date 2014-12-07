@@ -109,7 +109,7 @@
         }
     };
     $rootScope.showQueue = function () {
-        $('#SideBar').css('display', '');
+        $('#SideBar').css('display', 'block');
         $('#right-component').removeClass('lgcolumn_expanded');
     };
     $rootScope.hideQueue = function () {
