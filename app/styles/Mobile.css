@@ -23,17 +23,20 @@
 	ul.songlist .row .itemactions {
 		padding: 6px 10px 0 12px;
 	}
+	ul.songlist .albumgrid {
+		padding: 0px 0px 22px 0px;
+		width: 150px;
+	}
 	ul.songlist .albumgrid .itemactions {
 		width: auto;
 	}
 	ul.songlist .albumgrid .itemactions a {
-		padding: 6px;
+		padding: 5px;
 		background-position: center center;
 	}
-	ul.songlist .albumgrid {
-		padding: 0px 0px 22px 0px;
-	}
 	ul.songlist .albumgrid .albumart img {
+		width: 100px;
+		height: 100px;
 		margin-right: 5px;
 	}
 	ul.songlist .albumgrid .albuminfo {
@@ -41,6 +44,10 @@
 	}
 	ul.songlist .album a:hover {
 		background-position: center center;
+	}
+	ul.songlist .album .albumart {
+		width: 150px;
+		text-align: center;
 	}
 	#songdetails {
 		width: auto;
@@ -66,8 +73,5 @@
 	}
 	.lgcolumn {
 		margin-right: 0 !important;
-	}
-	ul.songlist .albumgrid {
-		width: 170px;
 	}
 }
