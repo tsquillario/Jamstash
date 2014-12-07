@@ -1,12 +1,33 @@
 /*@media only screen and (max-device-width: 680px) {*/
 @media only screen and (max-width: 500px) {
-
+	
+}
+@media only screen and (max-width: 600px) {
 	.smcolumn {
 		width: 75%;
-		background: rgba(255, 255, 255, 0.94);
+		background: rgba(255, 255, 255, 0.8);
 		border-bottom; none;
 		min-width: 292px;
 	}
+	#nav {
+		border-bottom: 1px solid #D5D5D5;
+		height: 39px;
+		box-shadow: 0 2px 1px -2px rgba(0, 0, 0, 0.2);
+	}
+	.smcolumn {
+		top: 80px;
+		margin-bottom: -82px;
+	}
+	.lgsection {
+		top: 80px;
+		margin-bottom: -82px;
+	}
+	.subactions {
+		margin: 11px 5px 0 0;
+		float: left;
+	}
+}
+@media only screen and (max-width: 840px) {
 	.lgcolumn {
 		margin-left: 0;
 	}
@@ -26,6 +47,7 @@
 	ul.songlist .albumgrid {
 		padding: 0px 0px 22px 0px;
 		width: 150px;
+		height: 160px;
 	}
 	ul.songlist .albumgrid .itemactions {
 		width: auto;
@@ -34,9 +56,12 @@
 		padding: 5px;
 		background-position: center center;
 	}
+	ul.songlist .albumgrid .itemactions a:hover {
+		box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
+	}
 	ul.songlist .albumgrid .albumart img {
-		width: 100px;
-		height: 100px;
+		width: 125px;
+		height: 125px;
 		margin-right: 5px;
 	}
 	ul.songlist .albumgrid .albuminfo {
@@ -58,11 +83,7 @@
 	#songdetails_controls {
 		display: none;	
 	}
-	.actions {
-		margin-left: 184px;
-	}
 	#globalactions {
-		display: none;
 	}
 	#SettingsForm {
 	}
@@ -70,6 +91,9 @@
 @media only screen and (max-width: 1200px) {
 	#SideBar {
 		display: none;
+		top: 80px;
+		margin-bottom: -82px;
+		width: 100%;
 	}
 	.lgcolumn {
 		margin-right: 0 !important;
