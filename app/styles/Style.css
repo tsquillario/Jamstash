@@ -238,7 +238,7 @@ span.apiversion
     background: #fff;
 }
 .smcolumn .leftactions {
-    margin: 0 5px 0 0;
+    margin: 5px 5px 0 0;
     float: right;
 }
 .lgcolumn 
@@ -639,7 +639,7 @@ ul.tablist li a:hover
 #BreadCrumb 
 {
     float: left;
-    margin: 14px 0 0 0;
+    margin: 16px 0 0 0;
     padding: 2px 0;
     color: #AEAEA7;
     border-radius: .4em;  
