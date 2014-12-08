@@ -139,7 +139,7 @@ angular.module('jamstash.archive.service', ['jamstash.settings', 'jamstash.model
                             angular.forEach(items, function (item, key) {
                                 content.album.push(mapAlbum(item));
                             });
-                            notifications.updateMessage(content.album.length, true);
+                            notifications.updateMessage(content.album.length + ' Items Returned', true);
                         } else {
                             notifications.updateMessage("Sorry :(", true);
                         }

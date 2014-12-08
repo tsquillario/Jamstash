@@ -73,14 +73,14 @@
             </div>
         </div>
 		<div id="left-component" class="smcolumn noselect" tabindex="0">
+			<div class="leftactions">
+				<a href="" class="button" id="action_ToggleArtists" ng-click="toggleArtists()" title="Toggle Artists"><img src="images/arrow_right_gl_8x8.png" /></a>
+			</div>
 			<ul class="tablist">
 				<li class="" ng-click="toggleIndex()"><a href="">Artists</a></li>
 				<li class="" ng-click="togglePlaylist()"><a href="">Playlists</a></li>
 				<li class="" ng-click="togglePodcast()"><a href="">Podcasts</a></li>
 			</ul>
-			<div class="leftactions">
-				<a href="" class="button" id="action_ToggleArtists" ng-click="toggleArtists()" title="Toggle Artists"><img src="images/arrow_right_gl_8x8.png" /></a>
-			</div>
 			<div class="clear"></div>
 			<div id="IndexContainer" class="leftsubsection" ng-show="showIndex">
 				<select id="MusicFolders" class="folders" ng-model="$root.SelectedMusicFolder" ng-options="o.name for o in MusicFolders"></select>
