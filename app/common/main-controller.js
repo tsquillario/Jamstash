@@ -1,6 +1,6 @@
 ﻿angular.module('JamStash')
-.controller('AppCtrl', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', 'utils', 'globals', 'model', 'notifications', 'player',
-    function($scope, $rootScope, $document, $window, $location, $cookieStore, utils, globals, model, notifications, player) {
+.controller('AppCtrl', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player',
+    function($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player) {
     'use strict';
 
     $rootScope.settings = globals.settings;
@@ -162,7 +162,7 @@
             }
         }
     };
-
+    $rootScope.showIndex = false;
     $scope.dragStart = function (e, ui) {
         ui.item.data('start', ui.item.index());
     };
@@ -173,6 +173,10 @@
             $rootScope.queue.splice(start, 1)[0]);
         $scope.$apply();
     };
+    $(document).on( 'click', 'message', function() { 
+        $(this).fadeOut(function () { $(this).remove(); });
+        return false;
+    })
     $document.keydown(function (e) {
         $scope.scrollToIndex(e);
     });
@@ -328,6 +332,14 @@
         });
     };
     $scope.ping = function () {
+        return $http({
+            method: 'GET',
+            timeout: globals.settings.Timeout,
+            url: globals.BaseURL() + '/ping.view?' + globals.BaseParams(),
+        }).error(function (data) {
+            notifications.updateMessage('Unable to connect to Subsonic server');
+        });
+        /*
         $.ajax({
             url: globals.BaseURL() + '/ping.view?' + globals.BaseParams(),
             method: 'GET',
@@ -346,6 +358,7 @@
                 notifications.updateMessage('Unable to connect to Subsonic server');
             }
         });
+        */
     };
     $scope.queueRemoveSelected = function (data, event) {
         angular.forEach($scope.selectedSongs, function (item, key) {

@@ -11,17 +11,12 @@ angular.module('jamstash.notifications', [])
     var msgIndex = 1;
     this.updateMessage = function (msg, autohide) {
         if (msg !== '') {
-            $rootScope.Messages.push(msg);
+            var id = $rootScope.Messages.push(msg) - 1;
             $('#messages').fadeIn();
             if (autohide) {
                 setTimeout(function () {
-                    $(el).fadeOut(function () { $(this).remove(); });
+                    $('#msg_' + id).fadeOut(function () { $(this).remove(); });
                 }, globals.settings.Timeout);
-            } else {
-                $(el).click(function () {
-                    $(el).fadeOut(function () { $(this).remove(); });
-                    return false;
-                });
             }
         }
     };

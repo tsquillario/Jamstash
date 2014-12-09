@@ -24,17 +24,17 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
     ];
     $scope.SelectedAlbumSort = globals.settings.DefaultAlbumSort;
     $scope.AlbumSort = globals.AlbumSorts;
-    $scope.showIndex = subsonic.showIndex;
+    $rootScope.showIndex = subsonic.showIndex;
     $scope.$watch("showIndex", function (newValue, oldValue) {
         if (newValue !== oldValue) {
-            subsonic.showIndex = $scope.showIndex;
+            subsonic.showIndex = $rootScope.showIndex;
         }
     });
     $scope.toggleIndex = function () {
-        if ($scope.showIndex) {
-            $scope.showIndex = false;
+        if ($rootScope.showIndex) {
+            $rootScope.showIndex = false;
         } else {
-            $scope.showIndex = true;
+            $rootScope.showIndex = true;
             $scope.showPlaylist = false;
             $scope.showPodcast = false;
         }
@@ -51,7 +51,7 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
             $scope.showPlaylist = false;
         } else {
             $scope.showPlaylist = true;
-            $scope.showIndex = false;
+            $rootScope.showIndex = false;
             $scope.showPodcast = false;
         }
         $scope.saveDefaultSection('playlist');
@@ -68,7 +68,7 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
         } else {
             $scope.showPodcast = true;
             $scope.showPlaylist = false;
-            $scope.showIndex = false;
+            $rootScope.showIndex = false;
         }
         $scope.saveDefaultSection('podcast');
     };
@@ -79,7 +79,7 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
         var section = utils.getValue('DefaultSection');
         switch (section) {
             case 'index':
-                $scope.showIndex = true;
+                $rootScope.showIndex = true;
                 break;
             case 'playlist':
                 $scope.showPlaylist = true;
