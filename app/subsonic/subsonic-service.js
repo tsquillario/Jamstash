@@ -30,7 +30,6 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
     var genres = [];
     var podcasts = [];
     var offset = 0;
-    var showIndex = false;
     var showPlaylist = false;
     var showPodcast = false;
 
@@ -71,7 +70,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
     };
     
     return {
-        showIndex: showIndex,
+        showIndex: $rootScope.showIndex,
         showPlaylist: showPlaylist,
         getSongTemplate: function (callback) {
             var id = '16608';

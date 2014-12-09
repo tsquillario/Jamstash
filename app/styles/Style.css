@@ -238,8 +238,9 @@ span.apiversion
     background: #fff;
 }
 .smcolumn .leftactions {
-    margin: 5px 5px 0 0;
-    float: right;
+    margin: 46px 2px 0 0;
+    position: fixed;
+    left: 264px;
 }
 .lgcolumn 
 {
@@ -1080,14 +1081,14 @@ ul.songlist li:hover
 .actions
 {
     height: 30px;
-    margin: 6px 5px 0 184px;
+    margin: 6px 5px 0 185px;
     padding: 0 0 0 5px;
 }
 .subactions
 {
-    height: 29px;
+    height: 30px;
     /* width: 660px; */
-    margin: 5px 105px 0 0;
+    margin: 6px 125px 0 5px;
     padding: 0 0 0 5px;
     float: right;
 }
@@ -1097,7 +1098,7 @@ ul.songlist li:hover
     top: 0px;
     right: 65px;
     height: 29px;
-    margin: 5px 0 0 0;
+    margin: 6px 0 0 0;
 }
 #search
 {
@@ -1243,7 +1244,7 @@ ul.songlist li:hover
 #player
 {
     border-top: 1px solid #cbcbcb;
-    border-bottom: 1px solid #cbcbcb;
+    border-bottom: none;
     margin: 4px 0 0 0;
     /*height: 75px;*/
     position: absolute;

@@ -1,8 +1,4 @@
-/*@media only screen and (max-device-width: 680px) {*/
-@media only screen and (max-width: 500px) {
-	
-}
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 400px) {
 	.smcolumn {
 		width: 75%;
 		background: rgba(255, 255, 255, 0.8);
@@ -50,7 +46,7 @@
 	}
 	ul.songlist .albumgrid {
 		padding: 0px 0px 22px 0px;
-		width: 150px;
+		width: 162px;
 		height: 160px;
 	}
 	ul.songlist .albumgrid .itemactions {
@@ -70,7 +66,7 @@
 		margin-right: 5px;
 	}
 	ul.songlist .albumgrid .albuminfo {
-		width: 150px;
+		width: 142px;
 	}
 	ul.songlist .album a:hover {
 		background-position: center center;
