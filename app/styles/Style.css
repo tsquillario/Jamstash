@@ -294,6 +294,7 @@ span.apiversion
     top: 40px;
     right: 0;
 	margin-bottom: -42px;
+    opacity: .95;
 }
 #SideBar .header
 {
