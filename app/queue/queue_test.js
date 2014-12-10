@@ -13,7 +13,7 @@ describe("Queue controller", function() {
             player = _player_;
 
             // Mock the functions of the services
-            spyOn(player, "playSong").and.stub();
+            spyOn(player, "play").and.stub();
 
             $controller('QueueController', {
                 $rootScope: $rootScope,
@@ -23,11 +23,11 @@ describe("Queue controller", function() {
             });
         });
     });
-    it("When I call playSong, it calls playSong in the player service", function() {
+    it("When I call playSong, it calls play in the player service", function() {
         var fakeSong = {"id": 3174};
 
-        scope.playSong(true, fakeSong);
+        scope.playSong(fakeSong);
 
-        expect(player.playSong).toHaveBeenCalledWith(true, fakeSong);
+        expect(player.play).toHaveBeenCalledWith(fakeSong);
     });
 });

@@ -23,7 +23,7 @@ describe("Subsonic controller", function() {
                 return {id: song.id};
             });
             spyOn(notifications, 'updateMessage').and.stub();
-            spyOn(player, 'playSong').and.stub();
+            spyOn(player, 'play').and.stub();
             $rootScope.queue = [];
 
             $controller('SubsonicController', {
@@ -78,7 +78,7 @@ describe("Subsonic controller", function() {
                 $rootScope.$apply();
 
                 expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
-                expect(player.playSong).toHaveBeenCalledWith(false, {id: "2548"});
+                expect(player.play).toHaveBeenCalledWith({id: "2548"});
                 expect($rootScope.queue).toEqual([
                     {id: "2548"}, {id: "8986"}, {id: "2986"}
                 ]);
@@ -95,7 +95,7 @@ describe("Subsonic controller", function() {
             $rootScope.$apply();
 
             expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
-            expect(player.playSong).not.toHaveBeenCalled();
+            expect(player.play).not.toHaveBeenCalled();
             expect($rootScope.queue).toEqual([{id: "7666"}]);
             expect(notifications.updateMessage).toHaveBeenCalledWith('No starred songs found on the Subsonic server.', true);
         });
@@ -157,12 +157,12 @@ describe("Subsonic controller", function() {
         });
     });
 
-    it("When I call playSong, it calls playSong in the player service", function() {
+    it("When I call playSong, it calls play in the player service", function() {
         var fakeSong = {"id": 3572};
 
-        scope.playSong(false, fakeSong);
+        scope.playSong(fakeSong);
 
-        expect(player.playSong).toHaveBeenCalledWith(false, fakeSong);
+        expect(player.play).toHaveBeenCalledWith(fakeSong);
     });
 
     //TODO: JMA: all starred

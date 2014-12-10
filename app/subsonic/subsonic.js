@@ -283,7 +283,7 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             if(action === 'play') {
                 $rootScope.queue = [].concat(mappedSongs);
                 notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);
-                player.playSong(false, $rootScope.queue[0]);
+                player.play($rootScope.queue[0]);
             } else if (action === 'add') {
                 $rootScope.queue = $rootScope.queue.concat(mappedSongs);
                 notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);
@@ -448,8 +448,8 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             end = ui.item.index();
         $scope.song.splice(end, 0, $scope.song.splice(start, 1)[0]);
     };
-    $scope.playSong = function (loadonly, song) {
-        player.playSong(loadonly, song);
+    $scope.playSong = function (song) {
+        player.play(song);
     };
 
     /* Launch on Startup */

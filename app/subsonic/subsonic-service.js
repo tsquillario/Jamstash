@@ -318,7 +318,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                                     $rootScope.queue.push(map.mapSong(item));
                                 });
                                 var next = $rootScope.queue[0];
-                                player.playSong(false, next);
+                                player.play(next);
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else {
                                 if (typeof data["subsonic-response"].directory.id != 'undefined') {
@@ -466,7 +466,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                                 $rootScope.queue.push(map.mapSong(item));
                             });
                             var next = $rootScope.queue[0];
-                            player.playSong(false, next);
+                            player.play(next);
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else {
                             content.album = [];
@@ -545,7 +545,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                                 $rootScope.queue.push(map.mapSong(item));
                             });
                             var next = $rootScope.queue[0];
-                            player.playSong(false, next);
+                            player.play(next);
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else {
                             content.album = [];
@@ -775,7 +775,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                                     }
                                 });
                                 var next = $rootScope.queue[0];
-                                player.playSong(false, next);
+                                player.play(next);
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else {
                                 content.album = [];

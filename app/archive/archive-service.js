@@ -193,7 +193,7 @@ angular.module('jamstash.archive.service', ['jamstash.settings', 'jamstash.model
                                 }
                             });
                             var next = $rootScope.queue[0];
-                            player.playSong(false, next);
+                            player.play(next);
                             notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
                         } else {
                             content.album = [];
