@@ -1,13 +1,13 @@
 /**
-* jamstash.subsonic.ctrl Module
+* jamstash.subsonic.controller Module
 *
 * Access and use the Subsonic Server. The Controller is in charge of relaying the Service's messages to the user through the
 * notifications.
 */
-angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service', 'jamstash.player.service'])
+angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'jamstash.player.service'])
 
-.controller('SubsonicCtrl', ['$scope', '$rootScope', '$routeParams', 'utils', 'globals', 'map', 'subsonic', 'notifications', 'player',
-    function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications, player) {
+.controller('SubsonicController', ['$scope', '$rootScope', '$routeParams', 'utils', 'globals', 'map', 'subsonic', 'notifications', 'player',
+    function ($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications, player) {
     'use strict';
 
     $scope.settings = globals.settings;

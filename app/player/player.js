@@ -3,9 +3,9 @@
 *
 * Control the HTML5 player through jplayer.js
 */
-angular.module('jamstash.player.ctrl', ['jamstash.player.service', 'jamstash.player.directive'])
+angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamstash.player.directive'])
 
-.controller('PlayerCtrl', ['$scope', 'player', function($scope, player){
+.controller('PlayerController', ['$scope', 'player', function($scope, player){
 	'use strict';
 
     $scope.previousTrack = function () {

@@ -4,7 +4,7 @@ describe("Queue controller", function() {
     var player, $rootScope, scope, globals;
 
     beforeEach(function() {
-        module('jamstash.queue.ctrl');
+        module('jamstash.queue.controller');
 
         inject(function ($controller, _$rootScope_, _globals_, _player_) {
             $rootScope = _$rootScope_;
@@ -15,7 +15,7 @@ describe("Queue controller", function() {
             // Mock the functions of the services
             spyOn(player, "playSong").and.stub();
 
-            $controller('QueueCtrl', {
+            $controller('QueueController', {
                 $rootScope: $rootScope,
                 $scope: scope,
                 globals: globals,

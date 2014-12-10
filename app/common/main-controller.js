@@ -1,5 +1,5 @@
 ﻿angular.module('JamStash')
-.controller('AppCtrl', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player',
+.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player',
     function($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player) {
     'use strict';
 
