@@ -21,7 +21,7 @@
     <link href="styles/Mobile.css" rel="stylesheet" type="text/css" data-name="main" />
     <link href="" rel="stylesheet" type="text/css" data-name="theme" />
 </head>
-<body ng-controller="AppCtrl">
+<body ng-controller="AppController">
     <div id="container">
         <div id="header">
             <div id="messages">
@@ -49,7 +49,7 @@
 
             <div class="clear"></div>
         </div><!-- end #content -->
-        <div id="SideBar" ng-controller="QueueCtrl">
+        <div id="SideBar" ng-controller="QueueController">
             <div class="headeractions">
                 <a class="buttonimg" title="Shuffle Queue" ng-click="queueShuffle()"><img src="images/fork_gd_11x12.png"></a>
                 <a class="buttonimg" id="action_Empty" title="Delete Queue" ng-click="queueEmpty()"><img src="images/trash_fill_gd_12x12.png"></a>
@@ -75,7 +75,7 @@
             -->
         </div>
         <!-- Player -->
-       <jamstash-player ng-controller="PlayerCtrl"></jamstash-player>
+       <jamstash-player ng-controller="PlayerController"></jamstash-player>
     </div> <!-- End container -->
     <script>
         (function (i, s, o, g, r, a, m) {

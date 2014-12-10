@@ -7,7 +7,7 @@ describe("Subsonic controller", function() {
     beforeEach(function() {
         jasmine.addCustomEqualityTester(angular.equals);
 
-        module('jamstash.subsonic.ctrl');
+        module('jamstash.subsonic.controller');
 
         inject(function ($controller, _$rootScope_, utils, globals, map, _subsonic_, _notifications_, $q, _player_) {
             $rootScope = _$rootScope_;
@@ -26,7 +26,7 @@ describe("Subsonic controller", function() {
             spyOn(player, 'playSong').and.stub();
             $rootScope.queue = [];
 
-            $controller('SubsonicCtrl', {
+            $controller('SubsonicController', {
                 $scope: scope,
                 $rootScope: $rootScope,
                 $routeParams: {},

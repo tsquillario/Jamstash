@@ -4,7 +4,7 @@ describe("Player controller", function() {
     var player, scope;
 
     beforeEach(function() {
-        module('jamstash.player.ctrl');
+        module('jamstash.player.controller');
 
         inject(function ($controller, $rootScope, _player_) {
             scope = $rootScope.$new();
@@ -15,7 +15,7 @@ describe("Player controller", function() {
             spyOn(player, "previousTrack").and.stub();
             spyOn(player, "defaultPlay").and.stub();
 
-            $controller('PlayerCtrl', {
+            $controller('PlayerController', {
                 $scope: scope,
                 player: player
             });

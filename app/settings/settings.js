@@ -1,11 +1,10 @@
 ﻿angular.module('JamStash')
 
-.controller('SettingsCtrl', ['$rootScope', '$scope', '$routeParams', '$location',  '$http', '$q', 'utils', 'globals', 'json', 'notifications', 'player',
-    function ($rootScope, $scope, $routeParams, $location, $http, $q, utils, globals, json, notifications, player) {
+.controller('SettingsController', ['$rootScope', '$scope', '$routeParams', '$location', 'utils', 'globals', 'json', 'notifications', 'player',
+    function ($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, player) {
     'use strict';
     $rootScope.hideQueue();
     $scope.settings = globals.settings; /* See service.js */
-    $scope.ApiVersion = globals.settings.ApiVersion;
     $scope.Timeouts = [
         { id: 10000, name: 10 },
         { id: 20000, name: 20 },
@@ -28,34 +27,6 @@
             $('#AZIndex').show();
         }
     });
-    $scope.ping = function () {
-        var exception = {reason: 'Error when contacting the Subsonic server.'};
-        var deferred = $q.defer();
-        var httpPromise;
-        httpPromise = $http({
-            method: 'GET',
-            timeout: globals.settings.Timeout,
-            // 2015-1-5: This API call only works with json as of SS v5.0?!?
-            //url: globals.BaseURL() + '/ping.view?' + globals.BaseParams(),
-            url: globals.BaseURL() + '/ping.view?' + globals.BaseJSONParams()
-        });
-        httpPromise.success(function(data, status) {
-            var subsonicResponse = (data['subsonic-response'] !== undefined) ? data['subsonic-response'] : {status: 'failed'};
-            if (subsonicResponse.status === 'ok') {
-                $scope.ApiVersion = subsonicResponse.version;
-                globals.settings.ApiVersion = $scope.ApiVersion;
-                deferred.resolve(data);
-            } else {
-                if(subsonicResponse.status === 'failed' && subsonicResponse.error !== undefined) {
-                    notifications.updateMessage(subsonicResponse.error.message);
-                }
-            }
-        }).error(function(data, status) {
-            exception.httpError = status;
-            deferred.reject(exception);
-        });
-        return deferred.promise;
-    };
     $scope.reset = function () {
         utils.setValue('Settings', null, true);
         $scope.loadSettings();
@@ -92,9 +63,16 @@
         notifications.updateMessage('Settings Updated!', true);
         $scope.loadSettings();
         if (globals.settings.Server !== '' && globals.settings.Username !== '' && globals.settings.Password !== '') {
-            $scope.ping().then(function() {
-                $location.path('/library').replace();
-                $rootScope.showIndex = true;
+            $scope.ping().then(function(data) {
+                if (data["subsonic-response"].status == 'ok') {
+                    globals.settings.ApiVersion = data["subsonic-response"].version;
+                    $location.path('/library').replace();
+                    $rootScope.showIndex = true;
+                } else {
+                    if (typeof data["subsonic-response"].error != 'undefined') {
+                        notifications.updateMessage(data["subsonic-response"].error.message);
+                    }
+                }
             });
         }
     };
