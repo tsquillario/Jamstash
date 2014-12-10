@@ -13,7 +13,7 @@ describe("Player controller", function() {
             // Mock the functions of the services
             spyOn(player, "nextTrack").and.stub();
             spyOn(player, "previousTrack").and.stub();
-            spyOn(player, "defaultPlay").and.stub();
+            spyOn(player, "play").and.stub();
 
             $controller('PlayerController', {
                 $scope: scope,
@@ -34,9 +34,9 @@ describe("Player controller", function() {
         expect(player.nextTrack).toHaveBeenCalled();
     });
 
-    it("When I call defaultPlay, it calls defaultPlay in the player service", function() {
-        scope.defaultPlay();
+    it("When I call play, it calls play in the player service", function() {
+        scope.play();
 
-        expect(player.defaultPlay).toHaveBeenCalled();
+        expect(player.play).toHaveBeenCalled();
     });
 });

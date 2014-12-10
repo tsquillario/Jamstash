@@ -279,7 +279,7 @@
         $rootScope.selectAll(songs);
         $rootScope.addSongsToQueue();
         var next = $rootScope.queue[0];
-        player.playSong(false, next);
+        player.play(next);
     };
     $rootScope.playFrom = function (index, songs) {
         var from = songs.slice(index,songs.length);
@@ -292,7 +292,7 @@
             $rootScope.queue = [];
             $rootScope.addSongsToQueue();
             var next = $rootScope.queue[0];
-            player.playSong(false, next);
+            player.play(next);
         }
     };
     $rootScope.addSongsToQueue = function () {
@@ -446,7 +446,7 @@
             // Load Saved Song
             var song = angular.fromJson(localStorage.getItem('CurrentSong'));
             if (song) {
-                player.playSong(true, song);
+                player.load(song);
                 // Load Saved Queue
                 var items = angular.fromJson(localStorage.getItem('CurrentQueue'));
                 if (items) {

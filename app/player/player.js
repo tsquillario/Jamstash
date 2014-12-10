@@ -16,7 +16,7 @@ angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamsta
         player.nextTrack();
     };
 
-    $scope.defaultPlay = function () {
-        player.defaultPlay();
+    $scope.play = function () {
+        player.play();
     };
 }]);

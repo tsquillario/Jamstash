@@ -8,7 +8,7 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
     //angular.copy($rootScope.queue, $scope.song);
     $scope.itemType = 'pl';
 
-    $scope.playSong = function (loadonly, song) {
-        player.playSong(loadonly, song);
+    $scope.playSong = function (song) {
+        player.play(song);
     };
 }]);
