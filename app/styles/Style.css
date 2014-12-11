@@ -231,14 +231,14 @@ span.apiversion
 	*/
 	border-right: 1px solid #ddd;
     border-top: 1px solid #cbcbcb;
-	position: absolute;
+	position: fixed;
 	top: 40px;
 	left: 0;
 	margin-bottom: -42px;
     background: #fff;
 }
 .smcolumn .leftactions {
-    margin: 46px 2px 0 0;
+    margin: 6px 0px 0 0;
     position: fixed;
     left: 264px;
 }
@@ -273,7 +273,7 @@ span.apiversion
     border-bottom: 1px solid #cbcbcb;
     width:  100%; 
     overflow: hidden;
-    position: absolute;
+    position: fixed;
     top: 40px;
 	/*
     bottom: 84px;

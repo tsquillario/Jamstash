@@ -25,7 +25,7 @@
     <div id="container">
         <div id="header">
             <div id="messages">
-                <span class="message" ng-repeat="item in Messages track by $index" ng-bind-html="item"></span>
+                <span ng-attr-id="{{ 'msg_' + $index }}" class="message" ng-repeat="item in Messages track by $index" ng-bind-html="item"></span>
             </div>
             <div id="loading"></div>
             <a id="jslogo" title="Jamstash" class="showQueue" href=""></a>
@@ -36,8 +36,6 @@
             <div id="nav">
                 <ul class="tabs">
                     <li><a href="#/library" class="first" id="action_Library" title="Library" ng-class="{'active': isActive('/library')}"><img src="images/headphones_gd_16x14.png" /></a></li>
-                    <!--<li><a href="#/playlists" id="action_Playlists" title="Playlists" ng-class="{'active': isActive('/playlists')}"><img src="images/list_gd_16x14.png" /></a></li>-->
-                    <!--<li><a href="#/podcasts" id="action_Podcasts" title="Podcasts" ng-class="{'active': isActive('/podcasts')}"><img src="images/rss_16x16.png" /></a></li>-->
                     <li><a href="#/archive" id="action_Archive" class="" title="Archive.org - Live Music Archive" ng-class="{'active': isActive('/archive')}"><img src="images/archive_gd_16x16.png" /></a></li>
                     <li><a href="#/settings" id="action_Settings" class="last" title="Settings" ng-class="{'active': isActive('/settings')}"><img src="images/cog_16x16.png" /></a></li>
                 </ul>
@@ -101,7 +99,6 @@
 							<a href="" id="action_UnMute" class="unmute" title="Unmute" style="display: none;"></a>
 							<!--<div class="jp-volume-bar"><div class="jp-volume-bar-value"></div></div><a href="" id="action_VolumeMax" class="volume" title="Max Volume"></a>-->
 						</div>
-                        <!--<div class="vertshade"></div>-->
                     </div>
                     <div id="playdeck_1"></div>
                     <div id="playdeck_2"></div>
