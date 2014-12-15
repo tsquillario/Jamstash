@@ -37,10 +37,7 @@ angular.module('jamstash.player.directive', ['jamstash.settings'])
                         duration: '#duration'
                     },
                     ready: function() {
-                        $player
-                            .jPlayer('setMedia', {
-                                mp3: 'shot_2.mp3'
-                            });
+                        //Do nothing
                     },
                     play: function() {
                         console.log('jplayer play');
@@ -56,12 +53,9 @@ angular.module('jamstash.player.directive', ['jamstash.settings'])
                     },
                     ended: function() {
                         console.log('jplayer ended');
+                        playerService.nextTrack();
                         element.removeClass(cls);
                     }
-                })
-                .end()
-                .unbind('click').click(function(e) {
-                    $player.jPlayer(element.hasClass(cls) ? 'stop' : 'play');
                 });
             };
 

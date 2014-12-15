@@ -19,6 +19,11 @@ angular.module('jamstash.player.service', ['jamstash.settings'])
             console.log('player service - play()', song);
         },
 
+        playFirstSong: function () {
+            player.playingIndex = 0;
+            player.play(player.queue[0]);
+        },
+
         load: function(song) {
             console.log('player service - load()');
         },
@@ -29,6 +34,7 @@ angular.module('jamstash.player.service', ['jamstash.settings'])
 
         nextTrack: function() {
             console.log('player service - nextTrack()');
+            console.log(player.playingIndex, player.queue);
             if((player.playingIndex + 1) < player.queue.length) {
                 var nextTrack = player.queue[player.playingIndex + 1];
                 player.playingIndex++;
@@ -43,9 +49,7 @@ angular.module('jamstash.player.service', ['jamstash.settings'])
                 player.playingIndex--;
                 player.play(previousTrack);
             } else if (player.queue.length > 0) {
-                player.playingIndex = 0;
-                var firstTrack = player.queue[0];
-                player.play(firstTrack);
+                player.playFirstSong();
             }
         }
     };
