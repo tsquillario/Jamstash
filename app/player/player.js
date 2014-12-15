@@ -8,17 +8,9 @@ angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamsta
 .controller('PlayerController', ['$scope', 'player', function($scope, player){
 	'use strict';
 
-    $scope.playingSong = player.playingSong;
+    $scope.player = player;
 
-    $scope.previousTrack = function () {
-        player.previousTrack();
-    };
-
-    $scope.nextTrack = function () {
-        player.nextTrack();
-    };
-
-    $scope.play = function () {
-        player.play();
+    $scope.updateFavorite = function (song) {
+        // TODO
     };
 }]);

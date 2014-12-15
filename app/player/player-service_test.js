@@ -1,7 +1,7 @@
 describe("Player service", function() {
     'use strict';
 
-    var player;
+    var player, firstSong;
     beforeEach(function() {
         module('jamstash.player.service');
 
@@ -13,13 +13,15 @@ describe("Player service", function() {
     describe("Given that I have 3 songs in my playing queue", function() {
 
         beforeEach(function() {
+            firstSong = {
+                id: 6726,
+                name: 'Guarauno',
+                artist: 'Carlyn Pollack',
+                album: 'Arenig'
+            };
             player.queue = [
+                firstSong,
                 {
-                    id: 6726,
-                    name: 'Guarauno',
-                    artist: 'Carlyn Pollack',
-                    album: 'Arenig'
-                }, {
                     id: 2452,
                     name: 'Michoacan',
                     artist: 'Lura Jeppsen',
@@ -87,6 +89,13 @@ describe("Player service", function() {
                 expect(player.playingIndex).toBe(1);
                 expect(player.play).toHaveBeenCalledWith(player.queue[1]);
             });
+        });
+
+        it("when I call playFirstSong, it plays the first song and updates the playing index", function() {
+            player.playFirstSong();
+
+            expect(player.playingIndex).toBe(0);
+            expect(player.play).toHaveBeenCalledWith(player.queue[0]);
         });
     });
 

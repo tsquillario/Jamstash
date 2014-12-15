@@ -2,34 +2,34 @@
     <div id="playercontainer">
         <div id="playerleft" class="floatleft">
             <div class="playeractions floatleft">
-                <a class="hover" id="PreviousTrack" title="Previous Track" ng-click="previousTrack()">
+                <a class="hover" id="PreviousTrack" title="Previous Track" ng-click="player.previousTrack()">
                     <img src="images/first_alt_24x24.png" height="24" width="24" alt="Previous track" />
                 </a>
-                <a class="hover PlayTrack" title="Play/Pause" ng-click="play()">
+                <a class="hover PlayTrack" title="Play/Pause" ng-click="player.play()">
                     <img src="images/play_alt_24x24.png" height="24" width="24" alt="Play" />
                 </a>
-                <a class="hover PauseTrack" title="Play/Pause" ng-click="play()" style="display: none;">
+                <a class="hover PauseTrack" title="Play/Pause" ng-click="player.pause()" style="display: none;">
                     <img src="images/pause_alt_24x24.png" height="24" width="24" alt="Pause" />
                 </a>
-                <a class="hover" id="NextTrack" title="Next Track" ng-click="nextTrack()">
+                <a class="hover" id="NextTrack" title="Next Track" ng-click="player.nextTrack()">
                     <img src="images/last_alt_24x24.png" height="24" width="24" alt="Next track" />
                 </a>
             </div>
             <div id="songdetails">
                 <div id="coverart">
 					<a ng-click="fancyboxOpenImage(playingSong.coverartfull)">
-                        <img ng-src="{{playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" height="30" width="30" />
+                        <img ng-src="{{player.playingSong.coverartthumb}}" src="images/albumdefault_60.jpg" height="30" width="30" />
                     </a>
                 </div>
                 <ul>
-                    <li class="song" id="{{playingSong.id}}" ng-bind-html="playingSong.name" title="{{playingSong.specs}}"></li>
-                    <li class="album" ng-bind-html="playingSong.album"></li>
+                    <li class="song" id="{{player.playingSong.id}}" ng-bind-html="player.playingSong.name" title="{{player.playingSong.specs}}"></li>
+                    <li class="album" ng-bind-html="player.playingSong.album"></li>
                 </ul>
                 <div id="songdetails_controls">
                     <a href="" class="jukebox" title="Jukebox Mode [Beta]" ng-click="toggleSetting('Jukebox')" ng-class="{'hoverSelected': !settings.Jukebox }"></a>
                     <a href="" class="loop" title="Repeat" ng-click="toggleSetting('Repeat')" ng-class="{'hoverSelected': !settings.Repeat }"></a>
                     <a href="" id="action_SaveProgress" class="lock" title="Save Track Position: On" ng-show="settings.SaveTrackPosition"></a>
-                    <a title="Favorite" href="" ng-class="{'favorite': playingSong.starred, 'rate': !playingSong.starred}" ng-click="updateFavorite(playingSong)" stop-event="click"></a>
+                    <a title="Favorite" href="" ng-class="{'favorite': player.playingSong.starred, 'rate': !player.playingSong.starred}" ng-click="updateFavorite(player.playingSong)" stop-event="click"></a>
                     <a href="" id="action_Mute" class="mute" title="Mute"></a>
                     <a href="" id="action_UnMute" class="unmute" title="Unmute" style="display: none;"></a>
                     <!--<div class="jp-volume-bar"><div class="jp-volume-bar-value"></div></div><a href="" id="action_VolumeMax" class="volume" title="Max Volume"></a>-->
