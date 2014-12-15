@@ -24,7 +24,7 @@ describe("Subsonic controller", function() {
             });
             spyOn(notifications, 'updateMessage').and.stub();
             spyOn(player, 'play').and.stub();
-            $rootScope.queue = [];
+            player.queue = [];
 
             $controller('SubsonicController', {
                 $scope: scope,
@@ -64,14 +64,14 @@ describe("Subsonic controller", function() {
                 $rootScope.$apply();
 
                 expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
-                expect($rootScope.queue).toEqual([
+                expect(player.queue).toEqual([
                     {id: "2548"}, {id: "8986"}, {id: "2986"}
                 ]);
                 expect(notifications.updateMessage).toHaveBeenCalledWith('3 Song(s) Added to Queue', true);
             });
 
             it("when playing random starred songs, it plays the first selected song, empties the queue and fills it with the selected songs, and notifies the user", function() {
-                $rootScope.queue = [{id: "7666"}];
+                player.queue = [{id: "7666"}];
 
                 scope.getRandomStarredSongs('play');
                 deferred.resolve(response);
@@ -79,7 +79,7 @@ describe("Subsonic controller", function() {
 
                 expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
                 expect(player.play).toHaveBeenCalledWith({id: "2548"});
-                expect($rootScope.queue).toEqual([
+                expect(player.queue).toEqual([
                     {id: "2548"}, {id: "8986"}, {id: "2986"}
                 ]);
                 expect(notifications.updateMessage).toHaveBeenCalledWith('3 Song(s) Added to Queue', true);
@@ -88,7 +88,7 @@ describe("Subsonic controller", function() {
         });
 
         it("given that I don't have any starred song in my library, when getting random starred songs, it notifies the user with an error message, does not play a song and does not touch the queue", function() {
-            $rootScope.queue = [{id: "7666"}];
+            player.queue = [{id: "7666"}];
 
             scope.getRandomStarredSongs('whatever action');
             deferred.reject({reason: 'No starred songs found on the Subsonic server.'});
@@ -96,7 +96,7 @@ describe("Subsonic controller", function() {
 
             expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
             expect(player.play).not.toHaveBeenCalled();
-            expect($rootScope.queue).toEqual([{id: "7666"}]);
+            expect(player.queue).toEqual([{id: "7666"}]);
             expect(notifications.updateMessage).toHaveBeenCalledWith('No starred songs found on the Subsonic server.', true);
         });
 

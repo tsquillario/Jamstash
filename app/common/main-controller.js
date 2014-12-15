@@ -474,7 +474,7 @@
         //$scope.ping();
         if (globals.settings.SaveTrackPosition) {
             loadTrackPosition();
-            player.startSaveTrackPosition();
+            //FIXME: player.startSaveTrackPosition();
         }
     }
     /* End Startup */

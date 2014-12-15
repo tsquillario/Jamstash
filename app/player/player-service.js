@@ -10,37 +10,42 @@ angular.module('jamstash.player.service', ['jamstash.settings'])
 
     var player = {
         queue: [],
-        currentlyPlayingIndex: -1,
+        playingIndex: -1,
+        playingSong: {},
 
         play: function(song) {
-            song.playing = true;
-            console.log('play()');
+            //song.playing = true;
+            player.playingSong = song;
+            console.log('player service - play()', song);
         },
 
         load: function(song) {
-
+            console.log('player service - load()');
         },
 
         restart: function() {
-            console.log('restart()');
+            console.log('player service - restart()');
         },
 
         nextTrack: function() {
-            if((player.currentlyPlayingIndex + 1) < player.queue.length) {
-                var nextTrack = player.queue[player.currentlyPlayingIndex + 1];
-                player.currentlyPlayingIndex++;
+            console.log('player service - nextTrack()');
+            if((player.playingIndex + 1) < player.queue.length) {
+                var nextTrack = player.queue[player.playingIndex + 1];
+                player.playingIndex++;
                 player.play(nextTrack);
             }
         },
 
         previousTrack: function() {
-            if((player.currentlyPlayingIndex - 1) > 0) {
-                var previousTrack = player.queue[player.currentlyPlayingIndex - 1];
-                player.currentlyPlayingIndex--;
+            console.log(('player service - previousTrack()'));
+            if((player.playingIndex - 1) > 0) {
+                var previousTrack = player.queue[player.playingIndex - 1];
+                player.playingIndex--;
                 player.play(previousTrack);
             } else if (player.queue.length > 0) {
-                player.currentlyPlayingIndex = 0;
-                player.play(player.queue[player.currentlyPlayingIndex]);
+                player.playingIndex = 0;
+                var firstTrack = player.queue[0];
+                player.play(firstTrack);
             }
         }
     };
