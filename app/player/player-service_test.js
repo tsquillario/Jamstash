@@ -39,25 +39,25 @@ describe("Player service", function() {
             it("and no song is playing, it plays the first song", function() {
                 player.nextTrack();
 
-                expect(player.currentlyPlayingIndex).toBe(0);
+                expect(player.playingIndex).toBe(0);
                 expect(player.play).toHaveBeenCalledWith(player.queue[0]);
             });
 
             it("and the first song is playing, it plays the second song", function() {
-                player.currentlyPlayingIndex = 0;
+                player.playingIndex = 0;
 
                 player.nextTrack();
 
-                expect(player.currentlyPlayingIndex).toBe(1);
+                expect(player.playingIndex).toBe(1);
                 expect(player.play).toHaveBeenCalledWith(player.queue[1]);
             });
 
             it("and the last song is playing, it does nothing", function() {
-                player.currentlyPlayingIndex = 2;
+                player.playingIndex = 2;
 
                 player.nextTrack();
 
-                expect(player.currentlyPlayingIndex).toBe(2);
+                expect(player.playingIndex).toBe(2);
                 expect(player.play).not.toHaveBeenCalled();
             });
         });
@@ -66,25 +66,25 @@ describe("Player service", function() {
             it("and no song is playing, it plays the first song", function() {
                 player.previousTrack();
 
-                expect(player.currentlyPlayingIndex).toBe(0);
+                expect(player.playingIndex).toBe(0);
                 expect(player.play).toHaveBeenCalledWith(player.queue[0]);
             });
 
             it("and the first song is playing, it restarts the first song", function() {
-                player.currentlyPlayingIndex = 0;
+                player.playingIndex = 0;
 
                 player.previousTrack();
 
-                expect(player.currentlyPlayingIndex).toBe(0);
+                expect(player.playingIndex).toBe(0);
                 expect(player.play).toHaveBeenCalledWith(player.queue[0]);
             });
 
             it("and the last song is playing, it plays the second song", function() {
-                player.currentlyPlayingIndex = 2;
+                player.playingIndex = 2;
 
                 player.previousTrack();
 
-                expect(player.currentlyPlayingIndex).toBe(1);
+                expect(player.playingIndex).toBe(1);
                 expect(player.play).toHaveBeenCalledWith(player.queue[1]);
             });
         });
@@ -106,14 +106,17 @@ describe("Player service", function() {
         it("when I play it, the song is marked as playing", function() {
             player.play(song);
 
+            expect(player.playingSong).toBe(song);
             expect(song.playing).toBeTruthy();
         });
 
         it("when I restart playback, the song is still marked as playing", function() {
             song.playing = true;
+            player.playingSong = song;
 
             player.restart();
 
+            expect(player.playingSong).toBe(song);
             expect(song.playing).toBeTruthy();
         });
     });
@@ -122,20 +125,20 @@ describe("Player service", function() {
 
         beforeEach(function() {
             player.queue = [];
-            player.currentlyPlayingIndex = -1;
+            player.playingIndex = -1;
             spyOn(player, "play").and.stub();
         });
 
         it("when I call nextTrack, it does nothing", function() {
             player.nextTrack();
             expect(player.play).not.toHaveBeenCalled();
-            expect(player.currentlyPlayingIndex).toBe(-1);
+            expect(player.playingIndex).toBe(-1);
         });
 
         it("when I call previousTrack, it does nothing", function() {
             player.previousTrack();
             expect(player.play).not.toHaveBeenCalled();
-            expect(player.currentlyPlayingIndex).toBe(-1);
+            expect(player.playingIndex).toBe(-1);
         });
     });
 });
