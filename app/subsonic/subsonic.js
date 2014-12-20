@@ -283,8 +283,7 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             if(action === 'play') {
                 player.queue = [].concat(mappedSongs);
                 notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);
-                console.log('subjs', player.queue);
-                player.play(player.queue[0]);
+                player.playFirstSong();
             } else if (action === 'add') {
                 player.queue = player.queue.concat(mappedSongs);
                 notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);

@@ -7,8 +7,7 @@ angular.module('jamstash.player.directive', ['jamstash.settings'])
         template: '<div></div>',
         link: function(scope, element, attrs) {
 
-            var $player = element.children('div'),
-                cls = 'pause';
+            var $player = element.children('div');
             console.log($player);
             var audioSolution = 'html,flash';
             if (globals.settings.ForceFlash) {
@@ -41,20 +40,15 @@ angular.module('jamstash.player.directive', ['jamstash.settings'])
                     },
                     play: function() {
                         console.log('jplayer play');
-                        element.addClass(cls);
+                        $('#playermiddle').css('visibility', 'visible');
+                        $('#songdetails').css('visibility', 'visible');
                     },
                     pause: function() {
                         console.log('jplayer pause');
-                        element.removeClass(cls);
-                    },
-                    stop: function() {
-                        console.log('jplayer stop');
-                        element.removeClass(cls);
                     },
                     ended: function() {
                         console.log('jplayer ended');
-                        playerService.nextTrack();
-                        element.removeClass(cls);
+                        playerService.playEnded();
                     }
                 });
             };
@@ -62,7 +56,7 @@ angular.module('jamstash.player.directive', ['jamstash.settings'])
             updatePlayer();
 
             scope.$watch(function () {
-                return playerService.playingSong;
+                return playerService.getPlayingSong();
             }, function (newVal) {
                 console.log('playingSong changed !');
                 $player.jPlayer('setMedia', {'mp3': newVal.url})

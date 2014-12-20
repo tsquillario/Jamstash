@@ -22,8 +22,9 @@ describe("Subsonic controller", function() {
             spyOn(map, 'mapSong').and.callFake(function (song) {
                 return {id: song.id};
             });
-            spyOn(notifications, 'updateMessage').and.stub();
-            spyOn(player, 'play').and.stub();
+            spyOn(notifications, 'updateMessage');
+            spyOn(player, 'play');
+            spyOn(player, 'playFirstSong');
             player.queue = [];
 
             $controller('SubsonicController', {
@@ -78,7 +79,7 @@ describe("Subsonic controller", function() {
                 $rootScope.$apply();
 
                 expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
-                expect(player.play).toHaveBeenCalledWith({id: "2548"});
+                expect(player.playFirstSong).toHaveBeenCalled();
                 expect(player.queue).toEqual([
                     {id: "2548"}, {id: "8986"}, {id: "2986"}
                 ]);
