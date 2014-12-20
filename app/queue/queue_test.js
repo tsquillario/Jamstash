@@ -1,22 +1,20 @@
 describe("Queue controller", function() {
     'use strict';
 
-    var player, $rootScope, scope, globals;
+    var player, scope, globals;
 
     beforeEach(function() {
         module('jamstash.queue.controller');
 
-        inject(function ($controller, _$rootScope_, _globals_, _player_) {
-            $rootScope = _$rootScope_;
+        inject(function ($controller, $rootScope, _globals_, _player_) {
             scope = $rootScope.$new();
             globals = _globals_;
             player = _player_;
 
             // Mock the functions of the services
-            spyOn(player, "play").and.stub();
+            spyOn(player, "play");
 
             $controller('QueueController', {
-                $rootScope: $rootScope,
                 $scope: scope,
                 globals: globals,
                 player: player
@@ -24,10 +22,29 @@ describe("Queue controller", function() {
         });
     });
     it("When I call playSong, it calls play in the player service", function() {
-        var fakeSong = {"id": 3174};
+        var songIndexInQueue = 3;
 
-        scope.playSong(fakeSong);
+        scope.playSong(songIndexInQueue);
 
-        expect(player.play).toHaveBeenCalledWith(fakeSong);
+        expect(player.play).toHaveBeenCalledWith(songIndexInQueue);
+    });
+
+    it("When I call queueEmpty, it empties the player's queue", function() {
+        player.queue = [{
+                id: 4425,
+                name: 'Ratiocinator',
+                artist: 'Kandice Pince',
+                album: 'Additionally'
+            }, {
+                id: 1831,
+                name: 'Nonteetotaler',
+                artist: 'Anabel Eady',
+                album: 'Lyricalness'
+            }
+        ];
+
+        scope.queueEmpty();
+
+        expect(player.queue).toEqual([]);
     });
 });

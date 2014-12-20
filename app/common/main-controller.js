@@ -442,6 +442,7 @@
     };
 
     function loadTrackPosition() {
+        //TODO: HYZ: Unit test
         if (utils.browserStorageCheck()) {
             // Load Saved Song
             var song = angular.fromJson(localStorage.getItem('CurrentSong'));
@@ -450,11 +451,11 @@
                 // Load Saved Queue
                 var items = angular.fromJson(localStorage.getItem('CurrentQueue'));
                 if (items) {
-                    $rootScope.queue = items;
-                    if ($rootScope.queue.length > 0) {
-                        notifications.updateMessage($rootScope.queue.length + ' Saved Song(s)', true);
+                    player.queue = items;
+                    if (player.queue.length > 0) {
+                        notifications.updateMessage(player.queue.length + ' Saved Song(s)', true);
                     }
-                    if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + $rootScope.queue.length + ' song(s)'); }
+                    if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + player.queue.length + ' song(s)'); }
                 }
             }
         } else {
@@ -474,7 +475,7 @@
         //$scope.ping();
         if (globals.settings.SaveTrackPosition) {
             loadTrackPosition();
-            //FIXME: player.startSaveTrackPosition();
+            //FIXME: HYZ: player.startSaveTrackPosition();
         }
     }
     /* End Startup */
