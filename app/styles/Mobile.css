@@ -1,15 +1,18 @@
-@media only screen and (max-width: 400px) {
-	.smcolumn {
-		width: 75%;
-		background: rgba(255, 255, 255, 0.8);
-		border-bottom; none;
-		min-width: 292px;
+@media only screen and (max-width: 1200px) {
+	#SideBar {
+		display: none;
+		width: 100%;
 	}
+	.lgcolumn {
+		margin-right: 0 !important;
+	}
+}
+@media only screen and (max-width: 840px) {
 	#nav {
 		border-bottom: 1px solid #D5D5D5;
 		height: 39px;
 		box-shadow: 0 2px 1px -2px rgba(0, 0, 0, 0.2);
-	}
+	} 
 	.smcolumn {
 		top: 80px;
 		margin-bottom: -82px;
@@ -23,14 +26,9 @@
 		margin-bottom: -82px;
 	}
 	.subactions {
-		margin: 11px 5px 0 0;
+		margin-top: 6px;
 		float: left;
 	}
-	#BreadCrumb {
-		margin: 5px;
-	}
-}
-@media only screen and (max-width: 840px) {
 	.lgcolumn {
 		margin-left: 0;
 	}
@@ -85,12 +83,27 @@
 	#SettingsForm {
 	}
 }
-@media only screen and (max-width: 1200px) {
-	#SideBar {
-		display: none;
-		width: 100%;
+@media only screen and (max-width: 600px) {
+	.smcolumn {
+		width: 75%;
+		background: rgba(255, 255, 255, 0.8);
+		border-bottom; none;
+		min-width: 292px;
+		top: 120px;
+		margin-bottom: -122px;
 	}
-	.lgcolumn {
-		margin-right: 0 !important;
+	.lgsection {
+		top: 120px;
+		margin-bottom: -122px;
+	} 
+	#SideBar {
+		top: 120px;
+		margin-bottom: -122px;
+	}
+	#BreadCrumb {
+		margin: 5px;
+	}
+	#search {
+		margin: 11px 5px 0px 5px;
 	}
 }

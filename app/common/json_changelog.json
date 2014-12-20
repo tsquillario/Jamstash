@@ -1,8 +1,14 @@
 ﻿[
     {   
+        "date": "12/20/2014", "version": "4.3",
+        "changes": [
+        { "text": "- I'm feeling really good about this one!"}
+        ]
+    },
+    {   
         "date": "12/7/2014", "version": "4.2.5",
         "changes": [
-        { "text": "- Better mobile support!"}
+        { "text": "- Better mobile support (CSS Media Queries)"}
         ]
     },
     {   
