@@ -4,6 +4,12 @@
         <div class="actions floatleft">
             <a href="" class="button" id="action_RefreshArtists" title="Refresh List" ng-click="refreshArtists()"><img class="pad" src="images/reload_9x11.png" /></a>
             <a href="" class="button" id="action_RescanLibrary" title="Rescan Library" ng-click="rescanLibrary()"><img class="pad" src="images/loop_alt1_gd_12x9.png" /></a>
+            <a href="" class="button" id="action_ToggleArtists" ng-click="toggleArtists()" title="Toggle Artists"><img src="images/arrow_right_gl_8x8.png" /></a>
+        </div>
+        <div id="search"> 
+            <input type="text" id="Search" name="Search" class="medium" title="Wildcards (*) supported" placeholder="Search..." ng-enter="search()"/>
+            <select id="SearchType" name="SearchType" ng-model="SearchType.id" ng-options="o.id as o.name for o in SearchTypes"></select>
+            <a href="" class="button" id="action_Search" title="Search" ng-click="search()"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
         </div>
         <div class="subactions">
             <div class="floatleft" ng-show="selectedPlaylist">
@@ -73,9 +79,6 @@
             </div>
         </div>
 		<div id="left-component" class="smcolumn noselect" tabindex="0">
-			<div class="leftactions">
-				<a href="" class="button" id="action_ToggleArtists" ng-click="toggleArtists()" title="Toggle Artists"><img src="images/arrow_right_gl_8x8.png" /></a>
-			</div>
 			<ul class="tablist">
 				<li class="" ng-click="toggleIndex()"><a href="">Artists</a></li>
 				<li class="" ng-click="togglePlaylist()"><a href="">Playlists</a></li>
@@ -87,11 +90,6 @@
 				<div id="AZIndex" ng-show="!settings.HideAZ" class="subactionsfixed">
 					<a href="" ng-click="toggleAZ()" stop-event="click">A-Z</a>
 				</div>
-				<div id="search">
-		            <input type="text" id="Search" name="Search" class="medium" title="Wildcards (*) supported" placeholder="Search..." ng-enter="search()"/>
-		            <select id="SearchType" name="SearchType" ng-model="SearchType.id" ng-options="o.id as o.name for o in SearchTypes"></select>
-		            <a href="" class="button" id="action_Search" title="Search" ng-click="search()"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
-		        </div>
 		        <div class="clear"></div>
 				<ul id="AutoAlbumContainer" class="simplelist mainlist noselect">
 					<li class="index" id="auto">Auto Albums</li>

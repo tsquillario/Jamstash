@@ -108,6 +108,18 @@
             setTimeout(function () { if (submenu_active === false) $('div.submenu').stop().fadeOut(); }, 10000);
         }
     };
+
+    $scope.$watchCollection('queue', function(newItem, oldItem) {
+        if (oldItem.length != newItem.length) {
+            $rootScope.showQueue();
+        }
+        /*
+        for (var index in newCol) {
+            var item = newCol[index];
+            item.order = parseInt(index) + 1;
+        }
+        */
+    });
     $rootScope.showQueue = function () {
         $('#SideBar').css('display', 'block');
         $('#right-component').removeClass('lgcolumn_expanded');
@@ -115,6 +127,13 @@
     $rootScope.hideQueue = function () {
         $('#SideBar').css('display', 'none');
         $('#right-component').addClass('lgcolumn_expanded');
+    };
+    $scope.toggleQueue = function () {
+        if ($('#SideBar').css('display') == 'none') {
+            $rootScope.showQueue();
+        } else {
+            $rootScope.hideQueue();
+        }
     };
     $scope.toggleQueue = function () {
         if ($('#SideBar').css('display') == 'none') {
