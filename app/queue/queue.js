@@ -8,7 +8,6 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
     $scope.itemType = 'pl'; // TODO: Hyz: What is this ?
 
     $scope.playSong = function (song) {
-        console.log('Queue Controller - playSong()', song);
         player.play(song);
     };
 

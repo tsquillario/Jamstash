@@ -1,160 +1,174 @@
 describe("Subsonic service -", function() {
-	'use strict';
+    'use strict';
 
-	var subsonic, mockBackend, mockGlobals, response;
+    var subsonic, mockBackend, mockGlobals, response;
+    beforeEach(function() {
+        // We redefine it because in some tests we need to alter the settings
+        mockGlobals = {
+            settings: {
+                AutoPlaylistSize: 3,
+                Protocol: 'jsonp'
+            },
+            BaseURL: function () {
+                return 'http://demo.subsonic.com/rest';
+            },
+            BaseParams: function () {
+                return 'u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=jsonp';
+            }
+        };
 
-	var url = 'http://demo.subsonic.com/rest/getStarred.view?'+
-			'callback=JSON_CALLBACK&u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=jsonp';
+        module('jamstash.subsonic.service', function ($provide) {
+            $provide.value('globals', mockGlobals);
+        });
 
-	beforeEach(function() {
-		// We redefine it because in some tests we need to alter the settings
-		mockGlobals = {
-			settings: {
-				AutoPlaylistSize: 3,
-				Protocol: 'jsonp'
-			},
-			BaseURL: function () {
-				return 'http://demo.subsonic.com/rest';
-			},
-			BaseParams: function () {
-				return 'u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=jsonp';
-			}
-		};
+        inject(function (_subsonic_, $httpBackend) {
+            subsonic = _subsonic_;
+            mockBackend = $httpBackend;
+        });
+        response = {"subsonic-response": {status: "ok", version: "1.10.2"}};
+    });
 
-		module('jamstash.subsonic.service', function ($provide) {
-			$provide.value('globals', mockGlobals);
-		});
+    afterEach(function() {
+        mockBackend.verifyNoOutstandingExpectation();
+        mockBackend.verifyNoOutstandingRequest();
+    });
 
-		inject(function (_subsonic_, $httpBackend) {
-			subsonic = _subsonic_;
-			mockBackend = $httpBackend;
-		});
-		response = {"subsonic-response": {status: "ok", version: "1.10.2"}};
-	});
+    it("scrobble - Given a song, when I scrobble it, it returns true if there was no error", function() {
+        var song = { id: 45872 };
+        var url = 'http://demo.subsonic.com/rest/scrobble.view?' +
+            'callback=JSON_CALLBACK&u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=jsonp&id=45872&submission=true';
 
-	afterEach(function() {
-		mockBackend.verifyNoOutstandingExpectation();
-		mockBackend.verifyNoOutstandingRequest();
-	});
+        mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
-	describe("getStarred -", function() {
+        var promise = subsonic.scrobble(song);
+        mockBackend.flush();
 
-		it("Given that I have 2 starred albums, 1 starred artist and 3 starred songs in my library, when getting everything starred, it returns them all", function() {
-			response["subsonic-response"].starred = {artist: [{id: 2245}], album: [{id: 1799},{id: 20987}], song: [{id: 2478},{id: 14726},{id: 742}]};
-			mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
+        expect(promise).toBeResolved();
+    });
 
-			var promise = subsonic.getStarred();
-			mockBackend.flush();
+    describe("getStarred -", function() {
+       var url = 'http://demo.subsonic.com/rest/getStarred.view?'+
+            'callback=JSON_CALLBACK&u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=jsonp';
 
-			expect(promise).toBeResolvedWith({artist: [
-					{id: 2245}
-				], album: [
-					{id: 1799},{id: 20987}
-				], song: [
-					{id: 2478},{id: 14726},{id: 742}
-				]
-			});
-		});
+        it("Given that I have 2 starred albums, 1 starred artist and 3 starred songs in my library, when getting everything starred, it returns them all", function() {
+            response["subsonic-response"].starred = {artist: [{id: 2245}], album: [{id: 1799},{id: 20987}], song: [{id: 2478},{id: 14726},{id: 742}]};
+            mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
-		it("Given that the global protocol setting is 'json' and given that I have 3 starred songs in my library, when getting everything starred, it uses GET and returns 3 starred songs", function() {
-			mockGlobals.settings.Protocol = 'json';
-			mockGlobals.BaseParams = function() { return 'u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=json'; };
-			var getUrl = 'http://demo.subsonic.com/rest/getStarred.view?' +
-				'u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=json';
-			response["subsonic-response"].starred = {song: [
-				{id: "2147"},{id:"9847"},{id:"214"}
-			]};
-			mockBackend.expectGET(getUrl).respond(200, JSON.stringify(response));
+            var promise = subsonic.getStarred();
+            mockBackend.flush();
 
-			var promise = subsonic.getStarred();
-			mockBackend.flush();
+            expect(promise).toBeResolvedWith({artist: [
+                    {id: 2245}
+                ], album: [
+                    {id: 1799},{id: 20987}
+                ], song: [
+                    {id: 2478},{id: 14726},{id: 742}
+                ]
+            });
+        });
 
-			expect(promise).toBeResolvedWith({song: [
-				{id: "2147"},{id:"9847"},{id:"214"}]
-			});
-		});
+        it("Given that the global protocol setting is 'json' and given that I have 3 starred songs in my library, when getting everything starred, it uses GET and returns 3 starred songs", function() {
+            mockGlobals.settings.Protocol = 'json';
+            mockGlobals.BaseParams = function() { return 'u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=json'; };
+            var getUrl = 'http://demo.subsonic.com/rest/getStarred.view?' +
+                'u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=json';
+            response["subsonic-response"].starred = {song: [
+                {id: "2147"},{id:"9847"},{id:"214"}
+            ]};
+            mockBackend.expectGET(getUrl).respond(200, JSON.stringify(response));
 
-		it("Given that there is absolutely nothing starred in my library, when getting everything starred, it returns an error object with a message", function() {
-			response["subsonic-response"].starred = {};
-			mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
+            var promise = subsonic.getStarred();
+            mockBackend.flush();
 
-			var promise = subsonic.getStarred();
-			mockBackend.flush();
+            expect(promise).toBeResolvedWith({song: [
+                {id: "2147"},{id:"9847"},{id:"214"}]
+            });
+        });
 
-			expect(promise).toBeRejectedWith({reason: 'Nothing is starred on the Subsonic server.'});
-		});
+        it("Given that there is absolutely nothing starred in my library, when getting everything starred, it returns an error object with a message", function() {
+            response["subsonic-response"].starred = {};
+            mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
-		it("Given that the Subsonic server is not responding, when getting everything starred, it returns an error object with a message", function() {
-			mockBackend.whenJSONP(url).respond(503, 'Service Unavailable');
+            var promise = subsonic.getStarred();
+            mockBackend.flush();
 
-			var promise = subsonic.getStarred();
-			mockBackend.flush();
+            expect(promise).toBeRejectedWith({reason: 'Nothing is starred on the Subsonic server.'});
+        });
+        // TODO: Hyz: Those tests should be at a higher level, we are repeating them for everything...
+        it("Given that the Subsonic server is not responding, when getting everything starred, it returns an error object with a message", function() {
+            mockBackend.whenJSONP(url).respond(503, 'Service Unavailable');
 
-			expect(promise).toBeRejectedWith({reason: 'Error when contacting the Subsonic server.', httpError: 503});
-		});
+            var promise = subsonic.getStarred();
+            mockBackend.flush();
 
-		it("Given a missing parameter, when getting the starred songs, it returns an error object with a message", function() {
-			mockGlobals.BaseParams = function() { return 'u=Hyzual&v=1.10.2&c=Jamstash&f=jsonp';};
-			var missingPasswordUrl = 'http://demo.subsonic.com/rest/getStarred.view?'+
-				'callback=JSON_CALLBACK&u=Hyzual&v=1.10.2&c=Jamstash&f=jsonp';
-			var errorResponse = {"subsonic-response" : {
-				"status" : "failed",
-				"version" : "1.10.2",
-				"error" : {"code" : 10,"message" : "Required parameter is missing."}
-			}};
-			mockBackend.whenJSONP(missingPasswordUrl).respond(200, errorResponse);
+            expect(promise).toBeRejectedWith({reason: 'Error when contacting the Subsonic server.', httpError: 503});
+        });
 
-			var promise = subsonic.getStarred();
-			mockBackend.flush();
+        it("Given a missing parameter, when getting the starred songs, it returns an error object with a message", function() {
+            mockGlobals.BaseParams = function() { return 'u=Hyzual&v=1.10.2&c=Jamstash&f=jsonp';};
+            var missingPasswordUrl = 'http://demo.subsonic.com/rest/getStarred.view?'+
+                'callback=JSON_CALLBACK&u=Hyzual&v=1.10.2&c=Jamstash&f=jsonp';
+            var errorResponse = {"subsonic-response" : {
+                "status" : "failed",
+                "version" : "1.10.2",
+                "error" : {"code" : 10,"message" : "Required parameter is missing."}
+            }};
+            mockBackend.whenJSONP(missingPasswordUrl).respond(200, errorResponse);
 
-			expect(promise).toBeRejectedWith({reason: 'Error when contacting the Subsonic server.', subsonicError: {code: 10, message:'Required parameter is missing.'}});
-		});
-	}); //end getStarred
+            var promise = subsonic.getStarred();
+            mockBackend.flush();
 
-	describe("getRandomStarredSongs -", function() {
-		describe("Given that the global setting AutoPlaylist Size is 3", function() {
+            expect(promise).toBeRejectedWith({reason: 'Error when contacting the Subsonic server.', subsonicError: {code: 10, message:'Required parameter is missing.'}});
+        });
+    }); //end getStarred
 
-			it("and given that I have more than 3 starred songs in my library, when getting random starred songs, the result should be limited to 3 starred songs", function() {
-				var library = [
-					{id: "11841"},{id: "12061"},{id: "17322"},{id: "1547"},{id: "14785"}
-				];
-				response["subsonic-response"].starred = {song: library};
-				mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
+    describe("getRandomStarredSongs -", function() {
+        var url = 'http://demo.subsonic.com/rest/getStarred.view?'+
+            'callback=JSON_CALLBACK&u=Hyzual&p=enc:cGFzc3dvcmQ=&v=1.10.2&c=Jamstash&f=jsonp';
 
-				var promise = subsonic.getRandomStarredSongs();
-				// We create a spy in order to get the results of the promise
-				var success = jasmine.createSpy("success");
-				promise.then(success);
+        describe("Given that the global setting AutoPlaylist Size is 3", function() {
 
-				mockBackend.flush();
+            it("and given that I have more than 3 starred songs in my library, when getting random starred songs, the result should be limited to 3 starred songs", function() {
+                var library = [
+                    {id: "11841"},{id: "12061"},{id: "17322"},{id: "1547"},{id: "14785"}
+                ];
+                response["subsonic-response"].starred = {song: library};
+                mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
-				expect(promise).toBeResolved();
-				expect(success).toHaveBeenCalled();
-				var randomlyPickedSongs = success.calls.mostRecent().args[0];
-				for (var i = 0; i < randomlyPickedSongs.length; i++) {
-					expect(library).toContain(randomlyPickedSongs[i]);
-				}
-			});
+                var promise = subsonic.getRandomStarredSongs();
+                // We create a spy in order to get the results of the promise
+                var success = jasmine.createSpy("success");
+                promise.then(success);
 
-			it("and given that I have only 1 starred song in my library, when getting random starred songs, it returns my starred song", function() {
-				response["subsonic-response"].starred = {song: [{id: "11841"}]};
-				mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
+                mockBackend.flush();
 
-				var promise = subsonic.getRandomStarredSongs();
-				mockBackend.flush();
+                expect(promise).toBeResolved();
+                expect(success).toHaveBeenCalled();
+                var randomlyPickedSongs = success.calls.mostRecent().args[0];
+                for (var i = 0; i < randomlyPickedSongs.length; i++) {
+                    expect(library).toContain(randomlyPickedSongs[i]);
+                }
+            });
 
-				expect(promise).toBeResolvedWith([{id: "11841"}]);
-			});
+            it("and given that I have only 1 starred song in my library, when getting random starred songs, it returns my starred song", function() {
+                response["subsonic-response"].starred = {song: [{id: "11841"}]};
+                mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
 
-			it("and given that I don't have any starred song in my library, when getting random starred songs, it returns an error object with a message", function() {
-				response["subsonic-response"].starred = {song: []};
-				mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
+                var promise = subsonic.getRandomStarredSongs();
+                mockBackend.flush();
 
-				var promise = subsonic.getRandomStarredSongs();
-				mockBackend.flush();
+                expect(promise).toBeResolvedWith([{id: "11841"}]);
+            });
 
-				expect(promise).toBeRejectedWith({reason: 'No starred songs found on the Subsonic server.'});
-			});
-		});
-	});
+            it("and given that I don't have any starred song in my library, when getting random starred songs, it returns an error object with a message", function() {
+                response["subsonic-response"].starred = {song: []};
+                mockBackend.whenJSONP(url).respond(200, JSON.stringify(response));
+
+                var promise = subsonic.getRandomStarredSongs();
+                mockBackend.flush();
+
+                expect(promise).toBeRejectedWith({reason: 'No starred songs found on the Subsonic server.'});
+            });
+        });
+    });
 });

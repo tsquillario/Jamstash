@@ -180,9 +180,18 @@ describe("Player service -", function() {
             player.restart();
             expect(player.restartSong).toBeTruthy();
         });
+
+        it("When I load the song, the flag for the directive is set", function() {
+            spyOn(player, "play");
+
+            player.load(song);
+
+            expect(player.loadSong).toBeTruthy();
+            expect(player.play).toHaveBeenCalledWith(song);
+        });
     });
 
-    describe("Given that there is no song in my playing queue", function() {
+    describe("Given that my playing queue is empty", function() {
 
         beforeEach(function() {
             player.queue = [];

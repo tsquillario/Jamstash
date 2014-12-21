@@ -1,14 +1,19 @@
-angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings'])
+/**
+ * jamstash.player.directive module
+ *
+ * Encapsulates the jPlayer plugin. It watches the player service for the song to play, load or restart.
+ * It also enables jPlayer to attach event handlers to our UI through css Selectors.
+ */
+angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings', 'jamstash.subsonic.service'])
 
-.directive('jplayer', ['player', 'globals', function(playerService, globals) {
+.directive('jplayer', ['player', 'globals', 'subsonic', function(playerService, globals, subsonic) {
     'use strict';
     return {
         restrict: 'EA',
         template: '<div></div>',
-        link: function(scope, element, attrs) {
+        link: function(scope, element) {
 
             var $player = element.children('div');
-            console.log($player);
             var audioSolution = 'html,flash';
             if (globals.settings.ForceFlash) {
                 audioSolution = 'flash,html';
@@ -17,7 +22,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
             var updatePlayer = function() {
                 $player.jPlayer({
                     // Flash fallback for outdated browser not supporting HTML5 audio/video tags
-                    // http://jplayer.org/download/
+                    // TODO: Hyz: Replace in Grunt !
                     swfPath: 'bower_components/jplayer/dist/jplayer/jquery.jplayer.swf',
                     wmode: 'window',
                     solution: audioSolution,
@@ -37,8 +42,8 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     },
                     play: function() {
                         console.log('jplayer play');
-                        $('#playermiddle').css('visibility', 'visible');
-                        $('#songdetails').css('visibility', 'visible');
+                        scope.revealControls();
+                        scope.scrobbled = false;
                     },
                     pause: function() {
                         console.log('jplayer pause');
@@ -47,18 +52,37 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                         console.log('jplayer ended');
                         playerService.nextTrack();
                         scope.$apply();
+                    },
+                    timeupdate: function (event) {
+                        // Scrobble song once percentage is reached
+                        var p = event.jPlayer.status.currentPercentAbsolute;
+                        if (!scope.scrobbled && p > 30) {
+                            if (globals.settings.Debug) { console.log('LAST.FM SCROBBLE - Percent Played: ' + p); }
+                            subsonic.scrobble(scope.currentSong);
+                            scope.scrobbled = true;
+                        }
                     }
                 });
             };
 
             updatePlayer();
 
+            scope.currentSong = {};
+            scope.scrobbled = false;
+
             scope.$watch(function () {
                 return playerService.getPlayingSong();
             }, function (newVal) {
                 console.log('playingSong changed !');
-                $player.jPlayer('setMedia', {'mp3': newVal.url})
-                    .jPlayer('play');
+                scope.currentSong = newVal;
+                $player.jPlayer('setMedia', {'mp3': newVal.url});
+                if(playerService.loadSong === true) {
+                    // Do not play, only load
+                    playerService.loadSong = false;
+                    scope.revealControls();
+                } else {
+                    $player.jPlayer('play');
+                }
             });
 
             scope.$watch(function () {
@@ -70,6 +94,12 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     playerService.restartSong = false;
                 }
             });
+
+            scope.revealControls = function () {
+                $('#playermiddle').css('visibility', 'visible');
+                $('#songdetails').css('visibility', 'visible');
+            };
+
         } //end link
     };
 }]);
