@@ -353,6 +353,7 @@
         });
     };
     $scope.queueEmpty = function () {
+        //TODO: Hyz: Remove
         //self.selectedSongs([]);
         $rootScope.queue = [];
         $.fancybox.close();
@@ -369,6 +370,7 @@
         }
     };
     $scope.queueShuffle = function () {
+        //TODO: Hyz: Remove
         $rootScope.queue.sort(function () { return 0.5 - Math.random(); });
     };
     $scope.selectedSongs = [];

@@ -1,7 +1,7 @@
 describe("Player service -", function() {
     'use strict';
 
-    var player, firstSong, secondSong;
+    var player, firstSong, secondSong, thirdSong, newSong;
     beforeEach(function() {
         module('jamstash.player.service');
 
@@ -25,15 +25,19 @@ describe("Player service -", function() {
                 artist: 'Lura Jeppsen',
                 album: 'dioptrical'
             };
-            player.queue = [
-                firstSong,
-                secondSong, {
-                    id: 574,
-                    name: 'Celtidaceae',
-                    artist: 'Willard Steury',
-                    album: 'redux'
-                }
-            ];
+            thirdSong = {
+                id: 574,
+                name: 'Celtidaceae',
+                artist: 'Willard Steury',
+                album: 'redux'
+            };
+            player.queue = [firstSong, secondSong, thirdSong];
+            newSong = {
+                id: 3573,
+                name: 'Tritopatores',
+                artist: 'Alysha Rocher',
+                album: 'uncombinably'
+            };
         });
 
         describe("when I call nextTrack", function() {
@@ -109,21 +113,27 @@ describe("Player service -", function() {
 
         it("when I play the second song, it finds its index in the playing queue and updates the playing index", function() {
             player.play(secondSong);
-
             expect(player.playingIndex).toBe(1);
         });
 
         it("when I play a song that isn't in the playing queue, the next song will be the first song of the playing queue", function() {
-            var newSong = {
-                id: 3573,
-                name: 'Tritopatores',
-                artist: 'Alysha Rocher',
-                album: 'uncombinably'
-            };
-
             player.play(newSong);
-
             expect(player.playingIndex).toBe(-1);
+        });
+
+        it("When I call emptyQueue, it empties the playing queue", function() {
+            player.emptyQueue();
+            expect(player.queue).toEqual([]);
+        });
+
+        it("When I add a song to the queue, it is appended to the end of the playing queue", function() {
+            player.addSong(newSong);
+            expect(player.queue).toEqual([firstSong, secondSong, thirdSong, newSong]);
+        });
+
+        it("When I remove the second song, the playing queue is now only the first and third song", function() {
+            player.removeSong(secondSong);
+            expect(player.queue).toEqual([firstSong, thirdSong]);
         });
     });
 
@@ -155,6 +165,15 @@ describe("Player service -", function() {
 
             expect(player.getPlayingSong()).toBe(song);
             expect(song.playing).toBeTruthy();
+        });
+
+        it("When the song was playing and I play it again, it restarts playback", function() {
+            spyOn(player, "restart");
+
+            player.play(song);
+            player.play(song);
+
+            expect(player.restart).toHaveBeenCalled();
         });
     });
 

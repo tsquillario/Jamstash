@@ -12,7 +12,7 @@
     <link rel="icon" href="images/favicon_32x32.png" sizes="32x32"/>
     <!-- build:css(.) styles/vendor.min.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/jplayer/skin/pink.flag/jplayer.pink.flag.css" />
+    <link rel="stylesheet" href="bower_components/jplayer/dist/skin/pink.flag/jplayer.pink.flag.css" />
     <link rel="stylesheet" href="bower_components/fancybox/source/jquery.fancybox.css" />
     <!-- endbower -->
     <!-- endbuild -->
@@ -51,6 +51,7 @@
         </div><!-- end #content -->
         <div id="SideBar" ng-controller="QueueController">
             <div class="headeractions">
+                <a ng-click="player.restart()">Restart</a>
                 <a class="buttonimg" title="Shuffle Queue" ng-click="queueShuffle()"><img src="images/fork_gd_11x12.png"></a>
                 <a class="buttonimg" id="action_Empty" title="Delete Queue" ng-click="queueEmpty()"><img src="images/trash_fill_gd_12x12.png"></a>
                 <a class="buttonimg" id="action_DeleteSelected" title="Remove Selected From Queue" ng-click="queueRemoveSelected()"><img src="images/x_11x11.png"></a>

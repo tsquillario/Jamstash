@@ -18,7 +18,7 @@ angular.module('jamstash.player.directive', ['jamstash.settings'])
                 $player.jPlayer({
                     // Flash fallback for outdated browser not supporting HTML5 audio/video tags
                     // http://jplayer.org/download/
-                    swfPath: 'bower_components/jplayer/jquery.jplayer/Jplayer.swf',
+                    swfPath: 'bower_components/jplayer/dist/jplayer/jquery.jplayer.swf',
                     wmode: 'window',
                     solution: audioSolution,
                     supplied: 'mp3',
@@ -35,9 +35,6 @@ angular.module('jamstash.player.directive', ['jamstash.settings'])
                         currentTime: '#played',
                         duration: '#duration'
                     },
-                    ready: function() {
-                        //Do nothing
-                    },
                     play: function() {
                         console.log('jplayer play');
                         $('#playermiddle').css('visibility', 'visible');
@@ -48,7 +45,8 @@ angular.module('jamstash.player.directive', ['jamstash.settings'])
                     },
                     ended: function() {
                         console.log('jplayer ended');
-                        playerService.playEnded();
+                        playerService.nextTrack();
+                        scope.$apply();
                     }
                 });
             };
@@ -61,6 +59,16 @@ angular.module('jamstash.player.directive', ['jamstash.settings'])
                 console.log('playingSong changed !');
                 $player.jPlayer('setMedia', {'mp3': newVal.url})
                     .jPlayer('play');
+            });
+
+            scope.$watch(function () {
+                return playerService.restartSong;
+            }, function (newVal) {
+                if(newVal === true) {
+                    console.log('restartSong changed !');
+                    $player.jPlayer('play', 0);
+                    playerService.restartSong = false;
+                }
             });
         } //end link
     };

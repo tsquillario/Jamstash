@@ -5,16 +5,26 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
 	'use strict';
     $scope.settings = globals.settings;
     $scope.player = player;
-    //$scope.song = player.queue;
-    //angular.copy($rootScope.queue, $scope.song);
-    $scope.itemType = 'pl';
+    $scope.itemType = 'pl'; // TODO: Hyz: What is this ?
 
     $scope.playSong = function (song) {
         console.log('Queue Controller - playSong()', song);
         player.play(song);
     };
 
-    $scope.queueEmpty = function () {
-        player.queue = [];
+    $scope.queueEmpty = function() {
+        player.emptyQueue();
+    };
+
+    $scope.queueShuffle = function() {
+        player.shuffleQueue();
+    };
+
+    $scope.addSongToQueue = function(song) {
+        player.addSong(song);
+    };
+
+    $scope.removeSongFromQueue = function(song) {
+        player.removeSong(song);
     };
 }]);

@@ -451,6 +451,9 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
     $scope.playSong = function (song) {
         player.play(song);
     };
+    $scope.addSongToQueue = function(song) {
+        player.addSong(song);
+    };
 
     /* Launch on Startup */
     $scope.getArtists();
