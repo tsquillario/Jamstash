@@ -5,7 +5,7 @@
 */
 angular.module('jamstash.player.service', ['jamstash.settings', 'angular-underscore/utils'])
 
-.factory('player', function () {
+.factory('player', ['globals', function (globals) {
     'use strict';
 
     var player = {
@@ -42,6 +42,22 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
 
         restart: function() {
             player.restartSong = true;
+        },
+
+        // Called from the player directive at the end of the current song
+        songEnded: function() {
+            if (globals.settings.Repeat) {
+                // repeat current track
+                player.restart();
+            } else if (player.isLastSongPlaying() === true) {
+                if (globals.settings.LoopQueue) {
+                    // Loop to first track in queue
+                    player.playingIndex = -1;
+                    player.nextTrack();
+                }
+            } else {
+                player.nextTrack();
+            }
         },
 
         nextTrack: function() {
@@ -81,8 +97,12 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
 
         getPlayingSong: function() {
             return player.playingSong;
+        },
+
+        isLastSongPlaying: function() {
+            return ((player.playingIndex +1) === player.queue.length);
         }
     };
 
     return player;
-});
+}]);

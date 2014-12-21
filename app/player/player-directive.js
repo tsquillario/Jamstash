@@ -45,12 +45,16 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                         scope.revealControls();
                         scope.scrobbled = false;
                     },
-                    pause: function() {
-                        console.log('jplayer pause');
-                    },
                     ended: function() {
                         console.log('jplayer ended');
-                        playerService.nextTrack();
+                        // We do this here and not on the service because we cannot create
+                        // a circular dependency between the player and subsonic services
+                        if(playerService.isLastSongPlaying() && globals.settings.AutoPlay) {
+                            // Load more random tracks
+                            subsonic.getRandomSongs('play', '', '');
+                        } else {
+                            playerService.songEnded();
+                        }
                         scope.$apply();
                     },
                     timeupdate: function (event) {
