@@ -150,14 +150,14 @@ describe("Player service -", function() {
             };
         });
 
-        xit("when I play it, the song is marked as playing", function() {
+        xit("When I play it, the song is marked as playing", function() {
             player.play(song);
 
             expect(player.getPlayingSong()).toBe(song);
             expect(song.playing).toBeTruthy();
         });
 
-        xit("when I restart playback, the song is still marked as playing", function() {
+        xit("When I restart playback, the song is still marked as playing", function() {
             song.playing = true;
             //player.getPlayingSong() = song;
 
@@ -174,6 +174,11 @@ describe("Player service -", function() {
             player.play(song);
 
             expect(player.restart).toHaveBeenCalled();
+        });
+
+        it("When I restart playback, the flag for the directive is set", function() {
+            player.restart();
+            expect(player.restartSong).toBeTruthy();
         });
     });
 

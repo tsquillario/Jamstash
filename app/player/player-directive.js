@@ -1,4 +1,4 @@
-angular.module('jamstash.player.directive', ['jamstash.settings'])
+angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings'])
 
 .directive('jplayer', ['player', 'globals', function(playerService, globals) {
     'use strict';
