@@ -1,7 +1,7 @@
 /**
 * jamstash.player.service Module
 *
-* Enables app-wide control of the behavior of the player directive.
+* Manages the player and playing queue. Use it to play a song, go to next track or add songs to the queue.
 */
 angular.module('jamstash.player.service', ['jamstash.settings', 'angular-underscore/utils'])
 
@@ -13,9 +13,9 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
         playingIndex: -1,
         playingSong: {},
         restartSong: false,
+        loadSong: false,
 
         play: function(song) {
-            console.log('player service - play()', song);
             var songIndexInQueue;
             // Find the song's index in the queue, if it's in there
             songIndexInQueue = player.queue.indexOf(song);
@@ -31,22 +31,20 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
         },
 
         playFirstSong: function() {
-            console.log('player service - playFirstSong()');
             player.playingIndex = 0;
             player.play(player.queue[0]);
         },
 
         load: function(song) {
-            console.log('player service - load()');
+            player.loadSong = true;
+            player.play(song);
         },
 
         restart: function() {
-            console.log('player service - restart()');
             player.restartSong = true;
         },
 
         nextTrack: function() {
-            console.log('player service - nextTrack()');
             if((player.playingIndex + 1) < player.queue.length) {
                 var nextTrack = player.queue[player.playingIndex + 1];
                 player.playingIndex++;
@@ -55,7 +53,6 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
         },
 
         previousTrack: function() {
-            console.log(('player service - previousTrack()'));
             if((player.playingIndex - 1) > 0) {
                 var previousTrack = player.queue[player.playingIndex - 1];
                 player.playingIndex--;
@@ -66,22 +63,18 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
         },
 
         emptyQueue: function() {
-            console.log('player service - emptyQueue()');
             player.queue = [];
         },
 
         shuffleQueue: function() {
-            console.log('player service - shuffleQueue()');
             player.queue = _.shuffle(player.queue);
         },
 
         addSong: function(song) {
-            console.log('player service - addSong()');
             player.queue.push(song);
         },
 
         removeSong: function(song) {
-            console.log('player service - removeSong()');
             var index = player.queue.indexOf(song);
             player.queue.splice(index, 1);
         },

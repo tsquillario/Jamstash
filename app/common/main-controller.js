@@ -443,27 +443,33 @@
         return $sce.trustAsHtml(html);
     };
 
-    function loadTrackPosition() {
-        //TODO: HYZ: Unit test
+    $scope.loadTrackPosition = function () {
         if (utils.browserStorageCheck()) {
             // Load Saved Song
             var song = angular.fromJson(localStorage.getItem('CurrentSong'));
             if (song) {
                 player.load(song);
-                // Load Saved Queue
-                var items = angular.fromJson(localStorage.getItem('CurrentQueue'));
-                if (items) {
-                    player.queue = items;
-                    if (player.queue.length > 0) {
-                        notifications.updateMessage(player.queue.length + ' Saved Song(s)', true);
-                    }
-                    if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + player.queue.length + ' song(s)'); }
-                }
             }
         } else {
             if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser'); }
         }
-    }
+    };
+
+    $scope.loadQueue = function () {
+        if(utils.browserStorageCheck()) {
+            // load Saved queue
+            var queue = angular.fromJson(localStorage.getItem('CurrentQueue'));
+            if (queue) {
+                player.queue = queue;
+                if (player.queue.length > 0) {
+                    notifications.updateMessage(player.queue.length + ' Saved Song(s)', true);
+                }
+                if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + player.queue.length + ' song(s)'); }
+            }
+        } else {
+            if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser'); }
+        }
+    };
 
     /* Launch on Startup */
     $scope.loadSettings();
@@ -476,7 +482,8 @@
     if ($scope.loggedIn()) {
         //$scope.ping();
         if (globals.settings.SaveTrackPosition) {
-            loadTrackPosition();
+            $scope.loadQueue();
+            $scope.loadTrackPosition();
             //FIXME: HYZ: player.startSaveTrackPosition();
         }
     }

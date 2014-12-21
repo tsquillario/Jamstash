@@ -793,7 +793,35 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 }
             });
             return deferred.promise;
+        },
+        scrobble: function (song) {
+            var id = song.id;
+            //TODO: Hyz: Refactor all this boilerplate into an http interceptor ? or something higher level than this
+            var exception = {reason: 'Error when contacting the Subsonic server.'};
+            var deferred = $q.defer();
+            var httpPromise;
+            if (globals.settings.Debug) { console.log('Scrobble Song: ' + id); }
+            if(globals.settings.Protocol === 'jsonp') {
+                httpPromise = $http.jsonp(globals.BaseURL() + '/scrobble.view?callback=JSON_CALLBACK&' + globals.BaseParams() + '&id=' + id + '&submission=true',
+                {
+                    timeout: globals.settings.Timeout
+                });
+            } else {
+                httpPromise = $http.get(globals.BaseURL() + '/scrobble.view?' + globals.BaseParams() + '&id=' + id + '&submission=true',
+                {
+                    timeout: globals.settings.Timeout
+                });
+            }
+            httpPromise.success(function (data, status) {
+                console.log(data);
+                if(globals.settings.Debug) { console.log('Successfully scrobbled song: ' + id); }
+            }).error(function(data, status) {
+                exception.httpError = status;
+                deferred.reject(exception);
+            });
+            return deferred.promise;
         }
+
         // End subsonic
     };
 }]);
