@@ -1,10 +1,18 @@
 describe("Player service -", function() {
     'use strict';
 
-    var player, firstSong, secondSong, thirdSong, newSong;
+    var player, mockGlobals, firstSong, secondSong, thirdSong, newSong;
     beforeEach(function() {
-        module('jamstash.player.service');
-
+        // We redefine globals because in some tests we need to alter the settings
+        mockGlobals = {
+            settings: {
+                Repeat: false,
+                LoopQueue: false
+            }
+        };
+        module('jamstash.player.service', function ($provide) {
+            $provide.value('globals', mockGlobals);
+        });
         inject(function (_player_) {
             player = _player_;
         });
@@ -121,19 +129,70 @@ describe("Player service -", function() {
             expect(player.playingIndex).toBe(-1);
         });
 
-        it("When I call emptyQueue, it empties the playing queue", function() {
+        it("when I call emptyQueue, it empties the playing queue", function() {
             player.emptyQueue();
             expect(player.queue).toEqual([]);
         });
 
-        it("When I add a song to the queue, it is appended to the end of the playing queue", function() {
+        it("when I add a song to the queue, it is appended to the end of the playing queue", function() {
             player.addSong(newSong);
             expect(player.queue).toEqual([firstSong, secondSong, thirdSong, newSong]);
         });
 
-        it("When I remove the second song, the playing queue is now only the first and third song", function() {
+        it("when I remove the second song, the playing queue is now only the first and third song", function() {
             player.removeSong(secondSong);
             expect(player.queue).toEqual([firstSong, thirdSong]);
+        });
+
+        it("when the first song is playing, isLastSongPlaying returns false", function() {
+            player.playingIndex = 0;
+            expect(player.isLastSongPlaying()).toBeFalsy();
+        });
+
+        it("when the third song is playing, isLastSongPlaying returns true", function() {
+            player.playingIndex = 2;
+            expect(player.isLastSongPlaying()).toBeTruthy();
+        });
+
+        it("and the current song is not the last, when the current song ends, it plays the next song in queue", function() {
+            spyOn(player, "nextTrack");
+            player.playingIndex = 0;
+
+            player.songEnded();
+
+            expect(player.nextTrack).toHaveBeenCalled();
+        });
+
+        it("and that the 'Repeat song' setting is true, when the current song ends, it restarts it", function() {
+            spyOn(player, "restart");
+            mockGlobals.settings.Repeat = true;
+
+            player.songEnded();
+
+            expect(player.restart).toHaveBeenCalled();
+        });
+
+        describe("and the current song is the last of the queue, when the current song ends,", function() {
+            beforeEach(function() {
+                spyOn(player, "nextTrack").and.callThrough();
+                player.playingIndex = 2;
+            });
+
+            it("if the 'Repeat queue' setting is true, it plays the first song of the queue", function() {
+                mockGlobals.settings.LoopQueue = true;
+
+                player.songEnded();
+
+                expect(player.playingIndex).toBe(0);
+                expect(player.nextTrack).toHaveBeenCalled();
+            });
+
+            it("it does not play anything", function() {
+                player.songEnded();
+
+                expect(player.playingIndex).toBe(2);
+                expect(player.nextTrack).not.toHaveBeenCalled();
+            });
         });
     });
 
@@ -150,14 +209,14 @@ describe("Player service -", function() {
             };
         });
 
-        xit("When I play it, the song is marked as playing", function() {
+        xit("when I play it, the song is marked as playing", function() {
             player.play(song);
 
             expect(player.getPlayingSong()).toBe(song);
             expect(song.playing).toBeTruthy();
         });
 
-        xit("When I restart playback, the song is still marked as playing", function() {
+        xit("when I restart the current song, the song is still marked as playing", function() {
             song.playing = true;
             //player.getPlayingSong() = song;
 
@@ -167,7 +226,7 @@ describe("Player service -", function() {
             expect(song.playing).toBeTruthy();
         });
 
-        it("When the song was playing and I play it again, it restarts playback", function() {
+        it("when the song was playing and I play it again, it restarts the current song", function() {
             spyOn(player, "restart");
 
             player.play(song);
@@ -176,12 +235,12 @@ describe("Player service -", function() {
             expect(player.restart).toHaveBeenCalled();
         });
 
-        it("When I restart playback, the flag for the directive is set", function() {
+        it("when I restart the current song, the flag for the directive is set", function() {
             player.restart();
             expect(player.restartSong).toBeTruthy();
         });
 
-        it("When I load the song, the flag for the directive is set", function() {
+        it("when I load the song, the flag for the directive is set", function() {
             spyOn(player, "play");
 
             player.load(song);

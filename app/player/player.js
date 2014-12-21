@@ -1,7 +1,7 @@
 /**
 * jamstash.player Module
 *
-* Control the HTML5 player through jplayer.js
+* Enables access to the player service through the scope
 */
 angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamstash.player.directive'])
 

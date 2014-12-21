@@ -457,16 +457,15 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                         }
                         if (action == 'add') {
                             angular.forEach(items, function (item, key) {
-                                $rootScope.queue.push(map.mapSong(item));
+                                player.queue.push(map.mapSong(item));
                             });
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else if (action == 'play') {
-                            $rootScope.queue = [];
+                            player.queue = [];
                             angular.forEach(items, function (item, key) {
-                                $rootScope.queue.push(map.mapSong(item));
+                                player.queue.push(map.mapSong(item));
                             });
-                            var next = $rootScope.queue[0];
-                            player.play(next);
+                            player.playFirstSong();
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else {
                             content.album = [];
@@ -800,7 +799,6 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             var exception = {reason: 'Error when contacting the Subsonic server.'};
             var deferred = $q.defer();
             var httpPromise;
-            if (globals.settings.Debug) { console.log('Scrobble Song: ' + id); }
             if(globals.settings.Protocol === 'jsonp') {
                 httpPromise = $http.jsonp(globals.BaseURL() + '/scrobble.view?callback=JSON_CALLBACK&' + globals.BaseParams() + '&id=' + id + '&submission=true',
                 {
@@ -813,7 +811,6 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 });
             }
             httpPromise.success(function (data, status) {
-                console.log(data);
                 if(globals.settings.Debug) { console.log('Successfully scrobbled song: ' + id); }
             }).error(function(data, status) {
                 exception.httpError = status;

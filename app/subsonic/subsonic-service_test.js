@@ -43,7 +43,7 @@ describe("Subsonic service -", function() {
         var promise = subsonic.scrobble(song);
         mockBackend.flush();
 
-        expect(promise).toBeResolved();
+        expect(promise).toBeResolvedWith(response);
     });
 
     describe("getStarred -", function() {

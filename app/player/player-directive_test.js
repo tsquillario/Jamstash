@@ -1,10 +1,16 @@
 describe("jplayer directive", function() {
     'use strict';
 
-    var element, scope, playerService, globals, subsonic, $player, playingSong;
+    var element, scope, playerService, mockGlobals, subsonic, $player, playingSong;
 
     beforeEach(function() {
         playingSong = {};
+        // We redefine globals because in some tests we need to alter the settings
+        mockGlobals = {
+            settings: {
+                AutoPlay: false
+            }
+        };
         module('jamstash.player.directive', function($provide) {
             // Mock the player service
             $provide.decorator('player', function($delegate) {
@@ -12,14 +18,16 @@ describe("jplayer directive", function() {
                     return playingSong;
                 });
                 $delegate.nextTrack = jasmine.createSpy('nextTrack');
+                $delegate.songEnded = jasmine.createSpy('songEnded');
+                $delegate.isLastSongPlaying = jasmine.createSpy('isLastSongPlaying');
 
                 return $delegate;
             });
+            $provide.value('globals', mockGlobals);
         });
 
-        inject(function($rootScope, $compile, _player_, _globals_, _subsonic_) {
+        inject(function($rootScope, $compile, _player_, _subsonic_) {
             playerService = _player_;
-            globals = _globals_;
             subsonic = _subsonic_;
             // Compile the directive
             scope = $rootScope.$new();
@@ -74,11 +82,26 @@ describe("jplayer directive", function() {
         expect(playerService.restartSong).toBeFalsy();
     });
 
-    it("When jplayer has finished the current song, it asks the player service for the next track", function() {
-        var e = $.jPlayer.event.ended;
-        $player.trigger(e);
+    describe("When jplayer has finished the current song,", function() {
+        var ended;
+        beforeEach(function() {
+            ended = $.jPlayer.event.ended;
+        });
+        it("it notifies the player service that the song has ended", function() {
+            $player.trigger(ended);
+            expect(playerService.songEnded).toHaveBeenCalled();
+        });
 
-        expect(playerService.nextTrack).toHaveBeenCalled();
+        it("given that the last song of the queue is playing and that the global setting AutoPlay is true, it asks subsonic for random tracks and notifies the player service that the song has ended", function() {
+            mockGlobals.settings.AutoPlay = true;
+            spyOn(subsonic, "getRandomSongs");
+            playerService.isLastSongPlaying.and.returnValue(true);
+
+            $player.trigger(ended);
+
+            expect(playerService.isLastSongPlaying).toHaveBeenCalled();
+            expect(subsonic.getRandomSongs).toHaveBeenCalledWith('play', '', '');
+        });
     });
 
     it("When jPlayer starts to play the current song, it displays the player controls", function() {
