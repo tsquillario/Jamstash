@@ -5,31 +5,33 @@
 */
 angular.module('jamstash.player.service', ['jamstash.settings', 'angular-underscore/utils'])
 
-.factory('player', ['$rootScope', function ($rootScope) {
+.factory('player', function () {
     'use strict';
 
     var player = {
         queue: [],
         playingIndex: -1,
         playingSong: {},
+        restartSong: false,
 
         play: function(song) {
             console.log('player service - play()', song);
             var songIndexInQueue;
             // Find the song's index in the queue, if it's in there
-            _.find(player.queue, function(queuedSong, songIdx){
-                if(queuedSong.id === song.id){ songIndexInQueue = songIdx; console.log('sond Index in queue found = ', songIndexInQueue); return true; }
-            });
-
-            console.log('play() playingIndex', player.playingIndex);
+            songIndexInQueue = player.queue.indexOf(song);
             player.playingIndex = (songIndexInQueue !== undefined) ? songIndexInQueue : -1;
-            console.log('play() playingIndex', player.playingIndex);
-            console.log('play() playingSong = ', player.playingSong);
-            player.playingSong = song;
-            console.log('play() playingSong = ', player.playingSong);
+
+            if(player.playingSong === song) {
+                // We call restart because the playingSong hasn't changed and the directive won't
+                // play the song again
+                player.restart();
+            } else {
+                player.playingSong = song;
+            }
         },
 
-        playFirstSong: function () {
+        playFirstSong: function() {
+            console.log('player service - playFirstSong()');
             player.playingIndex = 0;
             player.play(player.queue[0]);
         },
@@ -40,17 +42,16 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
 
         restart: function() {
             console.log('player service - restart()');
+            player.restartSong = true;
         },
 
         nextTrack: function() {
             console.log('player service - nextTrack()');
-            console.log('nextTrack() playingIndex = ', player.playingIndex);
             if((player.playingIndex + 1) < player.queue.length) {
                 var nextTrack = player.queue[player.playingIndex + 1];
                 player.playingIndex++;
                 player.play(nextTrack);
             }
-            console.log('nextTrack() playingIndex = ', player.playingIndex);
         },
 
         previousTrack: function() {
@@ -64,16 +65,31 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
             }
         },
 
-        // TODO: Hyz Special nextTrack for jplayer to call at ended event
-        playEnded: function () {
-            player.nextTrack();
-            $rootScope.$apply();
+        emptyQueue: function() {
+            console.log('player service - emptyQueue()');
+            player.queue = [];
         },
 
-        getPlayingSong: function () {
+        shuffleQueue: function() {
+            console.log('player service - shuffleQueue()');
+            player.queue = _.shuffle(player.queue);
+        },
+
+        addSong: function(song) {
+            console.log('player service - addSong()');
+            player.queue.push(song);
+        },
+
+        removeSong: function(song) {
+            console.log('player service - removeSong()');
+            var index = player.queue.indexOf(song);
+            player.queue.splice(index, 1);
+        },
+
+        getPlayingSong: function() {
             return player.playingSong;
         }
     };
 
     return player;
-}]);
+});

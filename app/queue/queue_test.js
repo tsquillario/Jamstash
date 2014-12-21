@@ -2,6 +2,9 @@ describe("Queue controller", function() {
     'use strict';
 
     var player, scope, globals;
+    var song = {
+        id: 7310
+    };
 
     beforeEach(function() {
         module('jamstash.queue.controller');
@@ -11,9 +14,6 @@ describe("Queue controller", function() {
             globals = _globals_;
             player = _player_;
 
-            // Mock the functions of the services
-            spyOn(player, "play");
-
             $controller('QueueController', {
                 $scope: scope,
                 globals: globals,
@@ -21,7 +21,9 @@ describe("Queue controller", function() {
             });
         });
     });
+
     it("When I call playSong, it calls play in the player service", function() {
+        spyOn(player, "play");
         var songIndexInQueue = 3;
 
         scope.playSong(songIndexInQueue);
@@ -29,22 +31,40 @@ describe("Queue controller", function() {
         expect(player.play).toHaveBeenCalledWith(songIndexInQueue);
     });
 
-    it("When I call queueEmpty, it empties the player's queue", function() {
-        player.queue = [{
-                id: 4425,
-                name: 'Ratiocinator',
-                artist: 'Kandice Pince',
-                album: 'Additionally'
-            }, {
-                id: 1831,
-                name: 'Nonteetotaler',
-                artist: 'Anabel Eady',
-                album: 'Lyricalness'
-            }
-        ];
+    it("When I call queueEmpty, it calls emptyQueue in the player service", function() {
+        spyOn(player, "emptyQueue");
 
         scope.queueEmpty();
 
-        expect(player.queue).toEqual([]);
+        expect(player.emptyQueue).toHaveBeenCalled();
+    });
+
+    it("When I call queueShuffle, it calls shuffleQueue in the player service", function() {
+        spyOn(player, "shuffleQueue");
+
+        scope.queueShuffle();
+
+        expect(player.shuffleQueue).toHaveBeenCalled();
+    });
+
+    it("When I add one song to the queue, it calls addSong in the player service", function() {
+        spyOn(player, "addSong");
+
+
+        scope.addSongToQueue(song);
+
+        expect(player.addSong).toHaveBeenCalledWith(song);
+    });
+
+    xit("When I add many songs to the queue, it calls addSong in the player service", function() {
+        spyOn(player, "addSong");
+    });
+
+    it("When I remove a song from the queue, it calls removeSong in the player service", function() {
+        spyOn(player, "removeSong");
+
+        scope.removeSongFromQueue(song);
+
+        expect(player.removeSong).toHaveBeenCalledWith(song);
     });
 });
