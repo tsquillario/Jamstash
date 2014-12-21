@@ -34,6 +34,7 @@ module.exports = function(config) {
       'bower_components/angular-underscore/angular-underscore.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/jasmine-promise-matchers/dist/jasmine-promise-matchers.js',
+      'bower_components/jasmine-fixture/dist/jasmine-fixture.js',
       // endbower
       'app/**/*.js',
       'app/**/*_test.js'
