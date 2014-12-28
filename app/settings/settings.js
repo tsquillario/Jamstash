@@ -3,6 +3,7 @@
 .controller('SettingsCtrl', ['$rootScope', '$scope', '$routeParams', '$location', 'utils', 'globals', 'json', 'notifications', 'player',
     function ($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, player) {
     'use strict';
+    $rootScope.hideQueue();
     $scope.settings = globals.settings; /* See service.js */
     $scope.Timeouts = [
         { id: 10000, name: 10 },
