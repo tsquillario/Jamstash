@@ -110,7 +110,8 @@
     };
 
     $scope.$watchCollection('queue', function(newItem, oldItem) {
-        if (oldItem.length != newItem.length) {
+        if (oldItem.length != newItem.length 
+		&& globals.settings.ShowQueue) {
             $rootScope.showQueue();
         }
         /*
