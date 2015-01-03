@@ -1,11 +1,10 @@
+'use strict';
 
 /* Declare app level module */
 angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize',
-    'jamstash.subsonic.controller', 'jamstash.archive.controller', 'jamstash.player.controller', 'jamstash.queue.controller'])
+    'jamstash.subsonic.controller', 'jamstash.archive.controller', 'jamstash.player.controller', 'jamstash.queue.controller', 'angular-locker'])
 
 .config(['$routeProvider',function($routeProvider) {
-    'use strict';
-
     $routeProvider
         .when('/index', { redirectTo: '/library' })
         .when('/settings', { templateUrl: 'settings/settings.html', controller: 'SettingsController' })
@@ -21,8 +20,6 @@ angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize',
 }])
 
 .config(['$httpProvider',function($httpProvider) {
-    'use strict';
-
     $httpProvider.interceptors.push(['$rootScope', '$location', '$q', 'globals', function ($rootScope, $location, $q, globals) {
         return {
             'request': function (request) {
@@ -51,4 +48,10 @@ angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize',
             }
         };
     }]);
+}])
+
+.config(['lockerProvider', function (lockerProvider) {
+    lockerProvider.setDefaultDriver('local')
+        .setDefaultNamespace('jamstash')
+        .setEventsEnabled(false);
 }]);

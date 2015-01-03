@@ -4,15 +4,17 @@
  * Encapsulates the jPlayer plugin. It watches the player service for the song to play, load or restart.
  * It also enables jPlayer to attach event handlers to our UI through css Selectors.
  */
-angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings', 'jamstash.subsonic.service'])
+angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings', 'jamstash.subsonic.service', 'jamstash.notifications', 'jamstash.utils', 'angular-locker'])
 
-.directive('jplayer', ['player', 'globals', 'subsonic', function(playerService, globals, subsonic) {
+.directive('jplayer', ['player', 'globals', 'subsonic', 'notifications', 'utils', 'locker', '$window',
+    function(playerService, globals, subsonic, notifications, utils, locker, $window) {
     'use strict';
     return {
         restrict: 'EA',
         template: '<div></div>',
         link: function(scope, element) {
 
+            var timerid;
             var $player = element.children('div');
             var audioSolution = 'html,flash';
             if (globals.settings.ForceFlash) {
@@ -41,12 +43,10 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                         duration: '#duration'
                     },
                     play: function() {
-                        console.log('jplayer play');
                         scope.revealControls();
                         scope.scrobbled = false;
                     },
                     ended: function() {
-                        console.log('jplayer ended');
                         // We do this here and not on the service because we cannot create
                         // a circular dependency between the player and subsonic services
                         if(playerService.isLastSongPlaying() && globals.settings.AutoPlay) {
@@ -69,23 +69,21 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                 });
             };
 
-            updatePlayer();
-
-            scope.currentSong = {};
-            scope.scrobbled = false;
-
             scope.$watch(function () {
                 return playerService.getPlayingSong();
-            }, function (newVal) {
-                console.log('playingSong changed !');
-                scope.currentSong = newVal;
-                $player.jPlayer('setMedia', {'mp3': newVal.url});
+            }, function (newSong) {
+                scope.currentSong = newSong;
+                $player.jPlayer('setMedia', {'mp3': newSong.url});
                 if(playerService.loadSong === true) {
                     // Do not play, only load
                     playerService.loadSong = false;
                     scope.revealControls();
+                    $player.jPlayer('pause', newSong.position);
                 } else {
                     $player.jPlayer('play');
+                    if(globals.settings.NotificationSong) {
+                        notifications.showNotification(newSong.coverartthumb, utils.toHTML.un(newSong.name), utils.toHTML.un(newSong.artist + ' - ' + newSong.album), 'text', '#NextTrack');
+                    }
                 }
             });
 
@@ -93,7 +91,6 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                 return playerService.restartSong;
             }, function (newVal) {
                 if(newVal === true) {
-                    console.log('restartSong changed !');
                     $player.jPlayer('play', 0);
                     playerService.restartSong = false;
                 }
@@ -103,6 +100,51 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                 $('#playermiddle').css('visibility', 'visible');
                 $('#songdetails').css('visibility', 'visible');
             };
+
+            scope.saveTrackPosition = function () {
+                var audio = $player.data('jPlayer');
+                if (audio !== undefined && scope.currentSong !== undefined) {
+                    var position = audio.status.currentTime;
+                    if (position !== null) {
+                        scope.currentSong.position = position;
+                        locker.put('CurrentSong', scope.currentSong);
+                        if (globals.settings.Debug) { console.log('Saving Current Position: ', scope.currentSong); }
+                    }
+                }
+            };
+
+            scope.saveQueue = function () {
+                locker.put('CurrentQueue', playerService.queue);
+                if (globals.settings.Debug) { console.log('Saving Queue: ' + playerService.queue.length + ' songs'); }
+            };
+
+            scope.startSavePosition = function () {
+                if (globals.settings.SaveTrackPosition) {
+                    if (timerid !== 0) {
+                        $window.clearInterval(timerid);
+                    }
+                    timerid = $window.setInterval(function () {
+                        var audio = $player.data('jPlayer');
+                        if (globals.settings.SaveTrackPosition && audio.status.currentTime > 0 && audio.status.paused === false) {
+                            $('#action_SaveProgress')
+                                .fadeTo("slow", 0).delay(500)
+                                .fadeTo("slow", 1).delay(500)
+                                .fadeTo("slow", 0).delay(500)
+                                .fadeTo("slow", 1);
+                            scope.saveTrackPosition();
+                            scope.saveQueue();
+                        }
+                    }, 30000);
+                }
+            };
+
+             // Startup
+            timerid = 0;
+            scope.currentSong = {};
+            scope.scrobbled = false;
+
+            updatePlayer();
+            scope.startSavePosition();
 
         } //end link
     };
