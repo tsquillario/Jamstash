@@ -206,6 +206,15 @@ describe("jplayer directive", function() {
         });
     });
 
+    it("When the global setting SaveTrackPosition becomes true, it starts saving the current song's position", function() {
+        spyOn(scope, "startSavePosition");
+        mockGlobals.settings.SaveTrackPosition = true;
+
+        scope.$apply();
+
+        expect(scope.startSavePosition).toHaveBeenCalled();
+    });
+
     describe("Given that the global setting SaveTrackPosition is true,", function() {
         beforeEach(function() {
             mockGlobals.settings.SaveTrackPosition = true;

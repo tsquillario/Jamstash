@@ -113,6 +113,14 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                 }
             });
 
+            scope.$watch(function () {
+                return globals.settings.SaveTrackPosition;
+            }, function (newVal) {
+                if (newVal === true) {
+                    scope.startSavePosition();
+                }
+            });
+
             scope.revealControls = function () {
                 $('#playermiddle').css('visibility', 'visible');
                 $('#songdetails').css('visibility', 'visible');

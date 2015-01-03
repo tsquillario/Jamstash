@@ -23,6 +23,16 @@ angular.module('jamstash.persistence', ['jamstash.settings', 'jamstash.player.se
         if (globals.settings.Debug) { console.log('Current Position Loaded from localStorage: ', song); }
     };
 
+    this.saveTrackPosition = function (song) {
+        locker.put('CurrentSong', song);
+        if (globals.settings.Debug) { console.log('Saving Current Position: ', song); }
+    };
+
+    this.deleteTrackPosition = function () {
+        locker.forget('CurrentSong');
+        if (globals.settings.Debug) { console.log('Removing Current Position from localStorage'); }
+    };
+
     this.loadQueue = function () {
         // load Saved queue
         var queue = locker.get('CurrentQueue');
@@ -31,18 +41,18 @@ angular.module('jamstash.persistence', ['jamstash.settings', 'jamstash.player.se
             if (player.queue.length > 0) {
                 notifications.updateMessage(player.queue.length + ' Saved Song(s)', true);
             }
-            if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + player.queue.length + ' song(s)'); }
+            if (globals.settings.Debug) { console.log('Play Queue Loaded from localStorage: ' + player.queue.length + ' song(s)'); }
         }
-    };
-
-    this.saveTrackPosition = function (song) {
-        locker.put('CurrentSong', song);
-        if (globals.settings.Debug) { console.log('Saving Current Position: ', song); }
     };
 
     this.saveQueue = function () {
         locker.put('CurrentQueue', player.queue);
         if (globals.settings.Debug) { console.log('Saving Queue: ' + player.queue.length + ' songs'); }
+    };
+
+    this.deleteQueue = function () {
+        locker.forget('CurrentQueue');
+        if (globals.settings.Debug) { console.log('Removing Play Queue from localStorage'); }
     };
 }]);
 
