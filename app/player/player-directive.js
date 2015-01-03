@@ -42,9 +42,11 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                         currentTime: '#played',
                         duration: '#duration'
                     },
+                    setmedia: function() {
+                        scope.scrobbled = false;
+                    },
                     play: function() {
                         scope.revealControls();
-                        scope.scrobbled = false;
                     },
                     ended: function() {
                         // We do this here and not on the service because we cannot create
@@ -60,7 +62,8 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     timeupdate: function (event) {
                         // Scrobble song once percentage is reached
                         var p = event.jPlayer.status.currentPercentAbsolute;
-                        if (!scope.scrobbled && p > 30) {
+                        var isPlaying = !event.jPlayer.status.paused;
+                        if (!scope.scrobbled && p > 30 && isPlaying) {
                             if (globals.settings.Debug) { console.log('LAST.FM SCROBBLE - Percent Played: ' + p); }
                             subsonic.scrobble(scope.currentSong);
                             scope.scrobbled = true;
@@ -131,6 +134,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                                 .fadeTo("slow", 1).delay(500)
                                 .fadeTo("slow", 0).delay(500)
                                 .fadeTo("slow", 1);
+                            //TODO: Hyz: Pass position and queue as parameter and move this away in another service
                             scope.saveTrackPosition();
                             scope.saveQueue();
                         }

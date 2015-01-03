@@ -134,10 +134,10 @@ describe("jplayer directive", function() {
         expect(scope.revealControls).toHaveBeenCalled();
     });
 
-    it("When jPlayer starts to play the current song, it resets the scrobbled flag to false", function() {
+    it("When jPlayer gets new media, it resets the scrobbled flag to false", function() {
         scope.scrobbled = true;
 
-        var e = $.jPlayer.event.play;
+        var e = $.jPlayer.event.setmedia;
         $player.trigger(e);
 
         expect(scope.scrobbled).toBeFalsy();
