@@ -1,6 +1,6 @@
 angular.module('JamStash')
-.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'locker',
-    function($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, locker) {
+.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence',
+    function($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, persistence) {
     'use strict';
 
     $rootScope.settings = globals.settings;
@@ -400,27 +400,6 @@ angular.module('JamStash')
         return $sce.trustAsHtml(html);
     };
 
-    $scope.loadTrackPosition = function () {
-        // Load Saved Song
-        var song = locker.get('CurrentSong');
-        if (song) {
-            player.load(song);
-        }
-        if (globals.settings.Debug) { console.log('Current Position Loaded from localStorage: ', song); }
-    };
-
-    $scope.loadQueue = function () {
-        // load Saved queue
-        var queue = locker.get('CurrentQueue');
-        if (queue) {
-            player.addSongs(queue);
-            if (player.queue.length > 0) {
-                notifications.updateMessage(player.queue.length + ' Saved Song(s)', true);
-            }
-            if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + player.queue.length + ' song(s)'); }
-        }
-    };
-
     /* Launch on Startup */
     $scope.loadSettings();
     utils.switchTheme(globals.settings.Theme);
@@ -432,9 +411,8 @@ angular.module('JamStash')
     if ($scope.loggedIn()) {
         //$scope.ping();
         if (globals.settings.SaveTrackPosition) {
-            $scope.loadQueue();
-            $scope.loadTrackPosition();
-            //FIXME: HYZ: player.startSaveTrackPosition();
+            persistence.loadQueue();
+            persistence.loadTrackPosition();
         }
     }
     /* End Startup */

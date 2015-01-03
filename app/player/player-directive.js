@@ -4,10 +4,10 @@
  * Encapsulates the jPlayer plugin. It watches the player service for the song to play, load or restart.
  * It also enables jPlayer to attach event handlers to our UI through css Selectors.
  */
-angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings', 'jamstash.subsonic.service', 'jamstash.notifications', 'jamstash.utils', 'angular-locker'])
+angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings', 'jamstash.subsonic.service', 'jamstash.notifications', 'jamstash.utils', 'jamstash.persistence'])
 
-.directive('jplayer', ['player', 'globals', 'subsonic', 'notifications', 'utils', 'locker', '$window',
-    function(playerService, globals, subsonic, notifications, utils, locker, $window) {
+.directive('jplayer', ['player', 'globals', 'subsonic', 'notifications', 'utils', '$window', 'persistence',
+    function(playerService, globals, subsonic, notifications, utils, $window, persistence) {
     'use strict';
     return {
         restrict: 'EA',
@@ -30,6 +30,8 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     solution: audioSolution,
                     supplied: 'mp3',
                     preload: 'auto',
+                    errorAlerts: false,
+                    warningAlerts: false,
                     cssSelectorAncestor: '#player',
                     cssSelector: {
                         play: '.PlayTrack',
@@ -68,6 +70,16 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                             subsonic.scrobble(scope.currentSong);
                             scope.scrobbled = true;
                         }
+                    },
+                    error: function (event) {
+                        var position = event.jPlayer.status.currentTime;
+                        if(position) {
+                           $player.jPlayer('play', position);
+                        }
+                        if (globals.settings.Debug) {
+                            console.log("jPlayer error: ", event.jPlayer.error);
+                            console.log("Stream interrupted, retrying from position: ", position);
+                        }
                     }
                 });
             };
@@ -75,17 +87,19 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
             scope.$watch(function () {
                 return playerService.getPlayingSong();
             }, function (newSong) {
-                scope.currentSong = newSong;
-                $player.jPlayer('setMedia', {'mp3': newSong.url});
-                if(playerService.loadSong === true) {
-                    // Do not play, only load
-                    playerService.loadSong = false;
-                    scope.revealControls();
-                    $player.jPlayer('pause', newSong.position);
-                } else {
-                    $player.jPlayer('play');
-                    if(globals.settings.NotificationSong) {
-                        notifications.showNotification(newSong.coverartthumb, utils.toHTML.un(newSong.name), utils.toHTML.un(newSong.artist + ' - ' + newSong.album), 'text', '#NextTrack');
+                if(newSong !== undefined) {
+                    scope.currentSong = newSong;
+                    $player.jPlayer('setMedia', {'mp3': newSong.url});
+                    if(playerService.loadSong === true) {
+                        // Do not play, only load
+                        playerService.loadSong = false;
+                        scope.revealControls();
+                        $player.jPlayer('pause', newSong.position);
+                    } else {
+                        $player.jPlayer('play');
+                        if(globals.settings.NotificationSong) {
+                            notifications.showNotification(newSong.coverartthumb, utils.toHTML.un(newSong.name), utils.toHTML.un(newSong.artist + ' - ' + newSong.album), 'text', '#NextTrack');
+                        }
                     }
                 }
             });
@@ -104,23 +118,6 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                 $('#songdetails').css('visibility', 'visible');
             };
 
-            scope.saveTrackPosition = function () {
-                var audio = $player.data('jPlayer');
-                if (audio !== undefined && scope.currentSong !== undefined) {
-                    var position = audio.status.currentTime;
-                    if (position !== null) {
-                        scope.currentSong.position = position;
-                        locker.put('CurrentSong', scope.currentSong);
-                        if (globals.settings.Debug) { console.log('Saving Current Position: ', scope.currentSong); }
-                    }
-                }
-            };
-
-            scope.saveQueue = function () {
-                locker.put('CurrentQueue', playerService.queue);
-                if (globals.settings.Debug) { console.log('Saving Queue: ' + playerService.queue.length + ' songs'); }
-            };
-
             scope.startSavePosition = function () {
                 if (globals.settings.SaveTrackPosition) {
                     if (timerid !== 0) {
@@ -128,15 +125,16 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     }
                     timerid = $window.setInterval(function () {
                         var audio = $player.data('jPlayer');
-                        if (globals.settings.SaveTrackPosition && audio.status.currentTime > 0 && audio.status.paused === false) {
+                        if (globals.settings.SaveTrackPosition && scope.currentSong !== undefined &&
+                            audio !== undefined && audio.status.currentTime > 0 && audio.status.paused === false) {
                             $('#action_SaveProgress')
                                 .fadeTo("slow", 0).delay(500)
                                 .fadeTo("slow", 1).delay(500)
                                 .fadeTo("slow", 0).delay(500)
                                 .fadeTo("slow", 1);
-                            //TODO: Hyz: Pass position and queue as parameter and move this away in another service
-                            scope.saveTrackPosition();
-                            scope.saveQueue();
+                            scope.currentSong.position = audio.status.currentTime;
+                            persistence.saveTrackPosition(scope.currentSong);
+                            persistence.saveQueue();
                         }
                     }, 30000);
                 }
