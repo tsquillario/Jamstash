@@ -107,4 +107,20 @@ describe("Persistence service", function() {
             expect(locker.put).toHaveBeenCalledWith('CurrentQueue', player.queue);
         });
     });
+
+    describe("remove from localStorage -", function() {
+        beforeEach(function() {
+            spyOn(locker, "forget");
+        });
+
+        it("it deletes the current track from local Storage", function() {
+            persistence.deleteTrackPosition();
+            expect(locker.forget).toHaveBeenCalledWith('CurrentSong');
+        });
+
+        it("it deletes the saved playing queue from local Storage", function() {
+            persistence.deleteQueue();
+            expect(locker.forget).toHaveBeenCalledWith('CurrentQueue');
+        });
+    });
 });
