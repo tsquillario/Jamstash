@@ -1,6 +1,6 @@
-﻿angular.module('JamStash')
-.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player',
-    function($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player) {
+angular.module('JamStash')
+.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'locker',
+    function($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, locker) {
     'use strict';
 
     $rootScope.settings = globals.settings;
@@ -103,7 +103,7 @@
     };
 
     $scope.$watchCollection('queue', function(newItem, oldItem) {
-        if (oldItem.length != newItem.length 
+        if (oldItem.length != newItem.length
 		&& globals.settings.ShowQueue) {
             $rootScope.showQueue();
         }
@@ -186,7 +186,7 @@
             $rootScope.queue.splice(start, 1)[0]);
         $scope.$apply();
     };
-    $(document).on( 'click', 'message', function() { 
+    $(document).on( 'click', 'message', function() {
         $(this).fadeOut(function () { $(this).remove(); });
         return false;
     })
@@ -444,30 +444,22 @@
     };
 
     $scope.loadTrackPosition = function () {
-        if (utils.browserStorageCheck()) {
-            // Load Saved Song
-            var song = angular.fromJson(localStorage.getItem('CurrentSong'));
-            if (song) {
-                player.load(song);
-            }
-        } else {
-            if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser'); }
+        // Load Saved Song
+        var song = locker.get('CurrentSong');
+        if (song) {
+            player.load(song);
         }
     };
 
     $scope.loadQueue = function () {
-        if(utils.browserStorageCheck()) {
-            // load Saved queue
-            var queue = angular.fromJson(localStorage.getItem('CurrentQueue'));
-            if (queue) {
-                player.queue = queue;
-                if (player.queue.length > 0) {
-                    notifications.updateMessage(player.queue.length + ' Saved Song(s)', true);
-                }
-                if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + player.queue.length + ' song(s)'); }
+        // load Saved queue
+        var queue = locker.get('CurrentQueue');
+        if (queue) {
+            player.addSongs(queue);
+            if (player.queue.length > 0) {
+                notifications.updateMessage(player.queue.length + ' Saved Song(s)', true);
             }
-        } else {
-            if (globals.settings.Debug) { console.log('HTML5::loadStorage not supported on your browser'); }
+            if (globals.settings.Debug) { console.log('Play Queue Loaded From localStorage: ' + player.queue.length + ' song(s)'); }
         }
     };
 

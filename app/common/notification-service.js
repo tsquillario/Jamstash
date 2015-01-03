@@ -3,9 +3,9 @@
 *
 * Provides access to the notification UI.
 */
-angular.module('jamstash.notifications', [])
+angular.module('jamstash.notifications', ['jamstash.player.service'])
 
-.service('notifications', ['$rootScope', 'globals', function($rootScope, globals) {
+.service('notifications', ['$rootScope', 'globals', 'player', function($rootScope, globals, player) {
     'use strict';
 
     var msgIndex = 1;
@@ -37,10 +37,12 @@ angular.module('jamstash.notifications', [])
         if (this.hasNotificationPermission()) {
             //closeAllNotifications()
             var settings = {};
-            if (bind = '#NextTrack') {
+            if (bind === '#NextTrack') {
                 settings.notifyClick = function () {
-                    $rootScope.nextTrack();
+                    player.nextTrack();
                     this.close();
+                    //TODO: Hyz: This should be in a directive, so we wouldn't have to use this.
+                    $rootScope.$apply();
                 };
             }
             if (type === 'text') {

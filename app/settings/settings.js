@@ -47,7 +47,7 @@
             }
         }
         if ($scope.settings.SaveTrackPosition) {
-            player.saveTrackPosition();
+            //TODO: Hyz: player.saveTrackPosition();
         } else {
             player.deleteCurrentQueue();
         }

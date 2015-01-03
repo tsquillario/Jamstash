@@ -1,18 +1,18 @@
 describe("Main controller", function() {
     'use strict';
 
-    var scope, $rootScope, utils, globals, model, notifications, player;
+    var scope, $rootScope, utils, globals, notifications, player, locker;
     beforeEach(function() {
         module('JamStash');
 
-        inject(function ($controller, _$rootScope_, _$document_, _$window_, _$location_, _$cookieStore_, _utils_, _globals_, _model_, _notifications_, _player_) {
+        inject(function ($controller, _$rootScope_, _$document_, _$window_, _$location_, _$cookieStore_, _utils_, _globals_, _model_, _notifications_, _player_, _locker_) {
             $rootScope = _$rootScope_;
             scope = $rootScope.$new();
             utils = _utils_;
             globals = _globals_;
-            model = _model_;
             notifications = _notifications_;
             player = _player_;
+            locker = _locker_;
 
             $controller('AppController', {
                 $scope: scope,
@@ -23,9 +23,10 @@ describe("Main controller", function() {
                 $cookieStore: _$cookieStore_,
                 utils: utils,
                 globals: globals,
-                model: model,
+                model: _model_,
                 notifications: notifications,
-                player: player
+                player: player,
+                locker: locker
             });
         });
     });
@@ -62,7 +63,7 @@ describe("Main controller", function() {
         beforeEach(function() {
             fakeStorage = {};
 
-            spyOn(localStorage, "getItem").and.callFake(function(key) {
+            spyOn(locker, "get").and.callFake(function(key) {
                 return fakeStorage[key];
             });
             spyOn(utils, "browserStorageCheck").and.returnValue(true);
@@ -86,13 +87,13 @@ describe("Main controller", function() {
 
                 scope.loadTrackPosition();
 
-                expect(localStorage.getItem).toHaveBeenCalledWith('CurrentSong');
+                expect(locker.get).toHaveBeenCalledWith('CurrentSong');
                 expect(player.load).toHaveBeenCalledWith(song);
             });
 
             it("Given that we didn't save anything in local Storage, it doesn't load anything", function() {
                 scope.loadTrackPosition();
-                expect(localStorage.getItem).toHaveBeenCalledWith('CurrentSong');
+                expect(locker.get).toHaveBeenCalledWith('CurrentSong');
                 expect(player.load).not.toHaveBeenCalled();
             });
         });
@@ -100,7 +101,10 @@ describe("Main controller", function() {
         describe("loadQueue -", function() {
             beforeEach(function() {
                 spyOn(notifications, "updateMessage");
-                player.queue = [];
+                spyOn(player, "addSongs").and.callFake(function (songs) {
+                    // Update the queue length so that notifications work
+                    player.queue.length += songs.length;
+                });
             });
 
             it("Given that we previously saved the playing queue in local Storage, it fills the player's queue with what we saved and notifies the user", function() {
@@ -115,16 +119,16 @@ describe("Main controller", function() {
 
                 scope.loadQueue();
 
-                expect(localStorage.getItem).toHaveBeenCalledWith('CurrentQueue');
-                expect(player.queue).toEqual(queue);
+                expect(locker.get).toHaveBeenCalledWith('CurrentQueue');
+                expect(player.addSongs).toHaveBeenCalledWith(queue);
                 expect(notifications.updateMessage).toHaveBeenCalledWith('3 Saved Song(s)', true);
             });
 
             it("Given that we didn't save anything in local Storage, it doesn't load anything", function() {
                 scope.loadQueue();
 
-                expect(localStorage.getItem).toHaveBeenCalledWith('CurrentQueue');
-                expect(player.queue).toEqual([]);
+                expect(locker.get).toHaveBeenCalledWith('CurrentQueue');
+                expect(player.addSongs).not.toHaveBeenCalled();
                 expect(notifications.updateMessage).not.toHaveBeenCalled();
             });
         });
