@@ -100,14 +100,6 @@ angular.module('jamstash.utils', ['jamstash.settings'])
                 break;
         }
     };
-    // HTML5
-    this.browserStorageCheck = function () {
-        if (typeof (localStorage) === 'undefined') {
-            return false;
-        } else {
-            return true;
-        }
-    };
     this.timeToSeconds = function (time) {
         var a = time.split(':'); // split it at the colons
         var seconds;

@@ -66,7 +66,6 @@ describe("Main controller", function() {
             spyOn(locker, "get").and.callFake(function(key) {
                 return fakeStorage[key];
             });
-            spyOn(utils, "browserStorageCheck").and.returnValue(true);
         });
 
         describe("loadTrackPosition -", function() {

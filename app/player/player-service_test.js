@@ -139,9 +139,21 @@ describe("Player service -", function() {
             expect(player.queue).toEqual([firstSong, secondSong, thirdSong, newSong]);
         });
 
+        it("when I add 3 songs to the queue, they are appended to the end of the playing queue", function() {
+            var secondNewSong = {id: 6338, name: 'Preconquest', artist: 'France Wisley', album: 'Unmix'};
+            var thirdNewSong = {id: 3696, name: 'Cetene', artist: 'Hilario Masley', album: 'Gonapophysal'};
+            player.addSongs([newSong, secondNewSong, thirdNewSong]);
+            expect(player.queue).toEqual([firstSong, secondSong, thirdSong, newSong, secondNewSong, thirdNewSong]);
+        });
+
         it("when I remove the second song, the playing queue is now only the first and third song", function() {
             player.removeSong(secondSong);
             expect(player.queue).toEqual([firstSong, thirdSong]);
+        });
+
+        it("when I remove the first and third songs, the playing queue is now only the second song", function() {
+            player.removeSongs([firstSong, thirdSong]);
+            expect(player.queue).toEqual([secondSong]);
         });
 
         it("when the first song is playing, isLastSongPlaying returns false", function() {

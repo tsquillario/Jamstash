@@ -80,19 +80,33 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
 
         emptyQueue: function() {
             player.queue = [];
+            return player;
         },
 
         shuffleQueue: function() {
-            player.queue = _.shuffle(player.queue);
+            player.queue = _(player.queue).shuffle();
+            return player;
         },
 
         addSong: function(song) {
             player.queue.push(song);
+            return player;
+        },
+
+        addSongs: function (songs) {
+            player.queue = player.queue.concat(songs);
+            return player;
         },
 
         removeSong: function(song) {
             var index = player.queue.indexOf(song);
             player.queue.splice(index, 1);
+            return player;
+        },
+
+        removeSongs: function (songs) {
+            player.queue = _(player.queue).difference(songs);
+            return player;
         },
 
         getPlayingSong: function() {

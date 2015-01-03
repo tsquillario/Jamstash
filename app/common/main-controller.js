@@ -305,16 +305,9 @@ angular.module('JamStash')
             $scope.selectedSongs.length = 0;
         }
     };
-	$scope.addSongToQueue = function (data) {
-        $rootScope.queue.push(data);
-    };
     $rootScope.removeSong = function (item, songs) {
         var index = songs.indexOf(item);
         songs.splice(index, 1);
-    };
-    $scope.removeSongFromQueue = function (item) {
-        var index = $rootScope.queue.indexOf(item)
-        $rootScope.queue.splice(index, 1);
     };
     $scope.isActive = function (route) {
         return route === $location.path();
@@ -344,20 +337,6 @@ angular.module('JamStash')
             }
         });
     };
-    $scope.queueRemoveSelected = function (data, event) {
-        angular.forEach($scope.selectedSongs, function (item, key) {
-            var index = $rootScope.queue.indexOf(item);
-            if (index > -1) {
-                $rootScope.queue.splice(index, 1);
-            }
-        });
-    };
-    $scope.queueEmpty = function () {
-        //TODO: Hyz: Remove
-        //self.selectedSongs([]);
-        $rootScope.queue = [];
-        $.fancybox.close();
-    };
     $scope.queueTotal = function () {
         var total = 0;
         utils.arrayForEach(self.queue(), function (item) {
@@ -368,10 +347,6 @@ angular.module('JamStash')
         } else {
             return '0 song(s), 00:00:00 total time';
         }
-    };
-    $scope.queueShuffle = function () {
-        //TODO: Hyz: Remove
-        $rootScope.queue.sort(function () { return 0.5 - Math.random(); });
     };
     $scope.selectedSongs = [];
     $scope.selectSong = function (data) {
@@ -412,11 +387,6 @@ angular.module('JamStash')
 			}
 		});
 	};
-    // Hyz: I don't know yet how to remove the circular dependency between player-service
-    // and notification-service... So I'll keep this one there until I know.
-    $rootScope.nextTrack = function (loadonly, song) {
-        player.nextTrack(loadonly, song);
-    };
 
     $scope.updateFavorite = function (item) {
         var id = item.id;

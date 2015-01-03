@@ -11,11 +11,13 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
         player.play(song);
     };
 
-    $scope.queueEmpty = function() {
+    $scope.emptyQueue = function() {
         player.emptyQueue();
+        //TODO: Hyz: Shouldn't it be in a directive ?
+        $.fancybox.close();
     };
 
-    $scope.queueShuffle = function() {
+    $scope.shuffleQueue = function() {
         player.shuffleQueue();
     };
 
@@ -25,5 +27,9 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
 
     $scope.removeSongFromQueue = function(song) {
         player.removeSong(song);
+    };
+
+    $scope.removeSelectedSongsFromQueue = function () {
+        player.removeSongs($scope.selectedSongs);
     };
 }]);
