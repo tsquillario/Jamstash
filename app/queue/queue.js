@@ -32,4 +32,10 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
     $scope.removeSelectedSongsFromQueue = function () {
         player.removeSongs($scope.selectedSongs);
     };
+
+    $scope.isPlayingSong = function (song) {
+        return angular.equals(song, player.getPlayingSong());
+    };
+
+    //TODO: Hyz: updateFavorite - leave in rootScope ?
 }]);
