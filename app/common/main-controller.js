@@ -103,6 +103,7 @@ angular.module('JamStash')
     };
 
     $scope.$watchCollection('queue', function(newItem, oldItem) {
+        // TODO: Hyz: Replace
         if (oldItem.length != newItem.length
 		&& globals.settings.ShowQueue) {
             $rootScope.showQueue();
@@ -123,14 +124,7 @@ angular.module('JamStash')
         $('#right-component').addClass('lgcolumn_expanded');
     };
     $scope.toggleQueue = function () {
-        if ($('#SideBar').css('display') == 'none') {
-            $rootScope.showQueue();
-        } else {
-            $rootScope.hideQueue();
-        }
-    };
-    $scope.toggleQueue = function () {
-        if ($('#SideBar').css('display') == 'none') {
+        if ($('#SideBar').css('display') === 'none') {
             $rootScope.showQueue();
         } else {
             $rootScope.hideQueue();
@@ -275,6 +269,7 @@ angular.module('JamStash')
         });
     };
     $rootScope.playAll = function (songs) {
+        // TODO: Hyz: Replace
         $rootScope.queue = [];
         $rootScope.selectAll(songs);
         $rootScope.addSongsToQueue();
@@ -282,6 +277,7 @@ angular.module('JamStash')
         player.play(next);
     };
     $rootScope.playFrom = function (index, songs) {
+        // TODO: Hyz: Replace
         var from = songs.slice(index,songs.length);
         $scope.selectedSongs = [];
         angular.forEach(from, function (item, key) {
@@ -296,6 +292,7 @@ angular.module('JamStash')
         }
     };
     $rootScope.addSongsToQueue = function () {
+        // TODO: Hyz: Replace
         if ($scope.selectedSongs.length !== 0) {
             angular.forEach($scope.selectedSongs, function (item, key) {
                 $rootScope.queue.push(item);
@@ -306,6 +303,7 @@ angular.module('JamStash')
         }
     };
     $rootScope.removeSong = function (item, songs) {
+        // TODO: Hyz: Replace
         var index = songs.indexOf(item);
         songs.splice(index, 1);
     };
@@ -336,17 +334,6 @@ angular.module('JamStash')
                 }
             }
         });
-    };
-    $scope.queueTotal = function () {
-        var total = 0;
-        utils.arrayForEach(self.queue(), function (item) {
-            total += parseInt(item.duration());
-        });
-        if (self.queue().length > 0) {
-            return self.queue().length + ' song(s), ' + utils.secondsToTime(total) + ' total time';
-        } else {
-            return '0 song(s), 00:00:00 total time';
-        }
     };
     $scope.selectedSongs = [];
     $scope.selectSong = function (data) {
@@ -419,6 +406,7 @@ angular.module('JamStash')
         if (song) {
             player.load(song);
         }
+        if (globals.settings.Debug) { console.log('Current Position Loaded from localStorage: ', song); }
     };
 
     $scope.loadQueue = function () {

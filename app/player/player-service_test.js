@@ -221,23 +221,6 @@ describe("Player service -", function() {
             };
         });
 
-        xit("when I play it, the song is marked as playing", function() {
-            player.play(song);
-
-            expect(player.getPlayingSong()).toBe(song);
-            expect(song.playing).toBeTruthy();
-        });
-
-        xit("when I restart the current song, the song is still marked as playing", function() {
-            song.playing = true;
-            //player.getPlayingSong() = song;
-
-            player.restart();
-
-            expect(player.getPlayingSong()).toBe(song);
-            expect(song.playing).toBeTruthy();
-        });
-
         it("when the song was playing and I play it again, it restarts the current song", function() {
             spyOn(player, "restart");
 

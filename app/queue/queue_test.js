@@ -2,9 +2,7 @@ describe("Queue controller", function() {
     'use strict';
 
     var player, scope, globals;
-    var song = {
-        id: 7310
-    };
+    var song;
 
     beforeEach(function() {
         module('jamstash.queue.controller');
@@ -20,6 +18,7 @@ describe("Queue controller", function() {
                 player: player
             });
         });
+        song = { id: 7310 };
     });
 
     it("When I play a song, it calls play in the player service", function() {
@@ -58,5 +57,11 @@ describe("Queue controller", function() {
         scope.selectedSongs = [song, secondSong];
         scope.removeSelectedSongsFromQueue();
         expect(player.removeSongs).toHaveBeenCalledWith([song, secondSong]);
+    });
+
+    it("asks the player service if a given song is the currently playing song", function() {
+        spyOn(player, "getPlayingSong").and.returnValue(song);
+        expect(scope.isPlayingSong(song)).toBeTruthy();
+        expect(player.getPlayingSong).toHaveBeenCalled();
     });
 });

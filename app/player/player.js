@@ -10,7 +10,9 @@ angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamsta
 
     $scope.player = player;
 
-    $scope.updateFavorite = function (song) {
-        // TODO
+    $scope.getPlayingSong = function () {
+        return player.getPlayingSong();
     };
+
+    //TODO: Hyz: updateFavorite - leave in rootScope ?
 }]);
