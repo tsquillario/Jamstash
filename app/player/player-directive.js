@@ -55,7 +55,9 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                         // a circular dependency between the player and subsonic services
                         if(playerService.isLastSongPlaying() && globals.settings.AutoPlay) {
                             // Load more random tracks
-                            subsonic.getRandomSongs('play', '', '');
+                            subsonic.getRandomSongs().then(function (songs) {
+                                playerService.addSongs(songs).songEnded();
+                            });
                         } else {
                             playerService.songEnded();
                         }
