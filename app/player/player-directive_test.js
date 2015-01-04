@@ -1,7 +1,7 @@
 describe("jplayer directive", function() {
     'use strict';
 
-    var element, scope, $player, playingSong,
+    var element, scope, $player, playingSong, deferred,
         playerService, mockGlobals, subsonic, notifications, persistence, $window;
 
     beforeEach(function() {
@@ -34,7 +34,7 @@ describe("jplayer directive", function() {
         });
 
         spyOn($.fn, "jPlayer").and.callThrough();
-        inject(function($rootScope, $compile, _player_, _subsonic_, _notifications_, _persistence_, _$window_) {
+        inject(function($rootScope, $compile, _player_, _subsonic_, _notifications_, _persistence_, _$window_, $q) {
             playerService = _player_;
             subsonic = _subsonic_;
             notifications = _notifications_;
@@ -45,6 +45,7 @@ describe("jplayer directive", function() {
             element = '<div id="playdeck_1" jplayer></div>';
             element = $compile(element)(scope);
             scope.$digest();
+            deferred = $q.defer();
         });
         $player = element.children('div');
     });
@@ -117,13 +118,15 @@ describe("jplayer directive", function() {
 
         it("given that the last song of the queue is playing and that the global setting AutoPlay is true, it asks subsonic for random tracks and notifies the player service that the song has ended", function() {
             mockGlobals.settings.AutoPlay = true;
-            spyOn(subsonic, "getRandomSongs");
+            spyOn(subsonic, "getRandomSongs").and.returnValue(deferred.promise);
             playerService.isLastSongPlaying.and.returnValue(true);
 
             $player.trigger(ended);
+            deferred.resolve();
+            scope.$apply();
 
             expect(playerService.isLastSongPlaying).toHaveBeenCalled();
-            expect(subsonic.getRandomSongs).toHaveBeenCalledWith('play', '', '');
+            expect(subsonic.getRandomSongs).toHaveBeenCalled();
         });
     });
 
