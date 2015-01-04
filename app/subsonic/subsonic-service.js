@@ -104,6 +104,57 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 }
             });
         },
+
+        /**
+         * Handles building the URL with the correct parameters and error-handling while communicating with
+         * a Subsonic server
+         * @param  {String} partialUrl the last part of the Subsonic URL you want, e.g. 'getStarred.view'. If it does not start with a '/', it will be prefixed
+         * @param  {Object} config     $http config object. The base settings expected by Subsonic (username, password, etc.) will be overwritten.
+         * @return {Promise}           a Promise that will be resolved if we receive the 'ok' status from Subsonic. Will be rejected otherwise with an object : {'reason': a message that can be displayed to a user, 'httpError': the HTTP error code, 'subsonicError': the error Object sent by Subsonic}
+         */
+        subsonicRequest: function (partialUrl, config) {
+            // TODO: Hyz: test with GET
+            var exception = { reason: 'Error when contacting the Subsonic server.' };
+            var deferred = $q.defer();
+            var actualUrl = (partialUrl.charAt(0) === '/') ? partialUrl : '/' + partialUrl;
+            var url = globals.BaseURL() + actualUrl;
+
+            // Extend the provided config (if it exists) with our params
+            // Otherwise we create a config object
+            var actualConfig = config || {};
+            var params = actualConfig.params || {};
+            params.u = globals.settings.Username;
+            params.p = globals.settings.Password;
+            params.f = globals.settings.Protocol;
+            params.v = globals.settings.ApiVersion;
+            params.c = globals.settings.ApplicationName;
+            actualConfig.params = params;
+            actualConfig.timeout = globals.settings.Timeout;
+
+            var httpPromise;
+            if(globals.settings.Protocol === 'jsonp') {
+                actualConfig.params.callback = 'JSON_CALLBACK';
+                httpPromise = $http.jsonp(url, actualConfig);
+            } else {
+                httpPromise = $http.get(url, actualConfig);
+            }
+            httpPromise.success(function(data, status) {
+                var subsonicResponse = (data['subsonic-response'] !== undefined) ? data['subsonic-response'] : {status: 'failed'};
+                if (subsonicResponse.status === 'ok') {
+                    deferred.resolve(subsonicResponse);
+                } else {
+                    if(subsonicResponse.status === 'failed' && subsonicResponse.error !== undefined) {
+                        exception.subsonicError = subsonicResponse.error;
+                    }
+                    deferred.reject(exception);
+                }
+            }).error(function(data, status) {
+                exception.httpError = status;
+                deferred.reject(exception);
+            });
+            return deferred.promise;
+        },
+
         getArtists: function (id, refresh) {
             var deferred = $q.defer();
             if (refresh || index.artists.length == 0) {
@@ -563,61 +614,32 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             });
             return deferred.promise;
         },
-        getStarred: function (action, type) {
-            var exception = {reason: 'Error when contacting the Subsonic server.'};
-            var deferred = $q.defer();
-            var httpPromise;
-            if(globals.settings.Protocol === 'jsonp') {
-                httpPromise = $http.jsonp(globals.BaseURL() + '/getStarred.view?callback=JSON_CALLBACK&' + globals.BaseParams(),
-                    {
-                        timeout: globals.settings.Timeout,
-                        cache: true
-                    });
-            } else {
-                httpPromise = $http.get(globals.BaseURL() + '/getStarred.view?' + globals.BaseParams(),
-                    {
-                        timeout: globals.settings.Timeout,
-                        cache: true
-                    });
-            }
-            httpPromise.success(function(data, status) {
-                var subsonicResponse = (data['subsonic-response'] !== undefined) ? data['subsonic-response'] : {status: 'failed'};
-                if (subsonicResponse.status === 'ok') {
+
+        getStarred: function () {
+            var deferred = this.subsonicRequest('getStarred.view', { cache: true })
+                .then(function (subsonicResponse) {
                     if(angular.equals(subsonicResponse.starred, {})) {
-                        deferred.reject({reason: 'Nothing is starred on the Subsonic server.'});
+                        return $q.reject({reason: 'Nothing is starred on the Subsonic server.'});
                     } else {
-                        deferred.resolve(subsonicResponse.starred);
+                        return subsonicResponse.starred;
                     }
-                } else {
-                    if(subsonicResponse.status === 'failed' && subsonicResponse.error !== undefined) {
-                        exception.subsonicError = subsonicResponse.error;
-                    }
-                    deferred.reject(exception);
-                }
-            }).error(function(data, status) {
-                exception.httpError = status;
-                deferred.reject(exception);
-            });
-            return deferred.promise;
+                });
+            return deferred;
         },
+
         getRandomStarredSongs: function() {
-            var exception = {reason: 'No starred songs found on the Subsonic server.'};
-            var deferred = $q.defer();
-
-            this.getStarred().then(function (data) {
-                if(data.song !== undefined && data.song.length > 0) {
-                    // Return random subarray of songs
-                    var randomSongs = [].concat(_.sample(data.song, globals.settings.AutoPlaylistSize));
-                    deferred.resolve(randomSongs);
-                } else {
-                    deferred.reject(exception);
-                }
-            }, function (reason) {
-                deferred.reject(reason);
-            });
-
-            return deferred.promise;
+            var deferred = this.getStarred()
+                .then(function (starred) {
+                    if(starred.song !== undefined && starred.song.length > 0) {
+                        // Return random subarray of songs
+                        return [].concat(_(starred.song).sample(globals.settings.AutoPlaylistSize));
+                    } else {
+                        return $q.reject({reason: 'No starred songs found on the Subsonic server.'});
+                    }
+                });
+            return deferred;
         },
+
         newPlaylist: function (data, event) {
             var deferred = $q.defer();
             var reply = prompt("Choose a name for your new playlist.", "");
@@ -793,32 +815,19 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             });
             return deferred.promise;
         },
-        scrobble: function (song) {
-            var id = song.id;
-            //TODO: Hyz: Refactor all this boilerplate into an http interceptor ? or something higher level than this
-            var exception = {reason: 'Error when contacting the Subsonic server.'};
-            var deferred = $q.defer();
-            var httpPromise;
-            if(globals.settings.Protocol === 'jsonp') {
-                httpPromise = $http.jsonp(globals.BaseURL() + '/scrobble.view?callback=JSON_CALLBACK&' + globals.BaseParams() + '&id=' + id + '&submission=true',
-                {
-                    timeout: globals.settings.Timeout
-                });
-            } else {
-                httpPromise = $http.get(globals.BaseURL() + '/scrobble.view?' + globals.BaseParams() + '&id=' + id + '&submission=true',
-                {
-                    timeout: globals.settings.Timeout
-                });
-            }
-            httpPromise.success(function (data, status) {
-                if(globals.settings.Debug) { console.log('Successfully scrobbled song: ' + id); }
-            }).error(function(data, status) {
-                exception.httpError = status;
-                deferred.reject(exception);
-            });
-            return deferred.promise;
-        }
 
+        scrobble: function (song) {
+            var deferred = this.subsonicRequest('scrobble.view', {
+                params: {
+                    id: song.id,
+                    submisssion: true
+                }
+            }).then(function () {
+                if(globals.settings.Debug) { console.log('Successfully scrobbled song: ' + song.id); }
+                return true;
+            });
+            return deferred;
+        }
         // End subsonic
     };
 }]);

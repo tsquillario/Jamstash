@@ -56,25 +56,25 @@ describe("Player service -", function() {
             it("and no song is playing, it plays the first song", function() {
                 player.nextTrack();
 
-                expect(player.playingIndex).toBe(0);
+                expect(player._playingIndex).toBe(0);
                 expect(player.play).toHaveBeenCalledWith(player.queue[0]);
             });
 
             it("and the first song is playing, it plays the second song", function() {
-                player.playingIndex = 0;
+                player._playingIndex = 0;
 
                 player.nextTrack();
 
-                expect(player.playingIndex).toBe(1);
+                expect(player._playingIndex).toBe(1);
                 expect(player.play).toHaveBeenCalledWith(player.queue[1]);
             });
 
             it("and the last song is playing, it does nothing", function() {
-                player.playingIndex = 2;
+                player._playingIndex = 2;
 
                 player.nextTrack();
 
-                expect(player.playingIndex).toBe(2);
+                expect(player._playingIndex).toBe(2);
                 expect(player.play).not.toHaveBeenCalled();
             });
         });
@@ -87,25 +87,25 @@ describe("Player service -", function() {
             it("and no song is playing, it plays the first song", function() {
                 player.previousTrack();
 
-                expect(player.playingIndex).toBe(0);
+                expect(player._playingIndex).toBe(0);
                 expect(player.play).toHaveBeenCalledWith(player.queue[0]);
             });
 
             it("and the first song is playing, it restarts the first song", function() {
-                player.playingIndex = 0;
+                player._playingIndex = 0;
 
                 player.previousTrack();
 
-                expect(player.playingIndex).toBe(0);
+                expect(player._playingIndex).toBe(0);
                 expect(player.play).toHaveBeenCalledWith(player.queue[0]);
             });
 
             it("and the last song is playing, it plays the second song", function() {
-                player.playingIndex = 2;
+                player._playingIndex = 2;
 
                 player.previousTrack();
 
-                expect(player.playingIndex).toBe(1);
+                expect(player._playingIndex).toBe(1);
                 expect(player.play).toHaveBeenCalledWith(player.queue[1]);
             });
         });
@@ -115,18 +115,18 @@ describe("Player service -", function() {
 
             player.playFirstSong();
 
-            expect(player.playingIndex).toBe(0);
+            expect(player._playingIndex).toBe(0);
             expect(player.play).toHaveBeenCalledWith(player.queue[0]);
         });
 
         it("when I play the second song, it finds its index in the playing queue and updates the playing index", function() {
             player.play(secondSong);
-            expect(player.playingIndex).toBe(1);
+            expect(player._playingIndex).toBe(1);
         });
 
         it("when I play a song that isn't in the playing queue, the next song will be the first song of the playing queue", function() {
             player.play(newSong);
-            expect(player.playingIndex).toBe(-1);
+            expect(player._playingIndex).toBe(-1);
         });
 
         it("when I call emptyQueue, it empties the playing queue", function() {
@@ -157,18 +157,18 @@ describe("Player service -", function() {
         });
 
         it("when the first song is playing, isLastSongPlaying returns false", function() {
-            player.playingIndex = 0;
+            player._playingIndex = 0;
             expect(player.isLastSongPlaying()).toBeFalsy();
         });
 
         it("when the third song is playing, isLastSongPlaying returns true", function() {
-            player.playingIndex = 2;
+            player._playingIndex = 2;
             expect(player.isLastSongPlaying()).toBeTruthy();
         });
 
         it("and the current song is not the last, when the current song ends, it plays the next song in queue", function() {
             spyOn(player, "nextTrack");
-            player.playingIndex = 0;
+            player._playingIndex = 0;
 
             player.songEnded();
 
@@ -187,7 +187,7 @@ describe("Player service -", function() {
         describe("and the current song is the last of the queue, when the current song ends,", function() {
             beforeEach(function() {
                 spyOn(player, "nextTrack").and.callThrough();
-                player.playingIndex = 2;
+                player._playingIndex = 2;
             });
 
             it("if the 'Repeat queue' setting is true, it plays the first song of the queue", function() {
@@ -195,14 +195,14 @@ describe("Player service -", function() {
 
                 player.songEnded();
 
-                expect(player.playingIndex).toBe(0);
+                expect(player._playingIndex).toBe(0);
                 expect(player.nextTrack).toHaveBeenCalled();
             });
 
             it("it does not play anything", function() {
                 player.songEnded();
 
-                expect(player.playingIndex).toBe(2);
+                expect(player._playingIndex).toBe(2);
                 expect(player.nextTrack).not.toHaveBeenCalled();
             });
         });
@@ -249,20 +249,20 @@ describe("Player service -", function() {
 
         beforeEach(function() {
             player.queue = [];
-            player.playingIndex = -1;
+            player._playingIndex = -1;
             spyOn(player, "play");
         });
 
         it("when I call nextTrack, it does nothing", function() {
             player.nextTrack();
             expect(player.play).not.toHaveBeenCalled();
-            expect(player.playingIndex).toBe(-1);
+            expect(player._playingIndex).toBe(-1);
         });
 
         it("when I call previousTrack, it does nothing", function() {
             player.previousTrack();
             expect(player.play).not.toHaveBeenCalled();
-            expect(player.playingIndex).toBe(-1);
+            expect(player._playingIndex).toBe(-1);
         });
     });
 });

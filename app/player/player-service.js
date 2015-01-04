@@ -9,9 +9,10 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
     'use strict';
 
     var player = {
+        // playingIndex and playingSong aren't meant to be used, they only are public for unit-testing purposes
+        _playingIndex: -1,
+        _playingSong: {},
         queue: [],
-        playingIndex: -1,
-        playingSong: {},
         restartSong: false,
         loadSong: false,
 
@@ -19,19 +20,19 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
             var songIndexInQueue;
             // Find the song's index in the queue, if it's in there
             songIndexInQueue = player.queue.indexOf(song);
-            player.playingIndex = (songIndexInQueue !== undefined) ? songIndexInQueue : -1;
+            player._playingIndex = (songIndexInQueue !== undefined) ? songIndexInQueue : -1;
 
-            if(player.playingSong === song) {
-                // We call restart because the playingSong hasn't changed and the directive won't
+            if(player._playingSong === song) {
+                // We call restart because the _playingSong hasn't changed and the directive won't
                 // play the song again
                 player.restart();
             } else {
-                player.playingSong = song;
+                player._playingSong = song;
             }
         },
 
         playFirstSong: function() {
-            player.playingIndex = 0;
+            player._playingIndex = 0;
             player.play(player.queue[0]);
         },
 
@@ -52,7 +53,7 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
             } else if (player.isLastSongPlaying() === true) {
                 if (globals.settings.LoopQueue) {
                     // Loop to first track in queue
-                    player.playingIndex = -1;
+                    player._playingIndex = -1;
                     player.nextTrack();
                 }
             } else {
@@ -61,17 +62,17 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
         },
 
         nextTrack: function() {
-            if((player.playingIndex + 1) < player.queue.length) {
-                var nextTrack = player.queue[player.playingIndex + 1];
-                player.playingIndex++;
+            if((player._playingIndex + 1) < player.queue.length) {
+                var nextTrack = player.queue[player._playingIndex + 1];
+                player._playingIndex++;
                 player.play(nextTrack);
             }
         },
 
         previousTrack: function() {
-            if((player.playingIndex - 1) > 0) {
-                var previousTrack = player.queue[player.playingIndex - 1];
-                player.playingIndex--;
+            if((player._playingIndex - 1) > 0) {
+                var previousTrack = player.queue[player._playingIndex - 1];
+                player._playingIndex--;
                 player.play(previousTrack);
             } else if (player.queue.length > 0) {
                 player.playFirstSong();
@@ -110,11 +111,11 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
         },
 
         getPlayingSong: function() {
-            return player.playingSong;
+            return player._playingSong;
         },
 
         isLastSongPlaying: function() {
-            return ((player.playingIndex +1) === player.queue.length);
+            return ((player._playingIndex +1) === player.queue.length);
         }
     };
 
