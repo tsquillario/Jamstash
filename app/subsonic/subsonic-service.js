@@ -469,12 +469,19 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return deferred.promise;
         },
 
-        getRandomSongs: function () {
+        getRandomSongs: function (genre, folder) {
             var exception = {reason: 'No songs found on the Subsonic server.'};
+            var params = {
+                size: globals.settings.AutoPlaylistSize
+            };
+            if (genre !== undefined && genre !== '' && genre !== 'Random') {
+                params.genre = genre;
+            }
+            if (!isNaN(folder)) {
+                params.musicFolderId = folder;
+            }
             var deferred = this.subsonicRequest('getRandomSongs.view', {
-                params: {
-                    size: globals.settings.AutoPlaylistSize
-                }
+                params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.randomSongs !== undefined && subsonicResponse.randomSongs.song.length > 0) {
                     var songs = [];
@@ -591,7 +598,13 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 .then(function (starred) {
                     if(starred.song !== undefined && starred.song.length > 0) {
                         // Return random subarray of songs
-                        return [].concat(_(starred.song).sample(globals.settings.AutoPlaylistSize));
+                        var songs = [].concat(_(starred.song).sample(globals.settings.AutoPlaylistSize));
+                        var mappedSongs = [];
+                        // TODO: Hyz: Add mapSongs to map service
+                        angular.forEach(songs, function (item) {
+                            mappedSongs.push(map.mapSong(item));
+                        });
+                        return mappedSongs;
                     } else {
                         return $q.reject({reason: 'No starred songs found on the Subsonic server.'});
                     }

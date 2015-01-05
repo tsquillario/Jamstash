@@ -2,12 +2,34 @@ describe("Subsonic controller", function() {
     'use strict';
 
 
-    var scope, $rootScope, subsonic, notifications, deferred, player;
+    var scope, $rootScope, subsonic, notifications, player,
+        deferred;
 
     beforeEach(function() {
         jasmine.addCustomEqualityTester(angular.equals);
 
-        module('jamstash.subsonic.controller');
+        module('jamstash.subsonic.controller', function ($provide) {
+            // Mock the player service
+            $provide.decorator('player', function($delegate) {
+
+                $delegate.queue = [];
+                $delegate.play = jasmine.createSpy("play");
+                $delegate.playFirstSong = jasmine.createSpy("playFirstSong");
+                return $delegate;
+            });
+
+            $provide.decorator('subsonic', function($delegate, $q) {
+                deferred = $q.defer();
+                $delegate.getRandomStarredSongs = jasmine.createSpy("getRandomStarredSongs").and.returnValue(deferred.promise);
+                $delegate.getRandomSongs = jasmine.createSpy("getRandomSongs").and.returnValue(deferred.promise);
+                return $delegate;
+            });
+
+            $provide.decorator('notifications', function ($delegate) {
+                $delegate.updateMessage = jasmine.createSpy("updateMessage");
+                return $delegate;
+            });
+        });
 
         inject(function ($controller, _$rootScope_, utils, globals, map, _subsonic_, _notifications_, $q, _player_) {
             $rootScope = _$rootScope_;
@@ -15,17 +37,6 @@ describe("Subsonic controller", function() {
             subsonic = _subsonic_;
             notifications = _notifications_;
             player = _player_;
-
-            // Mock the functions of the services and the rootscope
-            deferred = $q.defer();
-            spyOn(subsonic, 'getRandomStarredSongs').and.returnValue(deferred.promise);
-            spyOn(map, 'mapSong').and.callFake(function (song) {
-                return {id: song.id};
-            });
-            spyOn(notifications, 'updateMessage');
-            spyOn(player, 'play');
-            spyOn(player, 'playFirstSong');
-            player.queue = [];
 
             $controller('SubsonicController', {
                 $scope: scope,
@@ -40,45 +51,73 @@ describe("Subsonic controller", function() {
         });
     });
 
-    //TODO: JMA: It should be the exact same test when getting songs from an album. We aren't testing that it's randomized, that's the service's job.
-    describe("getRandomStarred -", function() {
-
-        describe("given that my library contains 3 starred songs, ", function() {
-            var response = [
+    describe("given that my library contains 3 songs, ", function() {
+        var response;
+        beforeEach(function() {
+            response = [
                 {id:"2548"}, {id:"8986"}, {id:"2986"}
             ];
+        });
 
-            it("when displaying random starred songs, it sets the scope with the selected songs", function() {
-                scope.getRandomStarredSongs('display');
+        describe("get songs -", function() {
+            beforeEach(function() {
+                spyOn(scope, "requestSongs");
+            });
+
+            it("it can get random starred songs from the subsonic service", function() {
+                scope.getRandomStarredSongs('whatever action');
                 deferred.resolve(response);
-                $rootScope.$apply();
 
                 expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
+                expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
+            });
+
+            it("it can get random songs from any folder or genre from the subsonic service", function() {
+                scope.getRandomSongs('whatever action');
+                deferred.resolve(response);
+
+                expect(subsonic.getRandomSongs).toHaveBeenCalled();
+                expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
+            });
+
+            it("it can get random songs from a given folder id and a given genre from the subsonic service", function() {
+                scope.getRandomSongs('whatever action', 'Rock', 1);
+                deferred.resolve(response);
+
+                expect(subsonic.getRandomSongs).toHaveBeenCalledWith('Rock', 1);
+                expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
+            });
+        });
+
+        describe("requestSongs -", function() {
+            it("when I display songs, it sets the scope with the selected songs", function() {
+                scope.requestSongs(deferred.promise, 'display');
+                deferred.resolve(response);
+                scope.$apply();
+
                 expect(scope.song).toEqual([
                     {id: "2548"}, {id: "8986"}, {id: "2986"}
                 ]);
             });
 
-            it("when adding random starred songs, it adds the selected songs to the queue and notifies the user", function() {
-                scope.getRandomStarredSongs('add');
+            it("when I add songs, it adds the selected songs to the playing queue and notifies the user", function() {
+                scope.requestSongs(deferred.promise, 'add');
                 deferred.resolve(response);
-                $rootScope.$apply();
+                scope.$apply();
 
-                expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
                 expect(player.queue).toEqual([
                     {id: "2548"}, {id: "8986"}, {id: "2986"}
                 ]);
                 expect(notifications.updateMessage).toHaveBeenCalledWith('3 Song(s) Added to Queue', true);
             });
 
-            it("when playing random starred songs, it plays the first selected song, empties the queue and fills it with the selected songs, and notifies the user", function() {
+            it("when I play songs, it plays the first selected song, empties the queue and fills it with the selected songs and it notifies the user", function() {
                 player.queue = [{id: "7666"}];
 
-                scope.getRandomStarredSongs('play');
+                scope.requestSongs(deferred.promise, 'play');
                 deferred.resolve(response);
-                $rootScope.$apply();
+                scope.$apply();
 
-                expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
                 expect(player.playFirstSong).toHaveBeenCalled();
                 expect(player.queue).toEqual([
                     {id: "2548"}, {id: "8986"}, {id: "2986"}
@@ -86,41 +125,47 @@ describe("Subsonic controller", function() {
                 expect(notifications.updateMessage).toHaveBeenCalledWith('3 Song(s) Added to Queue', true);
             });
 
-        });
+            it("when I request songs, it returns a promise so that I can chain it further", function() {
+                var success = jasmine.createSpy("success");
 
-        it("given that I don't have any starred song in my library, when getting random starred songs, it notifies the user with an error message, does not play a song and does not touch the queue", function() {
-            player.queue = [{id: "7666"}];
+                scope.requestSongs(deferred.promise, 'whatever action').then(success);
+                deferred.resolve(response);
+                scope.$apply();
 
-            scope.getRandomStarredSongs('whatever action');
-            deferred.reject({reason: 'No starred songs found on the Subsonic server.'});
-            $rootScope.$apply();
-
-            expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
-            expect(player.play).not.toHaveBeenCalled();
-            expect(player.queue).toEqual([{id: "7666"}]);
-            expect(notifications.updateMessage).toHaveBeenCalledWith('No starred songs found on the Subsonic server.', true);
-        });
-
-        it("given that the Subsonic server returns an error, when getting random starred songs, it notifies the user with the error message", function() {
-            scope.getRandomStarredSongs('whatever action');
-            deferred.reject({reason: 'Error when contacting the Subsonic server.',
-                subsonicError: {code: 10, message:'Required parameter is missing.'}
+                expect(success).toHaveBeenCalled();
             });
-            $rootScope.$apply();
 
-            expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
-            expect(notifications.updateMessage).toHaveBeenCalledWith('Error when contacting the Subsonic server. Required parameter is missing.', true);
-        });
+            it("given that I don't have any song in my library, when I request songs, it notifies the user with an error message, does not play a song and does not change the queue", function() {
+                player.queue = [{id: "7666"}];
 
-        it("given that the Subsonic server is unreachable, when getting random starred songs, it notifies the user with the HTTP error code", function() {
-            scope.getRandomStarredSongs('whatever action');
-            deferred.reject({reason: 'Error when contacting the Subsonic server.',
-                httpError: 404
+                scope.requestSongs(deferred.promise, 'whatever action');
+                deferred.reject({reason: 'No songs found on the Subsonic server.'});
+                scope.$apply();
+
+                expect(player.playFirstSong).not.toHaveBeenCalled();
+                expect(player.queue).toEqual([{id: "7666"}]);
+                expect(notifications.updateMessage).toHaveBeenCalledWith('No songs found on the Subsonic server.', true);
             });
-            $rootScope.$apply();
 
-            expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
-            expect(notifications.updateMessage).toHaveBeenCalledWith('Error when contacting the Subsonic server. HTTP error 404', true);
+            it("given that the Subsonic server returns an error, when I request songs, it notifies the user with the error message", function() {
+                scope.requestSongs(deferred.promise, 'whatever action');
+                deferred.reject({reason: 'Error when contacting the Subsonic server.',
+                    subsonicError: {code: 10, message:'Required parameter is missing.'}
+                });
+                scope.$apply();
+
+                expect(notifications.updateMessage).toHaveBeenCalledWith('Error when contacting the Subsonic server. Required parameter is missing.', true);
+            });
+
+            it("given that the Subsonic server is unreachable, when I request songs, it notifies the user with the HTTP error code", function() {
+                scope.requestSongs(deferred.promise, 'whatever action');
+                deferred.reject({reason: 'Error when contacting the Subsonic server.',
+                    httpError: 404
+                });
+                scope.$apply();
+
+                expect(notifications.updateMessage).toHaveBeenCalledWith('Error when contacting the Subsonic server. HTTP error 404', true);
+            });
         });
     });
 
