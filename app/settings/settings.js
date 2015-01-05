@@ -1,7 +1,7 @@
 ﻿angular.module('JamStash')
 
-.controller('SettingsController', ['$rootScope', '$scope', '$routeParams', '$location', 'utils', 'globals', 'json', 'notifications', 'player',
-    function ($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, player) {
+.controller('SettingsController', ['$rootScope', '$scope', '$routeParams', '$location', 'utils', 'globals', 'json', 'notifications', 'persistence',
+    function ($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, persistence) {
     'use strict';
     $rootScope.hideQueue();
     $scope.settings = globals.settings; /* See service.js */
@@ -47,9 +47,10 @@
             }
         }
         if ($scope.settings.SaveTrackPosition) {
-            //TODO: Hyz: player.saveTrackPosition();
+            persistence.saveQueue();
         } else {
-            player.deleteCurrentQueue();
+            persistence.deleteTrackPosition();
+            persistence.deleteQueue();
         }
         if ($scope.settings.Theme) {
             utils.switchTheme(globals.settings.Theme);
