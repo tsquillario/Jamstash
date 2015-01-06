@@ -351,35 +351,6 @@
             }
         });
     };
-    $scope.ping = function () {
-        return $http({
-            method: 'GET',
-            timeout: globals.settings.Timeout,
-            url: globals.BaseURL() + '/ping.view?' + globals.BaseParams(),
-        }).error(function (data) {
-            notifications.updateMessage('Unable to connect to Subsonic server');
-        });
-        /*
-        $.ajax({
-            url: globals.BaseURL() + '/ping.view?' + globals.BaseParams(),
-            method: 'GET',
-            dataType: globals.settings.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function (data) {
-                if (data["subsonic-response"].status == 'ok') {
-                    globals.settings.ApiVersion = data["subsonic-response"].version;
-                } else {
-                    if (typeof data["subsonic-response"].error != 'undefined') {
-                        notifications.updateMessage(data["subsonic-response"].error.message);
-                    }
-                }
-            },
-            error: function () {
-                notifications.updateMessage('Unable to connect to Subsonic server');
-            }
-        });
-        */
-    };
     $scope.queueRemoveSelected = function (data, event) {
         angular.forEach($scope.selectedSongs, function (item, key) {
             var index = $rootScope.queue.indexOf(item);
