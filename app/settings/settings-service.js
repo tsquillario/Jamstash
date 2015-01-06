@@ -70,6 +70,7 @@ angular.module('jamstash.settings', [])
 
     this.BaseURL = function () { return this.settings.Server + '/rest'; };
     this.BaseParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=' + this.settings.Protocol + '&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };
+    this.BaseJSONParams = function () { return 'u=' + this.settings.Username + '&p=' + this.settings.Password + '&f=json&v=' + this.settings.ApiVersion + '&c=' + this.settings.ApplicationName; };
 })
 
 .factory('json', ['$http', function ($http) { // Deferred loading
