@@ -2,7 +2,7 @@ describe("jplayer directive", function() {
     'use strict';
 
     var element, scope, $player, playingSong, deferred,
-        playerService, mockGlobals, subsonic, notifications, persistence, $window;
+        playerService, mockGlobals, subsonic, notifications, persistence, $interval;
 
     beforeEach(function() {
         // We redefine globals because in some tests we need to alter the settings
@@ -24,22 +24,16 @@ describe("jplayer directive", function() {
                 $delegate.isLastSongPlaying = jasmine.createSpy('isLastSongPlaying');
                 return $delegate;
             });
-            //TODO: Hyz: We shouldn't have to know the utils service just for that. Remove these calls and deal with this in the Notifications service.
-            // Mock the utils service
-            $provide.decorator('utils', function ($delegate) {
-                $delegate.toHTML.un = jasmine.createSpy('un');
-                return $delegate;
-            });
             $provide.value('globals', mockGlobals);
         });
 
         spyOn($.fn, "jPlayer").and.callThrough();
-        inject(function($rootScope, $compile, _player_, _subsonic_, _notifications_, _persistence_, _$window_, $q) {
+        inject(function($rootScope, $compile, _player_, _subsonic_, _notifications_, _persistence_, _$interval_, $q) {
             playerService = _player_;
             subsonic = _subsonic_;
             notifications = _notifications_;
             persistence = _persistence_;
-            $window = _$window_;
+            $interval = _$interval_;
             // Compile the directive
             scope = $rootScope.$new();
             element = '<div id="playdeck_1" jplayer></div>';
@@ -92,18 +86,20 @@ describe("jplayer directive", function() {
 
                 scope.$apply();
 
-                expect(notifications.showNotification).toHaveBeenCalled();
+                expect(notifications.showNotification).toHaveBeenCalledWith(playingSong);
             });
         });
     });
 
-    it("When the player service's restartSong flag is true, it restarts the current song and resets the flag to false", function() {
+    it("When the player service's restartSong flag is true, it restarts the current song, resets the restart flag to false and resets the scrobbled flag to false", function() {
         $.fn.jPlayer.and.stub();
         playerService.restartSong = true;
+        scope.scrobbled = true;
         scope.$apply();
 
         expect($player.jPlayer).toHaveBeenCalledWith('play', 0);
         expect(playerService.restartSong).toBeFalsy();
+        expect(scope.scrobbled).toBeFalsy();
     });
 
     describe("When jplayer has finished the current song,", function() {
@@ -223,11 +219,6 @@ describe("jplayer directive", function() {
             mockGlobals.settings.SaveTrackPosition = true;
             spyOn(persistence, "saveTrackPosition");
             spyOn(persistence, "saveQueue");
-            jasmine.clock().install();
-        });
-
-        afterEach(function() {
-            jasmine.clock().uninstall();
         });
 
         it("every 30 seconds, it saves the current song's position and the playing queue", function() {
@@ -236,7 +227,7 @@ describe("jplayer directive", function() {
             $player.data('jPlayer').status.paused = false;
 
             scope.startSavePosition();
-            jasmine.clock().tick(30001);
+            $interval.flush(30001);
 
             expect(scope.currentSong.position).toBe(35.3877);
             expect(persistence.saveTrackPosition).toHaveBeenCalledWith(scope.currentSong);
@@ -248,18 +239,18 @@ describe("jplayer directive", function() {
             $player.data('jPlayer').status.paused = true;
 
             scope.startSavePosition();
-            jasmine.clock().tick(30001);
+            $interval.flush(30001);
 
             expect(persistence.saveTrackPosition).not.toHaveBeenCalled();
             expect(persistence.saveQueue).not.toHaveBeenCalled();
         });
 
         it("if there was already a watcher, it clears it before adding a new one", function() {
-            spyOn($window, "clearInterval");
+            spyOn($interval, "cancel");
 
             scope.startSavePosition();
             scope.startSavePosition();
-            expect($window.clearInterval).toHaveBeenCalled();
+            expect($interval.cancel).toHaveBeenCalled();
         });
     });
 });
