@@ -4,10 +4,10 @@
  * Encapsulates the jPlayer plugin. It watches the player service for the song to play, load or restart.
  * It also enables jPlayer to attach event handlers to our UI through css Selectors.
  */
-angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings', 'jamstash.subsonic.service', 'jamstash.notifications', 'jamstash.utils', 'jamstash.persistence'])
+angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings', 'jamstash.subsonic.service', 'jamstash.notifications', 'jamstash.persistence'])
 
-.directive('jplayer', ['player', 'globals', 'subsonic', 'notifications', 'utils', '$window', 'persistence',
-    function(playerService, globals, subsonic, notifications, utils, $window, persistence) {
+.directive('jplayer', ['player', 'globals', 'subsonic', 'notifications', '$interval', 'persistence',
+    function(playerService, globals, subsonic, notifications, $interval, persistence) {
     'use strict';
     return {
         restrict: 'EA',
@@ -100,7 +100,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     } else {
                         $player.jPlayer('play');
                         if(globals.settings.NotificationSong) {
-                            notifications.showNotification(newSong.coverartthumb, utils.toHTML.un(newSong.name), utils.toHTML.un(newSong.artist + ' - ' + newSong.album), 'text', '#NextTrack');
+                            notifications.showNotification(newSong);
                         }
                     }
                 }
@@ -111,6 +111,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
             }, function (newVal) {
                 if(newVal === true) {
                     $player.jPlayer('play', 0);
+                    scope.scrobbled = false;
                     playerService.restartSong = false;
                 }
             });
@@ -131,9 +132,9 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
             scope.startSavePosition = function () {
                 if (globals.settings.SaveTrackPosition) {
                     if (timerid !== 0) {
-                        $window.clearInterval(timerid);
+                        $interval.cancel(timerid);
                     }
-                    timerid = $window.setInterval(function () {
+                    timerid = $interval(function () {
                         var audio = $player.data('jPlayer');
                         if (globals.settings.SaveTrackPosition && scope.currentSong !== undefined &&
                             audio !== undefined && audio.status.currentTime > 0 && audio.status.paused === false) {

@@ -36,13 +36,13 @@
         if ($scope.settings.Server.indexOf('http://') != 0 && $scope.settings.Server.indexOf('https://') != 0) { $scope.settings.Server = 'http://' + $scope.settings.Server; }
         if ($scope.settings.NotificationSong) {
             notifications.requestPermissionIfRequired();
-            if (!notifications.hasNotificationSupport()) {
+            if (!notifications.isSupported()) {
                 alert('HTML5 Notifications are not available for your current browser, Sorry :(');
             }
         }
         if ($scope.settings.NotificationNowPlaying) {
             notifications.requestPermissionIfRequired();
-            if (!notifications.hasNotificationSupport()) {
+            if (!notifications.isSupported()) {
                 alert('HTML5 Notifications are not available for your current browser, Sorry :(');
             }
         }
