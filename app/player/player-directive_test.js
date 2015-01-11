@@ -45,6 +45,7 @@ describe("jplayer directive", function() {
             deferred = $q.defer();
         });
         spyOn(Page, "setTitleSong");
+        $.fancybox.isOpen = false;
         $player = element.children('div');
     });
 
@@ -93,6 +94,15 @@ describe("jplayer directive", function() {
 
                 expect(notifications.showNotification).toHaveBeenCalledWith(playingSong);
             });
+        });
+
+        it("if fancybox is open, it sets it up with the new song's cover art", function() {
+            $.fancybox.isOpen = true;
+            scope.fancyboxOpenImage = jasmine.createSpy("fancyboxOpenImage");
+
+            scope.$apply();
+
+            expect(scope.fancyboxOpenImage).toHaveBeenCalledWith(playingSong.coverartfull);
         });
     });
 

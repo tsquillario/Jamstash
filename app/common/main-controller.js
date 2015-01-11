@@ -148,7 +148,20 @@ angular.module('JamStash')
     };
 
     $scope.fancyboxOpenImage = function (url) {
-        utils.fancyboxOpenImage(url);
+        $.fancybox.open({
+            helpers : {
+                overlay : {
+                    css : {
+                        'background' : 'rgba(0, 0, 0, 0.15)'
+                    }
+                }
+            },
+            hideOnContentClick: true,
+            type: 'image',
+            openEffect: 'none',
+            closeEffect: 'none',
+            href: url
+        });
     };
 
     $('#audiocontainer .scrubber').mouseover(function (e) {

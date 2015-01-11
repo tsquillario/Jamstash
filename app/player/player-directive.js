@@ -92,6 +92,9 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                 if(newSong !== undefined) {
                     scope.currentSong = newSong;
                     Page.setTitleSong(newSong);
+                    if($.fancybox.isOpen) {
+                        scope.fancyboxOpenImage(newSong.coverartfull);
+                    }
                     $player.jPlayer('setMedia', {'mp3': newSong.url});
                     if(playerService.loadSong === true) {
                         // Do not play, only load
