@@ -1,15 +1,14 @@
 describe("Queue controller", function() {
     'use strict';
 
-    var player, scope, globals;
+    var player, scope;
     var song;
 
     beforeEach(function() {
         module('jamstash.queue.controller');
 
-        inject(function ($controller, $rootScope, _globals_, _player_) {
+        inject(function ($controller, $rootScope, globals, _player_) {
             scope = $rootScope.$new();
-            globals = _globals_;
             player = _player_;
 
             $controller('QueueController', {
@@ -27,10 +26,13 @@ describe("Queue controller", function() {
         expect(player.play).toHaveBeenCalledWith(song);
     });
 
-    it("When I empty the queue, it calls emptyQueue in the player service", function() {
+    it("When I empty the queue, it calls emptyQueue in the player service and closes fancybox", function() {
         spyOn(player, "emptyQueue");
+        spyOn($.fancybox, "close");
+
         scope.emptyQueue();
         expect(player.emptyQueue).toHaveBeenCalled();
+        expect($.fancybox.close).toHaveBeenCalled();
     });
 
     it("When I shuffle the queue, it calls shuffleQueue in the player service", function() {
@@ -63,5 +65,16 @@ describe("Queue controller", function() {
         spyOn(player, "getPlayingSong").and.returnValue(song);
         expect(scope.isPlayingSong(song)).toBeTruthy();
         expect(player.getPlayingSong).toHaveBeenCalled();
+    });
+
+    it("when the player service's current song changes, it scrolls the queue to display it", function() {
+        spyOn(player, "getPlayingSong").and.callFake(function() {
+            return song;
+        });
+        spyOn($.fn, "scrollTo");
+
+        scope.$apply();
+
+        expect($.fn.scrollTo).toHaveBeenCalled();
     });
 });
