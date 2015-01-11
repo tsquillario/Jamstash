@@ -180,19 +180,19 @@ angular.module('jamstash.archive.service', ['jamstash.settings', 'jamstash.model
                             angular.forEach(items, function (item, key) {
                                 var song = mapSong(key, item, server, dir, identifier, coverart);
                                 if (song) {
-                                    $rootScope.queue.push(song);
+                                    player.queue.push(song);
                                 }
                             });
                             notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
                         } else if (action == 'play') {
-                            $rootScope.queue = [];
+                            player.queue = [];
                             angular.forEach(items, function (item, key) {
                                 var song = mapSong(key, item, server, dir, identifier, coverart);
                                 if (song) {
-                                    $rootScope.queue.push(song);
+                                    player.queue.push(song);
                                 }
                             });
-                            var next = $rootScope.queue[0];
+                            var next = player.queue[0];
                             player.play(next);
                             notifications.updateMessage(Object.keys(items).length + ' Song(s) Added to Queue', true);
                         } else {

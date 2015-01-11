@@ -1,18 +1,25 @@
 describe("Main controller", function() {
     'use strict';
 
-    var scope, $rootScope, utils, globals, notifications, player, locker;
+    var scope, mockGlobals, player, utils;
     beforeEach(function() {
-        module('JamStash');
+        mockGlobals = {
+            settings: {
+                ShowQueue: false,
+                Debug: true
+            }
+        };
 
-        inject(function ($controller, _$rootScope_, _$document_, _$window_, _$location_, _$cookieStore_, _utils_, _globals_, _model_, _notifications_, _player_, _locker_) {
-            $rootScope = _$rootScope_;
+        module('JamStash', function($provide) {
+            $provide.value('globals', mockGlobals);
+        });
+
+        inject(function ($controller, $rootScope, _$document_, _$window_, _$location_, _$cookieStore_, _utils_, globals, _model_, _notifications_, _player_, _locker_, _Page_) {
             scope = $rootScope.$new();
-            utils = _utils_;
-            globals = _globals_;
-            notifications = _notifications_;
             player = _player_;
-            locker = _locker_;
+            utils = _utils_;
+
+            spyOn(utils, "switchTheme");
 
             $controller('AppController', {
                 $scope: scope,
@@ -24,11 +31,13 @@ describe("Main controller", function() {
                 utils: utils,
                 globals: globals,
                 model: _model_,
-                notifications: notifications,
+                notifications: _notifications_,
                 player: player,
-                locker: locker
+                locker: _locker_,
+                Page: _Page_
             });
         });
+        player.queue = [];
     });
 
     xdescribe("updateFavorite -", function() {
@@ -56,5 +65,17 @@ describe("Main controller", function() {
 
     xdescribe("toggleSetting -", function() {
 
+    });
+
+    it("given that the global setting 'ShowQueue' is true, when the playing queue's length changes and is not empty, it shows the queue", function() {
+        mockGlobals.settings.ShowQueue = true;
+        player.queue = [{
+            id: 684
+        }];
+        spyOn(scope, "showQueue");
+
+        scope.$apply();
+
+        expect(scope.showQueue).toHaveBeenCalled();
     });
 });
