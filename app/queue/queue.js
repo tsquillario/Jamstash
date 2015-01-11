@@ -1,3 +1,9 @@
+/**
+* jamstash.queue.controller Module
+*
+* Manages the playing queue. Gives access to the player service's queue-related functions,
+* like adding, removing and shuffling the queue.
+*/
 angular.module('jamstash.queue.controller', ['jamstash.player.service'])
 
 .controller('QueueController', ['$scope', 'globals', 'player',
@@ -5,7 +11,6 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
 	'use strict';
     $scope.settings = globals.settings;
     $scope.player = player;
-    $scope.itemType = 'pl'; // TODO: Hyz: What is this ?
 
     $scope.playSong = function (song) {
         player.play(song);
@@ -36,6 +41,15 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
     $scope.isPlayingSong = function (song) {
         return angular.equals(song, player.getPlayingSong());
     };
+
+    $scope.$watch(function () {
+        return player.getPlayingSong();
+    }, function (newSong) {
+        if(newSong !== undefined) {
+            //TODO: Hyz: Shouldn't it be in a directive ?
+            $('#SideBar').stop().scrollTo('.song.id' + newSong.id, 400);
+        }
+    });
 
     //TODO: Hyz: updateFavorite - leave in rootScope ?
 }]);
