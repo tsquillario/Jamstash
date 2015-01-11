@@ -1,6 +1,6 @@
 angular.module('JamStash')
-.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence',
-    function($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, persistence) {
+.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence', 'Page',
+    function($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, persistence, Page) {
     'use strict';
 
     $rootScope.settings = globals.settings;
@@ -13,6 +13,7 @@ angular.module('JamStash')
 
     $rootScope.SelectedMusicFolder = "";
     $rootScope.unity = null;
+    $scope.Page = Page;
     $rootScope.loggedIn = function () {
         if (globals.settings.Server !== '' && globals.settings.Username !== '' && globals.settings.Password !== '') {
             return true;

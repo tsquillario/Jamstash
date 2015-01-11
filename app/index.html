@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
-<html lang="en" ng-app="JamStash">
+<html lang="en" ng-app="JamStash" ng-controller="AppController">
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
     <meta name="description" content="HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming">
     <meta name="keywords" content="Subsonic, Archive.org, Live Music Archive, HTML5 Audio, Music Streaming, Live Music">
     <meta property="og:image" content="http://jamstash.com/images/fbpreview.png"/>
     <meta name=viewport content="width=device-width, initial-scale=1">
-    <title>Jamstash</title>
+    <title ng-bind="Page.title()">Jamstash</title>
     <link href="images/favicon_32x32.ico" rel="shortcut icon" />
     <link rel="icon" href="images/favicon_48x48.png" sizes="48x48"/>
     <link rel="icon" href="images/favicon_32x32.png" sizes="32x32"/>
@@ -20,7 +20,7 @@
     <link href="styles/Mobile.css" rel="stylesheet" type="text/css" data-name="main" />
     <link href="" rel="stylesheet" type="text/css" data-name="theme" />
 </head>
-<body ng-controller="AppController">
+<body>
     <div id="container">
         <div id="header">
             <div id="messages">
@@ -102,6 +102,7 @@
     <script src="settings/settings-service.js"></script>
     <script src="common/model-service.js"></script>
     <script src="common/utils-service.js"></script>
+    <script src="common/page-service.js"></script>
     <script src="common/notification-service.js"></script>
     <script src="common/persistence-service.js"></script>
     <script src="common/main-controller.js"></script>
