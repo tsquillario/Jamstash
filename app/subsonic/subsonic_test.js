@@ -70,22 +70,38 @@ describe("Subsonic controller", function() {
 
                 expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
                 expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
+                expect(scope.selectedPlaylist).toBeNull();
+                expect(scope.selectedAutoPlaylist).toBe('starred');
             });
 
-            it("it can get random songs from any folder or genre from the subsonic service", function() {
+            it("it can get random songs from all folders or genres from the subsonic service", function() {
                 scope.getRandomSongs('whatever action');
                 deferred.resolve(response);
 
                 expect(subsonic.getRandomSongs).toHaveBeenCalled();
                 expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
+                expect(scope.selectedPlaylist).toBeNull();
+                expect(scope.selectedAutoPlaylist).toBe('random');
             });
 
-            it("it can get random songs from a given folder id and a given genre from the subsonic service", function() {
-                scope.getRandomSongs('whatever action', 'Rock', 1);
+            it("it can get random songs from a given genre from the subsonic service", function() {
+                scope.getRandomSongs('whatever action', 'Rock');
                 deferred.resolve(response);
 
-                expect(subsonic.getRandomSongs).toHaveBeenCalledWith('Rock', 1);
+                expect(subsonic.getRandomSongs).toHaveBeenCalledWith('Rock', undefined);
                 expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
+                expect(scope.selectedPlaylist).toBeNull();
+                expect(scope.selectedAutoPlaylist).toBe('Rock');
+            });
+
+            it("it can get random songs from a given folder id from the subsonic service", function() {
+                scope.getRandomSongs('whatever action', '', 1);
+                deferred.resolve(response);
+
+                expect(subsonic.getRandomSongs).toHaveBeenCalledWith('', 1);
+                expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
+                expect(scope.selectedPlaylist).toBeNull();
+                expect(scope.selectedAutoPlaylist).toBe(1);
             });
         });
 

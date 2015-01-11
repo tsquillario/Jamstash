@@ -239,23 +239,24 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
     $scope.getRandomStarredSongs = function (action) {
         var promise = subsonic.getRandomStarredSongs();
         $scope.requestSongs(promise, action);
-        // TODO: Hyz: SelectedAutoPlaylist
+
+        $scope.selectedPlaylist = null;
+        $scope.selectedAutoPlaylist = 'starred';
     };
 
     $scope.getRandomSongs = function (action, genre, folder) {
         var promise = subsonic.getRandomSongs(genre, folder);
         $scope.requestSongs(promise, action);
-        // TODO: Hyz: SelectedAutoPlaylist, selectedPlaylist
-    };
 
-    // $rootScope.getRandomSongs = function (action, genre, folder) {
-    //     subsonic.getRandomSongs(action, genre, folder).then(function (data) {
-    //         $scope.album = data.album;
-    //         $scope.song = data.song;
-    //         $scope.selectedAutoPlaylist = data.selectedAutoPlaylist;
-    //         $scope.selectedPlaylist = data.selectedPlaylist;
-    //     });
-    // };
+        $scope.selectedPlaylist = null;
+        if (!isNaN(folder)) {
+            $scope.selectedAutoPlaylist = folder;
+        } else if (genre !== undefined && genre !== '' && genre !== 'Random') {
+            $scope.selectedAutoPlaylist = genre;
+        } else {
+            $scope.selectedAutoPlaylist = 'random';
+        }
+    };
 
     $scope.getArtistByTag = function (id) { // Gets Artist by ID3 tag
         $scope.selectedAutoAlbum = null;
