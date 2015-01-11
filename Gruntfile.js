@@ -10,7 +10,11 @@
 module.exports = function (grunt) {
 
   // Lazy-load grunt tasks automatically
-  require('jit-grunt')(grunt);
+  require('jit-grunt')(grunt, {
+    useminPrepare: 'grunt-usemin',
+    sshexec: 'grunt-ssh',
+    sftp: 'grunt-ssh'
+  });
 
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
