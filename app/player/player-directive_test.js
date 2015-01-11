@@ -53,7 +53,10 @@ describe("jplayer directive", function() {
         beforeEach(function() {
             // To avoid errors breaking the test, we stub jPlayer
             $.fn.jPlayer.and.stub();
-            playingSong = {url: 'https://gantry.com/antemarital/vigorless?a=oropharyngeal&b=killcrop#eviscerate'};
+            playingSong = {
+                url: 'https://gantry.com/antemarital/vigorless?a=oropharyngeal&b=killcrop#eviscerate',
+                suffix: 'mp3'
+            };
         });
 
         it("it sets jPlayer's media, stores the song for future scrobbling and sets the page title with the song", function() {
@@ -104,6 +107,18 @@ describe("jplayer directive", function() {
 
             expect(scope.fancyboxOpenImage).toHaveBeenCalledWith(playingSong.coverartfull);
         });
+
+        it("if the song's suffix is 'm4a', it sets jPlayer up with this format", function() {
+            playingSong.suffix = 'm4a';
+            scope.$apply();
+            expect($.fn.jPlayer).toHaveBeenCalledWith('setMedia', {'m4a': 'https://gantry.com/antemarital/vigorless?a=oropharyngeal&b=killcrop#eviscerate'});
+        });
+
+        it("if the song's suffix is 'oga', it sets jPlayer up with this format", function() {
+            playingSong.suffix = 'oga';
+            scope.$apply();
+            expect($.fn.jPlayer).toHaveBeenCalledWith('setMedia', {'oga': 'https://gantry.com/antemarital/vigorless?a=oropharyngeal&b=killcrop#eviscerate'});
+        });
     });
 
     it("When the player service's restartSong flag is true, it restarts the current song, resets the restart flag to false and resets the scrobbled flag to false", function() {
@@ -127,9 +142,10 @@ describe("jplayer directive", function() {
             expect(playerService.songEnded).toHaveBeenCalled();
         });
 
-        it("given that the last song of the queue is playing and that the global setting AutoPlay is true, it asks subsonic for random tracks and notifies the player service that the song has ended", function() {
+        it("given that the last song of the queue is playing and that the global setting AutoPlay is true, it asks subsonic for random tracks, notifies the player service that the song has ended and notifies the user", function() {
             mockGlobals.settings.AutoPlay = true;
             spyOn(subsonic, "getRandomSongs").and.returnValue(deferred.promise);
+            spyOn(notifications, "updateMessage");
             playerService.isLastSongPlaying.and.returnValue(true);
 
             $player.trigger(ended);
@@ -138,6 +154,7 @@ describe("jplayer directive", function() {
 
             expect(playerService.isLastSongPlaying).toHaveBeenCalled();
             expect(subsonic.getRandomSongs).toHaveBeenCalled();
+            expect(notifications.updateMessage).toHaveBeenCalledWith('Auto Play Activated...', true);
         });
     });
 

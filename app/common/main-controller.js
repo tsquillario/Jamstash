@@ -5,7 +5,6 @@ angular.module('JamStash')
 
     $rootScope.settings = globals.settings;
     $rootScope.song = [];
-    $rootScope.queue = [];
     $rootScope.playingSong = null;
     $rootScope.MusicFolders = [];
     $rootScope.Genres = [];
@@ -103,19 +102,15 @@ angular.module('JamStash')
         }
     };
 
-    $scope.$watchCollection('queue', function(newItem, oldItem) {
-        // TODO: Hyz: Replace
-        if (oldItem.length != newItem.length
-		&& globals.settings.ShowQueue) {
-            $rootScope.showQueue();
+    $scope.$watchCollection(function () {
+        return player.queue;
+    }, function(newQueue) {
+        console.log('newQueue', newQueue);
+        if (newQueue !== undefined && newQueue.length > 0 && globals.settings.ShowQueue) {
+            $scope.showQueue();
         }
-        /*
-        for (var index in newCol) {
-            var item = newCol[index];
-            item.order = parseInt(index) + 1;
-        }
-        */
     });
+
     $rootScope.showQueue = function () {
         $('#SideBar').css('display', 'block');
         $('#right-component').removeClass('lgcolumn_expanded');
@@ -164,13 +159,6 @@ angular.module('JamStash')
         });
     };
 
-    $('#audiocontainer .scrubber').mouseover(function (e) {
-        $('.audiojs .scrubber').stop().animate({ height: '8px' });
-    });
-    $('#audiocontainer .scrubber').mouseout(function (e) {
-        $('.audiojs .scrubber').stop().animate({ height: '4px' });
-    });
-
 	$(document).on("click", ".message", function(){
 	   $(this).remove();
 	});
@@ -178,7 +166,7 @@ angular.module('JamStash')
     // Global Functions
     window.onbeforeunload = function () {
         if (!globals.settings.Debug) {
-            if ($rootScope.queue.length > 0) {
+            if (player.queue.length > 0) {
                 return "You're about to end your session, are you sure?";
             }
         }
@@ -190,8 +178,8 @@ angular.module('JamStash')
     $scope.dragEnd = function (e, ui) {
         var start = ui.item.data('start'),
             end = ui.item.index();
-        $rootScope.queue.splice(end, 0,
-            $rootScope.queue.splice(start, 1)[0]);
+        player.queue.splice(end, 0,
+            player.queue.splice(start, 1)[0]);
         $scope.$apply();
     };
     $(document).on( 'click', 'message', function() {
@@ -284,10 +272,10 @@ angular.module('JamStash')
     };
     $rootScope.playAll = function (songs) {
         // TODO: Hyz: Replace
-        $rootScope.queue = [];
+        player.queue = [];
         $rootScope.selectAll(songs);
         $rootScope.addSongsToQueue();
-        var next = $rootScope.queue[0];
+        var next = player.queue[0];
         player.play(next);
     };
     $rootScope.playFrom = function (index, songs) {
@@ -299,9 +287,9 @@ angular.module('JamStash')
             item.selected = true;
         });
         if ($scope.selectedSongs.length > 0) {
-            $rootScope.queue = [];
+            player.queue = [];
             $rootScope.addSongsToQueue();
-            var next = $rootScope.queue[0];
+            var next = player.queue[0];
             player.play(next);
         }
     };
@@ -309,7 +297,7 @@ angular.module('JamStash')
         // TODO: Hyz: Replace
         if ($scope.selectedSongs.length !== 0) {
             angular.forEach($scope.selectedSongs, function (item, key) {
-                $rootScope.queue.push(item);
+                player.queue.push(item);
                 item.selected = false;
             });
             notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);

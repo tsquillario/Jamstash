@@ -28,7 +28,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     swfPath: 'bower_components/jplayer/dist/jplayer/jquery.jplayer.swf',
                     wmode: 'window',
                     solution: audioSolution,
-                    supplied: 'mp3',
+                    supplied: 'mp3, oga, m4a',
                     preload: 'auto',
                     errorAlerts: false,
                     warningAlerts: false,
@@ -57,6 +57,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                             // Load more random tracks
                             subsonic.getRandomSongs().then(function (songs) {
                                 playerService.addSongs(songs).songEnded();
+                                notifications.updateMessage('Auto Play Activated...', true);
                             });
                         } else {
                             playerService.songEnded();
@@ -95,7 +96,15 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     if($.fancybox.isOpen) {
                         scope.fancyboxOpenImage(newSong.coverartfull);
                     }
-                    $player.jPlayer('setMedia', {'mp3': newSong.url});
+                    var media = {};
+                    if (newSong.suffix === 'oga') {
+                        media= { oga: newSong.url };
+                    } else if (newSong.suffix === 'm4a') {
+                        media= { m4a: newSong.url };
+                    } else if (newSong.suffix === 'mp3') {
+                        media= { mp3: newSong.url };
+                    }
+                    $player.jPlayer('setMedia', media);
                     if(playerService.loadSong === true) {
                         // Do not play, only load
                         playerService.loadSong = false;
@@ -155,13 +164,21 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                 }
             };
 
-             // Startup
+            // Startup
             timerid = 0;
             scope.currentSong = {};
             scope.scrobbled = false;
 
             updatePlayer();
             scope.startSavePosition();
+
+            //TODO: Hyz: Maybe move to another directive dedicated to the scrubber ?
+            $('#audiocontainer .scrubber').mouseover(function () {
+                $('.audiojs .scrubber').stop().animate({ height: '8px' });
+            });
+            $('#audiocontainer .scrubber').mouseout(function () {
+                $('.audiojs .scrubber').stop().animate({ height: '4px' });
+            });
 
         } //end link
     };

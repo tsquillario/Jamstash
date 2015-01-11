@@ -359,15 +359,15 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                             }
                             if (action == 'add') {
                                 angular.forEach(items, function (item, key) {
-                                    $rootScope.queue.push(map.mapSong(item));
+                                    player.queue.push(map.mapSong(item));
                                 });
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else if (action == 'play') {
-                                $rootScope.queue = [];
+                                player.queue = [];
                                 angular.forEach(items, function (item, key) {
-                                    $rootScope.queue.push(map.mapSong(item));
+                                    player.queue.push(map.mapSong(item));
                                 });
-                                var next = $rootScope.queue[0];
+                                var next = player.queue[0];
                                 player.play(next);
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else {
@@ -757,18 +757,18 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                             if (action == 'add') {
                                 angular.forEach(items, function (item, key) {
                                     if (item.status != "skipped") {
-                                        $rootScope.queue.push(map.mapPodcast(item));
+                                        player.queue.push(map.mapPodcast(item));
                                     }
                                 });
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else if (action == 'play') {
-                                $rootScope.queue = [];
+                                player.queue = [];
                                 angular.forEach(items, function (item, key) {
                                     if (item.status != "skipped") {
-                                        $rootScope.queue.push(map.mapPodcast(item));
+                                        player.queue.push(map.mapPodcast(item));
                                     }
                                 });
-                                var next = $rootScope.queue[0];
+                                var next = player.queue[0];
                                 player.play(next);
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else {
