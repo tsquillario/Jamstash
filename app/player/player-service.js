@@ -17,10 +17,15 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
         loadSong: false,
 
         play: function(song) {
-            var songIndexInQueue;
+            // Default value in case we don't find the song in the queue
+            player._playingIndex = -1;
             // Find the song's index in the queue, if it's in there
-            songIndexInQueue = player.queue.indexOf(song);
-            player._playingIndex = (songIndexInQueue !== undefined) ? songIndexInQueue : -1;
+            for (var i = player.queue.length - 1; i >= 0; i--) {
+                if (angular.equals(song, player.queue[i])) {
+                    player._playingIndex = i;
+                    break;
+                }
+            }
 
             if(player._playingSong === song) {
                 // We call restart because the _playingSong hasn't changed and the directive won't
