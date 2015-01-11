@@ -2,13 +2,15 @@ describe("jplayer directive", function() {
     'use strict';
 
     var element, scope, $player, playingSong, deferred,
-        playerService, mockGlobals, subsonic, notifications, persistence, $interval;
+        playerService, mockGlobals, subsonic, notifications, persistence, Page, $interval;
 
     beforeEach(function() {
         // We redefine globals because in some tests we need to alter the settings
         mockGlobals = {
             settings: {
-                AutoPlay: false
+                AutoPlay: false,
+                NotificationSong: false,
+                SaveTrackPosition: false
             }
         };
         // Redefined to avoid firing 'play' with a previous test song
@@ -28,12 +30,13 @@ describe("jplayer directive", function() {
         });
 
         spyOn($.fn, "jPlayer").and.callThrough();
-        inject(function($rootScope, $compile, _player_, _subsonic_, _notifications_, _persistence_, _$interval_, $q) {
+        inject(function($rootScope, $compile, _$interval_, $q, _player_, _subsonic_, _notifications_, _persistence_, _Page_) {
             playerService = _player_;
             subsonic = _subsonic_;
             notifications = _notifications_;
             persistence = _persistence_;
             $interval = _$interval_;
+            Page = _Page_;
             // Compile the directive
             scope = $rootScope.$new();
             element = '<div id="playdeck_1" jplayer></div>';
@@ -41,6 +44,7 @@ describe("jplayer directive", function() {
             scope.$digest();
             deferred = $q.defer();
         });
+        spyOn(Page, "setTitleSong");
         $player = element.children('div');
     });
 
@@ -51,11 +55,12 @@ describe("jplayer directive", function() {
             playingSong = {url: 'https://gantry.com/antemarital/vigorless?a=oropharyngeal&b=killcrop#eviscerate'};
         });
 
-        it("it sets jPlayer's media and stores the song for future scrobbling", function() {
+        it("it sets jPlayer's media, stores the song for future scrobbling and sets the page title with the song", function() {
             scope.$apply();
 
             expect($.fn.jPlayer).toHaveBeenCalledWith('setMedia', {'mp3': 'https://gantry.com/antemarital/vigorless?a=oropharyngeal&b=killcrop#eviscerate'});
             expect(scope.currentSong).toEqual(playingSong);
+            expect(Page.setTitleSong).toHaveBeenCalledWith(playingSong);
         });
 
         it("if the player service's loadSong flag is true, it does not play the song, it displays the player controls and sets the player to the song's supplied position", function() {
