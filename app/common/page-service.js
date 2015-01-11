@@ -49,7 +49,7 @@ angular.module('jamstash.page', ['jamstash.settings', 'jamstash.utils'])
             }
             t.push(" ");
             if (timer !== undefined) {
-                timer.cancel();
+                $interval.cancel(timer);
             }
             timer = $interval(function () {
                 var f = shift[opts.dir];
