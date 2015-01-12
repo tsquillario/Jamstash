@@ -18,7 +18,7 @@ describe("Player service -", function() {
         });
     });
 
-    describe("Given that I have 3 songs in my playing queue", function() {
+    describe("Given that I have 3 songs in my playing queue,", function() {
 
         beforeEach(function() {
             firstSong = {
@@ -62,6 +62,7 @@ describe("Player service -", function() {
 
             it("and the first song is playing, it plays the second song", function() {
                 player._playingIndex = 0;
+                player._playingSong = firstSong;
 
                 player.nextTrack();
 
@@ -71,6 +72,7 @@ describe("Player service -", function() {
 
             it("and the last song is playing, it does nothing", function() {
                 player._playingIndex = 2;
+                player._playingSong = thirdSong;
 
                 player.nextTrack();
 
@@ -93,6 +95,7 @@ describe("Player service -", function() {
 
             it("and the first song is playing, it restarts the first song", function() {
                 player._playingIndex = 0;
+                player._playingSong = firstSong;
 
                 player.previousTrack();
 
@@ -102,6 +105,7 @@ describe("Player service -", function() {
 
             it("and the last song is playing, it plays the second song", function() {
                 player._playingIndex = 2;
+                player._playingSong = thirdSong;
 
                 player.previousTrack();
 
@@ -132,6 +136,14 @@ describe("Player service -", function() {
         it("when I call emptyQueue, it empties the playing queue", function() {
             player.emptyQueue();
             expect(player.queue).toEqual([]);
+        });
+
+        it("when I get the index of the first song, it returns 0", function() {
+            expect(player.indexOfSong(firstSong)).toBe(0);
+        });
+
+        it("when I get the index of a song that isn't in the playing queue, it returns undefined", function() {
+            expect(player.indexOfSong(newSong)).toBeUndefined();
         });
 
         it("when I add a song to the queue, it is appended to the end of the playing queue", function() {

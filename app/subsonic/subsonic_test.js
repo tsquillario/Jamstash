@@ -188,7 +188,11 @@ describe("Subsonic controller", function() {
     describe("reorders playlists by drag and drop - ", function() {
         var mockUI;
         beforeEach(function() {
-            scope.song = [{id: "1084"}, {id: "6810"}, {id: "214"}];
+            scope.song = [
+                {id: 1084},
+                {id: 6810},
+                {id: 214}
+            ];
             mockUI = {
                 item: {}
             };
@@ -214,7 +218,9 @@ describe("Subsonic controller", function() {
             expect(mockUI.item.data).toHaveBeenCalledWith('start');
             // The second song should now be first
             expect(scope.song).toEqual([
-                {id: "6810"}, {id: "1084"}, {id: "214"}
+                {id: 6810},
+                {id: 1084},
+                {id: 214}
             ]);
         });
     });
