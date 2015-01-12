@@ -51,5 +51,18 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
         }
     });
 
+    /**
+     * Change the queue's order through jQuery UI's sortable
+     */
+    $scope.dragStart = function (e, ui) {
+        ui.item.data('start', ui.item.index());
+    };
+
+    $scope.dragEnd = function (e, ui) {
+        var start = ui.item.data('start'),
+            end = ui.item.index();
+        player.queue.splice(end, 0, player.queue.splice(start, 1)[0]);
+    };
+
     //TODO: Hyz: updateFavorite - leave in rootScope ?
 }]);

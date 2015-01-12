@@ -17,16 +17,9 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
         loadSong: false,
 
         play: function(song) {
-            // Default value in case we don't find the song in the queue
-            player._playingIndex = -1;
             // Find the song's index in the queue, if it's in there
-            for (var i = player.queue.length - 1; i >= 0; i--) {
-                if (angular.equals(song, player.queue[i])) {
-                    player._playingIndex = i;
-                    break;
-                }
-            }
-
+            var index = player.indexOfSong(song);
+            player._playingIndex = (index !== undefined) ? index : -1;
             if(player._playingSong === song) {
                 // We call restart because the _playingSong hasn't changed and the directive won't
                 // play the song again
@@ -67,6 +60,10 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
         },
 
         nextTrack: function() {
+            // Find the song's index in the queue, in case it changed (with a drag & drop)
+            var index = player.indexOfSong(player._playingSong);
+            player._playingIndex = (index !== undefined) ? index : -1;
+
             if((player._playingIndex + 1) < player.queue.length) {
                 var nextTrack = player.queue[player._playingIndex + 1];
                 player._playingIndex++;
@@ -75,6 +72,10 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
         },
 
         previousTrack: function() {
+            // Find the song's index in the queue, in case it changed (with a drag & drop)
+            var index = player.indexOfSong(player._playingSong);
+            player._playingIndex = (index !== undefined) ? index : -1;
+
             if((player._playingIndex - 1) > 0) {
                 var previousTrack = player.queue[player._playingIndex - 1];
                 player._playingIndex--;
@@ -121,6 +122,15 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
 
         isLastSongPlaying: function() {
             return ((player._playingIndex +1) === player.queue.length);
+        },
+
+        indexOfSong: function(song) {
+            for (var i = player.queue.length - 1; i >= 0; i--) {
+                if (angular.equals(song, player.queue[i])) {
+                    return i;
+                }
+            }
+            return undefined;
         }
     };
 

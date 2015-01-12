@@ -18,6 +18,7 @@ describe("Queue controller", function() {
             });
         });
         song = { id: 7310 };
+        player.queue = [];
     });
 
     it("When I play a song, it calls play in the player service", function() {
@@ -76,5 +77,58 @@ describe("Queue controller", function() {
         scope.$apply();
 
         expect($.fn.scrollTo).toHaveBeenCalled();
+    });
+
+    describe("reorders the queue by drag and drop - ", function() {
+        var mockUI;
+        beforeEach(function() {
+            player.queue = [
+                {id: 2246},
+                {id: 8869},
+                {id: 285}
+            ];
+            mockUI = {
+                item: {}
+            };
+        });
+
+        it("given a song in the queue, when I start dragging it, it records what its starting position in the queue was", function() {
+            mockUI.item.index = jasmine.createSpy("index").and.returnValue('1');
+            mockUI.item.data = jasmine.createSpy("data");
+
+            scope.dragStart({}, mockUI);
+
+            expect(mockUI.item.index).toHaveBeenCalled();
+            expect(mockUI.item.data).toHaveBeenCalledWith('start', '1');
+        });
+
+        it("given a song in the queue that I started dragging, when I drop it, its position in the queue has changed", function() {
+            mockUI.item.index = jasmine.createSpy("index").and.returnValue('0');
+            mockUI.item.data = jasmine.createSpy("data").and.returnValue('1');
+
+            scope.dragEnd({}, mockUI);
+
+            expect(mockUI.item.index).toHaveBeenCalled();
+            expect(mockUI.item.data).toHaveBeenCalledWith('start');
+            // The second song should now be first
+            expect(player.queue).toEqual([
+                {id: 8869},
+                {id: 2246},
+                {id: 285}
+            ]);
+        });
+
+        // TODO: Hyz: Maybe it should be an end-to-end test
+        it("given that the player is playing the second song (B), when I swap the first (A) and the second song (B), the player's next song should be A", function() {
+            player.play({id: 8869});
+            mockUI.item.index = jasmine.createSpy("index").and.returnValue('0');
+            mockUI.item.data = jasmine.createSpy("data").and.returnValue('1');
+
+            scope.dragEnd({}, mockUI);
+
+            player.nextTrack();
+            expect(player._playingIndex).toBe(1);
+            expect(player._playingSong).toEqual({id: 2246});
+        });
     });
 });

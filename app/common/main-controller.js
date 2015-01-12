@@ -105,7 +105,6 @@ angular.module('JamStash')
     $scope.$watchCollection(function () {
         return player.queue;
     }, function(newQueue) {
-        console.log('newQueue', newQueue);
         if (newQueue !== undefined && newQueue.length > 0 && globals.settings.ShowQueue) {
             $scope.showQueue();
         }
@@ -172,16 +171,6 @@ angular.module('JamStash')
         }
     };
     $rootScope.showIndex = false;
-    $scope.dragStart = function (e, ui) {
-        ui.item.data('start', ui.item.index());
-    };
-    $scope.dragEnd = function (e, ui) {
-        var start = ui.item.data('start'),
-            end = ui.item.index();
-        player.queue.splice(end, 0,
-            player.queue.splice(start, 1)[0]);
-        $scope.$apply();
-    };
     $(document).on( 'click', 'message', function() {
         $(this).fadeOut(function () { $(this).remove(); });
         return false;
