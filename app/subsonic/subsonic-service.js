@@ -154,6 +154,10 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return deferred.promise;
         },
 
+        ping: function () {
+            return this.subsonicRequest('ping.view');
+        },
+
         getArtists: function (id, refresh) {
             var deferred = $q.defer();
             if (refresh || index.artists.length == 0) {
