@@ -1,28 +1,25 @@
+'use strict';
 
 /* Declare app level module */
 angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize',
-    'jamstash.subsonic.ctrl', 'jamstash.archive.ctrl'])
+    'jamstash.subsonic.controller', 'jamstash.archive.controller', 'jamstash.player.controller', 'jamstash.queue.controller', 'jamstash.persistence'])
 
 .config(['$routeProvider',function($routeProvider) {
-    'use strict';
-
     $routeProvider
         .when('/index', { redirectTo: '/library' })
-        .when('/settings', { templateUrl: 'settings/settings.html', controller: 'SettingsCtrl' })
-        .when('/queue', { templateUrl: 'queue/queue.html', controller: 'QueueCtrl' })
-        .when('/library', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicCtrl' })
-        .when('/library/:artistId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicCtrl', reloadOnSearch: false })
-        .when('/library/:artistId/:albumId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicCtrl', reloadOnSearch: false })
-        .when('/podcasts', { templateUrl: 'podcasts/podcasts.html', controller: 'PodcastCtrl' })
-        .when('/archive', { templateUrl: 'archive/archive.html', controller: 'ArchiveCtrl' })
-        .when('/archive/:artist', { templateUrl: 'archive/archive.html', controller: 'ArchiveCtrl' })
-        .when('/archive/:artist/:album', { templateUrl: 'archive/archive.html', controller: 'ArchiveCtrl' })
+        .when('/settings', { templateUrl: 'settings/settings.html', controller: 'SettingsController' })
+        .when('/queue', { templateUrl: 'queue/queue.html', controller: 'QueueController' })
+        .when('/library', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController' })
+        .when('/library/:artistId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController', reloadOnSearch: false })
+        .when('/library/:artistId/:albumId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController', reloadOnSearch: false })
+        .when('/podcasts', { templateUrl: 'podcasts/podcasts.html', controller: 'PodcastController' })
+        .when('/archive', { templateUrl: 'archive/archive.html', controller: 'ArchiveController' })
+        .when('/archive/:artist', { templateUrl: 'archive/archive.html', controller: 'ArchiveController' })
+        .when('/archive/:artist/:album', { templateUrl: 'archive/archive.html', controller: 'ArchiveController' })
         .otherwise({ redirectTo: '/index' });
 }])
 
 .config(['$httpProvider',function($httpProvider) {
-    'use strict';
-
     $httpProvider.interceptors.push(['$rootScope', '$location', '$q', 'globals', function ($rootScope, $location, $q, globals) {
         return {
             'request': function (request) {

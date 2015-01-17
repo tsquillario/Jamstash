@@ -1,11 +1,10 @@
 ﻿angular.module('JamStash')
 
-.controller('SettingsCtrl', ['$rootScope', '$scope', '$routeParams', '$location',  '$http', '$q', 'utils', 'globals', 'json', 'notifications', 'player',
-    function ($rootScope, $scope, $routeParams, $location, $http, $q, utils, globals, json, notifications, player) {
+.controller('SettingsController', ['$rootScope', '$scope', '$routeParams', '$location', 'utils', 'globals', 'json', 'notifications', 'persistence', 'subsonic',
+    function ($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, persistence, subsonic) {
     'use strict';
     $rootScope.hideQueue();
     $scope.settings = globals.settings; /* See service.js */
-    $scope.ApiVersion = globals.settings.ApiVersion;
     $scope.Timeouts = [
         { id: 10000, name: 10 },
         { id: 20000, name: 20 },
@@ -28,34 +27,6 @@
             $('#AZIndex').show();
         }
     });
-    $scope.ping = function () {
-        var exception = {reason: 'Error when contacting the Subsonic server.'};
-        var deferred = $q.defer();
-        var httpPromise;
-        httpPromise = $http({
-            method: 'GET',
-            timeout: globals.settings.Timeout,
-            // 2015-1-5: This API call only works with json as of SS v5.0?!?
-            //url: globals.BaseURL() + '/ping.view?' + globals.BaseParams(),
-            url: globals.BaseURL() + '/ping.view?' + globals.BaseJSONParams()
-        });
-        httpPromise.success(function(data, status) {
-            var subsonicResponse = (data['subsonic-response'] !== undefined) ? data['subsonic-response'] : {status: 'failed'};
-            if (subsonicResponse.status === 'ok') {
-                $scope.ApiVersion = subsonicResponse.version;
-                globals.settings.ApiVersion = $scope.ApiVersion;
-                deferred.resolve(data);
-            } else {
-                if(subsonicResponse.status === 'failed' && subsonicResponse.error !== undefined) {
-                    notifications.updateMessage(subsonicResponse.error.message);
-                }
-            }
-        }).error(function(data, status) {
-            exception.httpError = status;
-            deferred.reject(exception);
-        });
-        return deferred.promise;
-    };
     $scope.reset = function () {
         utils.setValue('Settings', null, true);
         $scope.loadSettings();
@@ -65,20 +36,21 @@
         if ($scope.settings.Server.indexOf('http://') != 0 && $scope.settings.Server.indexOf('https://') != 0) { $scope.settings.Server = 'http://' + $scope.settings.Server; }
         if ($scope.settings.NotificationSong) {
             notifications.requestPermissionIfRequired();
-            if (!notifications.hasNotificationSupport()) {
+            if (!notifications.isSupported()) {
                 alert('HTML5 Notifications are not available for your current browser, Sorry :(');
             }
         }
         if ($scope.settings.NotificationNowPlaying) {
             notifications.requestPermissionIfRequired();
-            if (!notifications.hasNotificationSupport()) {
+            if (!notifications.isSupported()) {
                 alert('HTML5 Notifications are not available for your current browser, Sorry :(');
             }
         }
         if ($scope.settings.SaveTrackPosition) {
-            player.saveTrackPosition();
+            persistence.saveQueue();
         } else {
-            player.deleteCurrentQueue();
+            persistence.deleteTrackPosition();
+            persistence.deleteQueue();
         }
         if ($scope.settings.Theme) {
             utils.switchTheme(globals.settings.Theme);
@@ -92,9 +64,21 @@
         notifications.updateMessage('Settings Updated!', true);
         $scope.loadSettings();
         if (globals.settings.Server !== '' && globals.settings.Username !== '' && globals.settings.Password !== '') {
-            $scope.ping().then(function() {
+            subsonic.ping().then(function (subsonicResponse) {
+                globals.settings.ApiVersion = subsonicResponse.version;
                 $location.path('/library').replace();
                 $rootScope.showIndex = true;
+            }, function (error) {
+                //TODO: Hyz: Duplicate from subsonic.js - requestSongs. Find a way to handle this only once.
+                var errorNotif;
+                if (error.subsonicError !== undefined) {
+                    errorNotif = error.reason + ' ' + error.subsonicError.message;
+                } else if (error.httpError !== undefined) {
+                    errorNotif = error.reason + ' HTTP error ' + error.httpError;
+                } else {
+                    errorNotif = error.reason;
+                }
+                notifications.updateMessage(errorNotif, true);
             });
         }
     };

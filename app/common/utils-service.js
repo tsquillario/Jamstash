@@ -8,22 +8,6 @@ angular.module('jamstash.utils', ['jamstash.settings'])
 .service('utils', ['$rootScope', 'globals', function ($rootScope, globals) {
     'use strict';
 
-    this.fancyboxOpenImage = function (url) {
-        $.fancybox.open({
-            helpers : {
-                overlay : {
-                    css : {
-                        'background' : 'rgba(0, 0, 0, 0.15)'
-                    }
-                }
-            },
-            hideOnContentClick: true,
-            type: 'image',
-            openEffect: 'none',
-            closeEffect: 'none',
-            href: url
-        });
-    };
     this.safeApply = function (fn) {
         var phase = $rootScope.$root.$$phase;
         if (phase === '$apply' || phase === '$digest') {
@@ -98,14 +82,6 @@ angular.module('jamstash.utils', ['jamstash.settings'])
                 break;
             default:
                 break;
-        }
-    };
-    // HTML5
-    this.browserStorageCheck = function () {
-        if (typeof (localStorage) === 'undefined') {
-            return false;
-        } else {
-            return true;
         }
     };
     this.timeToSeconds = function (time) {
@@ -258,41 +234,6 @@ angular.module('jamstash.utils', ['jamstash.settings'])
         var strurl = url.toString();
         var u = strurl.substring(0, strurl.indexOf('?'));
         return u;
-    };
-    this.setTitle = function (text) {
-        if (text !== "") {
-            document.title = text;
-        }
-    };
-    var timer = 0;
-    this.scrollTitle = function (text) {
-        var shift = {
-            "left": function (a) {
-                a.push(a.shift());
-            },
-            "right": function (a) {
-                a.unshift(a.pop());
-            }
-        };
-        var opts = {
-            text: text,
-            dir: "left",
-            speed: 1200
-        };
-
-        var t = (opts.text || document.title).split("");
-        if (!t) {
-            return;
-        }
-        t.push(" ");
-        clearInterval(timer);
-        timer = setInterval(function () {
-            var f = shift[opts.dir];
-            if (f) {
-                f(t);
-                document.title = t.join("");
-            }
-        }, opts.speed);
     };
     this.parseVersionString = function (str) {
         if (typeof (str) !== 'string') { return false; }

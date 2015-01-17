@@ -1,18 +1,18 @@
-﻿angular.module('JamStash')
-.controller('AppCtrl', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player',
-    function($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player) {
+angular.module('JamStash')
+.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence', 'Page',
+    function($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, persistence, Page) {
     'use strict';
 
     $rootScope.settings = globals.settings;
     $rootScope.song = [];
-    $rootScope.queue = [];
     $rootScope.playingSong = null;
     $rootScope.MusicFolders = [];
     $rootScope.Genres = [];
     $rootScope.Messages = [];
-    
+
     $rootScope.SelectedMusicFolder = "";
     $rootScope.unity = null;
+    $scope.Page = Page;
     $rootScope.loggedIn = function () {
         if (globals.settings.Server !== '' && globals.settings.Username !== '' && globals.settings.Password !== '') {
             return true;
@@ -27,13 +27,6 @@
     $rootScope.go = function (path) {
         $location.path(path);
     };
-    /*
-    $scope.playSong = function (loadonly, data) { 
-    $scope.$apply(function () {
-    $rootScope.playSong(loadonly, data);
-    });
-    }
-    */
 
     // Reads cookies and sets globals.settings values
     $scope.loadSettings = function () {
@@ -109,18 +102,14 @@
         }
     };
 
-    $scope.$watchCollection('queue', function(newItem, oldItem) {
-        if (oldItem.length != newItem.length 
-		&& globals.settings.ShowQueue) {
-            $rootScope.showQueue();
+    $scope.$watchCollection(function () {
+        return player.queue;
+    }, function(newQueue) {
+        if (newQueue !== undefined && newQueue.length > 0 && globals.settings.ShowQueue) {
+            $scope.showQueue();
         }
-        /*
-        for (var index in newCol) {
-            var item = newCol[index];
-            item.order = parseInt(index) + 1;
-        }
-        */
     });
+
     $rootScope.showQueue = function () {
         $('#SideBar').css('display', 'block');
         $('#right-component').removeClass('lgcolumn_expanded');
@@ -130,14 +119,7 @@
         $('#right-component').addClass('lgcolumn_expanded');
     };
     $scope.toggleQueue = function () {
-        if ($('#SideBar').css('display') == 'none') {
-            $rootScope.showQueue();
-        } else {
-            $rootScope.hideQueue();
-        }
-    };
-    $scope.toggleQueue = function () {
-        if ($('#SideBar').css('display') == 'none') {
+        if ($('#SideBar').css('display') === 'none') {
             $rootScope.showQueue();
         } else {
             $rootScope.hideQueue();
@@ -160,15 +142,21 @@
     };
 
     $scope.fancyboxOpenImage = function (url) {
-        utils.fancyboxOpenImage(url);
+        $.fancybox.open({
+            helpers : {
+                overlay : {
+                    css : {
+                        'background' : 'rgba(0, 0, 0, 0.15)'
+                    }
+                }
+            },
+            hideOnContentClick: true,
+            type: 'image',
+            openEffect: 'none',
+            closeEffect: 'none',
+            href: url
+        });
     };
-
-    $('#audiocontainer .scrubber').mouseover(function (e) {
-        $('.audiojs .scrubber').stop().animate({ height: '8px' });
-    });
-    $('#audiocontainer .scrubber').mouseout(function (e) {
-        $('.audiojs .scrubber').stop().animate({ height: '4px' });
-    });
 
 	$(document).on("click", ".message", function(){
 	   $(this).remove();
@@ -177,23 +165,13 @@
     // Global Functions
     window.onbeforeunload = function () {
         if (!globals.settings.Debug) {
-            if ($rootScope.queue.length > 0) {
+            if (player.queue.length > 0) {
                 return "You're about to end your session, are you sure?";
             }
         }
     };
     $rootScope.showIndex = false;
-    $scope.dragStart = function (e, ui) {
-        ui.item.data('start', ui.item.index());
-    };
-    $scope.dragEnd = function (e, ui) {
-        var start = ui.item.data('start'),
-            end = ui.item.index();
-        $rootScope.queue.splice(end, 0,
-            $rootScope.queue.splice(start, 1)[0]);
-        $scope.$apply();
-    };
-    $(document).on( 'click', 'message', function() { 
+    $(document).on( 'click', 'message', function() {
         $(this).fadeOut(function () { $(this).remove(); });
         return false;
     })
@@ -226,9 +204,9 @@
                     $('#left-component').stop().scrollTo(el, 400);
                 }
             } else if (unicode == 39 || unicode == 176) { // right arrow
-                $rootScope.nextTrack();
+                player.nextTrack();
             } else if (unicode == 37 || unicode == 177) { // back arrow
-                $rootScope.previousTrack();
+                player.previousTrack();
             } else if (unicode == 32 || unicode == 179 || unicode.toString() == '0179') { // spacebar
                 player.playPauseSong();
                 return false;
@@ -282,13 +260,15 @@
         });
     };
     $rootScope.playAll = function (songs) {
-        $rootScope.queue = [];
+        // TODO: Hyz: Replace
+        player.queue = [];
         $rootScope.selectAll(songs);
         $rootScope.addSongsToQueue();
-        var next = $rootScope.queue[0];
-        $rootScope.playSong(false, next);
+        var next = player.queue[0];
+        player.play(next);
     };
     $rootScope.playFrom = function (index, songs) {
+        // TODO: Hyz: Replace
         var from = songs.slice(index,songs.length);
         $scope.selectedSongs = [];
         angular.forEach(from, function (item, key) {
@@ -296,32 +276,27 @@
             item.selected = true;
         });
         if ($scope.selectedSongs.length > 0) {
-            $rootScope.queue = [];
+            player.queue = [];
             $rootScope.addSongsToQueue();
-            var next = $rootScope.queue[0];
-            $rootScope.playSong(false, next);
+            var next = player.queue[0];
+            player.play(next);
         }
     };
     $rootScope.addSongsToQueue = function () {
+        // TODO: Hyz: Replace
         if ($scope.selectedSongs.length !== 0) {
             angular.forEach($scope.selectedSongs, function (item, key) {
-                $rootScope.queue.push(item);
+                player.queue.push(item);
                 item.selected = false;
             });
             notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
             $scope.selectedSongs.length = 0;
         }
     };
-	$scope.addSongToQueue = function (data) {
-        $rootScope.queue.push(data);
-    };
     $rootScope.removeSong = function (item, songs) {
+        // TODO: Hyz: Replace
         var index = songs.indexOf(item);
         songs.splice(index, 1);
-    };
-    $scope.removeSongFromQueue = function (item) {
-        var index = $rootScope.queue.indexOf(item)
-        $rootScope.queue.splice(index, 1);
     };
     $scope.isActive = function (route) {
         return route === $location.path();
@@ -350,33 +325,6 @@
                 }
             }
         });
-    };
-    $scope.queueRemoveSelected = function (data, event) {
-        angular.forEach($scope.selectedSongs, function (item, key) {
-            var index = $rootScope.queue.indexOf(item);
-            if (index > -1) {
-                $rootScope.queue.splice(index, 1);
-            }
-        });
-    };
-    $scope.queueEmpty = function () {
-        //self.selectedSongs([]);
-        $rootScope.queue = [];
-        $.fancybox.close();
-    };
-    $scope.queueTotal = function () {
-        var total = 0;
-        utils.arrayForEach(self.queue(), function (item) {
-            total += parseInt(item.duration());
-        });
-        if (self.queue().length > 0) {
-            return self.queue().length + ' song(s), ' + utils.secondsToTime(total) + ' total time';
-        } else {
-            return '0 song(s), 00:00:00 total time';
-        }
-    };
-    $scope.queueShuffle = function () {
-        $rootScope.queue.sort(function () { return 0.5 - Math.random(); });
     };
     $scope.selectedSongs = [];
     $scope.selectSong = function (data) {
@@ -417,6 +365,7 @@
 			}
 		});
 	};
+
     $scope.updateFavorite = function (item) {
         var id = item.id;
         var starred = item.starred;
@@ -441,7 +390,6 @@
     $scope.toTrusted = function (html) {
         return $sce.trustAsHtml(html);
     };
-    
 
     /* Launch on Startup */
     $scope.loadSettings();
@@ -454,8 +402,8 @@
     if ($scope.loggedIn()) {
         //$scope.ping();
         if (globals.settings.SaveTrackPosition) {
-            player.loadTrackPosition();
-            player.startSaveTrackPosition();
+            persistence.loadQueue();
+            persistence.loadTrackPosition();
         }
     }
     /* End Startup */

@@ -6,7 +6,7 @@
             <a href="" class="button" id="action_RescanLibrary" title="Rescan Library" ng-click="rescanLibrary()"><img class="pad" src="images/loop_alt1_gd_12x9.png" /></a>
             <a href="" class="button" id="action_ToggleArtists" ng-click="toggleArtists()" title="Toggle Artists"><img src="images/arrow_right_gl_8x8.png" /></a>
         </div>
-        <div id="search"> 
+        <div id="search">
             <input type="text" id="Search" name="Search" class="medium" title="Wildcards (*) supported" placeholder="Search..." ng-enter="search()"/>
             <select id="SearchType" name="SearchType" ng-model="SearchType.id" ng-options="o.id as o.name for o in SearchTypes"></select>
             <a href="" class="button" id="action_Search" title="Search" ng-click="search()"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
@@ -122,13 +122,15 @@
 					<li class="index" id="auto">Auto Playlists</li>
 					<li class="item" ng-click="getRandomStarredSongs('display')" ng-class="{'selected': selectedAutoPlaylist == 'starred'}">
 						<div class="itemactions">
-							<a class="add" href="" ng-click="getRandomStarredSongs('add')" title="Add To Play Queue" stop-event="click"></a><a class="play" href="" ng-click="getRandomStarredSongs('play')" title="Play" stop-event="click"></a>
+							<a class="add" href="" ng-click="getRandomStarredSongs('add')" title="Add To Play Queue" stop-event="click"></a>
+                            <a class="play" href="" ng-click="getRandomStarredSongs('play')" title="Play" stop-event="click"></a>
 						</div>
 						<div class="title">Starred</div>
 					</li>
-					<li class="item" ng-click="getRandomSongs('', '', '')" ng-class="{'selected': selectedAutoPlaylist == 'random'}">
+					<li class="item" ng-click="getRandomSongs('display')" ng-class="{'selected': selectedAutoPlaylist == 'random'}">
 						<div class="itemactions">
-							<a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add', '', '')" stop-event="click"></a><a class="play" href="" title="Play" ng-click="getRandomSongs('play', '', '')" stop-event="click"></a>
+							<a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add')" stop-event="click"></a>
+                            <a class="play" href="" title="Play" ng-click="getRandomSongs('play')" stop-event="click"></a>
 						</div>
 						<div class="title">Random</div>
 					</li>
@@ -136,18 +138,20 @@
 					<select id="Genres" name="Genres" class="large" ng-model="selectedGenre" ng-options="o for o in Genres">
 						<option value="">[Select Genre]</option>
 					</select>
-					<li class="item" ng-repeat="o in playlistsGenre" ng-click="getRandomSongs('', o, '')" ng-class="{'selected': selectedAutoPlaylist == o}">
+					<li class="item" ng-repeat="o in playlistsGenre" ng-click="getRandomSongs('display', o)" ng-class="{'selected': selectedAutoPlaylist == o}">
 						<div class="itemactions">
-							<a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add', o, '')" stop-event="click"></a><a class="play" href="" title="Play" ng-click="getRandomSongs('play', o, '')" stop-event="click"></a>
+							<a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add', o)" stop-event="click"></a>
+                            <a class="play" href="" title="Play" ng-click="getRandomSongs('play', o)" stop-event="click"></a>
 						</div>
 						<div class="title">{{o}}</div>
 					</li>
 				</ul>
 				<ul class="simplelist mainlist noselect">
 					<li class="index" id="folder">Folder Playlists</li>
-					<li class="item" ng-repeat="o in MusicFolders | musicfolder" ng-click=" getRandomSongs('', '' , o.id)" ng-class="{'selected': o.id == selectedAutoPlaylist}">
+					<li class="item" ng-repeat="o in MusicFolders | musicfolder" ng-click=" getRandomSongs('display', '' , o.id)" ng-class="{'selected': o.id == selectedAutoPlaylist}">
 						<div class="itemactions">
-							<a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add', '', o.id)" stop-event="click"></a><a class="play" href="" title="Play" ng-click="getRandomSongs('play', '', o.id)" stop-event="click"></a>
+							<a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add', '', o.id)" stop-event="click"></a>
+                            <a class="play" href="" title="Play" ng-click="getRandomSongs('play', '', o.id)" stop-event="click"></a>
 						</div>
 						<div class="title">{{o.name}}</div>
 					</li>

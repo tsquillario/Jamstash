@@ -1,6 +1,6 @@
 {
   "name": "jamstash",
-  "version": "4.3",
+  "version": "4.4.0",
   "description": "HTML5 Audio Streamer for Subsonic, Archive.org browsing and streaming",
   "authors": [
     "tsquillario (https://github.com/tsquillario)",
@@ -31,14 +31,15 @@
     "angular-sanitize": "~1.2.0",
     "angular-cookies": "~1.2.0",
     "angular-resource": "~1.2.0",
-    "jquery": "~2.0.3",
-    "jquery-ui": "~1.10.3",
-    "jplayer": "~2.8.4",
+    "jquery": "~2.0.0",
+    "jquery-ui": "~1.10.0",
+    "jplayer": "~2.9.0",
     "fancybox": "~2.1.4",
     "notify.js": "<=1.2.2",
     "jquery.scrollTo": "~1.4.5",
     "underscore": "~1.7.0",
-    "angular-underscore": "~0.5.0"
+    "angular-underscore": "~0.5.0",
+    "angular-locker": "~1.0.2"
   },
   "overrides": {
     "fancybox": {
@@ -50,7 +51,8 @@
   },
   "devDependencies": {
     "angular-mocks": "~1.2.0",
-    "jasmine-promise-matchers": "~0.0.3"
+    "jasmine-promise-matchers": "~0.0.3",
+    "jasmine-fixture": "~1.2.2"
   },
   "ignore": [
     "bower_components",

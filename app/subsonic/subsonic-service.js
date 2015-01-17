@@ -5,10 +5,10 @@
 * Also offers more fine-grained functionality that is not part of Subsonic's API.
 */
 angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.utils', 'jamstash.model',
-    'jamstash.notifications', 'angular-underscore/utils'])
+    'jamstash.notifications', 'jamstash.player.service', 'angular-underscore/utils'])
 
-.factory('subsonic', ['$rootScope', '$http', '$q', 'globals', 'utils', 'map', 'notifications',
-    function ($rootScope, $http, $q, globals, utils, map, notifications) {
+.factory('subsonic', ['$rootScope', '$http', '$q', 'globals', 'utils', 'map', 'notifications', 'player',
+    function ($rootScope, $http, $q, globals, utils, map, notifications, player) {
     'use strict';
 
     var index = { shortcuts: [], artists: [] };
@@ -23,7 +23,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
         selectedArtist: null,
         selectedAlbum: null,
         selectedPlaylist: null,
-        selectedAutoPlaylist: null,    
+        selectedAutoPlaylist: null,
         selectedGenre: null,
         selectedPodcast: null
     };
@@ -68,7 +68,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             }
         }
     };
-    
+
     return {
         showIndex: $rootScope.showIndex,
         showPlaylist: showPlaylist,
@@ -82,7 +82,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 dataType: globals.settings.Protocol,
                 timeout: globals.settings.Timeout,
                 success: function (data) {
-                    
+
                 }
             });
             */
@@ -104,6 +104,60 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 }
             });
         },
+
+        /**
+         * Handles building the URL with the correct parameters and error-handling while communicating with
+         * a Subsonic server
+         * @param  {String} partialUrl the last part of the Subsonic URL you want, e.g. 'getStarred.view'. If it does not start with a '/', it will be prefixed
+         * @param  {Object} config     optional $http config object. The base settings expected by Subsonic (username, password, etc.) will be overwritten.
+         * @return {Promise}           a Promise that will be resolved if we receive the 'ok' status from Subsonic. Will be rejected otherwise with an object : {'reason': a message that can be displayed to a user, 'httpError': the HTTP error code, 'subsonicError': the error Object sent by Subsonic}
+         */
+        subsonicRequest: function (partialUrl, config) {
+            var exception = { reason: 'Error when contacting the Subsonic server.' };
+            var deferred = $q.defer();
+            var actualUrl = (partialUrl.charAt(0) === '/') ? partialUrl : '/' + partialUrl;
+            var url = globals.BaseURL() + actualUrl;
+
+            // Extend the provided config (if it exists) with our params
+            // Otherwise we create a config object
+            var actualConfig = config || {};
+            var params = actualConfig.params || {};
+            params.u = globals.settings.Username;
+            params.p = globals.settings.Password;
+            params.f = globals.settings.Protocol;
+            params.v = globals.settings.ApiVersion;
+            params.c = globals.settings.ApplicationName;
+            actualConfig.params = params;
+            actualConfig.timeout = globals.settings.Timeout;
+
+            var httpPromise;
+            if(globals.settings.Protocol === 'jsonp') {
+                actualConfig.params.callback = 'JSON_CALLBACK';
+                httpPromise = $http.jsonp(url, actualConfig);
+            } else {
+                httpPromise = $http.get(url, actualConfig);
+            }
+            httpPromise.success(function(data) {
+                var subsonicResponse = (data['subsonic-response'] !== undefined) ? data['subsonic-response'] : {status: 'failed'};
+                if (subsonicResponse.status === 'ok') {
+                    deferred.resolve(subsonicResponse);
+                } else {
+                    if(subsonicResponse.status === 'failed' && subsonicResponse.error !== undefined) {
+                        exception.subsonicError = subsonicResponse.error;
+                    }
+                    deferred.reject(exception);
+                }
+            }).error(function(data, status) {
+                exception.httpError = status;
+                deferred.reject(exception);
+            });
+            return deferred.promise;
+        },
+
+        ping: function () {
+            return this.subsonicRequest('ping.view');
+        },
+
         getArtists: function (id, refresh) {
             var deferred = $q.defer();
             if (refresh || index.artists.length == 0) {
@@ -309,16 +363,16 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                             }
                             if (action == 'add') {
                                 angular.forEach(items, function (item, key) {
-                                    $rootScope.queue.push(map.mapSong(item));
+                                    player.queue.push(map.mapSong(item));
                                 });
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else if (action == 'play') {
-                                $rootScope.queue = [];
+                                player.queue = [];
                                 angular.forEach(items, function (item, key) {
-                                    $rootScope.queue.push(map.mapSong(item));
+                                    player.queue.push(map.mapSong(item));
                                 });
-                                var next = $rootScope.queue[0];
-                                $rootScope.playSong(false, next);
+                                var next = player.queue[0];
+                                player.play(next);
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else {
                                 if (typeof data["subsonic-response"].directory.id != 'undefined') {
@@ -418,69 +472,35 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             }
             return deferred.promise;
         },
-        getRandomSongs: function (action, genre, folder) {
-            var deferred = $q.defer();
-            if (globals.settings.Debug) { console.log('action:' + action + ', genre:' + genre + ', folder:' + folder); }
-            var size = globals.settings.AutoPlaylistSize;
-            content.selectedPlaylist = null;
-            if (typeof folder == 'number') {
-                content.selectedAutoPlaylist = folder;
-            } else if (genre !== '') {
-                content.selectedAutoPlaylist = genre;
-            } else {
-                content.selectedAutoPlaylist = 'random';
+
+        getRandomSongs: function (genre, folder) {
+            var exception = {reason: 'No songs found on the Subsonic server.'};
+            var params = {
+                size: globals.settings.AutoPlaylistSize
+            };
+            if (genre !== undefined && genre !== '' && genre !== 'Random') {
+                params.genre = genre;
             }
-            var genreParams = '';
-            if (genre !== '' && genre != 'Random') {
-                genreParams = '&genre=' + genre;
+            if (!isNaN(folder)) {
+                params.musicFolderId = folder;
             }
-            var folderParams = '';
-            if (typeof folder == 'number' && folder !== '' && folder != 'all') {
-                //alert(folder);
-                folderParams = '&musicFolderId=' + folder;
-            } else if (typeof $rootScope.SelectedMusicFolder.id != 'undefined' && $rootScope.SelectedMusicFolder.id >= 0) {
-                //alert($rootScope.SelectedMusicFolder.id);
-                folderParams = '&musicFolderId=' + $rootScope.SelectedMusicFolder.id;
-            }
-            $.ajax({
-                url: globals.BaseURL() + '/getRandomSongs.view?' + globals.BaseParams() + '&size=' + size + genreParams + folderParams,
-                method: 'GET',
-                dataType: globals.settings.Protocol,
-                timeout: globals.settings.Timeout,
-                success: function (data) {
-                    if (typeof data["subsonic-response"].randomSongs.song != 'undefined') {
-                        var items = [];
-                        if (data["subsonic-response"].randomSongs.song.length > 0) {
-                            items = data["subsonic-response"].randomSongs.song;
-                        } else {
-                            items[0] = data["subsonic-response"].randomSongs.song;
-                        }
-                        if (action == 'add') {
-                            angular.forEach(items, function (item, key) {
-                                $rootScope.queue.push(map.mapSong(item));
-                            });
-                            notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                        } else if (action == 'play') {
-                            $rootScope.queue = [];
-                            angular.forEach(items, function (item, key) {
-                                $rootScope.queue.push(map.mapSong(item));
-                            });
-                            var next = $rootScope.queue[0];
-                            $rootScope.playSong(false, next);
-                            notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                        } else {
-                            content.album = [];
-                            content.song = [];
-                            angular.forEach(items, function (item, key) {
-                                content.song.push(map.mapSong(item));
-                            });
-                        }
-                    }
-                    deferred.resolve(content);
+            var deferred = this.subsonicRequest('getRandomSongs.view', {
+                params: params
+            }).then(function (subsonicResponse) {
+                if(subsonicResponse.randomSongs !== undefined && subsonicResponse.randomSongs.song.length > 0) {
+                    var songs = [];
+                    // TODO: Hyz: Add mapSongs to map service
+                    angular.forEach(subsonicResponse.randomSongs.song, function (item) {
+                        songs.push(map.mapSong(item));
+                    });
+                    return songs;
+                } else {
+                    return $q.reject(exception);
                 }
             });
-            return deferred.promise;
+            return deferred;
         },
+
         getPlaylists: function (refresh) {
             var deferred = $q.defer();
             if (globals.settings.Debug) { console.log("LOAD PLAYLISTS"); }
@@ -517,6 +537,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return deferred.promise;
         },
         getPlaylist: function (id, action) {
+            //TODO: Hyz: Test this
             var deferred = $q.defer();
             content.selectedAutoPlaylist = null;
             content.selectedPlaylist = id;
@@ -536,16 +557,16 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                         }
                         if (action == 'add') {
                             angular.forEach(items, function (item, key) {
-                                $rootScope.queue.push(map.mapSong(item));
+                                player.queue.push(map.mapSong(item));
                             });
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else if (action == 'play') {
-                            $rootScope.queue = [];
+                            player.queue = [];
                             angular.forEach(items, function (item, key) {
-                                $rootScope.queue.push(map.mapSong(item));
+                                player.queue.push(map.mapSong(item));
                             });
-                            var next = $rootScope.queue[0];
-                            $rootScope.playSong(false, next);
+                            var next = player.queue[0];
+                            player.play(next);
                             notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                         } else {
                             content.album = [];
@@ -563,61 +584,38 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             });
             return deferred.promise;
         },
-        getStarred: function (action, type) {
-            var exception = {reason: 'Error when contacting the Subsonic server.'};
-            var deferred = $q.defer();
-            var httpPromise;
-            if(globals.settings.Protocol === 'jsonp') {
-                httpPromise = $http.jsonp(globals.BaseURL() + '/getStarred.view?callback=JSON_CALLBACK&' + globals.BaseParams(),
-                    {
-                        timeout: globals.settings.Timeout,
-                        cache: true
-                    });
-            } else {
-                httpPromise = $http.get(globals.BaseURL() + '/getStarred.view?' + globals.BaseParams(),
-                    {
-                        timeout: globals.settings.Timeout,
-                        cache: true
-                    });
-            }
-            httpPromise.success(function(data, status) {
-                var subsonicResponse = (data['subsonic-response'] !== undefined) ? data['subsonic-response'] : {status: 'failed'};
-                if (subsonicResponse.status === 'ok') {
+
+        getStarred: function () {
+            var deferred = this.subsonicRequest('getStarred.view', { cache: true })
+                .then(function (subsonicResponse) {
                     if(angular.equals(subsonicResponse.starred, {})) {
-                        deferred.reject({reason: 'Nothing is starred on the Subsonic server.'});
+                        return $q.reject({reason: 'Nothing is starred on the Subsonic server.'});
                     } else {
-                        deferred.resolve(subsonicResponse.starred);
+                        return subsonicResponse.starred;
                     }
-                } else {
-                    if(subsonicResponse.status === 'failed' && subsonicResponse.error !== undefined) {
-                        exception.subsonicError = subsonicResponse.error;
-                    }
-                    deferred.reject(exception);
-                }
-            }).error(function(data, status) {
-                exception.httpError = status;
-                deferred.reject(exception);
-            });
-            return deferred.promise;
+                });
+            return deferred;
         },
+
         getRandomStarredSongs: function() {
-            var exception = {reason: 'No starred songs found on the Subsonic server.'};
-            var deferred = $q.defer();
-
-            this.getStarred().then(function (data) {
-                if(data.song !== undefined && data.song.length > 0) {
-                    // Return random subarray of songs
-                    var randomSongs = [].concat(_.sample(data.song, globals.settings.AutoPlaylistSize));
-                    deferred.resolve(randomSongs);
-                } else {
-                    deferred.reject(exception);
-                }
-            }, function (reason) {
-                deferred.reject(reason);
-            });
-
-            return deferred.promise;
+            var deferred = this.getStarred()
+                .then(function (starred) {
+                    if(starred.song !== undefined && starred.song.length > 0) {
+                        // Return random subarray of songs
+                        var songs = [].concat(_(starred.song).sample(globals.settings.AutoPlaylistSize));
+                        var mappedSongs = [];
+                        // TODO: Hyz: Add mapSongs to map service
+                        angular.forEach(songs, function (item) {
+                            mappedSongs.push(map.mapSong(item));
+                        });
+                        return mappedSongs;
+                    } else {
+                        return $q.reject({reason: 'No starred songs found on the Subsonic server.'});
+                    }
+                });
+            return deferred;
         },
+
         newPlaylist: function (data, event) {
             var deferred = $q.defer();
             var reply = prompt("Choose a name for your new playlist.", "");
@@ -703,7 +701,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             } else {
             items[0] = data["subsonic-response"].genres;
             }
-    
+
             $rootScope.Genres = items;
             $scope.$apply();
             }
@@ -763,19 +761,19 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                             if (action == 'add') {
                                 angular.forEach(items, function (item, key) {
                                     if (item.status != "skipped") {
-                                        $rootScope.queue.push(map.mapPodcast(item));
+                                        player.queue.push(map.mapPodcast(item));
                                     }
                                 });
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else if (action == 'play') {
-                                $rootScope.queue = [];
+                                player.queue = [];
                                 angular.forEach(items, function (item, key) {
                                     if (item.status != "skipped") {
-                                        $rootScope.queue.push(map.mapPodcast(item));
+                                        player.queue.push(map.mapPodcast(item));
                                     }
                                 });
-                                var next = $rootScope.queue[0];
-                                $rootScope.playSong(false, next);
+                                var next = player.queue[0];
+                                player.play(next);
                                 notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
                             } else {
                                 content.album = [];
@@ -792,6 +790,19 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 }
             });
             return deferred.promise;
+        },
+
+        scrobble: function (song) {
+            var deferred = this.subsonicRequest('scrobble.view', {
+                params: {
+                    id: song.id,
+                    submisssion: true
+                }
+            }).then(function () {
+                if(globals.settings.Debug) { console.log('Successfully scrobbled song: ' + song.id); }
+                return true;
+            });
+            return deferred;
         }
         // End subsonic
     };
