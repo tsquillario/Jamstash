@@ -198,20 +198,20 @@ describe("Player service -", function() {
 
         describe("and the current song is the last of the queue, when the current song ends,", function() {
             beforeEach(function() {
-                spyOn(player, "nextTrack").and.callThrough();
                 player._playingIndex = 2;
             });
 
             it("if the 'Repeat queue' setting is true, it plays the first song of the queue", function() {
+                spyOn(player, "playFirstSong");
                 mockGlobals.settings.LoopQueue = true;
 
                 player.songEnded();
 
-                expect(player._playingIndex).toBe(0);
-                expect(player.nextTrack).toHaveBeenCalled();
+                expect(player.playFirstSong).toHaveBeenCalled();
             });
 
             it("it does not play anything", function() {
+                spyOn(player, "nextTrack").and.callThrough();
                 player.songEnded();
 
                 expect(player._playingIndex).toBe(2);
