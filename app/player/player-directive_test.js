@@ -9,6 +9,7 @@ describe("jplayer directive", function() {
         mockGlobals = {
             settings: {
                 AutoPlay: false,
+                Jukebox: false,
                 NotificationSong: false,
                 SaveTrackPosition: false
             }
@@ -56,6 +57,7 @@ describe("jplayer directive", function() {
             // To avoid errors breaking the test, we stub jPlayer
             $.fn.jPlayer.and.stub();
             playingSong = {
+                id: 659,
                 url: 'https://gantry.com/antemarital/vigorless?a=oropharyngeal&b=killcrop#eviscerate',
                 suffix: 'mp3'
             };
@@ -67,6 +69,15 @@ describe("jplayer directive", function() {
             expect($.fn.jPlayer).toHaveBeenCalledWith('setMedia', {'mp3': 'https://gantry.com/antemarital/vigorless?a=oropharyngeal&b=killcrop#eviscerate'});
             expect(scope.currentSong).toEqual(playingSong);
             expect(Page.setTitleSong).toHaveBeenCalledWith(playingSong);
+        });
+
+        it("if the global setting Jukebox is true, it mutes jPlayer and adds the song to subsonic's Jukebox", function() {
+            mockGlobals.settings.Jukebox = true;
+            scope.addToJukebox = jasmine.createSpy("addToJukebox");
+
+            scope.$apply();
+            expect($player.jPlayer).toHaveBeenCalledWith('mute', true);
+            expect(scope.addToJukebox).toHaveBeenCalledWith(playingSong.id);
         });
 
         it("if the player service's loadSong flag is true, it does not play the song, it displays the player controls and sets the player to the song's supplied position", function() {

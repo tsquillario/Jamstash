@@ -14,15 +14,15 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
         template: '<div></div>',
         link: function(scope, element) {
 
+            //TODO: Hyz: Move to another directive that delegates either to jPlayer or to jukebox
             $('.PlayTrack').on('click', function(event) {
-                console.log('play clicked');
                 event.preventDefault();
                 $(this).hide();
                 $('.PauseTrack').show();
             });
 
+            //TODO: Hyz: Move to another directive that delegates either to jPlayer or to jukebox
             $('.PauseTrack').on('click', function(event) {
-                console.log('pause clicked');
                 event.preventDefault();
                 $(this).hide();
                 $('.PlayTrack').show();
@@ -121,6 +121,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     }
                     $player.jPlayer('setMedia', media);
                     if (globals.settings.Jukebox) {
+                        $player.jPlayer('mute', true);
                         scope.addToJukebox(newSong.id);
                     }
                     if (playerService.loadSong === true || globals.settings.Jukebox) {
