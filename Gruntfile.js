@@ -9,8 +9,12 @@
 
 module.exports = function (grunt) {
 
-  // Load grunt tasks automatically
-  require('load-grunt-tasks')(grunt);
+  // Lazy-load grunt tasks automatically
+  require('jit-grunt')(grunt, {
+    useminPrepare: 'grunt-usemin',
+    sshexec: 'grunt-ssh',
+    sftp: 'grunt-ssh'
+  });
 
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
@@ -86,18 +90,26 @@ module.exports = function (grunt) {
         }
       },
       test: {
-      options: {
-        port: 9001,
-        middleware: function (connect) {
-          return [
-            connect().use(
-              '/bower_components',
-              connect.static('./bower_components')
-            ),
-            connect.static(appConfig.app)
-          ];
+        options: {
+          port: 9001,
+          middleware: function (connect) {
+            return [
+              connect().use(
+                '/bower_components',
+                connect.static('./bower_components')
+              ),
+              connect.static(appConfig.app)
+            ];
+          }
         }
-      }
+      },
+      coverage: {
+        options: {
+          open: true,
+          port: 9003,
+          keepalive: true,
+          base: './coverage/'
+        }
       },
       dist: {
         options: {
@@ -115,12 +127,14 @@ module.exports = function (grunt) {
       },
       unit: {
         singleRun: true,
-        browsers: ['Chrome']
+        browsers: ['Chrome'],
+        reporters: ['notify', 'coverage']
       },
       continuous: {
         singleRun: false,
         background: true,
-        browsers: ['PhantomJS']
+        browsers: ['Chrome'],
+        reporters: ['progress', 'notify']
       }
     },
 
@@ -346,11 +360,19 @@ module.exports = function (grunt) {
           createDirectories: true
         }
       }
-    }
+    },
 
+    // Display notfifications when builds complete using Growl
+    notify: {
+      deploy: {
+        options: {
+          message: 'Jamstash deployed to test server'
+        }
+      }
+    }
   });
 
-  grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
+  grunt.registerTask('serve', 'Compile then start a connect web server', function(target) {
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
@@ -363,31 +385,43 @@ module.exports = function (grunt) {
       ]);
   });
 
-  grunt.registerTask('test', [
-    'karma:unit',
-    'jshint'
-  ]);
+  grunt.registerTask('test', 'Run unit tests and jshint', function() {
+    return grunt.task.run([
+      'karma:unit',
+      'jshint'
+    ]);
+  });
 
-  grunt.registerTask('build', [
-    'clean:dist',
-    'wiredep:app',
-    'useminPrepare',
-    'concat:generated',
-    'copy:dist',
-    'imagemin',
-    //'ngAnnotate',
-    'cssmin',
-    'uglify:generated',
-    'filerev',
-    'usemin',
-    'htmlmin'
-  ]);
+  grunt.registerTask('coverage', 'Run unit tests and display test coverage results on browser', function() {
+    return grunt.task.run([
+      'karma:unit',
+      'connect:coverage'
+    ]);
+  });
+
+  grunt.registerTask('build', 'Concatenate all JS files, minify all JS, CSS, HTML and image files and version all static assets', function() {
+    return grunt.task.run([
+      'clean:dist',
+      'wiredep:app',
+      'useminPrepare',
+      'concat:generated',
+      'copy:dist',
+      'imagemin',
+      //'ngAnnotate',
+      'cssmin',
+      'uglify:generated',
+      'filerev',
+      'usemin',
+      'htmlmin'
+    ]);
+  });
 
   grunt.registerTask('deploy', 'Build and deploy to test server', function() {
     return grunt.task.run([
       'build',
       'sshexec:cleanTest',
-      'sftp:test'
+      'sftp:test',
+      'notify:deploy'
     ]);
   });
 
