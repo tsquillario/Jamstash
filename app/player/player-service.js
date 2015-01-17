@@ -51,8 +51,7 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
             } else if (player.isLastSongPlaying() === true) {
                 if (globals.settings.LoopQueue) {
                     // Loop to first track in queue
-                    player._playingIndex = -1;
-                    player.nextTrack();
+                    player.playFirstSong();
                 }
             } else {
                 player.nextTrack();
