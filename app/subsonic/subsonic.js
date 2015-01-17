@@ -1,13 +1,13 @@
-﻿/**
-* jamstash.subsonic.ctrl Module
+/**
+* jamstash.subsonic.controller Module
 *
 * Access and use the Subsonic Server. The Controller is in charge of relaying the Service's messages to the user through the
 * notifications.
 */
-angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
+angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'jamstash.player.service'])
 
-.controller('SubsonicCtrl', ['$scope', '$rootScope', '$routeParams', 'utils', 'globals', 'map', 'subsonic', 'notifications',
-    function SubsonicCtrl($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications) {
+.controller('SubsonicController', ['$scope', '$rootScope', '$routeParams', 'utils', 'globals', 'map', 'subsonic', 'notifications', 'player',
+    function ($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications, player) {
     'use strict';
 
     $scope.settings = globals.settings;
@@ -143,15 +143,19 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
     $scope.selectNone = function () {
         $rootScope.selectNone($scope.song);
     };
+    // TODO: Hyz: Replace
     $scope.playAll = function () {
         $rootScope.playAll($scope.song);
     };
+    // TODO: Hyz: Replace
     $scope.playFrom = function (index) {
         $rootScope.playFrom(index, $scope.song);
     };
+    // TODO: Hyz: Replace
     $scope.removeSong = function (item) {
         $rootScope.removeSong(item, $scope.song);
     };
+    // TODO: Hyz: Replace
     $scope.songsRemoveSelected = function () {
         subsonic.songsRemoveSelected($scope.selectedSongs).then(function (data) {
             $scope.album = data.album;
@@ -190,12 +194,70 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
             $scope.selectedPlaylist = data.selectedPlaylist;
         });
     };
+
+    /**
+     * Handles common actions with songs such as displaying them on the scope, adding them to the playing queue
+     * and playing the first song after adding them to the queue. Displays notifications for songs added to the playing queue
+     * Also handles error notifications in case of: a service error, a subsonic error or an HTTP error
+     * @param  {Promise} promise a Promise that must be resolved with an array of songs or must be rejected with an object : {'reason': a message that can be displayed to a user, 'httpError': the HTTP error code, 'subsonicError': the error Object sent by Subsonic}
+     * @param  {String} action  the action to be taken with the songs. Must be 'add', 'play' or 'display'
+     * @return {Promise}         the original promise passed in first param. That way we can chain it further !
+     */
+    $scope.requestSongs = function (promise, action) {
+        promise.then(function (songs) {
+            if(action === 'play') {
+                player.emptyQueue().addSongs(songs).playFirstSong();
+                notifications.updateMessage(songs.length + ' Song(s) Added to Queue', true);
+            } else if (action === 'add') {
+                player.addSongs(songs);
+                notifications.updateMessage(songs.length + ' Song(s) Added to Queue', true);
+            } else if (action === 'display') {
+                $scope.album = [];
+                $scope.song = songs;
+            }
+        }, function (error) {
+            var errorNotif;
+            if (error.subsonicError !== undefined) {
+                errorNotif = error.reason + ' ' + error.subsonicError.message;
+            } else if (error.httpError !== undefined) {
+                errorNotif = error.reason + ' HTTP error ' + error.httpError;
+            } else {
+                errorNotif = error.reason;
+            }
+            notifications.updateMessage(errorNotif, true);
+        });
+        return promise;
+    };
+
     $scope.getSongs = function (id, action) {
         subsonic.getSongs(id, action).then(function (data) {
             $scope.album = data.album;
             $scope.song = data.song;
         });
     };
+
+    $scope.getRandomStarredSongs = function (action) {
+        var promise = subsonic.getRandomStarredSongs();
+        $scope.requestSongs(promise, action);
+
+        $scope.selectedPlaylist = null;
+        $scope.selectedAutoPlaylist = 'starred';
+    };
+
+    $scope.getRandomSongs = function (action, genre, folder) {
+        var promise = subsonic.getRandomSongs(genre, folder);
+        $scope.requestSongs(promise, action);
+
+        $scope.selectedPlaylist = null;
+        if (!isNaN(folder)) {
+            $scope.selectedAutoPlaylist = folder;
+        } else if (genre !== undefined && genre !== '' && genre !== 'Random') {
+            $scope.selectedAutoPlaylist = genre;
+        } else {
+            $scope.selectedAutoPlaylist = 'random';
+        }
+    };
+
     $scope.getArtistByTag = function (id) { // Gets Artist by ID3 tag
         $scope.selectedAutoAlbum = null;
         $scope.selectedArtist = id;
@@ -264,6 +326,7 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
             $scope.selectedPlaylist = data.selectedPlaylist;
         });
     };
+
     $scope.getStarred = function (action, type) {
         subsonic.getStarred(action, type).then(function (data) {
             $scope.album = data.album;
@@ -272,45 +335,7 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
             $scope.selectedPlaylist = data.selectedPlaylist;
         });
     };
-    $scope.getRandomStarredSongs = function (action) {
-        subsonic.getRandomStarredSongs()
-        .then(function (randomStarredSongs) {
-            var mappedSongs = [];
-            // Map regardless of the action
-            for (var i = 0; i < randomStarredSongs.length; i++) {
-                mappedSongs.push(map.mapSong(randomStarredSongs[i]));
-            }
-            if(action === 'play') {
-                $rootScope.queue = [].concat(mappedSongs);
-                notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);
-                $rootScope.playSong(false, $rootScope.queue[0]);
-            } else if (action === 'add') {
-                $rootScope.queue = $rootScope.queue.concat(mappedSongs);
-                notifications.updateMessage(mappedSongs.length + ' Song(s) Added to Queue', true);
-            } else if (action === 'display') {
-                $scope.album = [];
-                $scope.song = mappedSongs;
-            }
-        }).catch(function (error) {
-            var errorNotif;
-            if (error.subsonicError !== undefined) {
-                errorNotif = error.reason + ' ' + error.subsonicError.message;
-            } else if (error.httpError !== undefined) {
-                errorNotif = error.reason + ' HTTP error ' + error.httpError;
-            } else {
-                errorNotif = error.reason;
-            }
-            notifications.updateMessage(errorNotif, true);
-        });
-    };
-    $rootScope.getRandomSongs = function (action, genre, folder) {
-        subsonic.getRandomSongs(action, genre, folder).then(function (data) {
-            $scope.album = data.album;
-            $scope.song = data.song;
-            $scope.selectedAutoPlaylist = data.selectedAutoPlaylist;
-            $scope.selectedPlaylist = data.selectedPlaylist;
-        });
-    };
+
     $scope.newPlaylist = function (data, event) {
         subsonic.newPlaylist(data, event).then(function (data) {
             $scope.getPlaylists(true);
@@ -447,6 +472,12 @@ angular.module('jamstash.subsonic.ctrl', ['jamstash.subsonic.service'])
         var start = ui.item.data('start'),
             end = ui.item.index();
         $scope.song.splice(end, 0, $scope.song.splice(start, 1)[0]);
+    };
+    $scope.playSong = function (song) {
+        player.play(song);
+    };
+    $scope.addSongToQueue = function(song) {
+        player.addSong(song);
     };
 
     /* Launch on Startup */

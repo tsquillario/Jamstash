@@ -1,11 +1,11 @@
-﻿/**
-* jamstash.archive.ctrl Module
+/**
+* jamstash.archive.controller Module
 *
 * Access Archive.org
 */
-angular.module('jamstash.archive.ctrl', ['jamstash.archive.service'])
+angular.module('jamstash.archive.controller', ['jamstash.archive.service'])
 
-.controller('ArchiveCtrl', ['$scope', '$rootScope', '$location', '$routeParams', '$http', '$timeout', 'utils', 'globals', 'model', 'notifications', 'player', 'archive', 'json',
+.controller('ArchiveController', ['$scope', '$rootScope', '$location', '$routeParams', '$http', '$timeout', 'utils', 'globals', 'model', 'notifications', 'player', 'archive', 'json',
     function($scope, $rootScope, $location, $routeParams, $http, $timeout, utils, globals, model, notifications, player, archive, json){
     'use strict';
 
