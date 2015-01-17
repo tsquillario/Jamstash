@@ -64,17 +64,17 @@
         notifications.updateMessage('Settings Updated!', true);
         $scope.loadSettings();
         if (globals.settings.Server !== '' && globals.settings.Username !== '' && globals.settings.Password !== '') {
-            $scope.ping().then(function(data) {
-                if (data["subsonic-response"].status == 'ok') {
-                    globals.settings.ApiVersion = data["subsonic-response"].version;
-                    $location.path('/library').replace();
-                    $rootScope.showIndex = true;
-                } else {
-                    if (typeof data["subsonic-response"].error != 'undefined') {
-                        notifications.updateMessage(data["subsonic-response"].error.message);
-                    }
-                }
-            });
+            // $scope.ping().then(function(data) {
+            //     if (data["subsonic-response"].status == 'ok') {
+            //         globals.settings.ApiVersion = data["subsonic-response"].version;
+            //         $location.path('/library').replace();
+            //         $rootScope.showIndex = true;
+            //     } else {
+            //         if (typeof data["subsonic-response"].error != 'undefined') {
+            //             notifications.updateMessage(data["subsonic-response"].error.message);
+            //         }
+            //     }
+            // });
         }
     };
     json.getChangeLog(function (data) {

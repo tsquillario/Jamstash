@@ -6,9 +6,10 @@ describe("Player controller", function() {
     beforeEach(function() {
         module('jamstash.player.controller');
 
-        inject(function ($controller, $rootScope, _player_) {
+        inject(function ($controller, $rootScope) {
             scope = $rootScope.$new();
-            player = _player_;
+
+            player = jasmine.createSpyObj("player", ["getPlayingSong", "previousTrack", "nextTrack"]);
 
             $controller('PlayerController', {
                 $scope: scope,
@@ -17,8 +18,22 @@ describe("Player controller", function() {
         });
     });
 
-    it("When I create the player controller, the player service should be on the scope", function() {
-        expect(scope.player).toBeDefined();
+    it("When I get the currently playing song, it asks the player service", function() {
+        scope.getPlayingSong();
+
+        expect(player.getPlayingSong).toHaveBeenCalled();
+    });
+
+    it("When I get the previous track, it uses the player service", function() {
+        scope.previousTrack();
+
+        expect(player.previousTrack).toHaveBeenCalled();
+    });
+
+    it("When I get the next track, it uses the player service", function() {
+        scope.nextTrack();
+
+        expect(player.nextTrack).toHaveBeenCalled();
     });
 
     // TODO: updateFavorite
