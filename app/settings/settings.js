@@ -1,7 +1,7 @@
 ﻿angular.module('JamStash')
 
-.controller('SettingsController', ['$rootScope', '$scope', '$routeParams', '$location', 'utils', 'globals', 'json', 'notifications', 'persistence',
-    function ($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, persistence) {
+.controller('SettingsController', ['$rootScope', '$scope', '$routeParams', '$location', 'utils', 'globals', 'json', 'notifications', 'persistence', 'subsonic',
+    function ($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, persistence, subsonic) {
     'use strict';
     $rootScope.hideQueue();
     $scope.settings = globals.settings; /* See service.js */
@@ -64,17 +64,22 @@
         notifications.updateMessage('Settings Updated!', true);
         $scope.loadSettings();
         if (globals.settings.Server !== '' && globals.settings.Username !== '' && globals.settings.Password !== '') {
-            // $scope.ping().then(function(data) {
-            //     if (data["subsonic-response"].status == 'ok') {
-            //         globals.settings.ApiVersion = data["subsonic-response"].version;
-            //         $location.path('/library').replace();
-            //         $rootScope.showIndex = true;
-            //     } else {
-            //         if (typeof data["subsonic-response"].error != 'undefined') {
-            //             notifications.updateMessage(data["subsonic-response"].error.message);
-            //         }
-            //     }
-            // });
+            subsonic.ping().then(function (subsonicResponse) {
+                globals.settings.ApiVersion = subsonicResponse.version;
+                $location.path('/library').replace();
+                $rootScope.showIndex = true;
+            }, function (error) {
+                //TODO: Hyz: Duplicate from subsonic.js - requestSongs. Find a way to handle this only once.
+                var errorNotif;
+                if (error.subsonicError !== undefined) {
+                    errorNotif = error.reason + ' ' + error.subsonicError.message;
+                } else if (error.httpError !== undefined) {
+                    errorNotif = error.reason + ' HTTP error ' + error.httpError;
+                } else {
+                    errorNotif = error.reason;
+                }
+                notifications.updateMessage(errorNotif, true);
+            });
         }
     };
     json.getChangeLog(function (data) {

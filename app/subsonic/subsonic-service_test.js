@@ -113,6 +113,17 @@ describe("Subsonic service -", function() {
         });
     });
 
+    it("ping - when I ping Subsonic, it returns Subsonic's response, containing its REST API version", function() {
+        var url = 'http://demo.subsonic.com/rest/ping.view?'+
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+
+        var promise = subsonic.ping();
+        mockBackend.flush();
+
+        expect(promise).toBeResolvedWith({status: "ok", version: "1.10.2"});
+    });
+
     it("scrobble - Given a song, when I scrobble it, it returns true if there was no error", function() {
         var song = { id: 45872 };
         var url = 'http://demo.subsonic.com/rest/scrobble.view?' +
