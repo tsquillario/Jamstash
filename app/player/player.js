@@ -5,13 +5,26 @@
 */
 angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamstash.player.directive'])
 
-.controller('PlayerController', ['$scope', 'player', function($scope, player){
+.controller('PlayerController', ['$scope', 'player', 'globals',
+    function($scope, player, globals){
 	'use strict';
 
     $scope.player = player;
 
     $scope.getPlayingSong = function () {
         return player.getPlayingSong();
+    };
+
+    $scope.play = function () {
+        if (globals.settings.Jukebox) {
+            $scope.sendToJukebox('start');
+        }
+    };
+
+    $scope.pause = function () {
+        if (globals.settings.Jukebox) {
+            $scope.sendToJukebox('stop');
+        }
     };
 
     //TODO: Hyz: updateFavorite - leave in rootScope ?

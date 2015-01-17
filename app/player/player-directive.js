@@ -14,6 +14,20 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
         template: '<div></div>',
         link: function(scope, element) {
 
+            $('.PlayTrack').on('click', function(event) {
+                console.log('play clicked');
+                event.preventDefault();
+                $(this).hide();
+                $('.PauseTrack').show();
+            });
+
+            $('.PauseTrack').on('click', function(event) {
+                console.log('pause clicked');
+                event.preventDefault();
+                $(this).hide();
+                $('.PlayTrack').show();
+            });
+
             var timerid;
             var $player = element.children('div');
             var audioSolution = 'html,flash';
@@ -22,6 +36,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
             }
 
             var updatePlayer = function() {
+                $.jPlayer.timeFormat.showHour = true;
                 $player.jPlayer({
                     // Flash fallback for outdated browser not supporting HTML5 audio/video tags
                     // TODO: Hyz: Replace in Grunt !
@@ -105,7 +120,10 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                         media= { mp3: newSong.url };
                     }
                     $player.jPlayer('setMedia', media);
-                    if(playerService.loadSong === true) {
+                    if (globals.settings.Jukebox) {
+                        scope.addToJukebox(newSong.id);
+                    }
+                    if (playerService.loadSong === true || globals.settings.Jukebox) {
                         // Do not play, only load
                         playerService.loadSong = false;
                         scope.revealControls();

@@ -18,6 +18,8 @@ describe("jplayer directive", function() {
         module('jamstash.player.directive', function($provide) {
             // Mock the player service
             $provide.decorator('player', function($delegate) {
+                $delegate.restartSong = false;
+                $delegate.loadSong = false;
                 $delegate.getPlayingSong = jasmine.createSpy('getPlayingSong').and.callFake(function() {
                     return playingSong;
                 });
