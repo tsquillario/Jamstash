@@ -6,8 +6,8 @@
  */
 angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings', 'jamstash.subsonic.service', 'jamstash.notifications', 'jamstash.persistence', 'jamstash.page'])
 
-.directive('jplayer', ['player', 'globals', 'subsonic', 'notifications', '$interval', 'persistence', 'Page',
-    function(playerService, globals, subsonic, notifications, $interval, persistence, Page) {
+.directive('jplayer', ['$interval', 'player', 'globals', 'subsonic', 'notifications', 'persistence', 'Page',
+    function($interval, playerService, globals, subsonic, notifications, persistence, Page) {
     'use strict';
     return {
         restrict: 'EA',
@@ -68,6 +68,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     ended: function() {
                         // We do this here and not on the service because we cannot create
                         // a circular dependency between the player and subsonic services
+                        // TODO: Hyz: Should be fixed when it's subsonic-controller instead of subsonic-service that uses player-service
                         if(playerService.isLastSongPlaying() && globals.settings.AutoPlay) {
                             // Load more random tracks
                             subsonic.getRandomSongs().then(function (songs) {

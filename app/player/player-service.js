@@ -11,7 +11,7 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
     var player = {
         // playingIndex and playingSong aren't meant to be used, they only are public for unit-testing purposes
         _playingIndex: -1,
-        _playingSong: {},
+        _playingSong: undefined,
         queue: [],
         restartSong: false,
         loadSong: false,
