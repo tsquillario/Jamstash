@@ -128,13 +128,13 @@ module.exports = function (grunt) {
       unit: {
         singleRun: true,
         browsers: ['Chrome'],
-        reporters: ['growl', 'coverage']
+        reporters: ['notify', 'coverage']
       },
       continuous: {
         singleRun: false,
         background: true,
         browsers: ['Chrome'],
-        reporters: ['progress', 'growl']
+        reporters: ['progress', 'notify']
       }
     },
 

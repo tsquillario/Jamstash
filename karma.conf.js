@@ -67,7 +67,7 @@ module.exports = function(config) {
       'karma-phantomjs-launcher',
       'karma-jasmine',
       'karma-coverage',
-      'karma-growl-reporter'
+      'karma-notify-reporter'
     ],
 
     // Continuous Integration mode
