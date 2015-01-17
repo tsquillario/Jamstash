@@ -1,7 +1,9 @@
 /**
 * jamstash.player Module
 *
-* Enables access to the player service through the scope
+* Enables basic control of the player : play, pause, previous track, next track.
+* Also provides the currently playing song's info through the scope so it can be displayed next to
+* the player controls.
 */
 angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamstash.player.directive'])
 
