@@ -150,6 +150,18 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
             });
 
             scope.$watch(function () {
+                return playerService.pauseSong;
+            }, function (newVal) {
+                if(newVal === true) {
+                    $player.jPlayer('pause');
+                    playerService.pauseSong = true; 
+                } else {
+                    $player.jPlayer('play');
+                    playerService.pauseSong = false; 
+                }
+            });
+
+            scope.$watch(function () {
                 return globals.settings.SaveTrackPosition;
             }, function (newVal) {
                 if (newVal === true) {

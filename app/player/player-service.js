@@ -29,6 +29,14 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
             }
         },
 
+        pause: function(song) {
+            if (player.pauseSong) {
+                player.pauseSong = false;
+            } else {
+                player.pauseSong = true;
+            }
+        },
+
         playFirstSong: function() {
             player._playingIndex = 0;
             player.play(player.queue[0]);
