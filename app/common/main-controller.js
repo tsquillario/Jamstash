@@ -208,7 +208,7 @@ angular.module('JamStash')
             } else if (unicode == 37 || unicode == 177) { // back arrow
                 player.previousTrack();
             } else if (unicode == 32 || unicode == 179 || unicode.toString() == '0179') { // spacebar
-                player.playPauseSong();
+                player.pause();
                 return false;
             } else if (unicode == 36 && $('#tabLibrary').is(':visible')) { // home
                 $('#left-component').stop().scrollTo('#MusicFolders', 400);
