@@ -91,12 +91,47 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
                 break;
         }
     };
+    var sortSubsonicAlbums = function (newValue) {
+        if (typeof newValue != 'undefined') {
+            //alert(newValue);
+            switch (newValue) {
+                case 'createdate desc':
+                    $scope.album.sort(utils.sortDateFunction);
+                    break;
+                case 'artist':
+                    $scope.album.sort(utils.sortArtistFunction);
+                    break;
+                case 'album':
+                    $scope.album.sort(utils.sortAlbumFunction);
+                    break;
+            }
+        }
+    };
+    var sortSubsonicSongs = function (newValue) {
+        if (typeof newValue != 'undefined') {
+            //alert(content.song.length);
+            switch (newValue) {
+                case 'createdate desc':
+                    $scope.song.sort(utils.sortDateFunction);
+                    break;
+                case 'artist':
+                    $scope.song.sort(utils.sortArtistFunction);
+                    break;
+                case 'album':
+                    $scope.song.sort(utils.sortAlbumFunction);
+                    break;
+                case 'track':
+                    $scope.song.sort(utils.sortTrackFunction);
+                    break;
+            }
+        }
+    };
     $scope.$watch("SelectedAlbumSort.id", function (newValue, oldValue) {
         if (newValue !== oldValue) {
-            if (subsonic.song.length > 0) {
-                subsonic.sortSubsonicSongs(newValue);
-            } else if (subsonic.content.album.length > 0) {
-                subsonic.sortSubsonicAlbums(newValue);
+            if ($scope.song.length > 0) {
+                sortSubsonicSongs(newValue);
+            } else if ($scope.album.length > 0) {
+                sortSubsonicAlbums(newValue);
                 var indexes = $.map(globals.AlbumSorts, function (obj, index) {
                     if (obj.id === newValue) {
                         return index;
@@ -177,11 +212,15 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         subsonic.getAlbums(id, name).then(function (data) {
             $scope.album = data.album;
             $scope.song = data.song;
+            console.log($scope.song.length);
             $scope.BreadCrumbs = data.breadcrumb;
             $scope.selectedAutoAlbum = data.selectedAutoAlbum;
             $scope.selectedArtist = data.selectedArtist;
             $scope.selectedAlbum = data.selectedAlbum;
             $scope.selectedPlaylist = data.selectedPlaylist;
+            if (SelectedAlbumSort.id != "default") {
+                sortSubsonicAlbums(SelectedAlbumSort.id);
+            }
         });
     };
     $scope.getAlbumListBy = function (id, off) {
@@ -192,6 +231,9 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             $scope.selectedAutoAlbum = data.selectedAutoAlbum;
             $scope.selectedArtist = data.selectedArtist;
             $scope.selectedPlaylist = data.selectedPlaylist;
+            if (SelectedAlbumSort.id != "default") {
+                sortSubsonicAlbums(SelectedAlbumSort.id);
+            }
         });
     };
 
@@ -233,6 +275,13 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         subsonic.getSongs(id, action).then(function (data) {
             $scope.album = data.album;
             $scope.song = data.song;
+            $scope.BreadCrumbs = data.breadcrumb;
+            $scope.selectedAutoAlbum = data.selectedAutoAlbum;
+            $scope.selectedArtist = data.selectedArtist;
+            $scope.selectedPlaylist = data.selectedPlaylist;
+            if (SelectedAlbumSort.id != "default") {
+                sortSubsonicAlbums(SelectedAlbumSort.id);
+            }
         });
     };
 
