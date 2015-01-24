@@ -201,6 +201,7 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         subsonic.getArtists(id, refresh).then(function (data) {
             $scope.index = data.artists;
             $scope.shortcut = data.shortcuts;
+            $scope.BreadCrumbs = data.breadcrumb;
         });
     };
     $scope.refreshArtists = function () {

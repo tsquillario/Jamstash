@@ -190,6 +190,8 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 if(subsonicResponse.directory.child !== undefined && subsonicResponse.directory.child.length > 0) {
                     content.song = [];
                     content.album = [];
+                    content.breadcrumb = [];
+                    content.breadcrumb.push({ 'type': 'artist', 'id': id, 'name': name });
                     angular.forEach(subsonicResponse.directory.child, function (item, key) {
                         if (item.isDir) {
                             content.album.push(map.mapAlbum(item));
