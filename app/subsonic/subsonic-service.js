@@ -33,42 +33,6 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
     var showPlaylist = false;
     var showPodcast = false;
 
-    var sortSubsonicAlbums = function (newValue) {
-        if (typeof newValue != 'undefined') {
-            //alert(newValue);
-            switch (newValue) {
-                case 'createdate desc':
-                    content.album.sort(utils.sortDateFunction);
-                    break;
-                case 'artist':
-                    content.album.sort(utils.sortArtistFunction);
-                    break;
-                case 'album':
-                    content.album.sort(utils.sortAlbumFunction);
-                    break;
-            }
-        }
-    };
-    var sortSubsonicSongs = function (newValue) {
-        if (typeof newValue != 'undefined') {
-            //alert(newValue);
-            switch (newValue) {
-                case 'createdate desc':
-                    content.song.sort(utils.sortDateFunction);
-                    break;
-                case 'artist':
-                    content.song.sort(utils.sortArtistFunction);
-                    break;
-                case 'album':
-                    content.song.sort(utils.sortAlbumFunction);
-                    break;
-                case 'track':
-                    content.song.sort(utils.sortTrackFunction);
-                    break;
-            }
-        }
-    };
-
     return {
         showIndex: $rootScope.showIndex,
         showPlaylist: showPlaylist,
@@ -215,108 +179,70 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return deferred.promise;
         },
         getAlbums: function (id, name) {
-            var deferred = $q.defer();
-            if (id) {
-                content.selectedAutoAlbum = null;
-                content.selectedPlaylist = null;
-                content.selectedArtist = id;
-                content.breadcrumb = [];
-                content.breadcrumb.push({ 'type': 'artist', 'id': id, 'name': name });
-                var url = globals.BaseURL() + '/getMusicDirectory.view?' + globals.BaseParams() + '&id=' + id;
-                /*
-                $http.get(url).success(function (data) {
-                });
-                */
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    dataType: globals.settings.Protocol,
-                    timeout: globals.settings.Timeout,
-                    success: function (data) {
-                        var items = [];
-                        if (typeof data["subsonic-response"].directory.child != 'undefined') {
-                            if (data["subsonic-response"].directory.child.length > 0) {
-                                items = data["subsonic-response"].directory.child;
-                            } else {
-                                items[0] = data["subsonic-response"].directory.child;
-                            }
-                            content.album = [];
-                            content.song = [];
-
-                            angular.forEach(items, function (item, key) {
-                                if (item.isDir) {
-                                    content.album.push(map.mapAlbum(item));
-                                } else {
-                                    content.song.push(map.mapSong(item));
-                                }
-                            });
-                            if (SelectedAlbumSort.id != "default") {
-                                sortSubsonicAlbums(SelectedAlbumSort.id);
-                            }
+            var exception = {reason: 'No songs found on the Subsonic server.'};
+            var params = {
+                size: globals.settings.AutoAlbumSize,
+                id: id
+            };
+            var deferred = this.subsonicRequest('getMusicDirectory.view', {
+                params: params
+            }).then(function (subsonicResponse) {
+                if(subsonicResponse.directory.child !== undefined && subsonicResponse.directory.child.length > 0) {
+                    content.song = [];
+                    content.album = [];
+                    angular.forEach(subsonicResponse.directory.child, function (item, key) {
+                        if (item.isDir) {
+                            content.album.push(map.mapAlbum(item));
                         } else {
-                            notifications.updateMessage('No Albums Returned :(', true);
+                            content.song.push(map.mapSong(item));
                         }
-                        deferred.resolve(content);
-                    }
-                });
-            } else {
-                deferred.resolve(content);
-            }
-            return deferred.promise;
+                    });
+                    return content;
+                } else {
+                    return $q.reject(exception);
+                }
+            });
+            return deferred;
         },
         getAlbumListBy: function (id, off) {
-            var deferred = $q.defer();
-            var size, url;
-            content.selectedArtist = null;
-            content.selectedPlaylist = null;
-            content.selectedAutoAlbum = id;
-            content.breadcrumb = [];
             if (off == 'next') {
                 offset = offset + globals.settings.AutoAlbumSize;
-            } else if (offset == 'prev') {
+            } else if (off == 'prev') {
                 offset = offset - globals.settings.AutoAlbumSize;
             } else {
                 offset = 0;
             }
-            if (offset > 0) {
-                url = globals.BaseURL() + '/getAlbumList.view?' + globals.BaseParams() + '&size=' + globals.settings.AutoAlbumSize.toString() + '&type=' + id + '&offset=' + offset;
-            } else {
-                url = globals.BaseURL() + '/getAlbumList.view?' + globals.BaseParams() + '&size=' + globals.settings.AutoAlbumSize.toString() + '&type=' + id;
-            }
-            $.ajax({
-                url: url,
-                method: 'GET',
-                dataType: globals.settings.Protocol,
-                timeout: globals.settings.Timeout,
-                success: function (data) {
-                    var items = [];
-                    if (typeof data["subsonic-response"].albumList.album != 'undefined') {
-                        if (data["subsonic-response"].albumList.album.length > 0) {
-                            items = data["subsonic-response"].albumList.album;
+            var exception = {reason: 'No songs found on the Subsonic server.'};
+            var params = {
+                size: globals.settings.AutoAlbumSize,
+                type: id,
+                offset: offset
+            };
+            var deferred = this.subsonicRequest('getAlbumList.view', {
+                params: params
+            }).then(function (subsonicResponse) {
+                if(subsonicResponse.albumList.album !== undefined && subsonicResponse.albumList.album.length > 0) {
+                    content.song = [];
+                    content.album = [];
+                    content.selectedArtist = null;
+                    content.selectedPlaylist = null;
+                    content.selectedAutoAlbum = id;
+                    content.breadcrumb = [];
+                    angular.forEach(subsonicResponse.albumList.album, function (item, key) {
+                        if (item.isDir) {
+                            content.album.push(map.mapAlbum(item));
                         } else {
-                            items[0] = data["subsonic-response"].albumList.album;
+                            content.song.push(map.mapSong(item));
                         }
-                        content.album = [];
-                        content.song = [];
-                        angular.forEach(items, function (item, key) {
-                            if (item.isDir) {
-                                content.album.push(map.mapAlbum(item));
-                            } else {
-                                content.song.push(map.mapSong(item));
-                            }
-                        });
-                        if (SelectedAlbumSort.id != "default") {
-                            sortSubsonicAlbums(SelectedAlbumSort.id);
-                        }
-                    } else {
-                        notifications.updateMessage('No Albums Returned :(', true);
-                    }
-                    deferred.resolve(content);
+                    });
+                    return content;
+                } else {
+                    return $q.reject(exception);
                 }
             });
-            return deferred.promise;
+            return deferred;
         },
-        getAlbumByTag: function (id) { // Gets Album by ID3 tag
+        getAlbumByTag: function (id) { // Gets Album by ID3 tag: NOT Being Used Currently 1/24/2015
             var deferred = $q.defer();
             $.ajax({
                 url: globals.BaseURL() + '/getAlbum.view?' + globals.BaseParams() + '&id=' + id,
@@ -344,70 +270,56 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return deferred.promise;
         },
         getSongs: function (id, action) {
-            var deferred = $q.defer();
-            if (id) {
-                content.selectedAlbum = id;
-                var url = globals.BaseURL() + '/getMusicDirectory.view?' + globals.BaseParams() + '&id=' + id;
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    dataType: globals.settings.Protocol,
-                    timeout: globals.settings.Timeout,
-                    success: function (data) {
-                        var items = [];
-                        if (typeof data["subsonic-response"].directory.child != 'undefined') {
-                            if (data["subsonic-response"].directory.child.length > 0) {
-                                items = data["subsonic-response"].directory.child;
+            var exception = {reason: 'No songs found on the Subsonic server.'};
+            var params = {
+                id: id
+            };
+            var deferred = this.subsonicRequest('getMusicDirectory.view', {
+                params: params
+            }).then(function (subsonicResponse) {
+                if(subsonicResponse.directory.child !== undefined && subsonicResponse.directory.child.length > 0) {
+                    var items = subsonicResponse.directory.child;
+                    content.selectedAlbum = id;
+                    if (action == 'add') {
+                        angular.forEach(items, function (item, key) {
+                            player.queue.push(map.mapSong(item));
+                        });
+                        notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
+                    } else if (action == 'play') {
+                        player.queue = [];
+                        angular.forEach(items, function (item, key) {
+                            player.queue.push(map.mapSong(item));
+                        });
+                        var next = player.queue[0];
+                        player.play(next);
+                        notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
+                    } else {
+                        if (subsonicResponse.directory.id != 'undefined') {
+                            var albumId = subsonicResponse.directory.id;
+                            var albumName = subsonicResponse.directory.name;
+                            if (content.breadcrumb.length > 0) { content.breadcrumb.splice(1, (content.breadcrumb.length - 1)); }
+                            content.breadcrumb.push({ 'type': 'album', 'id': albumId, 'name': albumName });
+                        }
+                        content.song = [];
+                        content.album = [];
+                        var albums = [];
+                        angular.forEach(items, function (item, key) {
+                            if (item.isDir) {
+                                albums.push(map.mapAlbum(item));
                             } else {
-                                items[0] = data["subsonic-response"].directory.child;
+                                content.song.push(map.mapSong(item));
                             }
-                            if (action == 'add') {
-                                angular.forEach(items, function (item, key) {
-                                    player.queue.push(map.mapSong(item));
-                                });
-                                notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                            } else if (action == 'play') {
-                                player.queue = [];
-                                angular.forEach(items, function (item, key) {
-                                    player.queue.push(map.mapSong(item));
-                                });
-                                var next = player.queue[0];
-                                player.play(next);
-                                notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                            } else {
-                                if (typeof data["subsonic-response"].directory.id != 'undefined') {
-                                    var albumId = data["subsonic-response"].directory.id;
-                                    var albumName = data["subsonic-response"].directory.name;
-                                    if (content.breadcrumb.length > 0) { content.breadcrumb.splice(1, (content.breadcrumb.length - 1)); }
-                                    content.breadcrumb.push({ 'type': 'album', 'id': albumId, 'name': albumName });
-                                }
-                                content.song = [];
-                                content.album = [];
-                                var albums = [];
-                                angular.forEach(items, function (item, key) {
-                                    if (item.isDir) {
-                                        albums.push(map.mapAlbum(item));
-                                    } else {
-                                        content.song.push(map.mapSong(item));
-                                    }
-                                });
-                                if (albums.length > 0) {
-                                    content.album = albums;
-                                    if (SelectedAlbumSort.id != "default") {
-                                        sortSubsonicAlbums(SelectedAlbumSort.id);
-                                    }
-                                }
-                            }
-                            deferred.resolve(content);
-                        } else {
-                            notifications.updateMessage('No Songs Returned :(', true);
+                        });
+                        if (albums.length > 0) {
+                            content.album = albums;
                         }
                     }
-                });
-        } else {
-            deferred.resolve(content);
-        }
-        return deferred.promise;
+                    return content;
+                } else {
+                    return $q.reject(exception);
+                }
+            });
+            return deferred;
         },
         search: function (query, type) {
             var deferred = $q.defer();
