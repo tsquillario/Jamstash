@@ -18,12 +18,16 @@ angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamsta
     $scope.play = function () {
         if (globals.settings.Jukebox) {
             $scope.sendToJukebox('start');
+        } else {
+            player.togglePause();
         }
     };
 
     $scope.pause = function () {
         if (globals.settings.Jukebox) {
             $scope.sendToJukebox('stop');
+        } else {
+            player.togglePause();
         }
     };
 
