@@ -5,6 +5,7 @@ describe("Main controller", function() {
     beforeEach(function() {
         mockGlobals = {
             settings: {
+                SaveTrackPosition: false,
                 ShowQueue: false,
                 Debug: true,
                 Jukebox: false
@@ -21,7 +22,7 @@ describe("Main controller", function() {
         player.volume = 1.0;
 
         // Mock the persistence service
-        persistence = jasmine.createSpyObj("persistence", ["getVolume", "saveVolume"]);
+        persistence = jasmine.createSpyObj("persistence", ["loadQueue", "loadTrackPosition", "getVolume", "saveVolume"]);
 
         inject(function (_$controller_, $rootScope, _$document_, _$window_, _$location_, _$cookieStore_, _utils_, globals, _model_, _notifications_, _Page_) {
             scope = $rootScope.$new();
