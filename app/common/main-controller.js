@@ -175,9 +175,9 @@ angular.module('JamStash')
         $(this).fadeOut(function () { $(this).remove(); });
         return false;
     })
-    // $document.keydown(function (e) {
-    //     $scope.scrollToIndex(e);
-    // });
+    $document.keydown(function (e) {
+        $scope.scrollToIndex(e);
+    });
     $scope.scrollToIndex = function (e) {
         var source = e.target.id;
         if (e.target.tagName.toUpperCase() != 'INPUT') {
