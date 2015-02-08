@@ -348,6 +348,26 @@ angular.module('JamStash')
         }
     };
 
+    $scope.turnVolumeUp = function () {
+        var volume = player.volume;
+        if ((volume+0.1) > 1 || volume < 0) {
+            volume = 0.9;
+        }
+        volume += 0.1;
+        player.volume = volume;
+        persistence.saveVolume(volume);
+    };
+
+    $scope.turnVolumeDown = function () {
+        var volume = player.volume;
+        if (volume > 1 || (volume-0.1) < 0) {
+            volume = 0.1;
+        }
+        volume -= 0.1;
+        player.volume = volume;
+        persistence.saveVolume(volume);
+    };
+
 	$rootScope.addToJukebox = function (id) {
 		if (globals.settings.Debug) { console.log("LOAD JUKEBOX"); }
 		$.ajax({
@@ -416,6 +436,7 @@ angular.module('JamStash')
             persistence.loadQueue();
             persistence.loadTrackPosition();
         }
+        player.volume = persistence.getVolume();
     }
     /* End Startup */
 }]);
