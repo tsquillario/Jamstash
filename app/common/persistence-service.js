@@ -54,5 +54,17 @@ angular.module('jamstash.persistence', ['jamstash.settings', 'jamstash.player.se
         locker.forget('CurrentQueue');
         if (globals.settings.Debug) { console.log('Removing Play Queue from localStorage'); }
     };
+
+    this.getVolume = function () {
+        return locker.get('Volume');
+    };
+
+    this.saveVolume = function (volume) {
+        locker.put('Volume', volume);
+    };
+
+    this.deleteVolume = function () {
+        locker.forget('Volume');
+    };
 }]);
 

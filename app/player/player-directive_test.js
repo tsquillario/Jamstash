@@ -22,6 +22,7 @@ describe("jplayer directive", function() {
                 $delegate.pauseSong = false;
                 $delegate.restartSong = false;
                 $delegate.loadSong = false;
+                $delegate.volume = 1.0;
                 $delegate.getPlayingSong = jasmine.createSpy('getPlayingSong').and.callFake(function() {
                     return playingSong;
                 });
@@ -137,33 +138,42 @@ describe("jplayer directive", function() {
         });
     });
 
-    it("When the player service's restartSong flag is true, it restarts the current song, resets the restart flag to false and resets the scrobbled flag to false", function() {
-        $.fn.jPlayer.and.stub();
-        playerService.restartSong = true;
-        scope.scrobbled = true;
-        scope.$apply();
+    describe("", function() {
+        beforeEach(function() {
+            $.fn.jPlayer.and.stub();
+        });
 
-        expect($player.jPlayer).toHaveBeenCalledWith('play', 0);
-        expect(playerService.restartSong).toBeFalsy();
-        expect(scope.scrobbled).toBeFalsy();
-    });
+        it("When the player service's restartSong flag is true, it restarts the current song, resets the restart flag to false and resets the scrobbled flag to false", function() {
+            playerService.restartSong = true;
+            scope.scrobbled = true;
+            scope.$apply();
 
-    it("When the player service's pauseSong is true, it pauses the current song", function() {
-        $.fn.jPlayer.and.stub();
-        playerService.pauseSong = true;
-        scope.$apply();
+            expect($player.jPlayer).toHaveBeenCalledWith('play', 0);
+            expect(playerService.restartSong).toBeFalsy();
+            expect(scope.scrobbled).toBeFalsy();
+        });
 
-        expect($player.jPlayer).toHaveBeenCalledWith('pause');
-    });
+        it("When the player service's pauseSong is true, it pauses the current song", function() {
+            playerService.pauseSong = true;
+            scope.$apply();
 
-    it("Given that the current song is paused, when I toggle pause again, it plays the song ", function() {
-        $.fn.jPlayer.and.stub();
-        playerService.pauseSong = true;
-        scope.$apply();
+            expect($player.jPlayer).toHaveBeenCalledWith('pause');
+        });
 
-        playerService.pauseSong = false;
-        scope.$apply();
-        expect($player.jPlayer).toHaveBeenCalledWith('play');
+        it("Given that the current song is paused, when the player service's pauseSong becomes false, it plays the song ", function() {
+            playerService.pauseSong = true;
+            scope.$apply();
+
+            playerService.pauseSong = false;
+            scope.$apply();
+            expect($player.jPlayer).toHaveBeenCalledWith('play');
+        });
+
+        it("When the player service's volume changes, it sets jPlayer's volume", function() {
+            playerService.volume = 0.2034;
+            scope.$apply();
+            expect($player.jPlayer).toHaveBeenCalledWith('volume', 0.2034);
+        });
     });
 
     describe("When jplayer has finished the current song,", function() {
