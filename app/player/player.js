@@ -11,29 +11,26 @@ angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamsta
     function($scope, player, globals){
 	'use strict';
 
-    $scope.getPlayingSong = function () {
-        return player.getPlayingSong();
-    };
+    $scope.getPlayingSong = player.getPlayingSong;
 
     $scope.play = function () {
         if (globals.settings.Jukebox) {
             $scope.sendToJukebox('start');
+        } else {
+            player.togglePause();
         }
     };
 
     $scope.pause = function () {
         if (globals.settings.Jukebox) {
             $scope.sendToJukebox('stop');
+        } else {
+            player.togglePause();
         }
     };
 
-    $scope.previousTrack = function () {
-        player.previousTrack();
-    };
-
-    $scope.nextTrack = function () {
-        player.nextTrack();
-    };
+    $scope.previousTrack = player.previousTrack;
+    $scope.nextTrack = player.nextTrack;
 
     //TODO: Hyz: updateFavorite - leave in rootScope ?
 }]);
