@@ -11,9 +11,7 @@ angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamsta
     function($scope, player, globals){
 	'use strict';
 
-    $scope.getPlayingSong = function () {
-        return player.getPlayingSong();
-    };
+    $scope.getPlayingSong = player.getPlayingSong;
 
     $scope.play = function () {
         if (globals.settings.Jukebox) {
@@ -31,13 +29,8 @@ angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamsta
         }
     };
 
-    $scope.previousTrack = function () {
-        player.previousTrack();
-    };
-
-    $scope.nextTrack = function () {
-        player.nextTrack();
-    };
+    $scope.previousTrack = player.previousTrack;
+    $scope.nextTrack = player.nextTrack;
 
     //TODO: Hyz: updateFavorite - leave in rootScope ?
 }]);
