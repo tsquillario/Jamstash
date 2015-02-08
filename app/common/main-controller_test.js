@@ -93,12 +93,12 @@ describe("Main controller", function() {
         });
 
         describe("When I toggle pause,", function() {
-            it("given that we're using the Jukebox mode, it sends a 'pause' command to the jukebox", function() {
+            it("given that we're using the Jukebox mode, it sends a 'stop' command to the jukebox", function() {
                 mockGlobals.settings.Jukebox = true;
                 spyOn(scope, "sendToJukebox");
 
                 scope.togglePause();
-                expect(scope.sendToJukebox).toHaveBeenCalledWith('pause');
+                expect(scope.sendToJukebox).toHaveBeenCalledWith('stop');
             });
 
             it("it toggles pause using the player service", function() {

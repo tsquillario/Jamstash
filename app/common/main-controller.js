@@ -178,66 +178,37 @@ angular.module('JamStash')
     // $document.keydown(function (e) {
     //     $scope.scrollToIndex(e);
     // });
-    // $scope.scrollToIndex = function (e) {
-    //     var source = e.target.id;
-    //     if (e.target.tagName.toUpperCase() != 'INPUT') {
-    //         var unicode = e.charCode ? e.charCode : e.keyCode;
-    //         if (globals.settings.Debug) { console.log('Keycode Triggered: ' + unicode); }
-    //         if (unicode == 49) { // 1
-    //             $('#action_Queue').click();
-    //         } else if (unicode == 50) {
-    //             $('#action_Library').click();
-    //         } else if (unicode == 51) {
-    //             $('#action_Archive').click();
-    //         } else if (unicode == 52) {
-    //             $('#action_Settings').click();
-    //         } else if (unicode == 53) {
-    //         } else if (unicode == 54) { // 6
-    //         }
-    //         if (unicode >= 65 && unicode <= 90 && $('#tabLibrary').is(':visible')) { // a-z
-    //             var key = utils.findKeyForCode(unicode);
-    //             if (key == 'x' || key == 'y' || key == 'z') {
-    //                 key = 'x-z';
-    //             }
-    //             var el = '#' + key.toUpperCase();
-    //             if ($(el).length > 0) {
-    //                 $('#left-component').stop().scrollTo(el, 400);
-    //             }
-    //         } else if (unicode == 39 || unicode == 176) { // right arrow
-    //             player.nextTrack();
-    //         } else if (unicode == 37 || unicode == 177) { // back arrow
-    //             player.previousTrack();
-    //         // } else if (unicode == 32 || unicode == 179 || unicode.toString() == '0179') { // spacebar
-    //         //     player.togglePause();
-    //         //     return false;
-    //         } else if (unicode == 36 && $('#tabLibrary').is(':visible')) { // home
-    //             $('#left-component').stop().scrollTo('#MusicFolders', 400);
-    //         }
-    //         if (unicode == 189) { // dash - volume down
-    //             var volume = utils.getValue('Volume') ? parseFloat(utils.getValue('Volume')) : 1;
-    //             if (volume <= 1 && volume > 0 && source === '') {
-    //                 volume += -0.1;
-    //                 $(globals.Player1).jPlayer({
-    //                     volume: volume
-    //                 });
-    //                 utils.setValue('Volume', volume, true);
-    //                 if (globals.settings.Debug) { console.log('Volume: ' + Math.round(volume * 100) + '%'); }
-    //             }
-    //         }
-    //         if (unicode == 187) { // equals - volume up
-    //             var volume = utils.getValue('Volume') ? parseFloat(utils.getValue('Volume')) : 1;
-    //             if (volume < 1 && volume >= 0 && source ==- '') {
-    //                 volume += 0.1;
-    //                 $(globals.Player1).jPlayer({
-    //                     volume: volume
-    //                 });
-    //                 utils.setValue('Volume', volume, true);
-    //                 if (globals.settings.Debug) { console.log('Volume: ' + Math.round(volume * 100) + '%'); }
-    //             }
-    //         }
-    //     }
-    //     return true;
-    // };
+    $scope.scrollToIndex = function (e) {
+        var source = e.target.id;
+        if (e.target.tagName.toUpperCase() != 'INPUT') {
+            var unicode = e.charCode ? e.charCode : e.keyCode;
+            if (globals.settings.Debug) { console.log('Keycode Triggered: ' + unicode); }
+            if (unicode == 49) { // 1
+                $('#action_Queue').click();
+            } else if (unicode == 50) {
+                $('#action_Library').click();
+            } else if (unicode == 51) {
+                $('#action_Archive').click();
+            } else if (unicode == 52) {
+                $('#action_Settings').click();
+            } else if (unicode == 53) {
+            } else if (unicode == 54) { // 6
+            }
+            if (unicode >= 65 && unicode <= 90 && $('#tabLibrary').is(':visible')) { // a-z
+                var key = utils.findKeyForCode(unicode);
+                if (key == 'x' || key == 'y' || key == 'z') {
+                    key = 'x-z';
+                }
+                var el = '#' + key.toUpperCase();
+                if ($(el).length > 0) {
+                    $('#left-component').stop().scrollTo(el, 400);
+                }
+            } else if (unicode == 36 && $('#tabLibrary').is(':visible')) { // home
+                $('#left-component').stop().scrollTo('#MusicFolders', 400);
+            }
+        }
+        return true;
+    };
     $scope.scrollToIndexName = function (index) {
         var el = '#' + index;
         if ($(el).length > 0) {
@@ -342,7 +313,7 @@ angular.module('JamStash')
         in order to bind keypresses to <body> and have global shortcuts */
     $scope.togglePause = function () {
         if(globals.settings.Jukebox) {
-            $scope.sendToJukebox('pause');
+            $scope.sendToJukebox('stop');
         } else {
             player.togglePause();
         }
@@ -367,6 +338,9 @@ angular.module('JamStash')
         player.volume = volume;
         persistence.saveVolume(volume);
     };
+
+    $scope.nextTrack = player.nextTrack;
+    $scope.previousTrack = player.previousTrack;
 
 	$rootScope.addToJukebox = function (id) {
 		if (globals.settings.Debug) { console.log("LOAD JUKEBOX"); }
