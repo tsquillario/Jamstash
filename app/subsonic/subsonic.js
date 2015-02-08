@@ -213,14 +213,13 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         subsonic.getAlbums(id, name).then(function (data) {
             $scope.album = data.album;
             $scope.song = data.song;
-            console.log($scope.song.length);
             $scope.BreadCrumbs = data.breadcrumb;
             $scope.selectedAutoAlbum = data.selectedAutoAlbum;
             $scope.selectedArtist = data.selectedArtist;
             $scope.selectedAlbum = data.selectedAlbum;
             $scope.selectedPlaylist = data.selectedPlaylist;
-            if (SelectedAlbumSort.id != "default") {
-                sortSubsonicAlbums(SelectedAlbumSort.id);
+            if ($scope.SelectedAlbumSort.id != "default") {
+                sortSubsonicAlbums($scope.SelectedAlbumSort.id);
             }
         });
     };
@@ -232,8 +231,8 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             $scope.selectedAutoAlbum = data.selectedAutoAlbum;
             $scope.selectedArtist = data.selectedArtist;
             $scope.selectedPlaylist = data.selectedPlaylist;
-            if (SelectedAlbumSort.id != "default") {
-                sortSubsonicAlbums(SelectedAlbumSort.id);
+            if ($scope.SelectedAlbumSort.id != "default") {
+                sortSubsonicAlbums($scope.SelectedAlbumSort.id);
             }
         });
     };
@@ -280,8 +279,8 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             $scope.selectedAutoAlbum = data.selectedAutoAlbum;
             $scope.selectedArtist = data.selectedArtist;
             $scope.selectedPlaylist = data.selectedPlaylist;
-            if (SelectedAlbumSort.id != "default") {
-                sortSubsonicAlbums(SelectedAlbumSort.id);
+            if ($scope.SelectedAlbumSort.id != "default") {
+                sortSubsonicAlbums($scope.SelectedAlbumSort.id);
             }
         });
     };
