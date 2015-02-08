@@ -85,19 +85,37 @@ describe("Persistence service", function() {
                 expect(notifications.updateMessage).not.toHaveBeenCalled();
             });
         });
+
+        describe("getVolume -", function() {
+            it("Given that we previously saved the volume in local Storage, it retrieves it", function() {
+                fakeStorage = { 'Volume': 0.46582 };
+
+                var volume = persistence.getVolume();
+
+                expect(locker.get).toHaveBeenCalledWith('Volume');
+                expect(volume).toBe(0.46582);
+            });
+
+            it("Given that we didn't save the volume in local Storage, it returns undefined", function() {
+                var volume = persistence.getVolume();
+
+                expect(locker.get).toHaveBeenCalledWith('Volume');
+                expect(volume).toBeUndefined();
+            });
+        });
     });
 
-    describe("save from localStorage -", function() {
+    describe("save to localStorage -", function() {
         beforeEach(function() {
             spyOn(locker, "put");
         });
 
-        it("it saves the current track's position in local Storage", function() {
+        it("saves the current track's position in local Storage", function() {
             persistence.saveTrackPosition(song);
             expect(locker.put).toHaveBeenCalledWith('CurrentSong', song);
         });
 
-        it("it saves the playing queue in local Storage", function() {
+        it("saves the playing queue in local Storage", function() {
             player.queue = [
                 { id: 1245 },
                 { id: 7465 },
@@ -106,6 +124,11 @@ describe("Persistence service", function() {
             persistence.saveQueue();
             expect(locker.put).toHaveBeenCalledWith('CurrentQueue', player.queue);
         });
+
+        it("saves the volume in local Storage", function() {
+            persistence.saveVolume(0.05167);
+            expect(locker.put).toHaveBeenCalledWith('Volume', 0.05167);
+        });
     });
 
     describe("remove from localStorage -", function() {
@@ -113,14 +136,19 @@ describe("Persistence service", function() {
             spyOn(locker, "forget");
         });
 
-        it("it deletes the current track from local Storage", function() {
+        it("deletes the current track from local Storage", function() {
             persistence.deleteTrackPosition();
             expect(locker.forget).toHaveBeenCalledWith('CurrentSong');
         });
 
-        it("it deletes the saved playing queue from local Storage", function() {
+        it("deletes the saved playing queue from local Storage", function() {
             persistence.deleteQueue();
             expect(locker.forget).toHaveBeenCalledWith('CurrentQueue');
+        });
+
+        it("deletes the saved volume from local Storage", function() {
+            persistence.deleteVolume();
+            expect(locker.forget).toHaveBeenCalledWith('Volume');
         });
     });
 });

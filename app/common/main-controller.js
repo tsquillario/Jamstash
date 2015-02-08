@@ -203,37 +203,8 @@ angular.module('JamStash')
                 if ($(el).length > 0) {
                     $('#left-component').stop().scrollTo(el, 400);
                 }
-            } else if (unicode == 39 || unicode == 176) { // right arrow
-                player.nextTrack();
-            } else if (unicode == 37 || unicode == 177) { // back arrow
-                player.previousTrack();
-            } else if (unicode == 32 || unicode == 179 || unicode.toString() == '0179') { // spacebar
-                player.pause();
-                return false;
             } else if (unicode == 36 && $('#tabLibrary').is(':visible')) { // home
                 $('#left-component').stop().scrollTo('#MusicFolders', 400);
-            }
-            if (unicode == 189) { // dash - volume down
-                var volume = utils.getValue('Volume') ? parseFloat(utils.getValue('Volume')) : 1;
-                if (volume <= 1 && volume > 0 && source === '') {
-                    volume += -0.1;
-                    $(globals.Player1).jPlayer({
-                        volume: volume
-                    });
-                    utils.setValue('Volume', volume, true);
-                    if (globals.settings.Debug) { console.log('Volume: ' + Math.round(volume * 100) + '%'); }
-                }
-            }
-            if (unicode == 187) { // equals - volume up
-                var volume = utils.getValue('Volume') ? parseFloat(utils.getValue('Volume')) : 1;
-                if (volume < 1 && volume >= 0 && source ==- '') {
-                    volume += 0.1;
-                    $(globals.Player1).jPlayer({
-                        volume: volume
-                    });
-                    utils.setValue('Volume', volume, true);
-                    if (globals.settings.Debug) { console.log('Volume: ' + Math.round(volume * 100) + '%'); }
-                }
             }
         }
         return true;
@@ -337,6 +308,40 @@ angular.module('JamStash')
             data.selected = true;
         }
     };
+
+    /* We define player-related methods here instead of in player controller
+        in order to bind keypresses to <body> and have global shortcuts */
+    $scope.togglePause = function () {
+        if(globals.settings.Jukebox) {
+            $scope.sendToJukebox('stop');
+        } else {
+            player.togglePause();
+        }
+    };
+
+    $scope.turnVolumeUp = function () {
+        var volume = player.volume;
+        if ((volume+0.1) > 1 || volume < 0) {
+            volume = 0.9;
+        }
+        volume += 0.1;
+        player.volume = volume;
+        persistence.saveVolume(volume);
+    };
+
+    $scope.turnVolumeDown = function () {
+        var volume = player.volume;
+        if (volume > 1 || (volume-0.1) < 0) {
+            volume = 0.1;
+        }
+        volume -= 0.1;
+        player.volume = volume;
+        persistence.saveVolume(volume);
+    };
+
+    $scope.nextTrack = player.nextTrack;
+    $scope.previousTrack = player.previousTrack;
+
 	$rootScope.addToJukebox = function (id) {
 		if (globals.settings.Debug) { console.log("LOAD JUKEBOX"); }
 		$.ajax({
@@ -405,6 +410,7 @@ angular.module('JamStash')
             persistence.loadQueue();
             persistence.loadTrackPosition();
         }
+        player.volume = persistence.getVolume();
     }
     /* End Startup */
 }]);
