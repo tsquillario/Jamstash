@@ -18,25 +18,37 @@ describe("Subsonic controller", function() {
                 return $delegate;
             });
 
-            $provide.decorator('subsonic', function($delegate, $q) {
-                deferred = $q.defer();
-                $delegate.getRandomStarredSongs = jasmine.createSpy("getRandomStarredSongs").and.returnValue(deferred.promise);
-                $delegate.getRandomSongs = jasmine.createSpy("getRandomSongs").and.returnValue(deferred.promise);
-                return $delegate;
-            });
-
             $provide.decorator('notifications', function ($delegate) {
                 $delegate.updateMessage = jasmine.createSpy("updateMessage");
                 return $delegate;
             });
         });
 
-        inject(function ($controller, _$rootScope_, utils, globals, map, _subsonic_, _notifications_, $q, _player_) {
+        inject(function ($controller, _$rootScope_, utils, globals, map, _notifications_, $q, _player_) {
             $rootScope = _$rootScope_;
             scope = $rootScope.$new();
-            subsonic = _subsonic_;
+            deferred = $q.defer();
             notifications = _notifications_;
             player = _player_;
+
+            // Mock the subsonic service
+            subsonic = jasmine.createSpyObj("subsonic", [
+                "getAlbums",
+                "getArtists",
+                "getGenres",
+                "getPlaylists",
+                "getPodcasts",
+                "getRandomStarredSongs",
+                "getRandomSongs"
+            ]);
+            subsonic.getAlbums.and.returnValue(deferred.promise);
+            subsonic.getArtists.and.returnValue(deferred.promise);
+            subsonic.getGenres.and.returnValue(deferred.promise);
+            subsonic.getPlaylists.and.returnValue(deferred.promise);
+            subsonic.getPodcasts.and.returnValue(deferred.promise);
+            subsonic.getRandomStarredSongs.and.returnValue(deferred.promise);
+            subsonic.getRandomSongs.and.returnValue(deferred.promise);
+            subsonic.showIndex = false;
 
             $controller('SubsonicController', {
                 $scope: scope,
