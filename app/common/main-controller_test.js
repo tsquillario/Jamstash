@@ -6,7 +6,8 @@ describe("Main controller", function() {
         mockGlobals = {
             settings: {
                 ShowQueue: false,
-                Debug: true
+                Debug: true,
+                Jukebox: false
             }
         };
 
@@ -14,9 +15,11 @@ describe("Main controller", function() {
             $provide.value('globals', mockGlobals);
         });
 
-        inject(function ($controller, $rootScope, _$document_, _$window_, _$location_, _$cookieStore_, _utils_, globals, _model_, _notifications_, _player_, _locker_, _Page_) {
+        // Mock the player service
+        player = jasmine.createSpyObj("player", ["togglePause"]);
+
+        inject(function ($controller, $rootScope, _$document_, _$window_, _$location_, _$cookieStore_, _utils_, globals, _model_, _notifications_, _locker_, _Page_) {
             scope = $rootScope.$new();
-            player = _player_;
             utils = _utils_;
 
             spyOn(utils, "switchTheme");
@@ -77,5 +80,20 @@ describe("Main controller", function() {
         scope.$apply();
 
         expect(scope.showQueue).toHaveBeenCalled();
+    });
+
+    describe("When I toggle pause,", function() {
+        it("given that we're using the Jukebox mode, it sends a 'pause' command to the jukebox", function() {
+            mockGlobals.settings.Jukebox = true;
+            spyOn(scope, "sendToJukebox");
+
+            scope.togglePause();
+            expect(scope.sendToJukebox).toHaveBeenCalledWith('pause');
+        });
+
+        it("it toggles pause using the player service", function() {
+            scope.togglePause();
+            expect(player.togglePause).toHaveBeenCalled();
+        });
     });
 });

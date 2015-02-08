@@ -13,6 +13,7 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
         _playingIndex: -1,
         _playingSong: undefined,
         queue: [],
+        pauseSong: false,
         restartSong: false,
         loadSong: false,
 
@@ -29,7 +30,7 @@ angular.module('jamstash.player.service', ['jamstash.settings', 'angular-undersc
             }
         },
 
-        pause: function(song) {
+        togglePause: function() {
             if (player.pauseSong) {
                 player.pauseSong = false;
             } else {

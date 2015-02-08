@@ -154,10 +154,8 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
             }, function (newVal) {
                 if(newVal === true) {
                     $player.jPlayer('pause');
-                    playerService.pauseSong = true; 
                 } else {
                     $player.jPlayer('play');
-                    playerService.pauseSong = false; 
                 }
             });
 
