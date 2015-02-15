@@ -20,7 +20,7 @@
     <link href="styles/Mobile.css" rel="stylesheet" type="text/css" data-name="main" />
     <link href="" rel="stylesheet" type="text/css" data-name="theme" />
 </head>
-<body ui-keypress="{'32 179': 'togglePause()', '43 61 187': 'turnVolumeUp()', '45 95 189': 'turnVolumeDown()'}" ui-keydown="{'right 176': 'nextTrack()', 'left 177': 'previousTrack()'}">
+<body ui-keypress="{'32 179': 'togglePause($event)', '43 61 187': 'turnVolumeUp($event)', '45 95 189': 'turnVolumeDown($event)'}" ui-keydown="{'right 176': 'nextTrack($event)', 'left 177': 'previousTrack($event)'}">
     <div id="container">
         <div id="header">
             <div id="messages">

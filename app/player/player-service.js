@@ -8,6 +8,8 @@ angular.module('jamstash.player.service', ['angular-underscore/utils', 'jamstash
 .factory('player', ['globals', function (globals) {
     'use strict';
 
+    var playerVolume = 1.0;
+
     var player = {
         // playingIndex and playingSong aren't meant to be used, they only are public for unit-testing purposes
         _playingIndex: -1,
@@ -16,9 +18,8 @@ angular.module('jamstash.player.service', ['angular-underscore/utils', 'jamstash
         pauseSong: false,
         restartSong: false,
         loadSong: false,
-        volume: 1.0,
 
-        play: function(song) {
+        play: function (song) {
             // Find the song's index in the queue, if it's in there
             var index = player.indexOfSong(song);
             player._playingIndex = (index !== undefined) ? index : -1;
@@ -31,7 +32,7 @@ angular.module('jamstash.player.service', ['angular-underscore/utils', 'jamstash
             }
         },
 
-        togglePause: function() {
+        togglePause: function () {
             if (player.pauseSong) {
                 player.pauseSong = false;
             } else {
@@ -39,22 +40,22 @@ angular.module('jamstash.player.service', ['angular-underscore/utils', 'jamstash
             }
         },
 
-        playFirstSong: function() {
+        playFirstSong: function () {
             player._playingIndex = 0;
             player.play(player.queue[0]);
         },
 
-        load: function(song) {
+        load: function (song) {
             player.loadSong = true;
             player.play(song);
         },
 
-        restart: function() {
+        restart: function () {
             player.restartSong = true;
         },
 
         // Called from the player directive at the end of the current song
-        songEnded: function() {
+        songEnded: function () {
             if (globals.settings.Repeat) {
                 // repeat current track
                 player.restart();
@@ -68,7 +69,7 @@ angular.module('jamstash.player.service', ['angular-underscore/utils', 'jamstash
             }
         },
 
-        nextTrack: function() {
+        nextTrack: function () {
             // Find the song's index in the queue, in case it changed (with a drag & drop)
             var index = player.indexOfSong(player._playingSong);
             player._playingIndex = (index !== undefined) ? index : -1;
@@ -80,7 +81,7 @@ angular.module('jamstash.player.service', ['angular-underscore/utils', 'jamstash
             }
         },
 
-        previousTrack: function() {
+        previousTrack: function () {
             // Find the song's index in the queue, in case it changed (with a drag & drop)
             var index = player.indexOfSong(player._playingSong);
             player._playingIndex = (index !== undefined) ? index : -1;
@@ -94,17 +95,17 @@ angular.module('jamstash.player.service', ['angular-underscore/utils', 'jamstash
             }
         },
 
-        emptyQueue: function() {
+        emptyQueue: function () {
             player.queue = [];
             return player;
         },
 
-        shuffleQueue: function() {
+        shuffleQueue: function () {
             player.queue = _(player.queue).shuffle();
             return player;
         },
 
-        addSong: function(song) {
+        addSong: function (song) {
             player.queue.push(song);
             return player;
         },
@@ -114,7 +115,7 @@ angular.module('jamstash.player.service', ['angular-underscore/utils', 'jamstash
             return player;
         },
 
-        removeSong: function(song) {
+        removeSong: function (song) {
             var index = player.queue.indexOf(song);
             player.queue.splice(index, 1);
             return player;
@@ -125,21 +126,52 @@ angular.module('jamstash.player.service', ['angular-underscore/utils', 'jamstash
             return player;
         },
 
-        getPlayingSong: function() {
+        getPlayingSong: function () {
             return player._playingSong;
         },
 
-        isLastSongPlaying: function() {
+        isLastSongPlaying: function () {
             return ((player._playingIndex +1) === player.queue.length);
         },
 
-        indexOfSong: function(song) {
+        indexOfSong: function (song) {
             for (var i = player.queue.length - 1; i >= 0; i--) {
                 if (angular.equals(song, player.queue[i])) {
                     return i;
                 }
             }
             return undefined;
+        },
+
+        turnVolumeUp: function () {
+            var volume = playerVolume;
+            if ((volume + 0.1) > 1 || volume < 0) {
+                volume = 0.9;
+            }
+            volume += 0.1;
+            playerVolume = Math.round(volume * 100) / 100;
+            return volume;
+        },
+
+        turnVolumeDown: function () {
+            var volume = playerVolume;
+            if (volume > 1 || (volume - 0.1) < 0) {
+                volume = 0.1;
+            }
+            volume -= 0.1;
+            playerVolume = Math.round(volume * 100) / 100;
+            return volume;
+        },
+
+        getVolume: function () {
+            return playerVolume;
+        },
+
+        setVolume: function (volume) {
+            if (volume > 1) { volume = 1; }
+            else if(volume < 0) { volume = 0; }
+            playerVolume = Math.round(volume * 100) / 100;
+            return player;
         }
     };
 

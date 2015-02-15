@@ -277,4 +277,32 @@ describe("Player service -", function() {
             expect(player._playingIndex).toBe(-1);
         });
     });
+
+    describe("When I turn the volume up,", function() {
+        it("it sets the player's volume up by 10%", function() {
+            player.setVolume(0.5);
+            player.turnVolumeUp();
+            expect(player.getVolume()).toBe(0.6);
+        });
+
+        it("if the player's resulting volume won't be between 0 and 1, it sets it to 1", function() {
+            player.setVolume(5.91488);
+            player.turnVolumeUp();
+            expect(player.getVolume()).toBe(1.0);
+        });
+    });
+
+    describe("When I turn the volume down,", function() {
+        it("it sets the player's volume down by 10%", function() {
+            player.setVolume(0.5);
+            player.turnVolumeDown();
+            expect(player.getVolume()).toBe(0.4);
+        });
+
+        it("if the player's resulting volume won't be between 0 and 1, it sets it to 0", function() {
+            player.setVolume(0.05);
+            player.turnVolumeDown();
+            expect(player.getVolume()).toBe(0);
+        });
+    });
 });

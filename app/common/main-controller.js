@@ -309,38 +309,52 @@ angular.module('JamStash')
         }
     };
 
+    /**
+     * Returns true if the target of this event is an input
+     * @param  {jQuery event}  event
+     * @return {Boolean}
+     */
+    function isTargetInput (event) {
+        return (event && event.target.tagName === "INPUT");
+    }
+
     /* We define player-related methods here instead of in player controller
-        in order to bind keypresses to <body> and have global shortcuts */
-    $scope.togglePause = function () {
-        if(globals.settings.Jukebox) {
-            $scope.sendToJukebox('stop');
-        } else {
-            player.togglePause();
+        in order to bind keypresses to <body> and have global shortcuts.
+        We also check the event so we don't do anything if it's on an input */
+    $scope.togglePause = function (event) {
+        if(!isTargetInput(event)) {
+            if(globals.settings.Jukebox) {
+                $scope.sendToJukebox('stop');
+            } else {
+                player.togglePause();
+            }
         }
     };
 
-    $scope.turnVolumeUp = function () {
-        var volume = player.volume;
-        if ((volume+0.1) > 1 || volume < 0) {
-            volume = 0.9;
+    $scope.turnVolumeUp = function (event) {
+        if(!isTargetInput(event)) {
+            var volume = player.turnVolumeUp();
+            persistence.saveVolume(volume);
         }
-        volume += 0.1;
-        player.volume = volume;
-        persistence.saveVolume(volume);
     };
 
-    $scope.turnVolumeDown = function () {
-        var volume = player.volume;
-        if (volume > 1 || (volume-0.1) < 0) {
-            volume = 0.1;
+    $scope.turnVolumeDown = function (event) {
+        if(!isTargetInput(event)) {
+            var volume = player.turnVolumeDown();
+            persistence.saveVolume(volume);
         }
-        volume -= 0.1;
-        player.volume = volume;
-        persistence.saveVolume(volume);
     };
 
-    $scope.nextTrack = player.nextTrack;
-    $scope.previousTrack = player.previousTrack;
+    $scope.nextTrack = function (event) {
+        if(!isTargetInput(event)) {
+            player.nextTrack();
+        }
+    };
+    $scope.previousTrack = function (event) {
+        if(!isTargetInput(event)) {
+            player.previousTrack();
+        }
+    };
 
 	$rootScope.addToJukebox = function (id) {
 		if (globals.settings.Debug) { console.log("LOAD JUKEBOX"); }
@@ -410,7 +424,7 @@ angular.module('JamStash')
             persistence.loadQueue();
             persistence.loadTrackPosition();
         }
-        player.volume = persistence.getVolume();
+        player.setVolume(persistence.getVolume());
     }
     /* End Startup */
 }]);
