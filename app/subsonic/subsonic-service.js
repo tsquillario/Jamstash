@@ -101,7 +101,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             } else {
                 httpPromise = $http.get(url, actualConfig);
             }
-            httpPromise.success(function(data) {
+            httpPromise.success(function (data) {
                 var subsonicResponse = (data['subsonic-response'] !== undefined) ? data['subsonic-response'] : {status: 'failed'};
                 if (subsonicResponse.status === 'ok') {
                     deferred.resolve(subsonicResponse);
@@ -122,62 +122,31 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return this.subsonicRequest('ping.view');
         },
 
-        getArtists: function (id, refresh) {
-            var deferred = $q.defer();
-            if (refresh || index.artists.length == 0) {
-                var url;
-                if (utils.getValue('MusicFolders')) {
-                    var folder = angular.fromJson(utils.getValue('MusicFolders'));
-                    id = folder.id;
-                }
-                if (id) {
-                    url = globals.BaseURL() + '/getIndexes.view?' + globals.BaseParams() + '&musicFolderId=' + id;
-                } else {
-                    url = globals.BaseURL() + '/getIndexes.view?' + globals.BaseParams();
-                }
-
-                /*
-                $http.get(url).success(function (data) {
-                });
-                */
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    dataType: globals.settings.Protocol,
-                    timeout: globals.settings.Timeout,
-                    success: function (data) {
-                        var indexes = [];
-                        if (typeof data["subsonic-response"].indexes.index != 'undefined') {
-                            if (data["subsonic-response"].indexes.index.length > 0) {
-                                indexes = data["subsonic-response"].indexes.index;
-                            } else {
-                                indexes[0] = data["subsonic-response"].indexes.index;
-                            }
-                        }
-                        index.artists = [];
-                        index.shortcuts = [];
-                        var items = [];
-                        if (typeof data["subsonic-response"].indexes.shortcut != 'undefined') {
-                            if (data["subsonic-response"].indexes.shortcut.length > 0) {
-                                items = data["subsonic-response"].indexes.shortcut;
-                            } else {
-                                items[0] = data["subsonic-response"].indexes.shortcut;
-                            }
-                            angular.forEach(items, function (item, key) {
-                                index.shortcuts.push(map.mapIndex(item));
-                            });
-                        }
-                        angular.forEach(indexes, function (item, key) {
-                            index.artists.push(map.mapArtist(item));
-                        });
-                        deferred.resolve(index);
-                    }
-                });
-            } else {
-                deferred.resolve(index);
+        getArtists: function (folder) {
+            var exception = {reason: 'No artist found on the Subsonic server.'};
+            // TODO: Hyz: Move loading / saving the music folder to persistence-service
+            if (isNaN(folder) && utils.getValue('MusicFolders')) {
+                var musicFolder = angular.fromJson(utils.getValue('MusicFolders'));
+                folder = musicFolder.id;
             }
-            return deferred.promise;
+            var params;
+            if (!isNaN(folder)) {
+                params = {
+                    musicFolderId: folder
+                };
+            }
+            var deferred = this.subsonicRequest('getIndexes.view', {
+                params: params
+            }).then(function (subsonicResponse) {
+                if(subsonicResponse.indexes !== undefined && (subsonicResponse.indexes.index !== undefined || subsonicResponse.indexes.shortcut !== undefined)) {
+                    return subsonicResponse.indexes;
+                } else {
+                    return $q.reject(exception);
+                }
+            });
+            return deferred;
         },
+
         getAlbums: function (id, name) {
             var exception = {reason: 'No songs found on the Subsonic server.'};
             var params = {
