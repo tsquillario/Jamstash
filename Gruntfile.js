@@ -188,6 +188,12 @@ module.exports = function (grunt) {
             '!<%= yeoman.dist %>/.git*'
           ]
         }]
+      },
+      coverage: {
+        files: [{
+            dot: true,
+            src: ['./coverage']
+        }]
       }
     },
 
@@ -394,6 +400,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('coverage', 'Run unit tests and display test coverage results on browser', function() {
     return grunt.task.run([
+      'clean:coverage',
       'karma:unit',
       'connect:coverage'
     ]);
