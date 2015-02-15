@@ -22,10 +22,10 @@ describe("jplayer directive", function() {
                 $delegate.pauseSong = false;
                 $delegate.restartSong = false;
                 $delegate.loadSong = false;
-                $delegate.volume = 1.0;
                 $delegate.getPlayingSong = jasmine.createSpy('getPlayingSong').and.callFake(function() {
                     return playingSong;
                 });
+                $delegate.getVolume = jasmine.createSpy('getVolume').and.returnValue(1.0);
                 $delegate.nextTrack = jasmine.createSpy('nextTrack');
                 $delegate.songEnded = jasmine.createSpy('songEnded');
                 $delegate.isLastSongPlaying = jasmine.createSpy('isLastSongPlaying');
@@ -170,7 +170,7 @@ describe("jplayer directive", function() {
         });
 
         it("When the player service's volume changes, it sets jPlayer's volume", function() {
-            playerService.volume = 0.2034;
+            playerService.getVolume.and.returnValue(0.2034);
             scope.$apply();
             expect($player.jPlayer).toHaveBeenCalledWith('volume', 0.2034);
         });

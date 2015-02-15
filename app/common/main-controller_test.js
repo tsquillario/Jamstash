@@ -17,9 +17,8 @@ describe("Main controller", function() {
         });
 
         // Mock the player service
-        player = jasmine.createSpyObj("player", ["togglePause"]);
+        player = jasmine.createSpyObj("player", ["togglePause", "turnVolumeUp", "turnVolumeDown", "nextTrack", "previousTrack", "setVolume"]);
         player.queue = [];
-        player.volume = 1.0;
 
         // Mock the persistence service
         persistence = jasmine.createSpyObj("persistence", ["loadQueue", "loadTrackPosition", "getVolume", "saveVolume"]);
@@ -108,41 +107,63 @@ describe("Main controller", function() {
             });
         });
 
-        describe("When I turn the volume up,", function() {
-            it("it sets the player's volume up by 10% and saves it using the persistence service", function() {
-                player.volume = 0.5;
+        it("When I turn the volume up, it sets the player's volume up and saves it using the persistence service", function() {
+            player.turnVolumeUp.and.returnValue(0.6);
+            scope.turnVolumeUp();
 
-                scope.turnVolumeUp();
-
-                expect(player.volume).toBe(0.6);
-                expect(persistence.saveVolume).toHaveBeenCalledWith(0.6);
-            });
-
-            it("if the player's resulting volume won't be between 0 and 1, it sets it to 1", function() {
-                player.volume = 5.91488;
-
-                scope.turnVolumeUp();
-
-                expect(player.volume).toBe(1.0);
-            });
+            expect(player.turnVolumeUp).toHaveBeenCalled();
+            expect(persistence.saveVolume).toHaveBeenCalledWith(0.6);
         });
 
-        describe("When I turn the volume down,", function() {
-            it("it sets the player's volume down by 10% and saves it using the persistence service", function() {
-                player.volume = 0.5;
+        it("When I turn the volume down, it sets the player's volume down and saves it using the persistence service", function() {
+            player.turnVolumeDown.and.returnValue(0.4);
+            scope.turnVolumeDown();
 
-                scope.turnVolumeDown();
+            expect(player.turnVolumeDown).toHaveBeenCalled();
+            expect(persistence.saveVolume).toHaveBeenCalledWith(0.4);
+        });
 
-                expect(player.volume).toBe(0.4);
-                expect(persistence.saveVolume).toHaveBeenCalledWith(0.4);
+        it("When I go to the next track, it calls next track on the player", function() {
+            scope.nextTrack();
+            expect(player.nextTrack).toHaveBeenCalled();
+        });
+
+        it("When I go to the previous track, it calls previous track on the player", function() {
+            scope.previousTrack();
+            expect(player.previousTrack).toHaveBeenCalled();
+        });
+
+        describe("Given that I am targeting an input,", function() {
+            var event;
+            beforeEach(function() {
+                event = { target: { tagName: "INPUT" } };
             });
 
-            it("if the player's resulting volume won't be between 0 and 1, it sets it to 0", function() {
-                player.volume = 5.91488;
+            it("when I use a shortcut to toggle pause, it doesn't do anything", function() {
+                scope.togglePause(event);
+                expect(player.togglePause).not.toHaveBeenCalled();
+            });
 
-                scope.turnVolumeDown();
+            it("when I use a shortcut to turn the volume up, it doesn't do anything", function() {
+                scope.turnVolumeUp(event);
+                expect(player.turnVolumeUp).not.toHaveBeenCalled();
+                expect(persistence.saveVolume).not.toHaveBeenCalled();
+            });
 
-                expect(player.volume).toBe(0);
+            it("when I use a shortcut to turn the volume down, it doesn't do anything", function() {
+                scope.turnVolumeDown(event);
+                expect(player.turnVolumeDown).not.toHaveBeenCalled();
+                expect(persistence.saveVolume).not.toHaveBeenCalled();
+            });
+
+            it("when I use a shortcut to go to the next track, it doesn't do anything", function() {
+                scope.nextTrack(event);
+                expect(player.nextTrack).not.toHaveBeenCalled();
+            });
+
+            it("when I use a shortcut to go to the previous track, it doesn't do anything", function() {
+                scope.previousTrack(event);
+                expect(player.previousTrack).not.toHaveBeenCalled();
             });
         });
     });
@@ -154,7 +175,7 @@ describe("Main controller", function() {
             $controller('AppController', controllerParams);
 
             expect(persistence.getVolume).toHaveBeenCalled();
-            expect(player.volume).toBe(0.551835);
+            expect(player.setVolume).toHaveBeenCalledWith(0.551835);
         });
     });
 });

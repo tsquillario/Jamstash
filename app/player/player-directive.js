@@ -160,7 +160,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
             });
 
             scope.$watch(function () {
-                return playerService.volume;
+                return playerService.getVolume();
             }, function (newVal) {
                 $player.jPlayer('volume', newVal);
                 if (globals.settings.Debug) { console.log('Volume: ' + Math.round(newVal * 100) + '%'); }
