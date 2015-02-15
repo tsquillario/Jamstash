@@ -402,12 +402,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.randomSongs !== undefined && subsonicResponse.randomSongs.song.length > 0) {
-                    var songs = [];
-                    // TODO: Hyz: Add mapSongs to map service
-                    angular.forEach(subsonicResponse.randomSongs.song, function (item) {
-                        songs.push(map.mapSong(item));
-                    });
-                    return songs;
+                    return map.mapSongs(subsonicResponse.randomSongs.song);
                 } else {
                     return $q.reject(exception);
                 }
@@ -511,18 +506,13 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return deferred;
         },
 
-        getRandomStarredSongs: function() {
+        getRandomStarredSongs: function () {
             var deferred = this.getStarred()
                 .then(function (starred) {
                     if(starred.song !== undefined && starred.song.length > 0) {
                         // Return random subarray of songs
                         var songs = [].concat(_(starred.song).sample(globals.settings.AutoPlaylistSize));
-                        var mappedSongs = [];
-                        // TODO: Hyz: Add mapSongs to map service
-                        angular.forEach(songs, function (item) {
-                            mappedSongs.push(map.mapSong(item));
-                        });
-                        return mappedSongs;
+                        return map.mapSongs(songs);
                     } else {
                         return $q.reject({reason: 'No starred songs found on the Subsonic server.'});
                     }
