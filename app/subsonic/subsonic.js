@@ -143,8 +143,9 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
     });
     $rootScope.$watch("SelectedMusicFolder", function (newValue, oldValue) {
         if (newValue !== oldValue) {
+            // TODO: Hyz: Move loading / saving the music folder to persistence-service
             utils.setValue('MusicFolders', angular.toJson(newValue), true);
-            $scope.getArtists(newValue.id, true);
+            $scope.getArtists(newValue.id);
         }
     });
     $scope.SearchType = globals.settings.DefaultSearchType;
@@ -197,16 +198,15 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             $scope.song = data.song;
         });
     };
-    $scope.getArtists = function (id, refresh) {
-        subsonic.getArtists(id, refresh).then(function (data) {
-            $scope.index = data.artists;
-            $scope.shortcut = data.shortcuts;
-            $scope.BreadCrumbs = data.breadcrumb;
+    $scope.getArtists = function (folder) {
+        subsonic.getArtists(folder).then(function (data) {
+            $scope.index = data.index;
+            $scope.shortcut = data.shortcut;
         });
     };
     $scope.refreshArtists = function () {
         utils.setValue('MusicFolders', null, true);
-        $scope.getArtists(0, true);
+        $scope.getArtists();
         $scope.getPlaylists(true);
     };
     $scope.getAlbums = function (id, name) {

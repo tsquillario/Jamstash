@@ -17,7 +17,7 @@ describe("Subsonic service -", function() {
             },
             BaseURL: function () {
                 return 'http://demo.subsonic.com/rest';
-            },
+            }
         };
 
         module('jamstash.subsonic.service', function ($provide) {
@@ -26,6 +26,13 @@ describe("Subsonic service -", function() {
             $provide.decorator('map', function ($delegate) {
                 $delegate.mapSong = function (argument) {
                     return argument;
+                };
+                return $delegate;
+            });
+            // Mock utils.getValue
+            $provide.decorator('utils', function ($delegate) {
+                $delegate.getValue = function () {
+                    return undefined;
                 };
                 return $delegate;
             });
@@ -128,7 +135,6 @@ describe("Subsonic service -", function() {
         var song = { id: 45872 };
         var url = 'http://demo.subsonic.com/rest/scrobble.view?' +
             'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&id=45872&p=enc:cGFzc3dvcmQ%3D&submisssion=true&u=Hyzual&v=1.10.2';
-
         mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
 
         var promise = subsonic.scrobble(song);
@@ -137,9 +143,70 @@ describe("Subsonic service -", function() {
         expect(promise).toBeResolvedWith(true);
     });
 
+    describe("getArtists - ", function() {
+        var url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+
+        it("Given that I have 2 artists at the top level, when I get the artists, it returns those 2 artists", function() {
+            response["subsonic-response"].indexes = {
+                shortcut: [
+                    {
+                        id: "8534",
+                        name: "Podcast"
+                    }
+                ],
+                index: [
+                    {
+                        name : "R",
+                        artist: [
+                            {
+                                id: "5493",
+                                name: "Ricki Perish"
+                            }
+                        ]
+                    },
+                    {
+                        name : "T",
+                        artist: [
+                            {
+                                id: "4934",
+                                name: "Terese Hoth"
+                            }
+                        ]
+                    }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+
+            var promise = subsonic.getArtists();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith(response["subsonic-response"].indexes);
+        });
+
+        it("When I get the artists of a given folder, it builds the correct url", function() {
+            var url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&musicFolderId=42&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+
+            subsonic.getArtists(42);
+            mockBackend.flush();
+        });
+
+        it("Given that I don't have any artist or shortcut in my library (empty server), when I get the artists, it returns an error object with a message", function() {
+            response["subsonic-response"].indexes = {};
+            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+
+            var promise = subsonic.getArtists();
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'No artist found on the Subsonic server.'});
+        });
+    });
+
     describe("getStarred -", function() {
         var url = 'http://demo.subsonic.com/rest/getStarred.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
 
         it("Given that I have 2 starred albums, 1 starred artist and 3 starred songs in my library, when getting everything starred, it returns them all", function() {
             response["subsonic-response"].starred = {
@@ -172,7 +239,7 @@ describe("Subsonic service -", function() {
 
     describe("getRandomStarredSongs -", function() {
         var url = 'http://demo.subsonic.com/rest/getStarred.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
 
         describe("Given that the global setting AutoPlaylist Size is 3", function() {
             it("and given that I have more than 3 starred songs in my library, when getting random starred songs, it returns 3 starred songs", function() {
