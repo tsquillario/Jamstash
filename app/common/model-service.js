@@ -60,29 +60,6 @@ angular.module('jamstash.model', ['jamstash.utils'])
 .service('map', ['$http', 'globals', 'utils', 'model', function ($http, globals, utils, model){
     'use strict';
 
-    this.mapArtist = function (data) {
-        var name = '';
-        var artist = data.artist;
-        var artists = [];
-        if (artist.length > 0) {
-            artists = artist;
-        } else {
-            artists[0] = artist;
-        }
-        angular.forEach(artists, function (item, key) {
-            if (typeof item.name !== 'undefined') { item.name = item.name.toString(); }
-        });
-        if (typeof data.name !== 'undefined') { name = data.name.toString(); }
-        return new model.Index(name, artists);
-    };
-
-    this.mapIndex = function (data) {
-        var name, id = '';
-        if (typeof data.id !== 'undefined') { id = data.id; }
-        if (typeof data.name !== 'undefined') { name = data.name.toString(); }
-        return new model.Artist(id, name);
-    };
-
     this.mapAlbum = function (data) {
         var album = data;
         var title, coverartthumb, coverartfull, starred;
