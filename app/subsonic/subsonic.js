@@ -207,7 +207,7 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
     $scope.refreshArtists = function () {
         utils.setValue('MusicFolders', null, true);
         $scope.getArtists();
-        $scope.getPlaylists(true);
+        $scope.getPlaylists();
     };
     $scope.getAlbums = function (id, name) {
         subsonic.getAlbums(id, name).then(function (data) {
@@ -359,12 +359,10 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
     $scope.toggleAZ = function () {
         $scope.toggleSubmenu('#submenu_AZIndex', '#AZIndex', 'right', 44);
     };
-    $scope.getPlaylists = function (refresh) {
-        subsonic.getPlaylists(refresh).then(function (data) {
+    $scope.getPlaylists = function () {
+        subsonic.getPlaylists().then(function (data) {
             $scope.playlists = data.playlists;
             $scope.playlistsPublic = data.playlistsPublic;
-            $scope.selectedAutoPlaylist = data.selectedAutoPlaylist;
-            $scope.selectedPlaylist = data.selectedPlaylist;
         });
     };
     $scope.getPlaylist = function (id, action) {
@@ -387,12 +385,12 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
 
     $scope.newPlaylist = function (data, event) {
         subsonic.newPlaylist(data, event).then(function (data) {
-            $scope.getPlaylists(true);
+            $scope.getPlaylists();
         });
     };
     $scope.deletePlaylist = function () {
         subsonic.deletePlaylist().then(function (data) {
-            $scope.getPlaylists(true);
+            $scope.getPlaylists();
         });
     };
     $scope.savePlaylist = function () {
