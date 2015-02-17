@@ -144,8 +144,11 @@ describe("Subsonic service -", function() {
     });
 
     describe("getArtists - ", function() {
-        var url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
-            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        var url;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
 
         it("Given that I have 2 artists at the top level, when I get the artists, it returns those 2 artists", function() {
             response["subsonic-response"].indexes = {
@@ -186,7 +189,7 @@ describe("Subsonic service -", function() {
 
         it("When I get the artists of a given folder, it builds the correct url", function() {
             var url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
-            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&musicFolderId=42&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&musicFolderId=42&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
             mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
 
             subsonic.getArtists(42);
@@ -204,9 +207,84 @@ describe("Subsonic service -", function() {
         });
     });
 
+    describe("getPlaylists - ", function() {
+        var url, myPlaylist, publicPlaylist;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getPlaylists.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            publicPlaylist = {
+                id: "563",
+                owner: "Rima Zentz"
+            };
+            myPlaylist = {
+                id: "829",
+                owner: "Hyzual"
+            };
+        });
+
+        it("Given that there is 1 public playlist and 1 playlist that I own in my library, when I get the playlists, it returns them separated between my playlists and public playlists", function() {
+            response["subsonic-response"].playlists = {
+                playlist: [ publicPlaylist, myPlaylist ]
+            };
+            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+
+            var promise = subsonic.getPlaylists();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith({
+                playlists: [ myPlaylist ],
+                playlistsPublic: [ publicPlaylist ]
+            });
+        });
+
+        it("Given that there is only 1 playlist in my library and that I own it, when I get the playlists, it returns my playlist and an empty array for public playlists", function() {
+            response["subsonic-response"].playlists = {
+                playlist: [ myPlaylist ]
+            };
+            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+
+            var promise = subsonic.getPlaylists();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith({
+                playlists: [ myPlaylist ],
+                playlistsPublic: []
+            });
+        });
+
+        it("Given that there is only 1 public playlist in my library and that I don't own it, when I get the playlists, it returns an empty array and the public playlist", function() {
+            response["subsonic-response"].playlists = {
+                playlist: [ publicPlaylist ]
+            };
+            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+
+            var promise = subsonic.getPlaylists();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith({
+                playlists: [],
+                playlistsPublic: [ publicPlaylist ]
+            });
+        });
+
+        // TODO: Hyz: On second thought, should it really return an error ? Or maybe we need to catch it controller-side !
+        it("Given that I don't have any playlist in my library, when I get the playlists, it returns an error object with a message", function() {
+            response["subsonic-response"].playlists = {};
+            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+
+            var promise = subsonic.getPlaylists();
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'No playlist found on the Subsonic server.'});
+        });
+    });
+
     describe("getStarred -", function() {
-        var url = 'http://demo.subsonic.com/rest/getStarred.view?'+
-            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        var url;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getStarred.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2'
+        });
 
         it("Given that I have 2 starred albums, 1 starred artist and 3 starred songs in my library, when getting everything starred, it returns them all", function() {
             response["subsonic-response"].starred = {
@@ -238,8 +316,11 @@ describe("Subsonic service -", function() {
     });
 
     describe("getRandomStarredSongs -", function() {
-        var url = 'http://demo.subsonic.com/rest/getStarred.view?'+
-            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        var url;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getStarred.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
 
         describe("Given that the global setting AutoPlaylist Size is 3", function() {
             it("and given that I have more than 3 starred songs in my library, when getting random starred songs, it returns 3 starred songs", function() {
@@ -287,8 +368,11 @@ describe("Subsonic service -", function() {
     });
 
     describe("getRandomSongs -", function() {
-        var url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
-            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&size=3&u=Hyzual&v=1.10.2';
+        var url;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&size=3&u=Hyzual&v=1.10.2';
+        });
 
         describe("Given that the global setting AutoPlaylist Size is 3", function() {
             it("and given that I have more than 3 songs in my library, when getting random songs, it returns 3 songs", function() {
