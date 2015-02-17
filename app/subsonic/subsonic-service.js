@@ -111,7 +111,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                     }
                     deferred.reject(exception);
                 }
-            }).error(function(data, status) {
+            }).error(function (data, status) {
                 exception.httpError = status;
                 deferred.reject(exception);
             });
@@ -379,41 +379,22 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return deferred;
         },
 
-        getPlaylists: function (refresh) {
-            var deferred = $q.defer();
-            if (globals.settings.Debug) { console.log("LOAD PLAYLISTS"); }
-            if (refresh || content.playlists.length == 0) {
-                $.ajax({
-                    url: globals.BaseURL() + '/getPlaylists.view?' + globals.BaseParams(),
-                    method: 'GET',
-                    dataType: globals.settings.Protocol,
-                    timeout: globals.settings.Timeout,
-                    success: function (data) {
-                        if (data["subsonic-response"].playlists.playlist !== undefined) {
-                            var items = [];
-                            if (data["subsonic-response"].playlists.playlist.length > 0) {
-                                items = data["subsonic-response"].playlists.playlist;
-                            } else {
-                                items[0] = data["subsonic-response"].playlists.playlist;
-                            }
-                            content.playlists = [];
-                            content.playlistsPublic = [];
-                            angular.forEach(items, function (item, key) {
-                                if (item.owner == globals.settings.Username) {
-                                    content.playlists.push(item);
-                                } else if (item.public) {
-                                    content.playlistsPublic.push(item);
-                                }
-                            });
-                            deferred.resolve(content);
-                        }
-                    }
-                });
-            } else {
-                deferred.resolve(content);
-            }
-            return deferred.promise;
+        getPlaylists: function () {
+            var exception = {reason: 'No playlist found on the Subsonic server.'};
+            var deferred = this.subsonicRequest('getPlaylists.view')
+            .then(function (subsonicResponse) {
+                if(subsonicResponse.playlists.playlist !== undefined && subsonicResponse.playlists.playlist.length > 0) {
+                    var allPlaylists = _(subsonicResponse.playlists.playlist).partition(function (item) {
+                        return item.owner === globals.settings.Username;
+                    });
+                    return {playlists: allPlaylists[0], playlistsPublic: allPlaylists[1]};
+                } else {
+                    return $q.reject(exception);
+                }
+            });
+            return deferred;
         },
+
         getPlaylist: function (id, action) {
             //TODO: Hyz: Test this
             var deferred = $q.defer();
