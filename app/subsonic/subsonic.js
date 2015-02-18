@@ -199,9 +199,16 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         });
     };
     $scope.getArtists = function (folder) {
-        subsonic.getArtists(folder).then(function (data) {
+        var promise = subsonic.getArtists(folder);
+        $scope.handleErrors(promise).then(function (data) {
             $scope.index = data.index;
             $scope.shortcut = data.shortcut;
+        }, function (error) {
+            $scope.index = [];
+            $scope.shortcut = [];
+            if (error.serviceError === true) {
+                notifications.updateMessage(error.reason, true);
+            }
         });
     };
     $scope.refreshArtists = function () {
@@ -238,15 +245,40 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
     };
 
     /**
+     * Handles error notifications in case of a subsonic error or an HTTP error. Sets a 'serviceError' flag when
+     * it is neither.
+     * @param  {Promise} promise a Promise that must be resolved or rejected with an object : {'reason': a message that can be displayed to a user, 'httpError': the HTTP error code, 'subsonicError': the error Object sent by Subsonic}
+     * @return {Promise}         the original promise passed as argument. That way we can chain it further !
+     */
+    $scope.handleErrors = function (promise) {
+       promise.then(null, function (error) {
+            var errorNotif;
+            if (error.subsonicError !== undefined) {
+                errorNotif = error.reason + ' ' + error.subsonicError.message;
+            } else if (error.httpError !== undefined) {
+                errorNotif = error.reason + ' HTTP error ' + error.httpError;
+            } else {
+                // TODO: Hyz: Do this service-side ?
+                error.serviceError = true;
+            }
+            if (error.subsonicError !== undefined || error.httpError !== undefined) {
+                notifications.updateMessage(errorNotif, true);
+            }
+        });
+       return promise;
+    };
+
+    /**
      * Handles common actions with songs such as displaying them on the scope, adding them to the playing queue
      * and playing the first song after adding them to the queue. Displays notifications for songs added to the playing queue
-     * Also handles error notifications in case of: a service error, a subsonic error or an HTTP error
-     * @param  {Promise} promise a Promise that must be resolved with an array of songs or must be rejected with an object : {'reason': a message that can be displayed to a user, 'httpError': the HTTP error code, 'subsonicError': the error Object sent by Subsonic}
+     * Handles error notifications in case of service error.
+     * @param  {Promise} promise a Promise that must be resolved with an array of songs or must be rejected with an object : {'reason': a message that can be displayed to a user}
      * @param  {String} action  the action to be taken with the songs. Must be 'add', 'play' or 'display'
      * @return {Promise}         the original promise passed in first param. That way we can chain it further !
      */
     $scope.requestSongs = function (promise, action) {
-        promise.then(function (songs) {
+        $scope.handleErrors(promise)
+        .then(function (songs) {
             if(action === 'play') {
                 player.emptyQueue().addSongs(songs).playFirstSong();
                 notifications.updateMessage(songs.length + ' Song(s) Added to Queue', true);
@@ -258,15 +290,9 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
                 $scope.song = songs;
             }
         }, function (error) {
-            var errorNotif;
-            if (error.subsonicError !== undefined) {
-                errorNotif = error.reason + ' ' + error.subsonicError.message;
-            } else if (error.httpError !== undefined) {
-                errorNotif = error.reason + ' HTTP error ' + error.httpError;
-            } else {
-                errorNotif = error.reason;
+            if (error.serviceError === true) {
+                notifications.updateMessage(error.reason, true);
             }
-            notifications.updateMessage(errorNotif, true);
         });
         return promise;
     };
@@ -360,9 +386,14 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         $scope.toggleSubmenu('#submenu_AZIndex', '#AZIndex', 'right', 44);
     };
     $scope.getPlaylists = function () {
-        subsonic.getPlaylists().then(function (data) {
+        var promise = subsonic.getPlaylists();
+        $scope.handleErrors(promise).then(function (data) {
             $scope.playlists = data.playlists;
             $scope.playlistsPublic = data.playlistsPublic;
+        }, function () {
+            // Do not display a notification, there simply are no playlists.
+            $scope.playlists = [];
+            $scope.playlistsPublic = [];
         });
     };
     $scope.getPlaylist = function (id, action) {
