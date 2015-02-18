@@ -40,13 +40,15 @@ describe("Subsonic controller", function() {
                 "getRandomStarredSongs",
                 "getRandomSongs"
             ]);
-            subsonic.getAlbums.and.returnValue(deferred.promise);
-            subsonic.getArtists.and.returnValue(deferred.promise);
-            subsonic.getGenres.and.returnValue(deferred.promise);
-            subsonic.getPlaylists.and.returnValue(deferred.promise);
-            subsonic.getPodcasts.and.returnValue(deferred.promise);
-            subsonic.getRandomStarredSongs.and.returnValue(deferred.promise);
-            subsonic.getRandomSongs.and.returnValue(deferred.promise);
+            // We make them return different promises and use our deferred variable only when testing
+            // a particular function, so that they stay isolated
+            subsonic.getAlbums.and.returnValue($q.defer().promise);
+            subsonic.getArtists.and.returnValue($q.defer().promise);
+            subsonic.getGenres.and.returnValue($q.defer().promise);
+            subsonic.getPlaylists.and.returnValue($q.defer().promise);
+            subsonic.getPodcasts.and.returnValue($q.defer().promise);
+            subsonic.getRandomStarredSongs.and.returnValue($q.defer().promise);
+            subsonic.getRandomSongs.and.returnValue($q.defer().promise);
             subsonic.showIndex = false;
 
             $controller = _$controller_;
@@ -122,6 +124,38 @@ describe("Subsonic controller", function() {
                 });
             });
 
+            describe("handleErrors -", function() {
+                it("when I make a request, it returns a promise so that I can chain it further", function() {
+                    var success = jasmine.createSpy("success");
+
+                    scope.handleErrors(deferred.promise).then(success);
+                    deferred.resolve(response);
+                    scope.$apply();
+
+                    expect(success).toHaveBeenCalled();
+                });
+
+                it("given that the Subsonic server returns an error, when I make a request, it notifies the user with the error message", function() {
+                    scope.handleErrors(deferred.promise);
+                    deferred.reject({reason: 'Error when contacting the Subsonic server.',
+                        subsonicError: {code: 10, message:'Required parameter is missing.'}
+                    });
+                    scope.$apply();
+
+                    expect(notifications.updateMessage).toHaveBeenCalledWith('Error when contacting the Subsonic server. Required parameter is missing.', true);
+                });
+
+                it("given that the Subsonic server is unreachable, when I make a request, it notifies the user with the HTTP error code", function() {
+                    scope.handleErrors(deferred.promise);
+                    deferred.reject({reason: 'Error when contacting the Subsonic server.',
+                        httpError: 404
+                    });
+                    scope.$apply();
+
+                    expect(notifications.updateMessage).toHaveBeenCalledWith('Error when contacting the Subsonic server. HTTP error 404', true);
+                });
+            });
+
             describe("requestSongs -", function() {
                 it("when I display songs, it sets the scope with the selected songs", function() {
                     scope.requestSongs(deferred.promise, 'display');
@@ -168,6 +202,18 @@ describe("Subsonic controller", function() {
                     expect(success).toHaveBeenCalled();
                 });
 
+                it("when I request songs, it lets handleErrors handle HTTP and Subsonic errors", function() {
+                    spyOn(scope, 'handleErrors').and.returnValue(deferred.promise);
+
+                    scope.requestSongs(deferred.promise, 'whatever action');
+                    deferred.reject({reason: 'Error when contacting the Subsonic server.',
+                        httpError: 404
+                    });
+                    scope.$apply();
+
+                    expect(scope.handleErrors).toHaveBeenCalledWith(deferred.promise);
+                });
+
                 it("given that I don't have any song in my library, when I request songs, it notifies the user with an error message, does not play a song and does not change the queue", function() {
                     player.queue = [{id: "7666"}];
 
@@ -178,26 +224,6 @@ describe("Subsonic controller", function() {
                     expect(player.playFirstSong).not.toHaveBeenCalled();
                     expect(player.queue).toEqual([{id: "7666"}]);
                     expect(notifications.updateMessage).toHaveBeenCalledWith('No songs found on the Subsonic server.', true);
-                });
-
-                it("given that the Subsonic server returns an error, when I request songs, it notifies the user with the error message", function() {
-                    scope.requestSongs(deferred.promise, 'whatever action');
-                    deferred.reject({reason: 'Error when contacting the Subsonic server.',
-                        subsonicError: {code: 10, message:'Required parameter is missing.'}
-                    });
-                    scope.$apply();
-
-                    expect(notifications.updateMessage).toHaveBeenCalledWith('Error when contacting the Subsonic server. Required parameter is missing.', true);
-                });
-
-                it("given that the Subsonic server is unreachable, when I request songs, it notifies the user with the HTTP error code", function() {
-                    scope.requestSongs(deferred.promise, 'whatever action');
-                    deferred.reject({reason: 'Error when contacting the Subsonic server.',
-                        httpError: 404
-                    });
-                    scope.$apply();
-
-                    expect(notifications.updateMessage).toHaveBeenCalledWith('Error when contacting the Subsonic server. HTTP error 404', true);
                 });
             });
         });
@@ -251,51 +277,108 @@ describe("Subsonic controller", function() {
         });
 
         //TODO: JMA: all starred
+
+        describe("When I load the artists,", function() {
+            beforeEach(function() {
+                subsonic.getArtists.and.returnValue(deferred.promise);
+            });
+
+            it("Given that there are songs in the library, it loads the artists and publishes them to the scope", function() {
+                scope.getArtists();
+                deferred.resolve({
+                    index: [
+                        {id: "520"}
+                    ],
+                    shortcut: [
+                        {id: "342"}
+                    ]
+                });
+                scope.$apply();
+
+                expect(subsonic.getArtists).toHaveBeenCalled();
+                expect(scope.index).toEqual([
+                    {id: "520"}
+                ]);
+                expect(scope.shortcut).toEqual([
+                    {id: "342"}
+                ]);
+            });
+
+            it("Given that there aren't any songs in the library, when loading indexes, it notifies the user with an error message", function() {
+                scope.getArtists();
+                deferred.reject({reason: 'No artist found on the Subsonic server.'});
+                scope.$apply();
+
+                expect(scope.index).toEqual([]);
+                expect(scope.shortcut).toEqual([]);
+                expect(notifications.updateMessage).toHaveBeenCalledWith('No artist found on the Subsonic server.', true);
+            });
+
+            it("it lets handleErrors handle HTTP and Subsonic errors", function() {
+                spyOn(scope, 'handleErrors').and.returnValue(deferred.promise);
+                scope.getArtists();
+                expect(scope.handleErrors).toHaveBeenCalledWith(deferred.promise);
+            });
+        });
+
+        describe("When I load the playlists,", function() {
+            beforeEach(function() {
+                subsonic.getPlaylists.and.returnValue(deferred.promise);
+            });
+
+            it("Given that there are playlists in the library, it loads the playlists and publishes them to the scope", function() {
+                scope.getPlaylists();
+                deferred.resolve({
+                    playlists: [
+                        {id: "588"}
+                    ],
+                    playlistsPublic: [
+                        {id: "761"}
+                    ]
+                });
+                scope.$apply();
+
+                expect(subsonic.getPlaylists).toHaveBeenCalled();
+                expect(scope.playlists).toEqual([
+                    {id: "588"}
+                ]);
+                expect(scope.playlistsPublic).toEqual([
+                    {id: "761"}
+                ]);
+            });
+
+            it("Given that there aren't any playlists in the library, it publishes an empty array to the scope and does not notify the user with the error message", function() {
+                scope.getPlaylists();
+                deferred.reject({reason: 'No playlist found on the Subsonic server.'});
+                scope.$apply();
+
+                console.log(notifications.updateMessage.calls.count());
+                expect(subsonic.getPlaylists).toHaveBeenCalled();
+                expect(scope.playlists).toEqual([]);
+                expect(scope.playlistsPublic).toEqual([]);
+                expect(notifications.updateMessage).not.toHaveBeenCalled();
+            });
+
+            it("it lets handleErrors handle HTTP and Subsonic errors", function() {
+                spyOn(scope, 'handleErrors').and.returnValue(deferred.promise);
+                scope.getPlaylists();
+                expect(scope.handleErrors).toHaveBeenCalledWith(deferred.promise);
+            });
+        });
     });
 
     describe("On startup,", function() {
-        it("Given that there are songs on the server, it loads the artists and publishes them to the scope", function() {
+        xit("it loads the indexes, the playlists", function() {
+            controllerParams.$scope.getArtists = jasmine.createSpy('getArtists');
+            controllerParams.$scope.getPlaylists = jasmine.createSpy('getPlaylists');
+            // spyOn(scope, 'getArtists');
+            // spyOn(scope, 'getPlaylists');
+
             $controller('SubsonicController', controllerParams);
-            deferred.resolve({
-                index: [
-                    {id: "520"}
-                ],
-                shortcut: [
-                    {id: "342"}
-                ]
-            });
-            scope.$apply();
+            expect(scope.getArtists).toHaveBeenCalled();
+            expect(scope.getPlaylists).toHaveBeenCalled();
 
-            expect(subsonic.getArtists).toHaveBeenCalled();
-            expect(scope.index).toEqual([
-                {id: "520"}
-            ]);
-            expect(scope.shortcut).toEqual([
-                {id: "342"}
-            ]);
+            //TODO: Hyz: Complete with everything called on startup
         });
-        //TODO: Hyz: What do we do in case of error ?! Should display a notification
-
-        it("Given that there are playlists on the server, it loads the playlists and publishes them to the scope", function() {
-            $controller('SubsonicController', controllerParams);
-            deferred.resolve({
-                playlists: [
-                    {id: "588"}
-                ],
-                playlistsPublic: [
-                    {id: "761"}
-                ]
-            });
-            scope.$apply();
-
-            expect(subsonic.getPlaylists).toHaveBeenCalled();
-            expect(scope.playlists).toEqual([
-                {id: "588"}
-            ]);
-            expect(scope.playlistsPublic).toEqual([
-                {id: "761"}
-            ]);
-        });
-        //TODO: Hyz: put [] on the scope in case of error
     });
 });
