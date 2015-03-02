@@ -135,7 +135,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                     musicFolderId: folder
                 };
             }
-            var deferred = this.subsonicRequest('getIndexes.view', {
+            var promise = this.subsonicRequest('getIndexes.view', {
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.indexes !== undefined && (subsonicResponse.indexes.index !== undefined || subsonicResponse.indexes.shortcut !== undefined)) {
@@ -144,7 +144,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                     return $q.reject(exception);
                 }
             });
-            return deferred;
+            return promise;
         },
 
         getAlbums: function (id, name) {
@@ -153,7 +153,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 size: globals.settings.AutoAlbumSize,
                 id: id
             };
-            var deferred = this.subsonicRequest('getMusicDirectory.view', {
+            var promise = this.subsonicRequest('getMusicDirectory.view', {
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.directory.child !== undefined && subsonicResponse.directory.child.length > 0) {
@@ -173,7 +173,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                     return $q.reject(exception);
                 }
             });
-            return deferred;
+            return promise;
         },
         getAlbumListBy: function (id, off) {
             if (off == 'next') {
@@ -189,7 +189,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 type: id,
                 offset: offset
             };
-            var deferred = this.subsonicRequest('getAlbumList.view', {
+            var promise = this.subsonicRequest('getAlbumList.view', {
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.albumList.album !== undefined && subsonicResponse.albumList.album.length > 0) {
@@ -211,7 +211,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                     return $q.reject(exception);
                 }
             });
-            return deferred;
+            return promise;
         },
         getAlbumByTag: function (id) { // Gets Album by ID3 tag: NOT Being Used Currently 1/24/2015
             var deferred = $q.defer();
@@ -245,7 +245,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             var params = {
                 id: id
             };
-            var deferred = this.subsonicRequest('getMusicDirectory.view', {
+            var promise = this.subsonicRequest('getMusicDirectory.view', {
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.directory.child !== undefined && subsonicResponse.directory.child.length > 0) {
@@ -290,7 +290,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                     return $q.reject(exception);
                 }
             });
-            return deferred;
+            return promise;
         },
         search: function (query, type) {
             var deferred = $q.defer();
@@ -367,7 +367,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             if (!isNaN(folder)) {
                 params.musicFolderId = folder;
             }
-            var deferred = this.subsonicRequest('getRandomSongs.view', {
+            var promise = this.subsonicRequest('getRandomSongs.view', {
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.randomSongs !== undefined && subsonicResponse.randomSongs.song.length > 0) {
@@ -376,12 +376,12 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                     return $q.reject(exception);
                 }
             });
-            return deferred;
+            return promise;
         },
 
         getPlaylists: function () {
             var exception = {reason: 'No playlist found on the Subsonic server.'};
-            var deferred = this.subsonicRequest('getPlaylists.view')
+            var promise = this.subsonicRequest('getPlaylists.view')
             .then(function (subsonicResponse) {
                 if(subsonicResponse.playlists.playlist !== undefined && subsonicResponse.playlists.playlist.length > 0) {
                     var allPlaylists = _(subsonicResponse.playlists.playlist).partition(function (item) {
@@ -392,60 +392,28 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                     return $q.reject(exception);
                 }
             });
-            return deferred;
+            return promise;
         },
 
-        getPlaylist: function (id, action) {
-            //TODO: Hyz: Test this
-            var deferred = $q.defer();
-            content.selectedAutoPlaylist = null;
-            content.selectedPlaylist = id;
-            $.ajax({
-                url: globals.BaseURL() + '/getPlaylist.view?' + globals.BaseParams() + '&id=' + id,
-                method: 'GET',
-                dataType: globals.settings.Protocol,
-                timeout: globals.settings.Timeout,
-                success: function (data) {
-                    if (typeof data["subsonic-response"].playlist.entry != 'undefined') {
-                        var items = [];
-                        var playlist = data["subsonic-response"].playlist;
-                        if (playlist.entry.length > 0) {
-                            items = playlist.entry;
-                        } else {
-                            items[0] = playlist.entry;
-                        }
-                        if (action == 'add') {
-                            angular.forEach(items, function (item, key) {
-                                player.queue.push(map.mapSong(item));
-                            });
-                            notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                        } else if (action == 'play') {
-                            player.queue = [];
-                            angular.forEach(items, function (item, key) {
-                                player.queue.push(map.mapSong(item));
-                            });
-                            var next = player.queue[0];
-                            player.play(next);
-                            notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                        } else {
-                            content.album = [];
-                            content.song = [];
-                            angular.forEach(items, function (item, key) {
-                                content.song.push(map.mapSong(item));
-                            });
-                            notifications.updateMessage(items.length + ' Song(s) in Playlist', true);
-                        }
-                    } else {
-                        content.song = [];
-                    }
-                    deferred.resolve(content);
+        getPlaylist: function (id) {
+            var exception = {reason: 'This playlist is empty.'};
+            var params = {
+                id: id
+            };
+            var promise = this.subsonicRequest('getPlaylist.view', {
+                params: params
+            }).then(function (subsonicResponse) {
+                if(subsonicResponse.playlist.entry !== undefined && subsonicResponse.playlist.entry.length > 0) {
+                    return map.mapSongs(subsonicResponse.playlist.entry);
+                } else {
+                    return $q.reject(exception);
                 }
             });
-            return deferred.promise;
+            return promise;
         },
 
         getStarred: function () {
-            var deferred = this.subsonicRequest('getStarred.view', { cache: true })
+            var promise = this.subsonicRequest('getStarred.view', { cache: true })
                 .then(function (subsonicResponse) {
                     if(angular.equals(subsonicResponse.starred, {})) {
                         return $q.reject({reason: 'Nothing is starred on the Subsonic server.'});
@@ -453,11 +421,11 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                         return subsonicResponse.starred;
                     }
                 });
-            return deferred;
+            return promise;
         },
 
         getRandomStarredSongs: function () {
-            var deferred = this.getStarred()
+            var promise = this.getStarred()
                 .then(function (starred) {
                     if(starred.song !== undefined && starred.song.length > 0) {
                         // Return random subarray of songs
@@ -467,7 +435,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                         return $q.reject({reason: 'No starred songs found on the Subsonic server.'});
                     }
                 });
-            return deferred;
+            return promise;
         },
 
         newPlaylist: function (data, event) {
@@ -647,7 +615,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
         },
 
         scrobble: function (song) {
-            var deferred = this.subsonicRequest('scrobble.view', {
+            var promise = this.subsonicRequest('scrobble.view', {
                 params: {
                     id: song.id,
                     submisssion: true
@@ -656,7 +624,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                 if(globals.settings.Debug) { console.log('Successfully scrobbled song: ' + song.id); }
                 return true;
             });
-            return deferred;
+            return promise;
         }
         // End subsonic
     };

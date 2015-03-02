@@ -76,7 +76,7 @@ describe("Subsonic service -", function() {
                 "version" : "1.10.2",
                 "error" : {"code" : 10,"message" : "Required parameter is missing."}
             }};
-            mockBackend.expectJSONP(missingPasswordUrl).respond(200, JSON.stringify(errorResponse));
+            mockBackend.expectJSONP(missingPasswordUrl).respond(JSON.stringify(errorResponse));
 
             var promise = subsonic.subsonicRequest(partialUrl);
             mockBackend.flush();
@@ -86,7 +86,7 @@ describe("Subsonic service -", function() {
 
         it("Given a partialUrl that does not start with '/', it adds '/' before it and makes a correct request", function() {
             partialUrl = 'getStarred.view';
-            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             subsonic.subsonicRequest(partialUrl);
             mockBackend.flush();
@@ -96,7 +96,7 @@ describe("Subsonic service -", function() {
             partialUrl = 'scrobble.view';
             url ='http://demo.subsonic.com/rest/scrobble.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&id=75&p=enc:cGFzc3dvcmQ%3D&submission=false&u=Hyzual&v=1.10.2';
-            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             subsonic.subsonicRequest(partialUrl, {
                 params: {
@@ -111,7 +111,7 @@ describe("Subsonic service -", function() {
             mockGlobals.settings.Protocol = 'json';
             var getUrl = 'http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&f=json&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
-            mockBackend.expectGET(getUrl).respond(200, JSON.stringify(response));
+            mockBackend.expectGET(getUrl).respond(JSON.stringify(response));
 
             var promise = subsonic.subsonicRequest(partialUrl);
             mockBackend.flush();
@@ -123,7 +123,7 @@ describe("Subsonic service -", function() {
     it("ping - when I ping Subsonic, it returns Subsonic's response, containing its REST API version", function() {
         var url = 'http://demo.subsonic.com/rest/ping.view?'+
             'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
-        mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+        mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
         var promise = subsonic.ping();
         mockBackend.flush();
@@ -135,7 +135,7 @@ describe("Subsonic service -", function() {
         var song = { id: 45872 };
         var url = 'http://demo.subsonic.com/rest/scrobble.view?' +
             'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&id=45872&p=enc:cGFzc3dvcmQ%3D&submisssion=true&u=Hyzual&v=1.10.2';
-        mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+        mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
         var promise = subsonic.scrobble(song);
         mockBackend.flush();
@@ -179,7 +179,7 @@ describe("Subsonic service -", function() {
                     }
                 ]
             };
-            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getArtists();
             mockBackend.flush();
@@ -190,7 +190,7 @@ describe("Subsonic service -", function() {
         it("When I get the artists of a given folder, it builds the correct url", function() {
             var url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&musicFolderId=42&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
-            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             subsonic.getArtists(42);
             mockBackend.flush();
@@ -198,7 +198,7 @@ describe("Subsonic service -", function() {
 
         it("Given that I don't have any artist or shortcut in my library (empty server), when I get the artists, it returns an error object with a message", function() {
             response["subsonic-response"].indexes = {};
-            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getArtists();
             mockBackend.flush();
@@ -226,7 +226,7 @@ describe("Subsonic service -", function() {
             response["subsonic-response"].playlists = {
                 playlist: [ publicPlaylist, myPlaylist ]
             };
-            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getPlaylists();
             mockBackend.flush();
@@ -241,7 +241,7 @@ describe("Subsonic service -", function() {
             response["subsonic-response"].playlists = {
                 playlist: [ myPlaylist ]
             };
-            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getPlaylists();
             mockBackend.flush();
@@ -256,7 +256,7 @@ describe("Subsonic service -", function() {
             response["subsonic-response"].playlists = {
                 playlist: [ publicPlaylist ]
             };
-            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getPlaylists();
             mockBackend.flush();
@@ -267,10 +267,9 @@ describe("Subsonic service -", function() {
             });
         });
 
-        // TODO: Hyz: On second thought, should it really return an error ? Or maybe we need to catch it controller-side !
         it("Given that I don't have any playlist in my library, when I get the playlists, it returns an error object with a message", function() {
             response["subsonic-response"].playlists = {};
-            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getPlaylists();
             mockBackend.flush();
@@ -279,11 +278,49 @@ describe("Subsonic service -", function() {
         });
     });
 
+    describe("getPlaylist - ", function() {
+        var url;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getPlaylist.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
+        it("Given a playlist with 2 songs in it, when I get it, it returns the 2 songs of the playlist", function() {
+            url = 'http://demo.subsonic.com/rest/getPlaylist.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&id=9123&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            response["subsonic-response"].playlist = {
+                id: 9123,
+                entry: [
+                    { id: 2860 },
+                    { id: 4762 }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getPlaylist(9123);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                { id: 2860 },
+                { id: 4762 }
+            ]);
+        });
+
+        it("Given that the playlist I want to get is empty (0 songs in it), when I get it, it returns an error object with a message", function() {
+            response["subsonic-response"].playlist = {};
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getPlaylist();
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'This playlist is empty.'});
+        });
+    });
+
     describe("getStarred -", function() {
         var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getStarred.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2'
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
         it("Given that I have 2 starred albums, 1 starred artist and 3 starred songs in my library, when getting everything starred, it returns them all", function() {
@@ -292,7 +329,7 @@ describe("Subsonic service -", function() {
                 album: [{id: 1799},{id: 20987}],
                 song: [{id: 2478},{id: 14726},{id: 742}]
             };
-            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getStarred();
             mockBackend.flush();
@@ -306,7 +343,7 @@ describe("Subsonic service -", function() {
 
         it("Given that there is absolutely nothing starred in my library, when getting everything starred, it returns an error object with a message", function() {
             response["subsonic-response"].starred = {};
-            mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getStarred();
             mockBackend.flush();
@@ -328,7 +365,7 @@ describe("Subsonic service -", function() {
                     {id: 11841},{id: 12061},{id: 17322},{id: 1547},{id: 14785}
                 ];
                 response["subsonic-response"].starred = {song: library};
-                mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
                 var promise = subsonic.getRandomStarredSongs();
                 // We create a spy in order to get the results of the promise
@@ -347,7 +384,7 @@ describe("Subsonic service -", function() {
 
             it("and given that I have only 1 starred song in my library, when getting random starred songs, it returns my starred song", function() {
                 response["subsonic-response"].starred = {song: [{id: 11841}]};
-                mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
                 var promise = subsonic.getRandomStarredSongs();
                 mockBackend.flush();
@@ -357,7 +394,7 @@ describe("Subsonic service -", function() {
 
             it("and given that I don't have any starred song in my library, when getting random starred songs, it returns an error object with a message", function() {
                 response["subsonic-response"].starred = {song: []};
-                mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
                 var promise = subsonic.getRandomStarredSongs();
                 mockBackend.flush();
@@ -380,7 +417,7 @@ describe("Subsonic service -", function() {
                     {id: 1143},{id: 5864},{id: 7407},{id: 6471},{id: 59}
                 ];
                 response["subsonic-response"].randomSongs = {song: library};
-                mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
                 var promise = subsonic.getRandomSongs();
                 // We create a spy in order to get the results of the promise
@@ -399,7 +436,7 @@ describe("Subsonic service -", function() {
 
             it("and given that I have only 1 song in my library, when getting random songs, it returns that song", function() {
                 response["subsonic-response"].randomSongs = {song: [{id: 7793}]};
-                mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
                 var promise = subsonic.getRandomSongs();
                 mockBackend.flush();
@@ -409,7 +446,7 @@ describe("Subsonic service -", function() {
 
             it("and given that I don't have any song in my library, when getting random songs, it returns an error object with a message", function() {
                 response["subsonic-response"].randomSongs = {song: []};
-                mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
                 var promise = subsonic.getRandomSongs();
                 mockBackend.flush();
@@ -424,7 +461,7 @@ describe("Subsonic service -", function() {
                     {id: 9408},{id: 9470},{id: 6932}
                 ];
                 response["subsonic-response"].randomSongs = {song: library};
-                mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
                 var promise = subsonic.getRandomSongs('Rock');
                 mockBackend.flush();
@@ -439,7 +476,7 @@ describe("Subsonic service -", function() {
                     {id: 9232},{id: 3720},{id: 8139}
                 ];
                 response["subsonic-response"].randomSongs = {song: library};
-                mockBackend.expectJSONP(url).respond(200, JSON.stringify(response));
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
                 var promise = subsonic.getRandomSongs('', 2);
                 mockBackend.flush();
