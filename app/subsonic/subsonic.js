@@ -250,15 +250,15 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
      * @param  {Promise} promise a Promise that must be resolved or rejected with an object : {'reason': a message that can be displayed to a user, 'httpError': the HTTP error code, 'subsonicError': the error Object sent by Subsonic}
      * @return {Promise}         the original promise passed as argument. That way we can chain it further !
      */
+    // TODO: Hyz: Move this to a response interceptor ?
     $scope.handleErrors = function (promise) {
-       promise.then(null, function (error) {
+        promise.then(null, function (error) {
             var errorNotif;
             if (error.subsonicError !== undefined) {
                 errorNotif = error.reason + ' ' + error.subsonicError.message;
             } else if (error.httpError !== undefined) {
                 errorNotif = error.reason + ' HTTP error ' + error.httpError;
             } else {
-                // TODO: Hyz: Do this service-side ?
                 error.serviceError = true;
             }
             if (error.subsonicError !== undefined || error.httpError !== undefined) {
@@ -333,6 +333,15 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         }
     };
 
+    $scope.getStarred = function (action, type) {
+        subsonic.getStarred(action, type).then(function (data) {
+            $scope.album = data.album;
+            $scope.song = data.song;
+            $scope.selectedAutoPlaylist = data.selectedAutoPlaylist;
+            $scope.selectedPlaylist = data.selectedPlaylist;
+        });
+    };
+
     $scope.getArtistByTag = function (id) { // Gets Artist by ID3 tag
         $scope.selectedAutoAlbum = null;
         $scope.selectedArtist = id;
@@ -385,6 +394,7 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
     $scope.toggleAZ = function () {
         $scope.toggleSubmenu('#submenu_AZIndex', '#AZIndex', 'right', 44);
     };
+
     $scope.getPlaylists = function () {
         var promise = subsonic.getPlaylists();
         $scope.handleErrors(promise).then(function (data) {
@@ -396,22 +406,16 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             $scope.playlistsPublic = [];
         });
     };
-    $scope.getPlaylist = function (id, action) {
-        subsonic.getPlaylist(id, action).then(function (data) {
-            $scope.album = data.album;
-            $scope.song = data.song;
-            $scope.selectedAutoPlaylist = data.selectedAutoPlaylist;
-            $scope.selectedPlaylist = data.selectedPlaylist;
-        });
-    };
 
-    $scope.getStarred = function (action, type) {
-        subsonic.getStarred(action, type).then(function (data) {
-            $scope.album = data.album;
-            $scope.song = data.song;
-            $scope.selectedAutoPlaylist = data.selectedAutoPlaylist;
-            $scope.selectedPlaylist = data.selectedPlaylist;
+    $scope.getPlaylist = function (action, id) {
+        var promise = subsonic.getPlaylist(id);
+        $scope.requestSongs(promise, action).then(function (songs) {
+            if(action === 'display') {
+                notifications.updateMessage(songs.length + ' Song(s) in Playlist', true);
+            }
         });
+        $scope.selectedPlaylist = id;
+        $scope.selectedAutoPlaylist = null;
     };
 
     $scope.newPlaylist = function (data, event) {
