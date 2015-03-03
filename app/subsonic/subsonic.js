@@ -441,13 +441,19 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             notifications.updateMessage('Please select a playlist to delete.');
         }
     };
+
     $scope.savePlaylist = function () {
-        var id = $scope.selectedPlaylist;
-        subsonic.savePlaylist().then(function (data) {
-            $scope.getPlaylist(id, '');
-            notifications.updateMessage('Playlist Updated!', true);
-        });
+        if ($scope.selectedPlaylist !== null) {
+            var promise = subsonic.savePlaylist($scope.selectedPlaylist, $scope.song);
+            $scope.handleErrors(promise).then(function () {
+                $scope.getPlaylist('display', $scope.selectedPlaylist);
+                notifications.updateMessage('Playlist Updated!', true);
+            });
+        } else {
+            notifications.updateMessage('Please select a playlist to save.');
+        }
     };
+
     $scope.loadPlaylistsForMenu = function (data, event) {
         $.ajax({
             url: globals.BaseURL() + '/getPlaylists.view?' + globals.BaseParams(),

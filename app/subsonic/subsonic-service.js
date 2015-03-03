@@ -454,30 +454,19 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return promise;
         },
 
-        savePlaylist: function () {
-            var deferred = $q.defer();
-            if (content.selectedPlaylist !== null) {
-                var id = content.selectedPlaylist;
-                var songs = [];
-                angular.forEach(content.song, function (item, key) {
-                    songs.push(item.id);
-                });
-                if (songs.length > 0) {
-                    $.ajax({
-                        type: 'GET',
-                        url: globals.BaseURL() + '/createPlaylist.view?' + globals.BaseParams(),
-                        dataType: globals.settings.Protocol,
-                        timeout: globals.settings.Timeout,
-                        data: { playlistId: id, songId: songs },
-                        success: function () {
-                            deferred.resolve();
-                        },
-                        traditional: true // Fixes POST with an array in JQuery 1.4
-                    });
+        savePlaylist: function (playlistId, songs) {
+            var params = {
+                params: {
+                    playlistId: playlistId,
+                    songId: []
                 }
+            };
+            for (var i = 0; i < songs.length; i++) {
+                params.params.songId.push(songs[i].id);
             }
-            return deferred.promise;
+            return this.subsonicRequest('createPlaylist.view', params);
         },
+
         songsRemoveSelected: function (songs) {
             var deferred = $q.defer();
             angular.forEach(songs, function (item, key) {

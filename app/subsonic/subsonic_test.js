@@ -40,7 +40,8 @@ describe("Subsonic controller", function() {
                 "getRandomSongs",
                 "getPlaylist",
                 "newPlaylist",
-                "deletePlaylist"
+                "deletePlaylist",
+                "savePlaylist"
             ]);
             // We make them return different promises and use our deferred variable only when testing
             // a particular function, so that they stay isolated
@@ -424,13 +425,45 @@ describe("Subsonic controller", function() {
             expect(scope.getPlaylists).toHaveBeenCalled();
         });
 
-        it("Given no selected playlist, when I try to delete that playlist, an error message will be notified", function() {
+        it("Given no selected playlist, when I try to delete a playlist, an error message will be notified", function() {
             scope.selectedPlaylist = null;
 
             scope.deletePlaylist();
 
             expect(notifications.updateMessage).toHaveBeenCalledWith('Please select a playlist to delete.');
             expect(subsonic.deletePlaylist).not.toHaveBeenCalled();
+        });
+
+        it("Given a selected playlist, when I save that playlist, the displayed songs will be sent to subsonic-service, the playlist will be displayed again and a notification message will be displayed", function() {
+            subsonic.savePlaylist.and.returnValue(deferred.promise);
+            spyOn(scope, 'getPlaylist');
+            scope.selectedPlaylist = 8469;
+            scope.song = [
+                { id: 3352 },
+                { id: 1518 },
+                { id: 5179 }
+            ];
+
+            scope.savePlaylist();
+            deferred.resolve();
+            scope.$apply();
+
+            expect(subsonic.savePlaylist).toHaveBeenCalledWith(8469, [
+                { id: 3352 },
+                { id: 1518 },
+                { id: 5179 }
+            ]);
+            expect(scope.getPlaylist).toHaveBeenCalledWith('display', 8469);
+            expect(notifications.updateMessage).toHaveBeenCalledWith('Playlist Updated!', true);
+        });
+
+        it("Given no selected playlist, when I try to save a playlist, an error message will be notified", function() {
+            scope.selectedPlaylist = null;
+
+            scope.savePlaylist();
+
+            expect(notifications.updateMessage).toHaveBeenCalledWith('Please select a playlist to save.');
+            expect(subsonic.savePlaylist).not.toHaveBeenCalled();
         });
     });
 

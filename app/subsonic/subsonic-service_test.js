@@ -508,4 +508,22 @@ describe("Subsonic service -", function() {
 
         expect(promise).toBeResolved();
     });
+
+    it("Given an array of songs and a playlist id, when I save that playlist, an empty resolved promise will be returned", function() {
+        var url = 'http://demo.subsonic.com/rest/createPlaylist.view?'+
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D'+'&playlistId=7071'+
+            '&songId=2801&songId=1002&songId=6612'+
+            '&u=Hyzual&v=1.10.2';
+        mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+        var songs = [
+            { id: 2801 },
+            { id: 1002 },
+            { id: 6612 }
+        ];
+        var promise = subsonic.savePlaylist(7071, songs);
+        mockBackend.flush();
+
+        expect(promise).toBeResolved();
+    });
 });
