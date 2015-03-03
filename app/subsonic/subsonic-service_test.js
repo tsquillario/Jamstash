@@ -15,6 +15,7 @@ describe("Subsonic service -", function() {
                 ApplicationName: "Jamstash",
                 Timeout: 20000
             },
+            // TODO: Hyz: Remove it when everything is refactored
             BaseURL: function () {
                 return 'http://demo.subsonic.com/rest';
             }
@@ -134,7 +135,7 @@ describe("Subsonic service -", function() {
     it("scrobble - Given a song, when I scrobble it, it returns true if there was no error", function() {
         var song = { id: 45872 };
         var url = 'http://demo.subsonic.com/rest/scrobble.view?' +
-            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&id=45872&p=enc:cGFzc3dvcmQ%3D&submisssion=true&u=Hyzual&v=1.10.2';
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=45872'+'&p=enc:cGFzc3dvcmQ%3D'+'&submisssion=true'+'&u=Hyzual&v=1.10.2';
         mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
         var promise = subsonic.scrobble(song);
@@ -189,7 +190,7 @@ describe("Subsonic service -", function() {
 
         it("When I get the artists of a given folder, it builds the correct url", function() {
             var url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&musicFolderId=42&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&musicFolderId=42'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             subsonic.getArtists(42);
@@ -286,7 +287,7 @@ describe("Subsonic service -", function() {
         });
         it("Given a playlist with 2 songs in it, when I get it, it returns the 2 songs of the playlist", function() {
             url = 'http://demo.subsonic.com/rest/getPlaylist.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&id=9123&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=9123'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
             response["subsonic-response"].playlist = {
                 id: 9123,
                 entry: [
@@ -318,7 +319,7 @@ describe("Subsonic service -", function() {
 
     it("Given a name, when I create a new playlist, a new playlist with that name will be created", function() {
         var url = 'http://demo.subsonic.com/rest/createPlaylist.view?'+
-            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&name=Apolloship&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&name=Apolloship'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
         var promise = subsonic.newPlaylist('Apolloship');
@@ -419,7 +420,7 @@ describe("Subsonic service -", function() {
         var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&size=3&u=Hyzual&v=1.10.2';
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
         });
 
         describe("Given that the global setting AutoPlaylist Size is 3", function() {
@@ -467,7 +468,7 @@ describe("Subsonic service -", function() {
 
             it("and given a genre, when getting random songs, it returns 3 songs from the given genre", function() {
                 url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
-                    'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&genre=Rock&p=enc:cGFzc3dvcmQ%3D&size=3&u=Hyzual&v=1.10.2';
+                    'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&genre=Rock'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
                 var library = [
                     {id: 9408},{id: 9470},{id: 6932}
                 ];
@@ -482,7 +483,7 @@ describe("Subsonic service -", function() {
 
             it("and given a folder id, when getting random songs, it returns 3 songs from the given folder", function() {
                 url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
-                    'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&musicFolderId=2&p=enc:cGFzc3dvcmQ%3D&size=3&u=Hyzual&v=1.10.2';
+                    'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&musicFolderId=2'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
                 var library = [
                     {id: 9232},{id: 3720},{id: 8139}
                 ];
