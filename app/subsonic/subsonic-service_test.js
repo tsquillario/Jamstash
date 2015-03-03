@@ -316,6 +316,17 @@ describe("Subsonic service -", function() {
         });
     });
 
+    it("Given a name, when I create a new playlist, a new playlist with that name will be created", function() {
+        var url = 'http://demo.subsonic.com/rest/createPlaylist.view?'+
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&name=Apolloship&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+        var promise = subsonic.newPlaylist('Apolloship');
+        mockBackend.flush();
+
+        expect(promise).toBeResolved();
+    });
+
     describe("getStarred -", function() {
         var url;
         beforeEach(function() {

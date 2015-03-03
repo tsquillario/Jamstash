@@ -6,8 +6,8 @@
 */
 angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'jamstash.player.service'])
 
-.controller('SubsonicController', ['$scope', '$rootScope', '$routeParams', 'utils', 'globals', 'map', 'subsonic', 'notifications', 'player',
-    function ($scope, $rootScope, $routeParams, utils, globals, map, subsonic, notifications, player) {
+.controller('SubsonicController', ['$scope', '$rootScope', '$routeParams', '$window', 'utils', 'globals', 'map', 'subsonic', 'notifications', 'player',
+    function ($scope, $rootScope, $routeParams, $window, utils, globals, map, subsonic, notifications, player) {
     'use strict';
 
     $scope.settings = globals.settings;
@@ -418,11 +418,15 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         $scope.selectedAutoPlaylist = null;
     };
 
-    $scope.newPlaylist = function (data, event) {
-        subsonic.newPlaylist(data, event).then(function (data) {
-            $scope.getPlaylists();
-        });
+    $scope.newPlaylist = function () {
+        var name = $window.prompt("Choose a name for your new playlist.", "");
+        if (name !== null && name !== '' && name !== 'null') {
+            subsonic.newPlaylist(name).then(function () {
+                $scope.getPlaylists();
+            });
+        }
     };
+
     $scope.deletePlaylist = function () {
         subsonic.deletePlaylist().then(function (data) {
             $scope.getPlaylists();
