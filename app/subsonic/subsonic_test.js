@@ -23,7 +23,10 @@ describe("Subsonic controller", function() {
             deferred = $q.defer();
             player = _player_;
 
-            $window = jasmine.createSpyObj("$window", ["prompt"]);
+            $window = jasmine.createSpyObj("$window", [
+                "prompt",
+                "confirm"
+            ]);
             notifications = jasmine.createSpyObj("notifications", ["updateMessage"]);
 
             // Mock the subsonic service
@@ -36,7 +39,8 @@ describe("Subsonic controller", function() {
                 "getRandomStarredSongs",
                 "getRandomSongs",
                 "getPlaylist",
-                "newPlaylist"
+                "newPlaylist",
+                "deletePlaylist"
             ]);
             // We make them return different promises and use our deferred variable only when testing
             // a particular function, so that they stay isolated
@@ -48,7 +52,6 @@ describe("Subsonic controller", function() {
             subsonic.getRandomStarredSongs.and.returnValue($q.defer().promise);
             subsonic.getRandomSongs.and.returnValue($q.defer().promise);
             subsonic.getPlaylist.and.returnValue($q.defer().promise);
-            subsonic.newPlaylist.and.returnValue($q.defer().promise);
             subsonic.showIndex = false;
 
             $controller = _$controller_;
@@ -69,6 +72,7 @@ describe("Subsonic controller", function() {
     describe("", function() {
         beforeEach(function() {
             $controller('SubsonicController', controllerParams);
+            scope.selectedPlaylist = null;
         });
 
         describe("Given that my library contained 3 songs, ", function() {
@@ -381,15 +385,9 @@ describe("Subsonic controller", function() {
                 expect(scope.playlistsPublic).toEqual([]);
                 expect(notifications.updateMessage).not.toHaveBeenCalled();
             });
-
-            it("it lets handleErrors handle HTTP and Subsonic errors", function() {
-                spyOn(scope, 'handleErrors').and.returnValue(deferred.promise);
-                scope.getPlaylists();
-                expect(scope.handleErrors).toHaveBeenCalledWith(deferred.promise);
-            });
         });
 
-        it("When I create a playlist, then it will ask for a name, use subsonic-service and load the playlists", function() {
+        it("When I create a playlist, then it will ask for a name, use subsonic-service and reload the playlists", function() {
             $window.prompt.and.returnValue('declassicize');
             subsonic.newPlaylist.and.returnValue(deferred.promise);
             spyOn(scope, 'getPlaylists');
@@ -409,6 +407,30 @@ describe("Subsonic controller", function() {
             scope.newPlaylist();
 
             expect(subsonic.newPlaylist).not.toHaveBeenCalled();
+        });
+
+        it("Given a selected playlist, when I delete that playlist, it will ask for confirmation, use subsonic-service and reload the playlists", function() {
+            $window.confirm.and.returnValue(true);
+            subsonic.deletePlaylist.and.returnValue(deferred.promise);
+            spyOn(scope, 'getPlaylists');
+            scope.selectedPlaylist = 8885;
+
+            scope.deletePlaylist();
+            deferred.resolve();
+            scope.$apply();
+
+            expect($window.confirm).toHaveBeenCalledWith('Are you sure you want to delete the selected playlist?');
+            expect(subsonic.deletePlaylist).toHaveBeenCalledWith(8885);
+            expect(scope.getPlaylists).toHaveBeenCalled();
+        });
+
+        it("Given no selected playlist, when I try to delete that playlist, an error message will be notified", function() {
+            scope.selectedPlaylist = null;
+
+            scope.deletePlaylist();
+
+            expect(notifications.updateMessage).toHaveBeenCalledWith('Please select a playlist to delete.');
+            expect(subsonic.deletePlaylist).not.toHaveBeenCalled();
         });
     });
 

@@ -445,24 +445,15 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return promise;
         },
 
-        deletePlaylist: function () {
-            var deferred = $q.defer();
-            if (content.selectedPlaylist !== null) {
-                var id = content.selectedPlaylist;
-                if (utils.confirmDelete('Are you sure you want to delete the selected playlist?')) {
-                    $.ajax({
-                        url: globals.BaseURL() + '/deletePlaylist.view?' + globals.BaseParams() + '&id=' + id,
-                        method: 'GET',
-                        dataType: globals.settings.Protocol,
-                        timeout: globals.settings.Timeout,
-                        success: function (data) {
-                            deferred.resolve();
-                        }
-                    });
+        deletePlaylist: function (id) {
+            var promise = this.subsonicRequest('deletePlaylist.view', {
+                params: {
+                    id: id
                 }
-            }
-            return deferred.promise;
+            });
+            return promise;
         },
+
         savePlaylist: function () {
             var deferred = $q.defer();
             if (content.selectedPlaylist !== null) {

@@ -421,16 +421,25 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
     $scope.newPlaylist = function () {
         var name = $window.prompt("Choose a name for your new playlist.", "");
         if (name !== null && name !== '' && name !== 'null') {
-            subsonic.newPlaylist(name).then(function () {
+            var promise = subsonic.newPlaylist(name);
+            $scope.handleErrors(promise).then(function () {
                 $scope.getPlaylists();
             });
         }
     };
 
     $scope.deletePlaylist = function () {
-        subsonic.deletePlaylist().then(function (data) {
-            $scope.getPlaylists();
-        });
+        if ($scope.selectedPlaylist !== null) {
+            var ok = $window.confirm('Are you sure you want to delete the selected playlist?');
+            if (ok) {
+                var promise = subsonic.deletePlaylist($scope.selectedPlaylist);
+                $scope.handleErrors(promise).then(function () {
+                    $scope.getPlaylists();
+                });
+            }
+        } else {
+            notifications.updateMessage('Please select a playlist to delete.');
+        }
     };
     $scope.savePlaylist = function () {
         var id = $scope.selectedPlaylist;

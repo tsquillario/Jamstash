@@ -121,6 +121,176 @@ describe("Subsonic service -", function() {
         });
     });
 
+        describe("getStarred -", function() {
+        var url;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getStarred.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
+
+        it("Given that I have 2 starred albums, 1 starred artist and 3 starred songs in my library, when getting everything starred, it returns them all", function() {
+            response["subsonic-response"].starred = {
+                artist: [{id: 2245}],
+                album: [{id: 1799},{id: 20987}],
+                song: [{id: 2478},{id: 14726},{id: 742}]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getStarred();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith({
+                artist: [{id: 2245}],
+                album: [{id: 1799},{id: 20987}],
+                song: [{id: 2478},{id: 14726},{id: 742}]
+            });
+        });
+
+        it("Given that there is absolutely nothing starred in my library, when getting everything starred, it returns an error object with a message", function() {
+            response["subsonic-response"].starred = {};
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getStarred();
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'Nothing is starred on the Subsonic server.'});
+        });
+    });
+
+    describe("getRandomStarredSongs -", function() {
+        var url;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getStarred.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
+
+        describe("Given that the global setting AutoPlaylist Size is 3", function() {
+            it("and given that I have more than 3 starred songs in my library, when getting random starred songs, it returns 3 starred songs", function() {
+                var library = [
+                    {id: 11841},{id: 12061},{id: 17322},{id: 1547},{id: 14785}
+                ];
+                response["subsonic-response"].starred = {song: library};
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getRandomStarredSongs();
+                // We create a spy in order to get the results of the promise
+                var success = jasmine.createSpy("success");
+                promise.then(success);
+
+                mockBackend.flush();
+
+                expect(promise).toBeResolved();
+                expect(success).toHaveBeenCalled();
+                var randomlyPickedSongs = success.calls.mostRecent().args[0];
+                for (var i = 0; i < randomlyPickedSongs.length; i++) {
+                    expect(library).toContain(randomlyPickedSongs[i]);
+                }
+            });
+
+            it("and given that I have only 1 starred song in my library, when getting random starred songs, it returns my starred song", function() {
+                response["subsonic-response"].starred = {song: [{id: 11841}]};
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getRandomStarredSongs();
+                mockBackend.flush();
+
+                expect(promise).toBeResolvedWith([{id: 11841}]);
+            });
+
+            it("and given that I don't have any starred song in my library, when getting random starred songs, it returns an error object with a message", function() {
+                response["subsonic-response"].starred = {song: []};
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getRandomStarredSongs();
+                mockBackend.flush();
+
+                expect(promise).toBeRejectedWith({reason: 'No starred songs found on the Subsonic server.'});
+            });
+        });
+    });
+
+    describe("getRandomSongs -", function() {
+        var url;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
+        });
+
+        describe("Given that the global setting AutoPlaylist Size is 3", function() {
+            it("and given that I have more than 3 songs in my library, when getting random songs, it returns 3 songs", function() {
+                var library = [
+                    {id: 1143},{id: 5864},{id: 7407},{id: 6471},{id: 59}
+                ];
+                response["subsonic-response"].randomSongs = {song: library};
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getRandomSongs();
+                // We create a spy in order to get the results of the promise
+                var success = jasmine.createSpy("success");
+                promise.then(success);
+
+                mockBackend.flush();
+
+                expect(promise).toBeResolved();
+                expect(success).toHaveBeenCalled();
+                var randomlyPickedSongs = success.calls.mostRecent().args[0];
+                for (var i = 0; i < randomlyPickedSongs.length; i++) {
+                    expect(library).toContain(randomlyPickedSongs[i]);
+                }
+            });
+
+            it("and given that I have only 1 song in my library, when getting random songs, it returns that song", function() {
+                response["subsonic-response"].randomSongs = {song: [{id: 7793}]};
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getRandomSongs();
+                mockBackend.flush();
+
+                expect(promise).toBeResolvedWith([{id: 7793}]);
+            });
+
+            it("and given that I don't have any song in my library, when getting random songs, it returns an error object with a message", function() {
+                response["subsonic-response"].randomSongs = {song: []};
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getRandomSongs();
+                mockBackend.flush();
+
+                expect(promise).toBeRejectedWith({reason: 'No songs found on the Subsonic server.'});
+            });
+
+            it("and given a genre, when getting random songs, it returns 3 songs from the given genre", function() {
+                url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
+                    'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&genre=Rock'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
+                var library = [
+                    {id: 9408},{id: 9470},{id: 6932}
+                ];
+                response["subsonic-response"].randomSongs = {song: library};
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getRandomSongs('Rock');
+                mockBackend.flush();
+
+                expect(promise).toBeResolvedWith([{id: 9408},{id: 9470},{id: 6932}]);
+            });
+
+            it("and given a folder id, when getting random songs, it returns 3 songs from the given folder", function() {
+                url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
+                    'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&musicFolderId=2'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
+                var library = [
+                    {id: 9232},{id: 3720},{id: 8139}
+                ];
+                response["subsonic-response"].randomSongs = {song: library};
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getRandomSongs('', 2);
+                mockBackend.flush();
+
+                expect(promise).toBeResolvedWith([{id: 9232},{id: 3720},{id: 8139}]);
+            });
+        });
+    });
+
     it("ping - when I ping Subsonic, it returns Subsonic's response, containing its REST API version", function() {
         var url = 'http://demo.subsonic.com/rest/ping.view?'+
             'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -317,7 +487,7 @@ describe("Subsonic service -", function() {
         });
     });
 
-    it("Given a name, when I create a new playlist, a new playlist with that name will be created", function() {
+    it("Given a name, when I create a new playlist, an empty resolved promise will be returned", function() {
         var url = 'http://demo.subsonic.com/rest/createPlaylist.view?'+
             'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&name=Apolloship'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         mockBackend.expectJSONP(url).respond(JSON.stringify(response));
@@ -328,173 +498,14 @@ describe("Subsonic service -", function() {
         expect(promise).toBeResolved();
     });
 
-    describe("getStarred -", function() {
-        var url;
-        beforeEach(function() {
-            url = 'http://demo.subsonic.com/rest/getStarred.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
-        });
+    it("Given a playlist id, when I delete that playlist, an empty resolved promise will be returned", function() {
+        var url = 'http://demo.subsonic.com/rest/deletePlaylist.view?'+
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=7579'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
-        it("Given that I have 2 starred albums, 1 starred artist and 3 starred songs in my library, when getting everything starred, it returns them all", function() {
-            response["subsonic-response"].starred = {
-                artist: [{id: 2245}],
-                album: [{id: 1799},{id: 20987}],
-                song: [{id: 2478},{id: 14726},{id: 742}]
-            };
-            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+        var promise = subsonic.deletePlaylist(7579);
+        mockBackend.flush();
 
-            var promise = subsonic.getStarred();
-            mockBackend.flush();
-
-            expect(promise).toBeResolvedWith({
-                artist: [{id: 2245}],
-                album: [{id: 1799},{id: 20987}],
-                song: [{id: 2478},{id: 14726},{id: 742}]
-            });
-        });
-
-        it("Given that there is absolutely nothing starred in my library, when getting everything starred, it returns an error object with a message", function() {
-            response["subsonic-response"].starred = {};
-            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
-
-            var promise = subsonic.getStarred();
-            mockBackend.flush();
-
-            expect(promise).toBeRejectedWith({reason: 'Nothing is starred on the Subsonic server.'});
-        });
-    });
-
-    describe("getRandomStarredSongs -", function() {
-        var url;
-        beforeEach(function() {
-            url = 'http://demo.subsonic.com/rest/getStarred.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
-        });
-
-        describe("Given that the global setting AutoPlaylist Size is 3", function() {
-            it("and given that I have more than 3 starred songs in my library, when getting random starred songs, it returns 3 starred songs", function() {
-                var library = [
-                    {id: 11841},{id: 12061},{id: 17322},{id: 1547},{id: 14785}
-                ];
-                response["subsonic-response"].starred = {song: library};
-                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
-
-                var promise = subsonic.getRandomStarredSongs();
-                // We create a spy in order to get the results of the promise
-                var success = jasmine.createSpy("success");
-                promise.then(success);
-
-                mockBackend.flush();
-
-                expect(promise).toBeResolved();
-                expect(success).toHaveBeenCalled();
-                var randomlyPickedSongs = success.calls.mostRecent().args[0];
-                for (var i = 0; i < randomlyPickedSongs.length; i++) {
-                    expect(library).toContain(randomlyPickedSongs[i]);
-                }
-            });
-
-            it("and given that I have only 1 starred song in my library, when getting random starred songs, it returns my starred song", function() {
-                response["subsonic-response"].starred = {song: [{id: 11841}]};
-                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
-
-                var promise = subsonic.getRandomStarredSongs();
-                mockBackend.flush();
-
-                expect(promise).toBeResolvedWith([{id: 11841}]);
-            });
-
-            it("and given that I don't have any starred song in my library, when getting random starred songs, it returns an error object with a message", function() {
-                response["subsonic-response"].starred = {song: []};
-                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
-
-                var promise = subsonic.getRandomStarredSongs();
-                mockBackend.flush();
-
-                expect(promise).toBeRejectedWith({reason: 'No starred songs found on the Subsonic server.'});
-            });
-        });
-    });
-
-    describe("getRandomSongs -", function() {
-        var url;
-        beforeEach(function() {
-            url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
-        });
-
-        describe("Given that the global setting AutoPlaylist Size is 3", function() {
-            it("and given that I have more than 3 songs in my library, when getting random songs, it returns 3 songs", function() {
-                var library = [
-                    {id: 1143},{id: 5864},{id: 7407},{id: 6471},{id: 59}
-                ];
-                response["subsonic-response"].randomSongs = {song: library};
-                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
-
-                var promise = subsonic.getRandomSongs();
-                // We create a spy in order to get the results of the promise
-                var success = jasmine.createSpy("success");
-                promise.then(success);
-
-                mockBackend.flush();
-
-                expect(promise).toBeResolved();
-                expect(success).toHaveBeenCalled();
-                var randomlyPickedSongs = success.calls.mostRecent().args[0];
-                for (var i = 0; i < randomlyPickedSongs.length; i++) {
-                    expect(library).toContain(randomlyPickedSongs[i]);
-                }
-            });
-
-            it("and given that I have only 1 song in my library, when getting random songs, it returns that song", function() {
-                response["subsonic-response"].randomSongs = {song: [{id: 7793}]};
-                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
-
-                var promise = subsonic.getRandomSongs();
-                mockBackend.flush();
-
-                expect(promise).toBeResolvedWith([{id: 7793}]);
-            });
-
-            it("and given that I don't have any song in my library, when getting random songs, it returns an error object with a message", function() {
-                response["subsonic-response"].randomSongs = {song: []};
-                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
-
-                var promise = subsonic.getRandomSongs();
-                mockBackend.flush();
-
-                expect(promise).toBeRejectedWith({reason: 'No songs found on the Subsonic server.'});
-            });
-
-            it("and given a genre, when getting random songs, it returns 3 songs from the given genre", function() {
-                url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
-                    'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&genre=Rock'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
-                var library = [
-                    {id: 9408},{id: 9470},{id: 6932}
-                ];
-                response["subsonic-response"].randomSongs = {song: library};
-                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
-
-                var promise = subsonic.getRandomSongs('Rock');
-                mockBackend.flush();
-
-                expect(promise).toBeResolvedWith([{id: 9408},{id: 9470},{id: 6932}]);
-            });
-
-            it("and given a folder id, when getting random songs, it returns 3 songs from the given folder", function() {
-                url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
-                    'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&musicFolderId=2'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
-                var library = [
-                    {id: 9232},{id: 3720},{id: 8139}
-                ];
-                response["subsonic-response"].randomSongs = {song: library};
-                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
-
-                var promise = subsonic.getRandomSongs('', 2);
-                mockBackend.flush();
-
-                expect(promise).toBeResolvedWith([{id: 9232},{id: 3720},{id: 8139}]);
-            });
-        });
+        expect(promise).toBeResolved();
     });
 });
