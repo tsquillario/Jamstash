@@ -1,7 +1,7 @@
 describe("Subsonic controller", function() {
     'use strict';
 
-    var scope, $rootScope, $controller, subsonic, notifications, player, controllerParams, deferred;
+    var scope, $rootScope, $controller, $window, subsonic, notifications, player, controllerParams, deferred;
 
     beforeEach(function() {
         jasmine.addCustomEqualityTester(angular.equals);
@@ -23,7 +23,7 @@ describe("Subsonic controller", function() {
             deferred = $q.defer();
             player = _player_;
 
-            // Mock the notifications service
+            $window = jasmine.createSpyObj("$window", ["prompt"]);
             notifications = jasmine.createSpyObj("notifications", ["updateMessage"]);
 
             // Mock the subsonic service
@@ -32,10 +32,11 @@ describe("Subsonic controller", function() {
                 "getArtists",
                 "getGenres",
                 "getPlaylists",
-                "getPlaylist",
                 "getPodcasts",
                 "getRandomStarredSongs",
-                "getRandomSongs"
+                "getRandomSongs",
+                "getPlaylist",
+                "newPlaylist"
             ]);
             // We make them return different promises and use our deferred variable only when testing
             // a particular function, so that they stay isolated
@@ -43,10 +44,11 @@ describe("Subsonic controller", function() {
             subsonic.getArtists.and.returnValue($q.defer().promise);
             subsonic.getGenres.and.returnValue($q.defer().promise);
             subsonic.getPlaylists.and.returnValue($q.defer().promise);
-            subsonic.getPlaylist.and.returnValue($q.defer().promise);
             subsonic.getPodcasts.and.returnValue($q.defer().promise);
             subsonic.getRandomStarredSongs.and.returnValue($q.defer().promise);
             subsonic.getRandomSongs.and.returnValue($q.defer().promise);
+            subsonic.getPlaylist.and.returnValue($q.defer().promise);
+            subsonic.newPlaylist.and.returnValue($q.defer().promise);
             subsonic.showIndex = false;
 
             $controller = _$controller_;
@@ -54,6 +56,7 @@ describe("Subsonic controller", function() {
                 $scope: scope,
                 $rootScope: $rootScope,
                 $routeParams: {},
+                $window: $window,
                 utils: utils,
                 globals: globals,
                 map: map,
@@ -68,7 +71,7 @@ describe("Subsonic controller", function() {
             $controller('SubsonicController', controllerParams);
         });
 
-        describe("Given that my library contains 3 songs, ", function() {
+        describe("Given that my library contained 3 songs, ", function() {
             var response;
             beforeEach(function() {
                 response = [
@@ -136,7 +139,7 @@ describe("Subsonic controller", function() {
                     expect(scope.selectedAutoPlaylist).toBeNull();
                 });
 
-                it("given a playlist that contains those 3 songs, when I display it, it notifies the user with the number of songs in the playlist", function() {
+                it("given a playlist that contained those 3 songs, when I display it, it will notify the user with the number of songs in the playlist", function() {
                     scope.getPlaylist('display', 1146);
                     deferred.resolve(response);
                     scope.$apply();
@@ -384,6 +387,28 @@ describe("Subsonic controller", function() {
                 scope.getPlaylists();
                 expect(scope.handleErrors).toHaveBeenCalledWith(deferred.promise);
             });
+        });
+
+        it("When I create a playlist, then it will ask for a name, use subsonic-service and load the playlists", function() {
+            $window.prompt.and.returnValue('declassicize');
+            subsonic.newPlaylist.and.returnValue(deferred.promise);
+            spyOn(scope, 'getPlaylists');
+
+            scope.newPlaylist();
+            deferred.resolve();
+            scope.$apply();
+
+            expect($window.prompt).toHaveBeenCalledWith("Choose a name for your new playlist.", "");
+            expect(subsonic.newPlaylist).toHaveBeenCalledWith('declassicize');
+            expect(scope.getPlaylists).toHaveBeenCalled();
+        });
+
+        it("When I create a playlist and provide no name, then the playlist won't be created", function() {
+            $window.prompt.and.returnValue(null);
+
+            scope.newPlaylist();
+
+            expect(subsonic.newPlaylist).not.toHaveBeenCalled();
         });
     });
 

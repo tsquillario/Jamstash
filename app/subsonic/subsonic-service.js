@@ -242,11 +242,10 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
         },
         getSongs: function (id, action) {
             var exception = {reason: 'No songs found on the Subsonic server.'};
-            var params = {
-                id: id
-            };
             var promise = this.subsonicRequest('getMusicDirectory.view', {
-                params: params
+                params: {
+                    id: id
+                }
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.directory.child !== undefined && subsonicResponse.directory.child.length > 0) {
                     var items = subsonicResponse.directory.child;
@@ -379,39 +378,6 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return promise;
         },
 
-        getPlaylists: function () {
-            var exception = {reason: 'No playlist found on the Subsonic server.'};
-            var promise = this.subsonicRequest('getPlaylists.view')
-            .then(function (subsonicResponse) {
-                if(subsonicResponse.playlists.playlist !== undefined && subsonicResponse.playlists.playlist.length > 0) {
-                    var allPlaylists = _(subsonicResponse.playlists.playlist).partition(function (item) {
-                        return item.owner === globals.settings.Username;
-                    });
-                    return {playlists: allPlaylists[0], playlistsPublic: allPlaylists[1]};
-                } else {
-                    return $q.reject(exception);
-                }
-            });
-            return promise;
-        },
-
-        getPlaylist: function (id) {
-            var exception = {reason: 'This playlist is empty.'};
-            var params = {
-                id: id
-            };
-            var promise = this.subsonicRequest('getPlaylist.view', {
-                params: params
-            }).then(function (subsonicResponse) {
-                if(subsonicResponse.playlist.entry !== undefined && subsonicResponse.playlist.entry.length > 0) {
-                    return map.mapSongs(subsonicResponse.playlist.entry);
-                } else {
-                    return $q.reject(exception);
-                }
-            });
-            return promise;
-        },
-
         getStarred: function () {
             var promise = this.subsonicRequest('getStarred.view', { cache: true })
                 .then(function (subsonicResponse) {
@@ -438,22 +404,47 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return promise;
         },
 
-        newPlaylist: function (data, event) {
-            var deferred = $q.defer();
-            var reply = prompt("Choose a name for your new playlist.", "");
-            if (reply != 'null' && reply !== null && reply !== '') {
-                $.ajax({
-                    url: globals.BaseURL() + '/createPlaylist.view?' + globals.BaseParams() + '&name=' + reply,
-                    method: 'GET',
-                    dataType: globals.settings.Protocol,
-                    timeout: globals.settings.Timeout,
-                    success: function (data) {
-                        deferred.resolve();
-                    }
-                });
-            }
-            return deferred.promise;
+        getPlaylists: function () {
+            var exception = {reason: 'No playlist found on the Subsonic server.'};
+            var promise = this.subsonicRequest('getPlaylists.view')
+            .then(function (subsonicResponse) {
+                if(subsonicResponse.playlists.playlist !== undefined && subsonicResponse.playlists.playlist.length > 0) {
+                    var allPlaylists = _(subsonicResponse.playlists.playlist).partition(function (item) {
+                        return item.owner === globals.settings.Username;
+                    });
+                    return {playlists: allPlaylists[0], playlistsPublic: allPlaylists[1]};
+                } else {
+                    return $q.reject(exception);
+                }
+            });
+            return promise;
         },
+
+        getPlaylist: function (id) {
+            var exception = {reason: 'This playlist is empty.'};
+            var promise = this.subsonicRequest('getPlaylist.view', {
+                params: {
+                    id: id
+                }
+            }).then(function (subsonicResponse) {
+                if(subsonicResponse.playlist.entry !== undefined && subsonicResponse.playlist.entry.length > 0) {
+                    return map.mapSongs(subsonicResponse.playlist.entry);
+                } else {
+                    return $q.reject(exception);
+                }
+            });
+            return promise;
+        },
+
+        newPlaylist: function (name) {
+            var promise = this.subsonicRequest('createPlaylist.view', {
+                params: {
+                    name: name
+                }
+            });
+            return promise;
+        },
+
         deletePlaylist: function () {
             var deferred = $q.defer();
             if (content.selectedPlaylist !== null) {
