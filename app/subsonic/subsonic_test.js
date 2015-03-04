@@ -465,6 +465,39 @@ describe("Subsonic controller", function() {
             expect(notifications.updateMessage).toHaveBeenCalledWith('Please select a playlist to save.');
             expect(subsonic.savePlaylist).not.toHaveBeenCalled();
         });
+
+        describe("When I load the podcasts,", function() {
+            beforeEach(function() {
+                subsonic.getPodcasts.and.returnValue(deferred.promise);
+            });
+
+            it("Given that there were podcasts in the library, then the podcasts will be published to the scope", function() {
+                scope.getPodcasts();
+                deferred.resolve([
+                    {id: 9775},
+                    {id: 5880},
+                    {id: 5554}
+                ]);
+                scope.$apply();
+
+                expect(subsonic.getPodcasts).toHaveBeenCalled();
+                expect(scope.podcasts).toEqual([
+                    {id: 9775},
+                    {id: 5880},
+                    {id: 5554}
+                ]);
+            });
+
+            it("Given that there weren't any podcast in the library, then an empty array will be published to the scope and the user won't be notified with an error message", function() {
+                scope.getPodcasts();
+                deferred.reject({reason: 'No podcast found on the Subsonic server.'});
+                scope.$apply();
+
+                expect(subsonic.getPodcasts).toHaveBeenCalled();
+                expect(scope.podcasts).toEqual([]);
+                expect(notifications.updateMessage).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe("On startup,", function() {

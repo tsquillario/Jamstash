@@ -526,4 +526,41 @@ describe("Subsonic service -", function() {
 
         expect(promise).toBeResolved();
     });
+
+    describe("When I load the podcasts,", function() {
+         var url;
+        beforeEach(function() {
+            url = url = 'http://demo.subsonic.com/rest/getPodcasts.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
+        it("given that there were podcasts in the library, then a promise will be resolved with an array of podcasts", function() {
+            response["subsonic-response"].podcasts = {
+                channel: [
+                    { id: 7820 },
+                    { id: 5174 },
+                    { id: 2404 }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getPodcasts();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                { id: 7820 },
+                { id: 5174 },
+                { id: 2404 }
+            ]);
+        });
+
+        it("given that there weren't any podcast in the library, then a rejected promise with an error message will be returned", function() {
+            response["subsonic-response"].podcasts = {};
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getPodcasts();
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'No podcast found on the Subsonic server.'});
+        });
+    });
 });
