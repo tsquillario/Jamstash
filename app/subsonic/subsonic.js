@@ -315,15 +315,20 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         var promise = subsonic.getRandomStarredSongs();
         $scope.requestSongs(promise, action);
 
-        $scope.selectedPlaylist = null;
+        $scope.album = [];
+        $scope.BreadCrumbs = null;
+        $scope.selectedAutoAlbum = null;
+        $scope.selectedArtist = null;
+        $scope.selectedAlbum = null;
         $scope.selectedAutoPlaylist = 'starred';
+        $scope.selectedPlaylist = null;
+        $scope.selectedPodcast = null;
     };
 
     $scope.getRandomSongs = function (action, genre, folder) {
         var promise = subsonic.getRandomSongs(genre, folder);
         $scope.requestSongs(promise, action);
 
-        $scope.selectedPlaylist = null;
         if (!isNaN(folder)) {
             $scope.selectedAutoPlaylist = folder;
         } else if (genre !== undefined && genre !== '' && genre !== 'Random') {
@@ -331,6 +336,13 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         } else {
             $scope.selectedAutoPlaylist = 'random';
         }
+        $scope.album = [];
+        $scope.BreadCrumbs = null;
+        $scope.selectedAutoAlbum = null;
+        $scope.selectedArtist = null;
+        $scope.selectedAlbum = null;
+        $scope.selectedPlaylist = null;
+        $scope.selectedPodcast = null;
     };
 
     $scope.getStarred = function (action, type) {
@@ -415,8 +427,15 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
                 notifications.updateMessage(songs.length + ' Song(s) in Playlist', true);
             }
         });
-        $scope.selectedPlaylist = id;
+        $scope.song = [];
+        $scope.album = [];
+        $scope.BreadCrumbs = null;
+        $scope.selectedAutoAlbum = null;
+        $scope.selectedArtist = null;
+        $scope.selectedAlbum = null;
         $scope.selectedAutoPlaylist = null;
+        $scope.selectedPlaylist = id;
+        $scope.selectedPodcast = null;
     };
 
     $scope.newPlaylist = function () {
@@ -526,13 +545,21 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         });
     };
 
-    $scope.getPodcast = function (id, action) {
-        subsonic.getPodcast(id, action).then(function (data) {
-            $scope.album = data.album;
-            $scope.song = data.song;
-            $scope.selectedPodcast = data.selectedPodcast;
-        });
+    $scope.getPodcast = function (action, id) {
+        var promise = subsonic.getPodcast(id);
+        $scope.requestSongs(promise, action);
+
+        $scope.song = [];
+        $scope.album = [];
+        $scope.BreadCrumbs = null;
+        $scope.selectedAutoAlbum = null;
+        $scope.selectedArtist = null;
+        $scope.selectedAlbum = null;
+        $scope.selectedAutoPlaylist = null;
+        $scope.selectedPlaylist = null;
+        $scope.selectedPodcast = id;
     };
+
     $scope.getMusicFolders = function () {
         $.ajax({
             url: globals.BaseURL() + '/getMusicFolders.view?' + globals.BaseParams(),
@@ -585,7 +612,7 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
     $scope.playSong = function (song) {
         player.play(song);
     };
-    $scope.addSongToQueue = function(song) {
+    $scope.addSongToQueue = function (song) {
         player.addSong(song);
     };
 
