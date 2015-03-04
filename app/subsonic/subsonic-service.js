@@ -427,7 +427,7 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
                     id: id
                 }
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.playlist.entry !== undefined && subsonicResponse.playlist.entry.length > 0) {
+                if (subsonicResponse.playlist.entry !== undefined && subsonicResponse.playlist.entry.length > 0) {
                     return map.mapSongs(subsonicResponse.playlist.entry);
                 } else {
                     return $q.reject(exception);
@@ -507,7 +507,11 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
 
         getPodcasts: function () {
             var exception = {reason: 'No podcast found on the Subsonic server.'};
-            var promise = this.subsonicRequest('getPodcasts.view')
+            var promise = this.subsonicRequest('getPodcasts.view', {
+                params: {
+                    includeEpisodes: false
+                }
+            })
             .then(function (subsonicResponse) {
                 if (subsonicResponse.podcasts !== undefined && subsonicResponse.podcasts.channel !== undefined && subsonicResponse.podcasts.channel.length > 0) {
                     return subsonicResponse.podcasts.channel;
@@ -518,62 +522,31 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             return promise;
         },
 
-        getPodcast: function (id, action) {
-            var deferred = $q.defer();
-            content.selectedPodcast = id;
-            $.ajax({
-                url: globals.BaseURL() + '/getPodcasts.view?' + globals.BaseParams(),
-                method: 'GET',
-                dataType: globals.settings.Protocol,
-                timeout: globals.settings.Timeout,
-                success: function (data) {
-                    if (data["subsonic-response"].podcasts.channel !== undefined) {
-                        var podcasts = [];
-                        if (data["subsonic-response"].podcasts.channel.length > 0) {
-                            podcasts = data["subsonic-response"].podcasts.channel;
-                        } else {
-                            podcasts[0] = data["subsonic-response"].podcasts.channel;
-                        }
-                        var items = [];
-                        $.each(podcasts, function (i, item) {
-                            if (item.id == id) {
-                                items = item.episode;
-                            }
+        getPodcast: function (id) {
+            var exception = {reason: 'This podcast was not found on the Subsonic server.'};
+            var promise = this.subsonicRequest('getPodcasts.view', {
+                params: {
+                    id: id,
+                    includeEpisodes: true
+                }
+            }).then(function (subsonicResponse) {
+                var episodes = [];
+                if (subsonicResponse.podcasts.channel !== undefined && subsonicResponse.podcasts.channel.length > 0) {
+                    var channel = subsonicResponse.podcasts.channel[0];
+                    if (channel !== null && channel.id === id) {
+                        episodes = _(channel.episode).filter(function (episode) {
+                            return episode.status === "completed";
                         });
-
-                        if (typeof items != 'undefined') {
-                            if (action == 'add') {
-                                angular.forEach(items, function (item, key) {
-                                    if (item.status != "skipped") {
-                                        player.queue.push(map.mapPodcast(item));
-                                    }
-                                });
-                                notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                            } else if (action == 'play') {
-                                player.queue = [];
-                                angular.forEach(items, function (item, key) {
-                                    if (item.status != "skipped") {
-                                        player.queue.push(map.mapPodcast(item));
-                                    }
-                                });
-                                var next = player.queue[0];
-                                player.play(next);
-                                notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                            } else {
-                                content.album = [];
-                                content.song = [];
-                                angular.forEach(items, function (item, key) {
-                                    if (item.status != "skipped") {
-                                        content.song.push(map.mapPodcast(item));
-                                    }
-                                });
-                            }
+                        if(episodes.length > 0) {
+                            return map.mapPodcasts(episodes);
+                        } else {
+                            return $q.reject({reason: 'No downloaded episode found for this podcast. Please check the podcast settings.'});
                         }
                     }
-                    deferred.resolve(content);
                 }
+                return $q.reject(exception);
             });
-            return deferred.promise;
+            return promise;
         },
 
         scrobble: function (song) {

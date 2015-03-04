@@ -20,11 +20,11 @@ describe("model service", function() {
 		expect(model.displayName).toBe("Know Your Enemy - Ghost in the Shell - Stand Alone Complex OST 3 - Yoko Kanno");
 	});
 
-    it("Given multiple songs, when I map them, it calls mapSong for each song", function() {
+    it("Given multiple songs, when I map them, then mapSong is called for each song", function() {
         var songs = [
-            {id: 2912},
-            {id: 1450},
-            {id: 6663}
+            { id: 2912 },
+            { id: 1450 },
+            { id: 6663 }
         ];
         spyOn(map, 'mapSong').and.callFake(function (song) { return song; });
 
@@ -34,5 +34,21 @@ describe("model service", function() {
         expect(map.mapSong).toHaveBeenCalledWith({id: 1450});
         expect(map.mapSong).toHaveBeenCalledWith({id: 6663});
         expect(result).toEqual(songs);
+    });
+
+    it("Given multiple podcast episodes, when I map them, then mapPodcast is called for each episode", function() {
+        var episodes = [
+            { id: 63 },
+            { id: 24 },
+            { id: 80 }
+        ];
+        spyOn(map, 'mapPodcast').and.callFake(function (episode) { return episode; });
+
+        var result = map.mapPodcasts(episodes);
+        expect(map.mapPodcast.calls.count()).toEqual(3);
+        expect(map.mapPodcast).toHaveBeenCalledWith({ id: 63 });
+        expect(map.mapPodcast).toHaveBeenCalledWith({ id: 24 });
+        expect(map.mapPodcast).toHaveBeenCalledWith({ id: 80 });
+        expect(result).toEqual(episodes);
     });
 });

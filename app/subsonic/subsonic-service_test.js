@@ -28,6 +28,9 @@ describe("Subsonic service -", function() {
                 $delegate.mapSong = function (argument) {
                     return argument;
                 };
+                $delegate.mapPodcast = function (argument) {
+                    return argument;
+                };
                 return $delegate;
             });
             // Mock utils.getValue
@@ -455,6 +458,7 @@ describe("Subsonic service -", function() {
             url = 'http://demo.subsonic.com/rest/getPlaylist.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
+
         it("Given a playlist with 2 songs in it, when I get it, it returns the 2 songs of the playlist", function() {
             url = 'http://demo.subsonic.com/rest/getPlaylist.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=9123'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -528,11 +532,12 @@ describe("Subsonic service -", function() {
     });
 
     describe("When I load the podcasts,", function() {
-         var url;
+        var url;
         beforeEach(function() {
-            url = url = 'http://demo.subsonic.com/rest/getPodcasts.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            url = 'http://demo.subsonic.com/rest/getPodcasts.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&includeEpisodes=false'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
+
         it("given that there were podcasts in the library, then a promise will be resolved with an array of podcasts", function() {
             response["subsonic-response"].podcasts = {
                 channel: [
@@ -553,7 +558,7 @@ describe("Subsonic service -", function() {
             ]);
         });
 
-        it("given that there weren't any podcast in the library, then a rejected promise with an error message will be returned", function() {
+        it("given that there weren't any podcast in the library, then a promise will be rejected with an error message", function() {
             response["subsonic-response"].podcasts = {};
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -561,6 +566,86 @@ describe("Subsonic service -", function() {
             mockBackend.flush();
 
             expect(promise).toBeRejectedWith({reason: 'No podcast found on the Subsonic server.'});
+        });
+    });
+
+    describe("When I load a podcast,", function() {
+        var url;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getPodcasts.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=2695&includeEpisodes=true'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
+
+        it("given a podcast id, then a promise will be resolved with an array of songs from all the non-skipped episodes of that podcast", function() {
+            response["subsonic-response"].podcasts = {
+                channel: [
+                    {
+                        id: 2695,
+                        episode: [
+                            {
+                                id: 691,
+                                status: "completed"
+                            }, {
+                                id: 771,
+                                status: "skipped"
+                            }, {
+                                id: 227,
+                                status: "completed"
+                            }
+                        ]
+                    }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getPodcast(2695);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                {
+                    id: 691,
+                    status: "completed"
+                }, {
+                    id: 227,
+                    status: "completed"
+                }
+            ]);
+        });
+
+        it("given that the podcast I wanted to get didn't exist in the library, when I try to get it, then a promise will be rejected with an error message", function() {
+            response["subsonic-response"].podcasts = {};
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getPodcast(2695);
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'This podcast was not found on the Subsonic server.'});
+        });
+
+        it("given that the podcast I wanted to get was empty (0 non-skipped episode in it), when I get it, then a promise will be rejected with an error message", function() {
+            response["subsonic-response"].podcasts = {
+                channel: [
+                    {
+                        id: 2695,
+                        episode: [
+                            {
+                                id: 678,
+                                status: "skipped"
+                            },
+                            {
+                                id: 972,
+                                status: "skipped"
+                            }
+                        ]
+                    }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getPodcast(2695);
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'No downloaded episode found for this podcast. Please check the podcast settings.'});
         });
     });
 });

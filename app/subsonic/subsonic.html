@@ -181,9 +181,10 @@
             <div id="PodcastContainer" class="leftsubsection" ng-show="showPodcast">
                 <ul class="simplelist mainlist noselect">
                     <li class="index" id="auto">Podcasts</li>
-                    <li class="item" ng-repeat="o in podcasts" ng-click="getPodcast(o.id, '')" ng-class="{ 'selected': o.id == selectedPodcast }">
+                    <li class="item" ng-repeat="o in podcasts" ng-click="getPodcast('display', o.id)" ng-class="{ 'selected': o.id == selectedPodcast }">
                         <div class="itemactions">
-                            <a class="add" href="" title="Add To Play Queue" ng-click="getPodcast(o.id, 'add')" stop-event="click"></a><a class="play" href="" title="Play" ng-click="getPodcast(o.id, 'play')" stop-event="click"></a>
+                            <a class="add" href="" title="Add To Play Queue" ng-click="getPodcast('add', o.id)" stop-event="click"></a>
+                            <a class="play" href="" title="Play" ng-click="getPodcast('play', o.id)" stop-event="click"></a>
                         </div>
                         <div class="title" title="{{o.description}}">{{o.title}}</div>
                     </li>

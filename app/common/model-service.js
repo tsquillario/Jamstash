@@ -138,4 +138,13 @@ angular.module('jamstash.model', ['jamstash.utils'])
         url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.streamId + '&salt=' + salt;
         return new model.Song(song.streamId, song.parent, track, title, artist, song.artistId, album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
     };
+
+    this.mapPodcasts = function (episodes) {
+        var mappedEpisodes = [];
+        var mapEpisode = this.mapPodcast;
+        angular.forEach(episodes, function (episode) {
+            mappedEpisodes.push(mapEpisode(episode));
+        });
+        return mappedEpisodes;
+    };
 }]);

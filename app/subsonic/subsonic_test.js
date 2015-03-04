@@ -41,7 +41,8 @@ describe("Subsonic controller", function() {
                 "getPlaylist",
                 "newPlaylist",
                 "deletePlaylist",
-                "savePlaylist"
+                "savePlaylist",
+                "getPodcast"
             ]);
             // We make them return different promises and use our deferred variable only when testing
             // a particular function, so that they stay isolated
@@ -50,9 +51,6 @@ describe("Subsonic controller", function() {
             subsonic.getGenres.and.returnValue($q.defer().promise);
             subsonic.getPlaylists.and.returnValue($q.defer().promise);
             subsonic.getPodcasts.and.returnValue($q.defer().promise);
-            subsonic.getRandomStarredSongs.and.returnValue($q.defer().promise);
-            subsonic.getRandomSongs.and.returnValue($q.defer().promise);
-            subsonic.getPlaylist.and.returnValue($q.defer().promise);
             subsonic.showIndex = false;
 
             $controller = _$controller_;
@@ -89,67 +87,132 @@ describe("Subsonic controller", function() {
                     spyOn(scope, "requestSongs").and.returnValue(deferred.promise);
                 });
 
-                it("when I request random starred songs, it uses subsonic-service, delegates to requestSongs displaying, adding or playing songs and sets the scope's current playlist", function() {
+                it("when I request random starred songs, then subsonic-service will be called, displaying, adding or playing songs will be delegated to requestSongs and the current playlist will be published to the scope", function() {
+                    subsonic.getRandomStarredSongs.and.returnValue(deferred.promise);
+
                     scope.getRandomStarredSongs('whatever action');
                     deferred.resolve(response);
                     scope.$apply();
 
                     expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
                     expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
-                    expect(scope.selectedPlaylist).toBeNull();
+                    expect(scope.album).toEqual([]);
+                    expect(scope.BreadCrumbs).toBeNull();
+                    expect(scope.selectedAutoAlbum).toBeNull();
+                    expect(scope.selectedArtist).toBeNull();
+                    expect(scope.selectedAlbum).toBeNull();
                     expect(scope.selectedAutoPlaylist).toBe('starred');
-                });
-
-                it("when I request random songs from all folders or genres, it uses subsonic-service, delegates to requestSongs displaying, adding or playing songs and sets the scope's current playlist", function() {
-                    scope.getRandomSongs('whatever action');
-                    deferred.resolve(response);
-                    scope.$apply();
-
-                    expect(subsonic.getRandomSongs).toHaveBeenCalled();
-                    expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
                     expect(scope.selectedPlaylist).toBeNull();
-                    expect(scope.selectedAutoPlaylist).toBe('random');
+                    expect(scope.selectedPodcast).toBeNull();
                 });
 
-                it("when I request random songs from a given genre, it uses subsonic-service, delegates to requestSongs displaying, adding or playing songs and sets the scope's current playlist", function() {
-                    scope.getRandomSongs('whatever action', 'Rock');
+                describe("when I request random songs", function() {
+                    beforeEach(function() {
+                        subsonic.getRandomSongs.and.returnValue(deferred.promise);
+                    });
+
+                    it("from all folders or genres, then subsonic-service will be called, displaying, adding or playing songs will be delegated to requestSongs and the current playlist will be published to the scope", function() {
+                        scope.getRandomSongs('whatever action');
+                        deferred.resolve(response);
+                        scope.$apply();
+
+                        expect(subsonic.getRandomSongs).toHaveBeenCalled();
+                        expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
+                        expect(scope.album).toEqual([]);
+                        expect(scope.BreadCrumbs).toBeNull();
+                        expect(scope.selectedAutoAlbum).toBeNull();
+                        expect(scope.selectedArtist).toBeNull();
+                        expect(scope.selectedAlbum).toBeNull();
+                        expect(scope.selectedAutoPlaylist).toBe('random');
+                        expect(scope.selectedPlaylist).toBeNull();
+                        expect(scope.selectedPodcast).toBeNull();
+                    });
+
+                    it("from a given genre, then subsonic-service will be called, displaying, adding or playing songs will be delegated to requestSongs and the current playlist will be published to the scope", function() {
+                        scope.getRandomSongs('whatever action', 'Rock');
+                        deferred.resolve(response);
+                        scope.$apply();
+
+                        expect(subsonic.getRandomSongs).toHaveBeenCalledWith('Rock', undefined);
+                        expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
+                        expect(scope.album).toEqual([]);
+                        expect(scope.BreadCrumbs).toBeNull();
+                        expect(scope.selectedAutoAlbum).toBeNull();
+                        expect(scope.selectedArtist).toBeNull();
+                        expect(scope.selectedAlbum).toBeNull();
+                        expect(scope.selectedAutoPlaylist).toBe('Rock');
+                        expect(scope.selectedPlaylist).toBeNull();
+                        expect(scope.selectedPodcast).toBeNull();
+                    });
+
+                    it("from a given folder id, then subsonic-service will be called, displaying, adding or playing songs will be delegated to requestSongs and the current playlist will be published to the scope", function() {
+                        scope.getRandomSongs('whatever action', '', 1);
+                        deferred.resolve(response);
+                        scope.$apply();
+
+                        expect(subsonic.getRandomSongs).toHaveBeenCalledWith('', 1);
+                        expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
+                        expect(scope.album).toEqual([]);
+                        expect(scope.BreadCrumbs).toBeNull();
+                        expect(scope.selectedAutoAlbum).toBeNull();
+                        expect(scope.selectedArtist).toBeNull();
+                        expect(scope.selectedAlbum).toBeNull();
+                        expect(scope.selectedAutoPlaylist).toBe(1);
+                        expect(scope.selectedPlaylist).toBeNull();
+                        expect(scope.selectedPodcast).toBeNull();
+                    });
+                });
+
+                describe("given a playlist that contained those 3 songs,", function() {
+                    beforeEach(function() {
+                        subsonic.getPlaylist.and.returnValue(deferred.promise);
+                    });
+
+                    it("when I request it, then subsonic-service will be called, displaying, adding or playing songs will be delegated to requestSongs and the current playlist will be published to the scope", function() {
+                        scope.getPlaylist('whatever action', 1146);
+                        deferred.resolve(response);
+                        scope.$apply();
+
+                        expect(subsonic.getPlaylist).toHaveBeenCalledWith(1146);
+                        expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
+                        expect(scope.song).toEqual([]);
+                        expect(scope.album).toEqual([]);
+                        expect(scope.BreadCrumbs).toBeNull();
+                        expect(scope.selectedAutoAlbum).toBeNull();
+                        expect(scope.selectedArtist).toBeNull();
+                        expect(scope.selectedAlbum).toBeNull();
+                        expect(scope.selectedAutoPlaylist).toBeNull();
+                        expect(scope.selectedPlaylist).toBe(1146);
+                        expect(scope.selectedPodcast).toBeNull();
+                    });
+
+                    it("when I display it, the number of songs in the playlist will be notified", function() {
+                        scope.getPlaylist('display', 1146);
+                        deferred.resolve(response);
+                        scope.$apply();
+
+                        expect(notifications.updateMessage).toHaveBeenCalledWith('3 Song(s) in Playlist', true);
+                    });
+                });
+
+                it("given a podcast that contained those 3 songs as episodes, when I request it, then subsonic-service will be called, displaying adding or playing songs will be delegated to requestSongs and the current selected podcast will be published to the scope", function() {
+                    subsonic.getPodcast.and.returnValue(deferred.promise);
+
+                    scope.getPodcast('whatever action', 45);
                     deferred.resolve(response);
                     scope.$apply();
 
-                    expect(subsonic.getRandomSongs).toHaveBeenCalledWith('Rock', undefined);
+                    expect(subsonic.getPodcast).toHaveBeenCalledWith(45);
                     expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
-                    expect(scope.selectedPlaylist).toBeNull();
-                    expect(scope.selectedAutoPlaylist).toBe('Rock');
-                });
-
-                it("when I request random songs from a given folder id, it uses subsonic-service, delegates to requestSongs displaying, adding or playing songs and sets the scope's current playlist", function() {
-                    scope.getRandomSongs('whatever action', '', 1);
-                    deferred.resolve(response);
-                    scope.$apply();
-
-                    expect(subsonic.getRandomSongs).toHaveBeenCalledWith('', 1);
-                    expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
-                    expect(scope.selectedPlaylist).toBeNull();
-                    expect(scope.selectedAutoPlaylist).toBe(1);
-                });
-
-                it("given a playlist that contains those 3 songs, when I request it, it uses subsonic-service, delegates to requestSongs displaying, adding or playing the songs of the playlist and sets the scope's current playlist", function() {
-                    scope.getPlaylist('whatever action', 1146);
-                    deferred.resolve(response);
-                    scope.$apply();
-
-                    expect(subsonic.getPlaylist).toHaveBeenCalledWith(1146);
-                    expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
-                    expect(scope.selectedPlaylist).toBe(1146);
+                    expect(scope.song).toEqual([]);
+                    expect(scope.album).toEqual([]);
+                    expect(scope.BreadCrumbs).toBeNull();
+                    expect(scope.selectedAutoAlbum).toBeNull();
+                    expect(scope.selectedArtist).toBeNull();
+                    expect(scope.selectedAlbum).toBeNull();
                     expect(scope.selectedAutoPlaylist).toBeNull();
-                });
-
-                it("given a playlist that contained those 3 songs, when I display it, it will notify the user with the number of songs in the playlist", function() {
-                    scope.getPlaylist('display', 1146);
-                    deferred.resolve(response);
-                    scope.$apply();
-
-                    expect(notifications.updateMessage).toHaveBeenCalledWith('3 Song(s) in Playlist', true);
+                    expect(scope.selectedPlaylist).toBeNull();
+                    expect(scope.selectedPodcast).toBe(45);
                 });
             });
 
