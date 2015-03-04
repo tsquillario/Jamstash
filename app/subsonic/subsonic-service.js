@@ -504,29 +504,20 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             deferred.resolve(genres);
             return deferred.promise;
         },
-        getPodcasts: function (refresh) {
-            var deferred = $q.defer();
-            if (globals.settings.Debug) { console.log("LOAD PODCASTS"); }
-            $.ajax({
-                url: globals.BaseURL() + '/getPodcasts.view?' + globals.BaseParams(),
-                method: 'GET',
-                dataType: globals.settings.Protocol,
-                timeout: globals.settings.Timeout,
-                success: function (data) {
-                    if (data["subsonic-response"].podcasts.channel !== undefined) {
-                        var items = [];
-                        if (data["subsonic-response"].podcasts.channel.length > 0) {
-                            items = data["subsonic-response"].podcasts.channel;
-                        } else {
-                            items[0] = data["subsonic-response"].podcasts.channel;
-                        }
-                        podcasts = items;
-                    }
-                    deferred.resolve(podcasts);
+
+        getPodcasts: function () {
+            var exception = {reason: 'No podcast found on the Subsonic server.'};
+            var promise = this.subsonicRequest('getPodcasts.view')
+            .then(function (subsonicResponse) {
+                if (subsonicResponse.podcasts !== undefined && subsonicResponse.podcasts.channel !== undefined && subsonicResponse.podcasts.channel.length > 0) {
+                    return subsonicResponse.podcasts.channel;
+                } else {
+                    return $q.reject(exception);
                 }
             });
-            return deferred.promise;
+            return promise;
         },
+
         getPodcast: function (id, action) {
             var deferred = $q.defer();
             content.selectedPodcast = id;

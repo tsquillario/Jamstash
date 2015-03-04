@@ -402,6 +402,7 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             $scope.playlistsPublic = data.playlistsPublic;
         }, function () {
             // Do not display a notification, there simply are no playlists.
+            // Otherwise, a notification will be displayed at every page reload.
             $scope.playlists = [];
             $scope.playlistsPublic = [];
         });
@@ -513,11 +514,18 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             $scope.Genres = data;
         });
     };
-    $scope.getPodcasts = function (refresh) {
-        subsonic.getPodcasts(refresh).then(function (data) {
-            $scope.podcasts = data;
+
+    $scope.getPodcasts = function () {
+        var promise = subsonic.getPodcasts();
+        $scope.handleErrors(promise).then(function (podcasts) {
+            $scope.podcasts = podcasts;
+        }, function () {
+            // Do not display a notification, there simply are no podcasts.
+            // Otherwise, a notification will be displayed at every page reload.
+            $scope.podcasts = [];
         });
     };
+
     $scope.getPodcast = function (id, action) {
         subsonic.getPodcast(id, action).then(function (data) {
             $scope.album = data.album;
