@@ -78,6 +78,15 @@ angular.module('jamstash.model', ['jamstash.utils'])
         return new model.Album(album.id, album.parent, title, album.artist.toString(), album.artistId, coverartthumb, coverartfull, $.format.date(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '', type);
     };
 
+    this.mapAlbums = function (albums) {
+        var mappedAlbums = [];
+        var mapAlbum = this.mapAlbum;
+        angular.forEach(albums, function (album) {
+            mappedAlbums.push(mapAlbum(album));
+        });
+        return mappedAlbums;
+    };
+
     this.mapSong = function (data) {
         var song = data;
         var url, title, artist, track, rating, starred, contenttype, suffix, description;

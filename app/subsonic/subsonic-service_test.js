@@ -31,6 +31,9 @@ describe("Subsonic service -", function() {
                 $delegate.mapPodcast = function (argument) {
                     return argument;
                 };
+                $delegate.mapAlbum = function (argument) {
+                    return argument;
+                };
                 return $delegate;
             });
             // Mock utils.getValue
@@ -646,6 +649,150 @@ describe("Subsonic service -", function() {
             mockBackend.flush();
 
             expect(promise).toBeRejectedWith({reason: 'No downloaded episode found for this podcast. Please check the podcast settings.'});
+        });
+    });
+
+    describe("search() -", function() {
+        var url;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/search2.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D'+'&query=unintersetingly'+'&u=Hyzual&v=1.10.2';
+        });
+
+        it("Given that songs containing 'unintersetingly' existed in my library, when I search for a song that contains 'unintersetingly', then a promise will be resolved with an array of songs", function() {
+            response["subsonic-response"].searchResult2 = {
+                song: [
+                    {
+                        id: 2916,
+                        name: "unintersetingly sleepyhead"
+                    }, {
+                        id: 489,
+                        name: "unintersetingly Labyrinthula"
+                    }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 0);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                {
+                    id: 2916,
+                    name: "unintersetingly sleepyhead"
+                }, {
+                    id: 489,
+                    name: "unintersetingly Labyrinthula"
+                }
+            ]);
+        });
+
+        it("Given that no songs containing 'unintersetingly' existed in my library, when I search for a song that contains 'unintersetingly', then a promise will be rejected with an error message", function() {
+            response["subsonic-response"].searchResult2 = {
+                album: []
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 0);
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: "No results."});
+        });
+
+        it("Given that albums containing 'unintersetingly' existed in my library, when I search for an album that contains 'unintersetingly', then a promise will be resolved with an array of albums", function() {
+            response["subsonic-response"].searchResult2 = {
+                album: [
+                    {
+                        id: 434,
+                        name: "Microtomical unintersetingly"
+                    }, {
+                        id: 150,
+                        name: "unintersetingly assurance"
+                    }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 1);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                {
+                    id: 434,
+                    name: "Microtomical unintersetingly"
+                }, {
+                    id: 150,
+                    name: "unintersetingly assurance"
+                }
+            ]);
+        });
+
+        it("Given that no albums containing 'unintersetingly' existed in my library, when I search for an album that contains 'unintersetingly', then a promise will be rejected with an error message", function() {
+            response["subsonic-response"].searchResult2 = {
+                song: []
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 1);
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: "No results."});
+        });
+
+        it("Given that artists containing 'unintersetingly' existed in my library, when I search for an artist that contains 'unintersetingly', then a promise will be resolved with an array of artists", function () {
+            response["subsonic-response"].searchResult2 = {
+                artist: [
+                    {
+                        id: 52,
+                        name: "unintersetingly overlaxly"
+                    }, {
+                        id: 77,
+                        name: "Waybread unintersetingly"
+                    }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 2);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                {
+                    id: 52,
+                    name: "unintersetingly overlaxly"
+                }, {
+                    id: 77,
+                    name: "Waybread unintersetingly"
+                }
+            ]);
+        });
+
+        it("Given that no artists containing 'unintersetingly' existed in my library, when I search for an artist that contains 'unintersetingly', then a promise will be rejected with an error message", function() {
+            response["subsonic-response"].searchResult2 = {
+                song: []
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 2);
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: "No results."});
+        });
+
+        it("Given that the library didn't contain anything containing 'unintersetingly', when I search for anything that contains 'unintersetingly', then a promise will be rejected with an error message", function() {
+            response["subsonic-response"].searchResult2 = {};
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 0);
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: "No results."});
+        });
+
+        it("Given a search type that isn't 0 or 1 or 2, when I search for anything, Subsonic's API won't be called and a promise will be rejected with an error message", function() {
+            var promise = subsonic.search("fading", 35);
+
+            expect(promise).toBeRejectedWith({reason: "Wrong search type."});
         });
     });
 });

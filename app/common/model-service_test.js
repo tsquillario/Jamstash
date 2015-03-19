@@ -51,4 +51,20 @@ describe("model service", function() {
         expect(map.mapPodcast).toHaveBeenCalledWith({ id: 80 });
         expect(result).toEqual(episodes);
     });
+
+    it("Given multiple albums, when I map them, then mapAlbum is called for each album", function() {
+        var albums = [
+            { id: 941 },
+            { id: 967 },
+            { id: 545 }
+        ];
+        spyOn(map, 'mapAlbum').and.callFake(function (album) { return album; });
+
+        var result = map.mapAlbums(albums);
+        expect(map.mapAlbum.calls.count()).toEqual(3);
+        expect(map.mapAlbum).toHaveBeenCalledWith({ id: 941 });
+        expect(map.mapAlbum).toHaveBeenCalledWith({ id: 967 });
+        expect(map.mapAlbum).toHaveBeenCalledWith({ id: 545 });
+        expect(result).toEqual(albums);
+    });
 });

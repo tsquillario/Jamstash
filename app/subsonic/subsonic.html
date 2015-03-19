@@ -7,9 +7,9 @@
             <a href="" class="button" id="action_ToggleArtists" ng-click="toggleArtists()" title="Toggle Artists"><img src="images/arrow_right_gl_8x8.png" /></a>
         </div>
         <div id="search">
-            <input type="text" id="Search" name="Search" class="medium" title="Wildcards (*) supported" placeholder="Search..." ng-enter="search()"/>
-            <select id="SearchType" name="SearchType" ng-model="SearchType.id" ng-options="o.id as o.name for o in SearchTypes"></select>
-            <a href="" class="button" id="action_Search" title="Search" ng-click="search()"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
+            <input type="text" id="Search" name="Search" class="medium" title="Wildcards (*) supported" placeholder="Search..." ng-model="searching.query" ng-enter="search(searching.query, searching.typeId)"/>
+            <select id="SearchType" name="SearchType" ng-model="searching.typeId" ng-options="o.id as o.name for o in searching.types"></select>
+            <a href="" class="button" id="action_Search" title="Search" ng-click="search(searching.query, searching.typeId)"><img class="pad" src="images/magnifying_glass_alt_12x12.png" /></a>
         </div>
         <div class="subactions">
             <div class="floatleft" ng-show="selectedPlaylist !== null">
