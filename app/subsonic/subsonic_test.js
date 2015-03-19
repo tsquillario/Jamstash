@@ -42,7 +42,8 @@ describe("Subsonic controller", function() {
                 "newPlaylist",
                 "deletePlaylist",
                 "savePlaylist",
-                "getPodcast"
+                "getPodcast",
+                "search"
             ]);
             // We make them return different promises and use our deferred variable only when testing
             // a particular function, so that they stay isolated
@@ -561,9 +562,90 @@ describe("Subsonic controller", function() {
                 expect(notifications.updateMessage).not.toHaveBeenCalled();
             });
         });
+
+        describe("search() -", function() {
+            beforeEach(function() {
+                subsonic.search.and.returnValue(deferred.promise);
+            });
+
+            it("Given that songs containing 'fireboard' existed in my library, when I search for a song that contains 'fireboard', then the scope's songs will be filled with an array containing those songs and the other scope arrays will be emptied", function() {
+                scope.search('fireboard', 0);
+                deferred.resolve([
+                    {id: 318, name: "antichronically fireboard"},
+                    {id: 890, name: "fireboard Rhoda"},
+                    {id: 643, name: "fireboarding stalactical"}
+                ]);
+                scope.$apply();
+
+                expect(subsonic.search).toHaveBeenCalledWith('fireboard', 0);
+                expect(scope.song).toEqual([
+                    {id: 318, name: "antichronically fireboard"},
+                    {id: 890, name: "fireboard Rhoda"},
+                    {id: 643, name: "fireboarding stalactical"}
+                ]);
+                expect(scope.album).toEqual([]);
+                expect(scope.BreadCrumbs).toBeNull();
+            });
+
+            it("Given that albums containing 'neolalia' existed in my library, when I search for an album that contains 'neolalia', then the scope's albums will be filled with an array containing those albums and the other scope arrays will be emptied", function() {
+                scope.search('neolalia', 1);
+                deferred.resolve([
+                    {id: 74, name: "Magdalen neolalia"},
+                    {id: 2, name: "neolalia tribrac"},
+                    {id: 19, name: "neolaliaviator"},
+                ]);
+                scope.$apply();
+
+                expect(subsonic.search).toHaveBeenCalledWith('neolalia', 1);
+                expect(scope.album).toEqual([
+                    {id: 74, name: "Magdalen neolalia"},
+                    {id: 2, name: "neolalia tribrac"},
+                    {id: 19, name: "neolaliaviator"},
+                ]);
+                expect(scope.song).toEqual([]);
+                expect(scope.BreadCrumbs).toBeNull();
+            });
+
+            it("Given that artists containing 'brazenly' existed in my library, when I search for an artist that contains 'brazenly', then the scope's shortcuts will be filled with an array containing those artists and the other scope arrays will be emptied", function() {
+                scope.search('brazenly', 2);
+                deferred.resolve([
+                    {id: 645, name: "brazenly unsheriff"},
+                    {id: 831, name: "planorotund brazenly"},
+                    {id: 181, name: "brazenlyon"},
+                ]);
+                scope.$apply();
+
+                expect(subsonic.search).toHaveBeenCalledWith('brazenly', 2);
+                expect(scope.shortcut).toEqual([
+                    {id: 645, name: "brazenly unsheriff"},
+                    {id: 831, name: "planorotund brazenly"},
+                    {id: 181, name: "brazenlyon"},
+                ]);
+                expect(scope.song).toEqual([]);
+                expect(scope.album).toEqual([]);
+                expect(scope.BreadCrumbs).toBeNull();
+            });
+
+            it("Given any type of search and given that the library didn't contain anything containing 'shindig', when I search for 'shindig', then an error notification will be displayed", function() {
+                scope.search('shindig', jasmine.any(Number()));
+                deferred.reject({reason: "No results."});
+                scope.$apply();
+
+                expect(subsonic.search).toHaveBeenCalledWith('shindig', jasmine.any(Number()));
+                expect(notifications.updateMessage).toHaveBeenCalledWith('No results.', true);
+            });
+
+            it("Given any type of search, When I search for an empty string, then subsonic service won't be called", function() {
+                scope.search('', 34);
+
+                expect(subsonic.search).not.toHaveBeenCalled();
+            });
+        });
     });
 
     describe("On startup,", function() {
+        //TODO: Hyz: Search types and default types published at startup
+
         xit("it loads the indexes, the playlists", function() {
             controllerParams.$scope.getArtists = jasmine.createSpy('getArtists');
             controllerParams.$scope.getPlaylists = jasmine.createSpy('getPlaylists');

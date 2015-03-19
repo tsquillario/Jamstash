@@ -28,10 +28,8 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
         selectedPodcast: null
     };
     var genres = [];
-    var podcasts = [];
     var offset = 0;
     var showPlaylist = false;
-    var showPodcast = false;
 
     return {
         showIndex: $rootScope.showIndex,
@@ -291,68 +289,40 @@ angular.module('jamstash.subsonic.service', ['jamstash.settings', 'jamstash.util
             });
             return promise;
         },
+
         search: function (query, type) {
-            var deferred = $q.defer();
-            if (query !== '') {
-                $.ajax({
-                    url: globals.BaseURL() + '/search2.view?' + globals.BaseParams() + '&query=' + query,
-                    method: 'GET',
-                    dataType: globals.settings.Protocol,
-                    timeout: globals.settings.Timeout,
-                    success: function (data) {
-                        if (data["subsonic-response"].searchResult2 !== "") {
-                            var items = [];
-                            if (type === '0') {
-                                if (data["subsonic-response"].searchResult2.song !== undefined) {
-                                    if (data["subsonic-response"].searchResult2.song.length > 0) {
-                                        items = data["subsonic-response"].searchResult2.song;
-                                    } else {
-                                        items[0] = data["subsonic-response"].searchResult2.song;
-                                    }
-                                    content.album = [];
-                                    content.song = [];
-                                    angular.forEach(items, function (item, key) {
-                                        content.song.push(map.mapSong(item));
-                                    });
+            if(_([0, 1, 2]).contains(type)) {
+                var promise = this.subsonicRequest('search2.view', {
+                    params: {
+                        query: query
+                    }
+                }).then(function (subsonicResponse) {
+                    if (!_.isEmpty(subsonicResponse.searchResult2)) {
+                        switch (type) {
+                            case 0:
+                                if (subsonicResponse.searchResult2.song !== undefined) {
+                                    return map.mapSongs(subsonicResponse.searchResult2.song);
                                 }
-                            }
-                            if (type === '1') {
-                                if (data["subsonic-response"].searchResult2.album !== undefined) {
-                                    if (data["subsonic-response"].searchResult2.album.length > 0) {
-                                        items = data["subsonic-response"].searchResult2.album;
-                                    } else {
-                                        items[0] = data["subsonic-response"].searchResult2.album;
-                                    }
-                                    content.album = [];
-                                    content.song = [];
-                                    angular.forEach(items, function (item, key) {
-                                        if (item.isDir) {
-                                            content.album.push(map.mapAlbum(item));
-                                        } else {
-                                            content.song.push(map.mapAlbum(item));
-                                        }
-                                    });
+                                break;
+                            case 1:
+                                if (subsonicResponse.searchResult2.album !== undefined) {
+                                    return map.mapAlbums(subsonicResponse.searchResult2.album);
                                 }
-                            }
-                            if (type === '2') {
-                                if (data["subsonic-response"].searchResult2.artist !== undefined) {
-                                    if (data["subsonic-response"].searchResult2.artist.length > 0) {
-                                        items = data["subsonic-response"].searchResult2.artist;
-                                    } else {
-                                        items[0] = data["subsonic-response"].searchResult2.artist;
-                                    }
-                                    angular.forEach(items, function (item, key) {
-                                        index.shortcuts.push(item);
-                                    });
+                                break;
+                            case 2:
+                                if (subsonicResponse.searchResult2.artist !== undefined) {
+                                    return subsonicResponse.searchResult2.artist;
                                 }
-                            }
-                            deferred.resolve(content);
+                                break;
                         }
                     }
+                    // We end up here for every else
+                    return $q.reject({reason: 'No results.'});
                 });
-                //$('#Search').val("");
+                return promise;
+            } else {
+                return $q.reject({reason: 'Wrong search type.'});
             }
-            return deferred.promise;
         },
 
         getRandomSongs: function (genre, folder) {

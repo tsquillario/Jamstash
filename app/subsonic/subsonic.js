@@ -148,8 +148,11 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             $scope.getArtists(newValue.id);
         }
     });
-    $scope.SearchType = globals.settings.DefaultSearchType;
-    $scope.SearchTypes = globals.SearchTypes;
+    $scope.searching = {
+        query: "",
+        typeId: globals.settings.DefaultSearchType,
+        types: globals.SearchTypes
+    };
     $scope.playlistsGenre = globals.SavedGenres;
     $scope.$watch("selectedGenre", function (newValue, oldValue) {
         if (newValue !== oldValue) {
@@ -394,14 +397,28 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             $scope.selectedPlaylist = data.selectedPlaylist;
         });
     };
-    $scope.search = function () {
-        var query = $('#Search').val();
-        var type = $('#SearchType').val();
-        subsonic.search(query, type).then(function (data) {
-            //$scope.shortcut = data.shortcuts;
-            $scope.album = data.album;
-            $scope.song = data.song;
-        });
+    $scope.search = function (query, type) {
+        if(query && query.length > 0) {
+            var promise = subsonic.search(query, type);
+            $scope.handleErrors(promise).then(function (data) {
+                if (type === 0) {
+                    $scope.song = data;
+                    $scope.album = [];
+                } else if (type === 1) {
+                    $scope.song = [];
+                    $scope.album = data;
+                } else if (type === 2) {
+                    $scope.song = [];
+                    $scope.album = [];
+                    $scope.shortcut = data;
+                }
+                $scope.BreadCrumbs = null;
+            }, function (error) {
+                if (error.serviceError === true) {
+                    notifications.updateMessage(error.reason, true);
+                }
+            });
+        }
     };
     $scope.toggleAZ = function () {
         $scope.toggleSubmenu('#submenu_AZIndex', '#AZIndex', 'right', 44);
