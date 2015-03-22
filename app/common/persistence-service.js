@@ -9,11 +9,11 @@ angular.module('jamstash.persistence', ['jamstash.settings', 'jamstash.player.se
 
 .config(['lockerProvider', function (lockerProvider) {
     lockerProvider.setDefaultDriver('local')
-        .setDefaultNamespace('jamstash')
+        .setDefaultNamespace(false)
         .setEventsEnabled(false);
 }])
 
-.service('persistence', ['globals', 'player', 'notifications', 'locker', function(globals, player, notifications, locker){
+.service('persistence', ['globals', 'player', 'notifications', 'locker', function (globals, player, notifications, locker) {
     this.loadTrackPosition = function () {
         // Load Saved Song
         var song = locker.get('CurrentSong');
