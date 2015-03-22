@@ -21,7 +21,14 @@ describe("Main controller", function() {
         player.queue = [];
 
         // Mock the persistence service
-        persistence = jasmine.createSpyObj("persistence", ["loadQueue", "loadTrackPosition", "getVolume", "saveVolume"]);
+        persistence = jasmine.createSpyObj("persistence", [
+            "loadQueue",
+            "loadTrackPosition",
+            "getVolume",
+            "saveVolume",
+            "getSettings",
+            "saveSettings"
+        ]);
 
         inject(function (_$controller_, $rootScope, _$document_, _$window_, _$location_, _$cookieStore_, _utils_, globals, _model_, _notifications_, _Page_) {
             scope = $rootScope.$new();
@@ -165,6 +172,24 @@ describe("Main controller", function() {
                 scope.previousTrack(event);
                 expect(player.previousTrack).not.toHaveBeenCalled();
             });
+        });
+
+        describe("loadSettings() -", function() {
+            it("Given user settings were saved using persistence, when I load the settings, the globals object will be completed with them, excluding the Url setting", function() {
+                persistence.getSettings.and.returnValue({
+                    "Url": "http://gmelinite.com/contrastive/hypercyanotic?a=overdrive&b=chirpling#postjugular",
+                    "Username": "Hollingshead",
+                    "AutoPlaylistSize": 25,
+                    "AutoPlay": true
+                });
+
+                scope.loadSettings();
+                expect(mockGlobals.settings.Username).toEqual("Hollingshead");
+                expect(mockGlobals.settings.AutoPlaylistSize).toBe(25);
+                expect(mockGlobals.settings.AutoPlay).toBe(true);
+                expect(mockGlobals.settings.Url).toBeUndefined();
+            });
+
         });
     });
 

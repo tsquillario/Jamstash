@@ -5,7 +5,8 @@
 * Provides load, save and delete operations for the current song and queue.
 * Data storage provided by HTML5 localStorage.
 */
-angular.module('jamstash.persistence', ['jamstash.settings', 'jamstash.player.service', 'jamstash.notifications', 'angular-locker'])
+angular.module('jamstash.persistence', ['angular-locker',
+    'jamstash.settings.service', 'jamstash.player.service', 'jamstash.notifications'])
 
 .config(['lockerProvider', function (lockerProvider) {
     lockerProvider.setDefaultDriver('local')
@@ -13,7 +14,9 @@ angular.module('jamstash.persistence', ['jamstash.settings', 'jamstash.player.se
         .setEventsEnabled(false);
 }])
 
-.service('persistence', ['globals', 'player', 'notifications', 'locker', function (globals, player, notifications, locker) {
+.service('persistence', ['globals', 'player', 'notifications', 'locker', 'jamstashVersion',
+    function (globals, player, notifications, locker, jamstashVersion) {
+    /* Manage current track */
     this.loadTrackPosition = function () {
         // Load Saved Song
         var song = locker.get('CurrentSong');
@@ -33,6 +36,7 @@ angular.module('jamstash.persistence', ['jamstash.settings', 'jamstash.player.se
         if (globals.settings.Debug) { console.log('Removing Current Position from localStorage'); }
     };
 
+    /* Manage playing queue */
     this.loadQueue = function () {
         // load Saved queue
         var queue = locker.get('CurrentQueue');
@@ -55,6 +59,7 @@ angular.module('jamstash.persistence', ['jamstash.settings', 'jamstash.player.se
         if (globals.settings.Debug) { console.log('Removing Play Queue from localStorage'); }
     };
 
+    /* Manage player volume */
     this.getVolume = function () {
         return locker.get('Volume');
     };
@@ -65,6 +70,38 @@ angular.module('jamstash.persistence', ['jamstash.settings', 'jamstash.player.se
 
     this.deleteVolume = function () {
         locker.forget('Volume');
+    };
+
+    /* Manage user settings */
+    this.getSettings = function () {
+        if(this.getVersion() !== jamstashVersion) {
+            this.upgradeToVersion(jamstashVersion);
+        }
+        return locker.get('Settings');
+    };
+
+    this.saveSettings = function (settings) {
+        locker.put('Settings', settings);
+    };
+
+    this.deleteSettings = function () {
+        locker.forget('Settings');
+    };
+
+    /* Manage Jamstash Version */
+    this.getVersion = function () {
+        return locker.get('version');
+    };
+
+    this.upgradeToVersion = function (version) {
+        locker.put('version', version);
+        switch (version) {
+            case '4.4.5':
+                var settings = locker.get('Settings');
+                settings.DefaultSearchType = 0;
+                this.saveSettings(settings);
+                break;
+        }
     };
 }]);
 

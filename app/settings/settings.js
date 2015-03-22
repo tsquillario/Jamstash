@@ -1,7 +1,7 @@
-﻿angular.module('JamStash')
+angular.module('jamstash.settings.controller', ['jamstash.settings.service', 'jamstash.persistence'])
 
-.controller('SettingsController', ['$rootScope', '$scope', '$routeParams', '$location', 'utils', 'globals', 'json', 'notifications', 'persistence', 'subsonic',
-    function ($rootScope, $scope, $routeParams, $location, utils, globals, json, notifications, persistence, subsonic) {
+.controller('SettingsController', ['$rootScope', '$scope', '$location', 'utils', 'globals', 'json', 'notifications', 'persistence', 'subsonic',
+    function ($rootScope, $scope, $location, utils, globals, json, notifications, persistence, subsonic) {
     'use strict';
     $rootScope.hideQueue();
     $scope.settings = globals.settings; /* See service.js */
@@ -28,8 +28,9 @@
         }
     });
     $scope.reset = function () {
-        utils.setValue('Settings', null, true);
+        persistence.deleteSettings();
         $scope.loadSettings();
+        // TODO: Hyz: reload the page
     };
     $scope.save = function () {
         if ($scope.settings.Password !== '' && globals.settings.Password.substring(0, 4) != 'enc:') { $scope.settings.Password = 'enc:' + utils.HexEncode($scope.settings.Password); }
@@ -60,7 +61,7 @@
         } else {
             $rootScope.hideQueue();
         }
-        utils.setValue('Settings', $scope.settings, true);
+        persistence.saveSettings($scope.settings);
         notifications.updateMessage('Settings Updated!', true);
         $scope.loadSettings();
         if (globals.settings.Server !== '' && globals.settings.Username !== '' && globals.settings.Password !== '') {
