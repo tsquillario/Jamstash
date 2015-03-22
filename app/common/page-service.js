@@ -3,7 +3,7 @@
 *
 * Set the page's title from anywhere, the angular way
 */
-angular.module('jamstash.page', ['jamstash.settings', 'jamstash.utils'])
+angular.module('jamstash.page', ['jamstash.settings.service', 'jamstash.utils'])
 
 .factory('Page', ['$interval', 'globals', 'utils', function($interval, globals, utils){
     'use strict';

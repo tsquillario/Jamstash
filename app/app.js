@@ -1,8 +1,8 @@
 'use strict';
 
 /* Declare app level module */
-angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize', 'ui.keypress',
-    'jamstash.subsonic.controller', 'jamstash.archive.controller', 'jamstash.player.controller', 'jamstash.queue.controller', 'jamstash.persistence'])
+angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize', 'ui.keypress', 'angular-underscore/utils',
+    'jamstash.subsonic.controller', 'jamstash.archive.controller', 'jamstash.player.controller', 'jamstash.queue.controller', 'jamstash.settings.controller', 'jamstash.persistence'])
 
 .config(['$routeProvider',function($routeProvider) {
     $routeProvider
@@ -48,4 +48,6 @@ angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize', 'ui.keypress',
             }
         };
     }]);
-}]);
+}])
+
+.constant('jamstashVersion', '4.4.5');

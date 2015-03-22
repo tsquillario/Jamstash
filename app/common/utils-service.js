@@ -3,7 +3,7 @@
 *
 * Provides generally useful functions, like sorts, date-related functions, localStorage access, etc.
 */
-angular.module('jamstash.utils', ['jamstash.settings'])
+angular.module('jamstash.utils', ['jamstash.settings.service'])
 
 .service('utils', ['$rootScope', 'globals', function ($rootScope, globals) {
     'use strict';

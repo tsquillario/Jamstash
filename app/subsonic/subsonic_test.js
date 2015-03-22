@@ -1,7 +1,8 @@
 describe("Subsonic controller", function() {
     'use strict';
 
-    var scope, $rootScope, $controller, $window, subsonic, notifications, player, controllerParams, deferred;
+    var scope, $rootScope, $controller, $window,
+        subsonic, notifications, player, controllerParams, deferred;
 
     beforeEach(function() {
         jasmine.addCustomEqualityTester(angular.equals);
