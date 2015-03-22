@@ -2,14 +2,16 @@ describe("Persistence service", function() {
     'use strict';
 
     var persistence, player, notifications, locker,
-        song, fakeStorage;
+        song, fakeStorage, fakeVersionChangesets;
     beforeEach(function() {
+        fakeVersionChangesets = {versions: []};
         module('jamstash.persistence', function ($provide) {
             // Mock locker
             $provide.decorator('locker', function () {
                 return jasmine.createSpyObj("locker", ["get", "put", "forget"]);
             });
             $provide.constant("jamstashVersion", "1.0.1");
+            $provide.value("jamstashVersionChangesets", fakeVersionChangesets);
         });
 
         inject(function (_persistence_, _player_, _notifications_, _locker_) {
@@ -202,18 +204,59 @@ describe("Persistence service", function() {
                 expect(locker.put).toHaveBeenCalledWith('version', '1.0.1');
             });
 
-            it("that settings.DefaultSearchType was stored as an object and that a changeset for version '4.4.5' was defined that changes it to an int, when I upgrade the storage version to '4.4.5', settings.DefaultSearch will be stored as an int", function() {
-                fakeStorage = {
-                    Settings: {
-                        DefaultSearchType: {
-                            id: "song",
-                            name: "Song"
+            describe("that changesets for versions '1.0.1' and '1.0.2' were defined,", function() {
+                beforeEach(function() {
+                    fakeVersionChangesets.versions = [
+                        {
+                            version: '1.0.1',
+                            changeset: function (settings) {
+                                settings.DefaultSearchType = 0;
+                            }
+                        },
+                        {
+                            version: '1.0.2',
+                            changeset:  function (settings) {
+                                settings.DefaultAlbumSort = 0;
+                            }
                         }
-                    }
-                };
-                persistence.upgradeToVersion('4.4.5');
-                expect(locker.put).toHaveBeenCalledWith('Settings', {
-                    DefaultSearchType: 0
+                    ];
+                    fakeStorage = {
+                        Settings: {
+                            DefaultSearchType: {
+                                id: "song",
+                                name: "Song"
+                            },
+                            DefaultAlbumSort: {
+                                id: "default",
+                                name: "Default Sort"
+                            },
+                            Username: "Hedrix",
+                            AutoPlay: true
+                        }
+                    };
+                });
+
+                it("when I upgrade the storage version to '1.0.2', both changesets have been applied", function() {
+                    persistence.upgradeToVersion('1.0.2');
+                    expect(locker.put).toHaveBeenCalledWith('Settings', {
+                        DefaultSearchType: 0,
+                        DefaultAlbumSort: 0,
+                        Username: "Hedrix",
+                        AutoPlay: true
+                    });
+                });
+
+                it("when I upgrade the storage version to '1.0.1', only the first changeset has been applied", function() {
+                    persistence.upgradeToVersion('1.0.1');
+                    expect(locker.put).toHaveBeenCalledWith('Settings', {
+                        DefaultSearchType: 0,
+                        DefaultAlbumSort: {
+                            id: "default",
+                            name: "Default Sort"
+                        },
+                        Username: "Hedrix",
+                        AutoPlay: true
+                    });
                 });
             });
         });

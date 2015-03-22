@@ -248,6 +248,7 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
             patch: pat
         };
     };
+    //TODO: Hyz: have "checkVersion" do the conversion themselves
     this.checkVersion = function (runningVersion, minimumVersion) {
         if (runningVersion.major >= minimumVersion.major) {
             if (runningVersion.minor >= minimumVersion.minor) {
@@ -263,6 +264,7 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
             return false;
         }
     };
+    //TODO: Hyz: have "checkVersion" do the conversion themselves
     this.checkVersionNewer = function (runningVersion, newVersion) {
         if (runningVersion.major < newVersion.major) {
             return true;

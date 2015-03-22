@@ -50,4 +50,5 @@ angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize', 'ui.keypress',
     }]);
 }])
 
+//TODO: store as version object
 .constant('jamstashVersion', '4.4.5');

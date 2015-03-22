@@ -6,7 +6,7 @@
 * Data storage provided by HTML5 localStorage.
 */
 angular.module('jamstash.persistence', ['angular-locker',
-    'jamstash.settings.service', 'jamstash.player.service', 'jamstash.notifications'])
+    'jamstash.settings.service', 'jamstash.player.service', 'jamstash.notifications', 'jamstash.utils'])
 
 .config(['lockerProvider', function (lockerProvider) {
     lockerProvider.setDefaultDriver('local')
@@ -14,8 +14,8 @@ angular.module('jamstash.persistence', ['angular-locker',
         .setEventsEnabled(false);
 }])
 
-.service('persistence', ['globals', 'player', 'notifications', 'locker', 'jamstashVersion',
-    function (globals, player, notifications, locker, jamstashVersion) {
+.service('persistence', ['globals', 'player', 'notifications', 'locker', 'jamstashVersion', 'jamstashVersionChangesets', 'utils',
+    function (globals, player, notifications, locker, jamstashVersion, jamstashVersionChangesets, utils) {
     /* Manage current track */
     this.loadTrackPosition = function () {
         // Load Saved Song
@@ -74,6 +74,7 @@ angular.module('jamstash.persistence', ['angular-locker',
 
     /* Manage user settings */
     this.getSettings = function () {
+        //TODO: store as version object
         if(this.getVersion() !== jamstashVersion) {
             this.upgradeToVersion(jamstashVersion);
         }
@@ -93,15 +94,33 @@ angular.module('jamstash.persistence', ['angular-locker',
         return locker.get('version');
     };
 
-    this.upgradeToVersion = function (version) {
-        locker.put('version', version);
-        switch (version) {
-            case '4.4.5':
-                var settings = locker.get('Settings');
-                settings.DefaultSearchType = 0;
-                this.saveSettings(settings);
-                break;
-        }
+    this.upgradeToVersion = function (finalVersion) {
+        var currentVersion = utils.parseVersionString(this.getVersion());
+        var settings = locker.get('Settings');
+        // Apply all upgrades older than the final version
+        // TODO: Hyz: Do not apply upgrades already applied (start from current version)
+        var allUpgrades = _(jamstashVersionChangesets.versions).filter(function (toApply) {
+            //TODO: Hyz: have "checkVersion" do the conversion themselves
+            var versionToCheck = utils.parseVersionString(toApply.version);
+            var objFinalVersion = utils.parseVersionString(finalVersion);
+            return utils.checkVersion(objFinalVersion, versionToCheck);
+        });
+        _(allUpgrades).each(function (versionUpg) {
+            versionUpg.changeset(settings);
+        });
+        this.saveSettings(settings);
+        locker.put('version', finalVersion);
     };
-}]);
+}])
+
+.value('jamstashVersionChangesets', {
+    versions: [
+        {
+            version: '4.4.5',
+            changeset: function (settings) {
+                settings.DefaultSearchType = 0;
+            }
+        }
+    ]
+});
 
