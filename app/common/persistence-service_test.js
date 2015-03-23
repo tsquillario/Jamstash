@@ -12,6 +12,16 @@ describe("Persistence service", function() {
             });
             $provide.constant("jamstashVersion", "1.0.1");
             $provide.value("jamstashVersionChangesets", fakeVersionChangesets);
+
+            $provide.decorator('notifications', function () {
+                return jasmine.createSpyObj("notifications", ["updateMessage"]);
+            });
+
+            $provide.decorator('player', function () {
+                var fakePlayer = jasmine.createSpyObj("player", ["load", "addSongs"]);
+                fakePlayer.queue = [];
+                return fakePlayer;
+            });
         });
 
         inject(function (_persistence_, _player_, _notifications_, _locker_) {
@@ -27,8 +37,6 @@ describe("Persistence service", function() {
             artist: 'Isiah Hosfield',
             album: 'Tammanyize'
         };
-        player.queue = [];
-
         fakeStorage = {};
 
         locker.get.and.callFake(function(key) {
@@ -37,10 +45,6 @@ describe("Persistence service", function() {
     });
 
     describe("loadTrackPosition() -", function() {
-        beforeEach(function() {
-            spyOn(player, "load");
-        });
-
         it("Given a previously saved song in local storage, when I load the song, the player will load it", function() {
             fakeStorage = { 'CurrentSong': song };
 
@@ -69,8 +73,7 @@ describe("Persistence service", function() {
 
     describe("loadQueue() -", function() {
         beforeEach(function() {
-            spyOn(notifications, "updateMessage");
-            spyOn(player, "addSongs").and.callFake(function (songs) {
+            player.addSongs.and.callFake(function (songs) {
                 // Update the queue length so that notifications work
                 player.queue.length += songs.length;
             });
@@ -162,6 +165,7 @@ describe("Persistence service", function() {
         });
 
         it("Given that the previously stored Jamstash version was '1.0.0' and given the current constant jamstash.version was '1.0.1', when I get the settings, then upgradeToVersion will be called", function() {
+            fakeStorage.JamstashVersion = '1.0.0';
             spyOn(persistence, 'upgradeToVersion');
 
             persistence.getSettings();
@@ -193,50 +197,72 @@ describe("Persistence service", function() {
         expect(locker.forget).toHaveBeenCalledWith('Settings');
     });
 
+    describe("getVersion() -", function() {
+        it("Given a previously saved Jamstash version in local storage, it retrieves it", function() {
+            fakeStorage = { 'JamstashVersion': '1.2.5' };
+
+            var version = persistence.getVersion();
+
+            expect(locker.get).toHaveBeenCalledWith('JamstashVersion');
+            expect(version).toBe('1.2.5');
+        });
+
+        it("Given that no Jamstash version was previously saved in local storage, it returns undefined", function() {
+            var version = persistence.getVersion();
+
+            expect(locker.get).toHaveBeenCalledWith('JamstashVersion');
+            expect(version).toBeUndefined();
+        });
+    });
+
     describe("upgradeToVersion() -", function() {
-        describe("Given that Jamstash version '1.0.0' was previously stored in local storage,", function() {
+        it("Given that Jamstash version '1.0.0' was previously stored in local storage, when I upgrade the storage version to '1.0.1', Jamstash version '1.0.1' will be in local storage and the user will be notified", function() {
+            fakeStorage.JamstashVersion = '1.0.0';
+
+            persistence.upgradeToVersion('1.0.1');
+
+            expect(locker.put).toHaveBeenCalledWith('JamstashVersion', '1.0.1');
+            expect(notifications.updateMessage).toHaveBeenCalledWith('Version 1.0.0 to 1.0.1', true);
+        });
+
+        describe("Given that changesets for versions '1.0.1' and '1.0.2' were defined,", function() {
             beforeEach(function() {
-                fakeStorage.version = '1.0.0';
-            });
-
-            it("when I upgrade the storage version to '1.0.1', Jamstash version '1.0.1' will be in local storage", function() {
-                persistence.upgradeToVersion('1.0.1');
-                expect(locker.put).toHaveBeenCalledWith('version', '1.0.1');
-            });
-
-            describe("that changesets for versions '1.0.1' and '1.0.2' were defined,", function() {
-                beforeEach(function() {
-                    fakeVersionChangesets.versions = [
-                        {
-                            version: '1.0.1',
-                            changeset: function (settings) {
-                                settings.DefaultSearchType = 0;
-                            }
+                fakeVersionChangesets.versions = [
+                    {
+                        version: '1.0.1',
+                        changeset: function (settings) {
+                            settings.DefaultSearchType = 0;
+                        }
+                    },
+                    {
+                        version: '1.0.2',
+                        changeset:  function (settings) {
+                            settings.DefaultAlbumSort = 0;
+                        }
+                    }
+                ];
+                fakeStorage = {
+                    Settings: {
+                        DefaultSearchType: {
+                            id: "song",
+                            name: "Song"
                         },
-                        {
-                            version: '1.0.2',
-                            changeset:  function (settings) {
-                                settings.DefaultAlbumSort = 0;
-                            }
-                        }
-                    ];
-                    fakeStorage = {
-                        Settings: {
-                            DefaultSearchType: {
-                                id: "song",
-                                name: "Song"
-                            },
-                            DefaultAlbumSort: {
-                                id: "default",
-                                name: "Default Sort"
-                            },
-                            Username: "Hedrix",
-                            AutoPlay: true
-                        }
-                    };
+                        DefaultAlbumSort: {
+                            id: "default",
+                            name: "Default Sort"
+                        },
+                        Username: "Hedrix",
+                        AutoPlay: true
+                    }
+                };
+            });
+
+            describe("and that Jamstash version '1.0.0' was previously stored in local storage,", function() {
+                beforeEach(function() {
+                    fakeStorage.JamstashVersion = '1.0.0';
                 });
 
-                it("when I upgrade the storage version to '1.0.2', both changesets have been applied", function() {
+                 it("when I upgrade the storage version to '1.0.2', both changesets have been applied", function() {
                     persistence.upgradeToVersion('1.0.2');
                     expect(locker.put).toHaveBeenCalledWith('Settings', {
                         DefaultSearchType: 0,
@@ -246,7 +272,7 @@ describe("Persistence service", function() {
                     });
                 });
 
-                it("when I upgrade the storage version to '1.0.1', only the first changeset has been applied", function() {
+                it("when I upgrade the storage version to '1.0.1', only the '1.0.1' changeset has been applied", function() {
                     persistence.upgradeToVersion('1.0.1');
                     expect(locker.put).toHaveBeenCalledWith('Settings', {
                         DefaultSearchType: 0,
@@ -257,6 +283,21 @@ describe("Persistence service", function() {
                         Username: "Hedrix",
                         AutoPlay: true
                     });
+                });
+            });
+
+            it("and that Jamstash version '1.0.1' was previously stored in local storage, when I upgrade the storage version to '1.0.2', only the '1.0.2' changeset has been applied", function() {
+                fakeStorage.JamstashVersion = '1.0.1';
+
+                persistence.upgradeToVersion('1.0.2');
+                expect(locker.put).toHaveBeenCalledWith('Settings', {
+                    DefaultSearchType: {
+                        id: "song",
+                        name: "Song"
+                    },
+                    DefaultAlbumSort: 0,
+                    Username: "Hedrix",
+                    AutoPlay: true
                 });
             });
         });
