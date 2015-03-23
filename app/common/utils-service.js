@@ -235,6 +235,7 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
         var u = strurl.substring(0, strurl.indexOf('?'));
         return u;
     };
+
     this.parseVersionString = function (str) {
         if (typeof (str) !== 'string') { return false; }
         var x = str.split('.');
@@ -248,31 +249,21 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
             patch: pat
         };
     };
-    //TODO: Hyz: have "checkVersion" do the conversion themselves
-    this.checkVersion = function (runningVersion, minimumVersion) {
-        if (runningVersion.major >= minimumVersion.major) {
-            if (runningVersion.minor >= minimumVersion.minor) {
-                if (runningVersion.patch >= minimumVersion.patch) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+
+    this.checkVersion = function (newerVersion, olderVersion) {
+        if (!angular.isObject(newerVersion)) {
+            newerVersion = this.parseVersionString(newerVersion);
         }
-    };
-    //TODO: Hyz: have "checkVersion" do the conversion themselves
-    this.checkVersionNewer = function (runningVersion, newVersion) {
-        if (runningVersion.major < newVersion.major) {
+        if (!angular.isObject(olderVersion)) {
+            olderVersion = this.parseVersionString(olderVersion);
+        }
+        if (olderVersion.major !== undefined && newerVersion.major !== undefined && newerVersion.major > olderVersion.major) {
             return true;
         } else {
-            if (runningVersion.minor < newVersion.minor) {
+            if (olderVersion.minor !== undefined && newerVersion.minor !== undefined && newerVersion.minor > olderVersion.minor) {
                 return true;
             } else {
-                if (runningVersion.patch < newVersion.patch) {
+                if (olderVersion.patch !== undefined && newerVersion.patch !== undefined && newerVersion.patch >= olderVersion.patch) {
                     return true;
                 } else {
                     return false;
@@ -280,6 +271,29 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
             }
         }
     };
+
+    this.checkVersionNewer = function (newerVersion, olderVersion) {
+        if (!angular.isObject(newerVersion)) {
+            newerVersion = this.parseVersionString(newerVersion);
+        }
+        if (!angular.isObject(olderVersion)) {
+            olderVersion = this.parseVersionString(olderVersion);
+        }
+        if (olderVersion.major !== undefined && newerVersion.major !== undefined && newerVersion.major > olderVersion.major) {
+            return true;
+        } else {
+            if (olderVersion.minor !== undefined && newerVersion.minor !== undefined && newerVersion.minor > olderVersion.minor) {
+                return true;
+            } else {
+                if (olderVersion.patch !== undefined && newerVersion.patch !== undefined && newerVersion.patch > olderVersion.patch) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    };
+
     this.reloadRoute = function (date) {
         if (reload) {
             $window.location.reload();

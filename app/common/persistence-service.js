@@ -74,8 +74,7 @@ angular.module('jamstash.persistence', ['angular-locker',
 
     /* Manage user settings */
     this.getSettings = function () {
-        //TODO: store as version object
-        if(this.getVersion() !== jamstashVersion) {
+        if(utils.checkVersionNewer(jamstashVersion, this.getVersion())) {
             this.upgradeToVersion(jamstashVersion);
         }
         return locker.get('Settings');
@@ -91,25 +90,24 @@ angular.module('jamstash.persistence', ['angular-locker',
 
     /* Manage Jamstash Version */
     this.getVersion = function () {
-        return locker.get('version');
+        return locker.get('JamstashVersion');
     };
 
     this.upgradeToVersion = function (finalVersion) {
-        var currentVersion = utils.parseVersionString(this.getVersion());
+        var currentVersion = this.getVersion();
         var settings = locker.get('Settings');
-        // Apply all upgrades older than the final version
-        // TODO: Hyz: Do not apply upgrades already applied (start from current version)
+        // Apply all upgrades older than the final version and newer than the current
         var allUpgrades = _(jamstashVersionChangesets.versions).filter(function (toApply) {
-            //TODO: Hyz: have "checkVersion" do the conversion themselves
-            var versionToCheck = utils.parseVersionString(toApply.version);
-            var objFinalVersion = utils.parseVersionString(finalVersion);
-            return utils.checkVersion(objFinalVersion, versionToCheck);
+            var olderOrEqualToFinal = utils.checkVersion(finalVersion, toApply.version);
+            var newerThanCurrent = utils.checkVersionNewer(toApply.version, currentVersion);
+            return olderOrEqualToFinal && newerThanCurrent;
         });
         _(allUpgrades).each(function (versionUpg) {
             versionUpg.changeset(settings);
         });
         this.saveSettings(settings);
-        locker.put('version', finalVersion);
+        locker.put('JamstashVersion', finalVersion);
+        notifications.updateMessage('Version ' + currentVersion + ' to ' + finalVersion, true);
     };
 }])
 
