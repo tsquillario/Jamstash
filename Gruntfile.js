@@ -50,7 +50,7 @@ module.exports = function (grunt) {
       },
       jsTest: {
         files: ['<%= yeoman.app %>/**/*_test.js'],
-        tasks: ['karma:continuous:run'],
+        tasks: ['karma:continuous:run']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -325,6 +325,16 @@ module.exports = function (grunt) {
           ],
           dest: '.tmp/styles'
         }]
+      }
+    },
+
+    // bump versions in json files
+    bump: {
+      options: {
+        files: ['package.json', 'bower.json', 'manifest.json'],
+        commit: false,
+        createTag: false,
+        push: false
       }
     },
 
