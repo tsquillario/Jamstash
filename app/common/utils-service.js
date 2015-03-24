@@ -250,20 +250,23 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
         };
     };
 
-    this.checkVersion = function (newerVersion, olderVersion) {
-        if (!angular.isObject(newerVersion)) {
-            newerVersion = this.parseVersionString(newerVersion);
+    this.checkVersion = function (running, required) {
+        if (required === undefined) {
+            return true;
         }
-        if (!angular.isObject(olderVersion)) {
-            olderVersion = this.parseVersionString(olderVersion);
+        if (!angular.isObject(running)) {
+            running = this.parseVersionString(running);
         }
-        if (olderVersion.major !== undefined && newerVersion.major !== undefined && newerVersion.major > olderVersion.major) {
+        if (!angular.isObject(required)) {
+            required = this.parseVersionString(required);
+        }
+        if (required.major !== undefined && running.major !== undefined && running.major > required.major) {
             return true;
         } else {
-            if (olderVersion.minor !== undefined && newerVersion.minor !== undefined && newerVersion.minor > olderVersion.minor) {
+            if (required.minor !== undefined && running.minor !== undefined && running.minor > required.minor) {
                 return true;
             } else {
-                if (olderVersion.patch !== undefined && newerVersion.patch !== undefined && newerVersion.patch >= olderVersion.patch) {
+                if (required.patch !== undefined && running.patch !== undefined && running.patch >= required.patch) {
                     return true;
                 } else {
                     return false;
@@ -273,6 +276,9 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
     };
 
     this.checkVersionNewer = function (newerVersion, olderVersion) {
+        if (olderVersion === undefined) {
+            return true;
+        }
         if (!angular.isObject(newerVersion)) {
             newerVersion = this.parseVersionString(newerVersion);
         }

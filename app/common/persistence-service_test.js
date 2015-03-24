@@ -1,7 +1,7 @@
 describe("Persistence service", function() {
     'use strict';
 
-    var persistence, player, notifications, locker,
+    var persistence, player, notifications, locker, json,
         song, fakeStorage, fakeVersionChangesets;
     beforeEach(function() {
         fakeVersionChangesets = {versions: []};
@@ -10,7 +10,6 @@ describe("Persistence service", function() {
             $provide.decorator('locker', function () {
                 return jasmine.createSpyObj("locker", ["get", "put", "forget"]);
             });
-            $provide.constant("jamstashVersion", "1.0.1");
             $provide.value("jamstashVersionChangesets", fakeVersionChangesets);
 
             $provide.decorator('notifications', function () {
@@ -22,13 +21,18 @@ describe("Persistence service", function() {
                 fakePlayer.queue = [];
                 return fakePlayer;
             });
+
+            $provide.decorator('json', function () {
+                return jasmine.createSpyObj("json", ["getChangeLog"]);
+            });
         });
 
-        inject(function (_persistence_, _player_, _notifications_, _locker_) {
+        inject(function (_persistence_, _player_, _notifications_, _locker_, _json_) {
             persistence = _persistence_;
             player = _player_;
             notifications = _notifications_;
             locker = _locker_;
+            json = _json_;
         });
 
         song = {
@@ -164,13 +168,19 @@ describe("Persistence service", function() {
             });
         });
 
-        it("Given that the previously stored Jamstash version was '1.0.0' and given the current constant jamstash.version was '1.0.1', when I get the settings, then upgradeToVersion will be called", function() {
+        it("Given that the previously stored Jamstash version was '1.0.0' and given the latest version in changelog.json was '1.0.1', when I get the settings, then upgradeVersion will be called", function() {
             fakeStorage.JamstashVersion = '1.0.0';
-            spyOn(persistence, 'upgradeToVersion');
+            spyOn(persistence, 'upgradeVersion');
+            json.getChangeLog.and.callFake(function (callback) {
+                console.log('callback', callback);
+                callback([
+                    {version: '1.0.1'}
+                ]);
+            });
 
             persistence.getSettings();
 
-            expect(persistence.upgradeToVersion).toHaveBeenCalledWith('1.0.1');
+            expect(persistence.upgradeVersion).toHaveBeenCalledWith('1.0.0', '1.0.1');
         });
 
         it("Given that no user settings had been saved in local storage, it returns undefined", function() {
@@ -215,11 +225,11 @@ describe("Persistence service", function() {
         });
     });
 
-    describe("upgradeToVersion() -", function() {
+    describe("upgradeVersion() -", function() {
         it("Given that Jamstash version '1.0.0' was previously stored in local storage, when I upgrade the storage version to '1.0.1', Jamstash version '1.0.1' will be in local storage and the user will be notified", function() {
             fakeStorage.JamstashVersion = '1.0.0';
 
-            persistence.upgradeToVersion('1.0.1');
+            persistence.upgradeVersion('1.0.0', '1.0.1');
 
             expect(locker.put).toHaveBeenCalledWith('JamstashVersion', '1.0.1');
             expect(notifications.updateMessage).toHaveBeenCalledWith('Version 1.0.0 to 1.0.1', true);
@@ -257,39 +267,31 @@ describe("Persistence service", function() {
                 };
             });
 
-            describe("and that Jamstash version '1.0.0' was previously stored in local storage,", function() {
-                beforeEach(function() {
-                    fakeStorage.JamstashVersion = '1.0.0';
-                });
-
-                 it("when I upgrade the storage version to '1.0.2', both changesets have been applied", function() {
-                    persistence.upgradeToVersion('1.0.2');
-                    expect(locker.put).toHaveBeenCalledWith('Settings', {
-                        DefaultSearchType: 0,
-                        DefaultAlbumSort: 0,
-                        Username: "Hedrix",
-                        AutoPlay: true
-                    });
-                });
-
-                it("when I upgrade the storage version to '1.0.1', only the '1.0.1' changeset has been applied", function() {
-                    persistence.upgradeToVersion('1.0.1');
-                    expect(locker.put).toHaveBeenCalledWith('Settings', {
-                        DefaultSearchType: 0,
-                        DefaultAlbumSort: {
-                            id: "default",
-                            name: "Default Sort"
-                        },
-                        Username: "Hedrix",
-                        AutoPlay: true
-                    });
+            it("when I upgrade the storage version from '1.0.0' to '1.0.2', both changesets have been applied", function() {
+                persistence.upgradeVersion('1.0.0', '1.0.2');
+                expect(locker.put).toHaveBeenCalledWith('Settings', {
+                    DefaultSearchType: 0,
+                    DefaultAlbumSort: 0,
+                    Username: "Hedrix",
+                    AutoPlay: true
                 });
             });
 
-            it("and that Jamstash version '1.0.1' was previously stored in local storage, when I upgrade the storage version to '1.0.2', only the '1.0.2' changeset has been applied", function() {
-                fakeStorage.JamstashVersion = '1.0.1';
+            it("when I upgrade the storage version from '1.0.0' to '1.0.1', only the '1.0.1' changeset has been applied", function() {
+                persistence.upgradeVersion('1.0.0', '1.0.1');
+                expect(locker.put).toHaveBeenCalledWith('Settings', {
+                    DefaultSearchType: 0,
+                    DefaultAlbumSort: {
+                        id: "default",
+                        name: "Default Sort"
+                    },
+                    Username: "Hedrix",
+                    AutoPlay: true
+                });
+            });
 
-                persistence.upgradeToVersion('1.0.2');
+            it("when I upgrade the storage version from '1.0.1' to '1.0.2', only the '1.0.2' changeset has been applied", function() {
+                persistence.upgradeVersion('1.0.1', '1.0.2');
                 expect(locker.put).toHaveBeenCalledWith('Settings', {
                     DefaultSearchType: {
                         id: "song",

@@ -14,8 +14,8 @@ angular.module('jamstash.persistence', ['angular-locker',
         .setEventsEnabled(false);
 }])
 
-.service('persistence', ['globals', 'player', 'notifications', 'locker', 'jamstashVersion', 'jamstashVersionChangesets', 'utils',
-    function (globals, player, notifications, locker, jamstashVersion, jamstashVersionChangesets, utils) {
+.service('persistence', ['globals', 'player', 'notifications', 'locker', 'json', 'jamstashVersionChangesets', 'utils',
+    function (globals, player, notifications, locker, json, jamstashVersionChangesets, utils) {
     /* Manage current track */
     this.loadTrackPosition = function () {
         // Load Saved Song
@@ -74,9 +74,16 @@ angular.module('jamstash.persistence', ['angular-locker',
 
     /* Manage user settings */
     this.getSettings = function () {
-        if(utils.checkVersionNewer(jamstashVersion, this.getVersion())) {
-            this.upgradeToVersion(jamstashVersion);
-        }
+        // If the latest version from changelog.json is newer than the version stored in local storage,
+        // we upgrade it
+        var storedVersion = this.getVersion();
+        var persistenceService = this;
+        json.getChangeLog(function (changelogs) {
+            var changelogVersion = changelogs[0].version;
+            if(utils.checkVersionNewer(changelogVersion, storedVersion)) {
+                persistenceService.upgradeVersion(storedVersion, changelogVersion);
+            }
+        });
         return locker.get('Settings');
     };
 
@@ -93,8 +100,7 @@ angular.module('jamstash.persistence', ['angular-locker',
         return locker.get('JamstashVersion');
     };
 
-    this.upgradeToVersion = function (finalVersion) {
-        var currentVersion = this.getVersion();
+    this.upgradeVersion = function (currentVersion, finalVersion) {
         var settings = locker.get('Settings');
         // Apply all upgrades older than the final version and newer than the current
         var allUpgrades = _(jamstashVersionChangesets.versions).filter(function (toApply) {
