@@ -80,6 +80,12 @@ describe("utils service", function() {
             required = 'uSIwvRDp8QJO';
             expect(utils.checkVersion(running, required)).toBeTruthy();
         });
+
+        it("Given a version string '1.0.1' and undefined, when I check the version required, the result will be true", function() {
+            running = '1.0.1';
+            required = undefined;
+            expect(utils.checkVersion(running, required)).toBeTruthy();
+        });
     });
 
     describe("checkVersionNewer() -", function() {
@@ -138,6 +144,12 @@ describe("utils service", function() {
             newer = 'wISr91GRXzTsxkx';
             older = 'uSIwvRDp8QJO';
             expect(utils.checkVersionNewer(newer, older)).toBeFalsy();
+        });
+
+        it("Given a version string '1.0.1' and undefined, when I check if the first version is newer, the result will be true", function() {
+            newer = '1.0.1';
+            older = undefined;
+            expect(utils.checkVersionNewer(newer, older)).toBeTruthy();
         });
     });
 });

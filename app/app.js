@@ -48,7 +48,4 @@ angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize', 'ui.keypress',
             }
         };
     }]);
-}])
-
-//TODO: Hyz: Fill with grunt task
-.constant('jamstashVersion', '4.4.5');
+}]);
