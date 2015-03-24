@@ -6,7 +6,7 @@
 */
 angular.module('jamstash.model', ['jamstash.utils'])
 
-.service('model', ['utils', function(utils){
+.service('model', ['utils', function (utils){
     'use strict';
 
     this.Index = function (name, artist) {
@@ -57,30 +57,9 @@ angular.module('jamstash.model', ['jamstash.utils'])
     };
 }])
 
-.service('map', ['$http', 'globals', 'utils', 'model', function($http, globals, utils, model){
+.service('map', ['$http', 'globals', 'utils', 'model', function ($http, globals, utils, model){
     'use strict';
 
-    this.mapArtist = function (data) {
-        var name = '';
-        var artist = data.artist;
-        var artists = [];
-        if (artist.length > 0) {
-            artists = artist;
-        } else {
-            artists[0] = artist;
-        }
-        angular.forEach(artists, function (item, key) {
-            if (typeof item.name !== 'undefined') { item.name = item.name.toString(); }
-        });
-        if (typeof data.name !== 'undefined') { name = data.name.toString(); }
-        return new model.Index(name, artists);
-    };
-    this.mapIndex = function (data) {
-        var name, id = '';
-        if (typeof data.id !== 'undefined') { id = data.id; }
-        if (typeof data.name !== 'undefined') { name = data.name.toString(); }
-        return new model.Artist(id, name);
-    };
     this.mapAlbum = function (data) {
         var album = data;
         var title, coverartthumb, coverartfull, starred;
@@ -98,6 +77,16 @@ angular.module('jamstash.model', ['jamstash.utils'])
         }
         return new model.Album(album.id, album.parent, title, album.artist.toString(), album.artistId, coverartthumb, coverartfull, $.format.date(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '', type);
     };
+
+    this.mapAlbums = function (albums) {
+        var mappedAlbums = [];
+        var mapAlbum = this.mapAlbum;
+        angular.forEach(albums, function (album) {
+            mappedAlbums.push(mapAlbum(album));
+        });
+        return mappedAlbums;
+    };
+
     this.mapSong = function (data) {
         var song = data;
         var url, title, artist, track, rating, starred, contenttype, suffix, description;
@@ -122,9 +111,20 @@ angular.module('jamstash.model', ['jamstash.utils'])
         url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.id + '&salt=' + salt;
         return new model.Song(song.id, song.parent, track, title, artist, song.artistId, song.album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
     };
+
+    this.mapSongs = function (songs) {
+        var mappedSongs = [];
+        var mapSong = this.mapSong;
+        angular.forEach(songs, function (song) {
+            mappedSongs.push(mapSong(song));
+        });
+        return mappedSongs;
+    };
+
     this.mapPlaylist = function (data) {
         return new model.Artist(data.id, data.name);
     };
+
     this.mapPodcast = function (data) {
         var song = data;
         var url, track, rating, starred, contenttype, suffix, description, artist, album, title;
@@ -146,5 +146,14 @@ angular.module('jamstash.model', ['jamstash.utils'])
         var salt = Math.floor(Math.random() * 100000);
         url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.streamId + '&salt=' + salt;
         return new model.Song(song.streamId, song.parent, track, title, artist, song.artistId, album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
+    };
+
+    this.mapPodcasts = function (episodes) {
+        var mappedEpisodes = [];
+        var mapEpisode = this.mapPodcast;
+        angular.forEach(episodes, function (episode) {
+            mappedEpisodes.push(mapEpisode(episode));
+        });
+        return mappedEpisodes;
     };
 }]);

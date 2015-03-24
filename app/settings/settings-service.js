@@ -9,9 +9,9 @@ angular.module('jamstash.settings', [])
     'use strict';
 
     this.SearchTypes = [
-        { id: "song", name: "Song" },
-        { id: "album", name: "Album" },
-        { id: "artist", name: "Artist" }
+        { id: 0, name: "Song" },
+        { id: 1, name: "Album" },
+        { id: 2, name: "Artist" }
     ];
     this.Layouts = [
         { id: "grid", name: "Grid" },
