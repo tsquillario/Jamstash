@@ -61,7 +61,12 @@ angular.module('jamstash.persistence', ['angular-locker',
 
     /* Manage player volume */
     this.getVolume = function () {
-        return locker.get('Volume');
+        var volume = locker.get('Volume');
+        if (volume === undefined) {
+            locker.put('Volume', 1.0);
+            volume = 1.0;
+        }
+        return volume;
     };
 
     this.saveVolume = function (volume) {
