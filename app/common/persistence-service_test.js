@@ -46,6 +46,9 @@ describe("Persistence service", function() {
         locker.get.and.callFake(function(key) {
             return fakeStorage[key];
         });
+        locker.put.and.callFake(function(key, value) {
+            fakeStorage[key] = value;
+        });
     });
 
     describe("loadTrackPosition() -", function() {
@@ -132,11 +135,12 @@ describe("Persistence service", function() {
             expect(volume).toBe(0.46582);
         });
 
-        it("Given that no volume value was previously saved in local storage, it returns undefined", function() {
+        it("Given that no volume value was previously saved in local storage, it will return 1.0 and set it in local storage", function() {
             var volume = persistence.getVolume();
 
             expect(locker.get).toHaveBeenCalledWith('Volume');
-            expect(volume).toBeUndefined();
+            expect(volume).toBe(1.0);
+            expect(locker.put).toHaveBeenCalledWith('Volume', 1.0);
         });
     });
 
@@ -151,7 +155,17 @@ describe("Persistence service", function() {
     });
 
     describe("getSettings() -", function() {
-        it("Given previously saved user settings in local storage, it retrieves them", function() {
+        beforeEach(function() {
+            spyOn(persistence, 'upgradeVersion');
+            json.getChangeLog.and.callFake(function (callback) {
+                callback([
+                    {version: '1.0.1'}
+                ]);
+            });
+            fakeStorage.JamstashVersion = '1.0.1';
+        });
+
+        it("Given previously saved user settings in local storage, a promise will be resovled with the user settings", function() {
             fakeStorage = {
                 "Settings": {
                     "url": "https://headed.com/aleurodidae/taistrel?a=roquet&b=trichophoric#cathole",
@@ -170,13 +184,6 @@ describe("Persistence service", function() {
 
         it("Given that the previously stored Jamstash version was '1.0.0' and given the latest version in changelog.json was '1.0.1', when I get the settings, then upgradeVersion will be called", function() {
             fakeStorage.JamstashVersion = '1.0.0';
-            spyOn(persistence, 'upgradeVersion');
-            json.getChangeLog.and.callFake(function (callback) {
-                console.log('callback', callback);
-                callback([
-                    {version: '1.0.1'}
-                ]);
-            });
 
             persistence.getSettings();
 

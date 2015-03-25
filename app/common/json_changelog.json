@@ -2,7 +2,7 @@
     {
         "date": "3/24/2015", "version": "4.4.5",
         "changes": [
-        { "text": "- Code refactoring, fixes Podcasts retrieval"}
+        { "text": "- Code refactoring, fixes Podcasts retrieval."}
         ]
     },
     {
