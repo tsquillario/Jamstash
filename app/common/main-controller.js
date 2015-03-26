@@ -32,18 +32,16 @@ angular.module('JamStash')
     $scope.loadSettings = function () {
         // Temporary Code to Convert Cookies added 2/2/2014
         if ($cookieStore.get('Settings')) {
-            utils.setValue('Settings', $cookieStore.get('Settings'), false);
+            persistence.saveSettings($cookieStore.get('Settings'));
             $cookieStore.remove('Settings');
         }
-        if (utils.getValue('Settings')) {
-            $.each(utils.getValue('Settings'), function (k, v) {
-                if (v == 'false') { v = false; }
-                if (v == 'true') { v = true; }
-                var exclude = ['Url'];
-                var idx = exclude.indexOf(k);
-                if (idx === -1) {
-                    globals.settings[k] = v;
-                }
+        var settings = persistence.getSettings();
+        if (settings !== undefined) {
+            var updSettings = _(settings).omit('Url');
+            // We can't just assign settings to globals.settings because it's on the scope
+            // TODO: Hyz: remove $rootScope.settings and replace with individual settings
+            _(updSettings).each(function(val, key) {
+                globals.settings[key] = val;
             });
         }
         if (utils.getValue("SavedCollections")) { globals.SavedCollections = utils.getValue("SavedCollections").split(","); }

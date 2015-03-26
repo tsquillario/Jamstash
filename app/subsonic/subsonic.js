@@ -635,7 +635,6 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
 
     /* Launch on Startup */
     $scope.getArtists();
-    $scope.getAlbums();
     $scope.getPlaylists();
     $scope.getGenres();
     $scope.getPodcasts();

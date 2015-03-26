@@ -32,6 +32,7 @@ describe("jplayer directive", function() {
                 return $delegate;
             });
             $provide.value('globals', mockGlobals);
+            $provide.constant('jamstashVersion', '1.0.0');
         });
 
         spyOn($.fn, "jPlayer").and.callThrough();

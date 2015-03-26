@@ -4,7 +4,7 @@
  * Encapsulates the jPlayer plugin. It watches the player service for the song to play, load or restart.
  * It also enables jPlayer to attach event handlers to our UI through css Selectors.
  */
-angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings', 'jamstash.subsonic.service', 'jamstash.notifications', 'jamstash.persistence', 'jamstash.page'])
+angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstash.settings.service', 'jamstash.subsonic.service', 'jamstash.notifications', 'jamstash.persistence', 'jamstash.page'])
 
 .directive('jplayer', ['$interval', 'player', 'globals', 'subsonic', 'notifications', 'persistence', 'Page',
     function($interval, playerService, globals, subsonic, notifications, persistence, Page) {
