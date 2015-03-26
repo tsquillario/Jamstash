@@ -1,9 +1,9 @@
 /**
-* jamstash.settings Module
+* jamstash.settings.service Module
 *
 * Houses Jamstash's global settings and a few utility functions.
 */
-angular.module('jamstash.settings', [])
+angular.module('jamstash.settings.service', [])
 
 .service('globals', function () {
     'use strict';

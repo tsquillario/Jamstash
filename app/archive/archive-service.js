@@ -3,7 +3,7 @@
 *
 * Access Archive.org
 */
-angular.module('jamstash.archive.service', ['jamstash.settings', 'jamstash.model', 'jamstash.notifications',
+angular.module('jamstash.archive.service', ['jamstash.settings.service', 'jamstash.model', 'jamstash.notifications',
     'jamstash.player.service'])
 
 .factory('archive', ['$rootScope', '$http', '$q', '$sce', 'globals', 'model', 'utils', 'map', 'notifications', 'player',
