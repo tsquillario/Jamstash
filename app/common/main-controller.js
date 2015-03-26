@@ -37,7 +37,12 @@ angular.module('JamStash')
         }
         var settings = persistence.getSettings();
         if (settings !== undefined) {
-            globals.settings = _(settings).omit('Url');
+            var updSettings = _(settings).omit('Url');
+            // We can't just assign settings to globals.settings because it's on the scope
+            // TODO: Hyz: remove $rootScope.settings and replace with individual settings
+            _(updSettings).each(function(val, key) {
+                globals.settings[key] = val;
+            });
         }
         if (utils.getValue("SavedCollections")) { globals.SavedCollections = utils.getValue("SavedCollections").split(","); }
         if (utils.getValue("DefaultCollection")) { globals.DefaultCollection = utils.getValue("DefaultCollection"); }
