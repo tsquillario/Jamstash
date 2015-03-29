@@ -6,7 +6,7 @@
 */
 angular.module('jamstash.model', ['jamstash.utils'])
 
-.service('model', ['utils', function (utils){
+.service('model', ['utils', function (utils) {
     'use strict';
 
     this.Index = function (name, artist) {
@@ -57,12 +57,12 @@ angular.module('jamstash.model', ['jamstash.utils'])
     };
 }])
 
-.service('map', ['$http', 'globals', 'utils', 'model', function ($http, globals, utils, model){
+.service('map', ['$http', 'globals', 'utils', 'model', function ($http, globals, utils, model) {
     'use strict';
 
     this.mapAlbum = function (data) {
         var album = data;
-        var title, coverartthumb, coverartfull, starred;
+        var title, coverartthumb, coverartfull, starred, artist;
         if (typeof album.coverArt != 'undefined') {
             coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=160&id=' + album.coverArt;
             coverartfull = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&id=' + album.coverArt;
@@ -75,7 +75,9 @@ angular.module('jamstash.model', ['jamstash.utils'])
         } else {
             type = 'bytag';
         }
-        return new model.Album(album.id, album.parent, title, album.artist.toString(), album.artistId, coverartthumb, coverartfull, $.format.date(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '', type);
+        artist = (album.artist !== undefined) ? album.artist.toString() : '';
+        //TODO: Hyz: we shouldn't format the date here but use a filter in the template
+        return new model.Album(album.id, album.parent, title, artist, album.artistId, coverartthumb, coverartfull, utils.formatDate(new Date(album.created), "yyyy-MM-dd h:mm a"), starred, '', '', type);
     };
 
     this.mapAlbums = function (albums) {

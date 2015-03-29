@@ -58,11 +58,6 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
             return false;
         }
     };
-    this.makeBaseAuth = function (user, password) {
-        var tok = user + ':' + password;
-        var hash = $.base64Encode(tok);
-        return "Basic " + hash;
-    };
     this.HexEncode = function (n) {
         for (var u = "0123456789abcdef", i = [], r = [], t = 0; t < 256; t++) {
             i[t] = u.charAt(t >> 4) + u.charAt(t & 15);
@@ -129,12 +124,13 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
         }
         return time;
     };
-    this.arrayObjectIndexOf = function (myArray, searchTerm, property) {
-        for (var i = 0, len = myArray.length; i < len; i++) {
-            if (myArray[i][property] === searchTerm) { return i; }
-        }
-        return -1;
+
+    //TODO: Hyz: replace with using an angular date filter in the template
+    this.formatDate = function (date, format) {
+        var dateToformat = (angular.isDate(date)) ? date : new Date(date);
+        return $.format.date(dateToformat, format);
     };
+
     this.logObjectProperties = function (obj) {
         $.each(obj, function (key, value) {
             var parent = key;
@@ -146,25 +142,6 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
                 console.log(key + ' : ' + value);
             }
         });
-    };
-    this.clickButton = function (el) {
-        var el = $(el);
-        if (el) {
-            var classes = $(el).attr('class').split(" ");
-            for (var i = 0, l = classes.length; i < l; ++i) {
-                var types = ['shuffle', 'mute'];
-                if (jQuery.inArray(classes[i], types) >= 0) {
-                    var up = classes[i] + '_up';
-                    if (el.hasClass(up)) {
-                        el.removeClass(up);
-                        return false;
-                    } else {
-                        el.addClass(up);
-                        return true;
-                    }
-                }
-            }
-        }
     };
     this.findKeyForCode = function (code) {
         var map = {
@@ -218,22 +195,6 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
             return String.fromCharCode(parseInt(c, b ? 16 : 10));
         });
         }
-    };
-    this.getParameterByName = function (name) {
-        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-        var regexS = "[\\?&]" + name + "=([^&#]*)";
-        var regex = new RegExp(regexS);
-        var results = regex.exec(window.location.search);
-        if (results === null) {
-            return "";
-        } else {
-            return decodeURIComponent(results[1].replace(/\+/g, " "));
-        }
-    };
-    this.getPathFromUrl = function (url) {
-        var strurl = url.toString();
-        var u = strurl.substring(0, strurl.indexOf('?'));
-        return u;
     };
 
     this.parseVersionString = function (str) {
@@ -298,22 +259,5 @@ angular.module('jamstash.utils', ['jamstash.settings.service'])
                 }
             }
         }
-    };
-
-    this.reloadRoute = function (date) {
-        if (reload) {
-            $window.location.reload();
-        } else {
-            $route.reload();
-        }
-    };
-    this.parseDate = function (date) {
-        // input: "2012-09-23 20:00:00.0"
-        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        var parts = date.split(" ");
-        var dateParts = parts[0].split("-");
-        var month = parseInt(dateParts[1], 10) - 1;
-        var newDate = months[month] + " " + dateParts[2] + ", " + dateParts[0];
-        return newDate;
     };
 }]);
