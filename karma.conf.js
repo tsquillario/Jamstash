@@ -30,6 +30,7 @@ module.exports = function (config) {
       'bower_components/fancybox/source/jquery.fancybox.js',
       'bower_components/notify.js/notify.js',
       'bower_components/jquery.scrollTo/jquery.scrollTo.js',
+      'bower_components/jquery-dateFormat/dist/jquery-dateFormat.js',
       'bower_components/underscore/underscore.js',
       'bower_components/angular-underscore/angular-underscore.js',
       'bower_components/angular-locker/dist/angular-locker.min.js',

@@ -58,7 +58,7 @@ describe("model service", function() {
         expect(result).toEqual(episodes);
     });
 
-    it("Given album data without artist info, when I map it to an Album, an Album with an empty artist name will be returned", function() {
+    it("Given album data without artist info, when I map it to an Album, then an Album with an empty artist name will be returned", function() {
         var albumData = {
             id: 584,
             artist: undefined,

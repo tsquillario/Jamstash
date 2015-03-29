@@ -1,8 +1,8 @@
 describe("Subsonic service -", function() {
     'use strict';
 
-    var subsonic, mockBackend, mockGlobals;
-    var response;
+    var subsonic, mockBackend, mockGlobals,
+        response;
     beforeEach(function() {
         // We redefine it because in some tests we need to alter the settings
         mockGlobals = {
