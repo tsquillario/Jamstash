@@ -37,6 +37,7 @@
     "fancybox": "~2.1.4",
     "notify.js": "<=1.2.2",
     "jquery.scrollTo": "~1.4.5",
+    "jquery-dateFormat": "~1.0.2",
     "underscore": "~1.7.0",
     "angular-underscore": "~0.5.0",
     "angular-locker": "~1.2.0",

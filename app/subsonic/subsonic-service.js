@@ -31,7 +31,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
     var offset = 0;
     var showPlaylist = false;
 
-    return {
+    var subsonicService = {
         showIndex: $rootScope.showIndex,
         showPlaylist: showPlaylist,
         getSongTemplate: function (callback) {
@@ -117,7 +117,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         },
 
         ping: function () {
-            return this.subsonicRequest('ping.view');
+            return subsonicService.subsonicRequest('ping.view');
         },
 
         getArtists: function (folder) {
@@ -133,7 +133,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                     musicFolderId: folder
                 };
             }
-            var promise = this.subsonicRequest('getIndexes.view', {
+            var promise = subsonicService.subsonicRequest('getIndexes.view', {
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.indexes !== undefined && (subsonicResponse.indexes.index !== undefined || subsonicResponse.indexes.shortcut !== undefined)) {
@@ -160,7 +160,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             var params = {
                 id: id
             };
-            var promise = this.subsonicRequest('getMusicDirectory.view', {
+            var promise = subsonicService.subsonicRequest('getMusicDirectory.view', {
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.directory.child !== undefined) {
@@ -199,7 +199,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                 type: id,
                 offset: offset
             };
-            var promise = this.subsonicRequest('getAlbumList.view', {
+            var promise = subsonicService.subsonicRequest('getAlbumList.view', {
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.albumList.album !== undefined) {
@@ -255,7 +255,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         },
         getSongs: function (id, action) {
             var exception = {reason: 'No songs found on the Subsonic server.'};
-            var promise = this.subsonicRequest('getMusicDirectory.view', {
+            var promise = subsonicService.subsonicRequest('getMusicDirectory.view', {
                 params: {
                     id: id
                 }
@@ -309,7 +309,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
 
         search: function (query, type) {
             if(_([0, 1, 2]).contains(type)) {
-                var promise = this.subsonicRequest('search2.view', {
+                var promise = subsonicService.subsonicRequest('search2.view', {
                     params: {
                         query: query
                     }
@@ -353,7 +353,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             if (!isNaN(folder)) {
                 params.musicFolderId = folder;
             }
-            var promise = this.subsonicRequest('getRandomSongs.view', {
+            var promise = subsonicService.subsonicRequest('getRandomSongs.view', {
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.randomSongs !== undefined) {
@@ -369,7 +369,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         },
 
         getStarred: function () {
-            var promise = this.subsonicRequest('getStarred.view', { cache: true })
+            var promise = subsonicService.subsonicRequest('getStarred.view', { cache: true })
                 .then(function (subsonicResponse) {
                     if(angular.equals(subsonicResponse.starred, {})) {
                         return $q.reject({reason: 'Nothing is starred on the Subsonic server.'});
@@ -381,7 +381,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         },
 
         getRandomStarredSongs: function () {
-            var promise = this.getStarred()
+            var promise = subsonicService.getStarred()
                 .then(function (starred) {
                     if(starred.song !== undefined) {
                         var songArray = [].concat(starred.song);
@@ -399,7 +399,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
 
         getPlaylists: function () {
             var exception = {reason: 'No playlist found on the Subsonic server.'};
-            var promise = this.subsonicRequest('getPlaylists.view')
+            var promise = subsonicService.subsonicRequest('getPlaylists.view')
             .then(function (subsonicResponse) {
                 if(subsonicResponse.playlists.playlist !== undefined) {
                     var playlistArray = [].concat(subsonicResponse.playlists.playlist);
@@ -418,7 +418,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
 
         getPlaylist: function (id) {
             var exception = {reason: 'This playlist is empty.'};
-            var promise = this.subsonicRequest('getPlaylist.view', {
+            var promise = subsonicService.subsonicRequest('getPlaylist.view', {
                 params: {
                     id: id
                 }
@@ -436,7 +436,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         },
 
         newPlaylist: function (name) {
-            var promise = this.subsonicRequest('createPlaylist.view', {
+            var promise = subsonicService.subsonicRequest('createPlaylist.view', {
                 params: {
                     name: name
                 }
@@ -445,7 +445,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         },
 
         deletePlaylist: function (id) {
-            var promise = this.subsonicRequest('deletePlaylist.view', {
+            var promise = subsonicService.subsonicRequest('deletePlaylist.view', {
                 params: {
                     id: id
                 }
@@ -463,7 +463,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             for (var i = 0; i < songs.length; i++) {
                 params.params.songId.push(songs[i].id);
             }
-            return this.subsonicRequest('createPlaylist.view', params);
+            return subsonicService.subsonicRequest('createPlaylist.view', params);
         },
 
         //TODO: Hyz: move to controller
@@ -507,7 +507,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
 
         getPodcasts: function () {
             var exception = {reason: 'No podcast found on the Subsonic server.'};
-            var promise = this.subsonicRequest('getPodcasts.view', {
+            var promise = subsonicService.subsonicRequest('getPodcasts.view', {
                 params: {
                     includeEpisodes: false
                 }
@@ -527,7 +527,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
 
         getPodcast: function (id) {
             var exception = {reason: 'This podcast was not found on the Subsonic server.'};
-            var promise = this.subsonicRequest('getPodcasts.view', {
+            var promise = subsonicService.subsonicRequest('getPodcasts.view', {
                 params: {
                     id: id,
                     includeEpisodes: true
@@ -558,7 +558,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         },
 
         scrobble: function (song) {
-            var promise = this.subsonicRequest('scrobble.view', {
+            var promise = subsonicService.subsonicRequest('scrobble.view', {
                 params: {
                     id: song.id,
                     submisssion: true
@@ -571,4 +571,5 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         }
         // End subsonic
     };
+    return subsonicService;
 }]);

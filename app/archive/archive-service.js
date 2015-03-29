@@ -23,44 +23,45 @@ angular.module('jamstash.archive.service', ['jamstash.settings.service', 'jamsta
     };
     var offset = 0;
 
-    var mapAlbum = function (data) {
-        var song = data;
-        var coverartthumb, coverartfull, starred, title, album, publisher, avg_rating, downloads, identifier, source, date;
-        var url = globals.archiveUrl + 'details/' + song.identifier;
-        coverartthumb = 'images/albumdefault_50.jpg';
-        coverartfull = 'images/albumdefault_160.jpg';
-        if (parseInt(song.avg_rating) == 5) { starred = true; } else { starred = false; }
-        if (typeof song.title == 'undefined') { title = '&nbsp;'; } else { title = song.title.toString(); }
-        if (typeof song.identifier == 'undefined') { identifier = '&nbsp;'; } else { identifier = song.identifier.toString(); }
-        if (typeof song.collection[0] == 'undefined') { album = '&nbsp;'; } else { album = song.collection[0].toString(); }
-        if (typeof song.source == 'undefined') { source = '&nbsp;'; } else { source = song.source.toString(); }
-        if (typeof song.date == 'undefined') { date = '&nbsp;'; } else { date = song.date.toString(); }
-        if (typeof song.publisher == 'undefined') { publisher = '&nbsp;'; } else { publisher = song.publisher.toString(); }
-        if (typeof song.avg_rating == 'undefined') { avg_rating = '&nbsp;'; } else { avg_rating = song.avg_rating.toString(); }
-        if (typeof song.downloads == 'undefined') { downloads = '&nbsp;'; } else { downloads = song.downloads.toString(); }
+    var archiveService = {
+        mapAlbum: function (data) {
+            var song = data;
+            var coverartthumb, coverartfull, starred, title, album, publisher, avg_rating, downloads, identifier, source, date;
+            var url = globals.archiveUrl + 'details/' + song.identifier;
+            coverartthumb = 'images/albumdefault_50.jpg';
+            coverartfull = 'images/albumdefault_160.jpg';
+            if (parseInt(song.avg_rating) == 5) { starred = true; } else { starred = false; }
+            if (typeof song.title == 'undefined') { title = '&nbsp;'; } else { title = song.title.toString(); }
+            if (typeof song.identifier == 'undefined') { identifier = '&nbsp;'; } else { identifier = song.identifier.toString(); }
+            if (typeof song.collection[0] == 'undefined') { album = '&nbsp;'; } else { album = song.collection[0].toString(); }
+            if (typeof song.source == 'undefined') { source = '&nbsp;'; } else { source = song.source.toString(); }
+            if (typeof song.date == 'undefined') { date = '&nbsp;'; } else { date = song.date.toString(); }
+            if (typeof song.publisher == 'undefined') { publisher = '&nbsp;'; } else { publisher = song.publisher.toString(); }
+            if (typeof song.avg_rating == 'undefined') { avg_rating = '&nbsp;'; } else { avg_rating = song.avg_rating.toString(); }
+            if (typeof song.downloads == 'undefined') { downloads = '&nbsp;'; } else { downloads = song.downloads.toString(); }
 
-        //var description = '<b>Details</b><br />';
-        var description = '<b>Source</b>: ' + source + '<br />';
-        description += '<b>Date</b>: ' + date + '<br />';
-        description += '<b>Transferer</b>: ' + publisher + '<br />';
-        description += '<b>Rating</b>: ' + avg_rating + '<br />';
-        description += '<b>Downloads</b>: ' + downloads + '<br />';
-        return new model.Album(identifier, null, title, album, '', coverartthumb, coverartfull, $.format.date(new Date(song.publicdate), "yyyy-MM-dd h:mm a"), starred, $sce.trustAsHtml(description), url);
-    };
-    var mapSong = function (key, song, server, dir, identifier, coverart) {
-        var url, time, track, title, rating, starred, contenttype, suffix;
-        var specs = '';
-        if (song.format == 'VBR MP3') {
-            url = 'http://' + server + dir + key;
-            if (typeof song.bitrate == 'undefined' || typeof song.format == 'undefined') { specs = '&nbsp;'; } else { specs = song.bitrate + 'kbps, ' + song.format.toLowerCase(); }
-            if (typeof song.track == 'undefined') { track = '&nbsp;'; } else { track = song.track; }
-            if (typeof song.title == 'undefined') { title = '&nbsp;'; } else { title = song.title; }
-            if (typeof song.length == 'undefined') { time = '&nbsp;'; } else { time = utils.timeToSeconds(song.length); }
-            return new model.Song(song.md5, identifier, song.track, title, song.creator, '', song.album, '', coverart, coverart, time, '', '', 'mp3', specs, url, 0, '');
-        }
-    };
+            //var description = '<b>Details</b><br />';
+            var description = '<b>Source</b>: ' + source + '<br />';
+            description += '<b>Date</b>: ' + date + '<br />';
+            description += '<b>Transferer</b>: ' + publisher + '<br />';
+            description += '<b>Rating</b>: ' + avg_rating + '<br />';
+            description += '<b>Downloads</b>: ' + downloads + '<br />';
+            return new model.Album(identifier, null, title, album, '', coverartthumb, coverartfull, utils.formatDate(new Date(song.publicdate), "yyyy-MM-dd h:mm a"), starred, $sce.trustAsHtml(description), url);
+        },
 
-    return {
+        mapSong: function (key, song, server, dir, identifier, coverart) {
+            var url, time, track, title, rating, starred, contenttype, suffix;
+            var specs = '';
+            if (song.format == 'VBR MP3') {
+                url = 'http://' + server + dir + key;
+                if (typeof song.bitrate == 'undefined' || typeof song.format == 'undefined') { specs = '&nbsp;'; } else { specs = song.bitrate + 'kbps, ' + song.format.toLowerCase(); }
+                if (typeof song.track == 'undefined') { track = '&nbsp;'; } else { track = song.track; }
+                if (typeof song.title == 'undefined') { title = '&nbsp;'; } else { title = song.title; }
+                if (typeof song.length == 'undefined') { time = '&nbsp;'; } else { time = utils.timeToSeconds(song.length); }
+                return new model.Song(song.md5, identifier, song.track, title, song.creator, '', song.album, '', coverart, coverart, time, '', '', 'mp3', specs, url, 0, '');
+            }
+        },
+
         getArtists: function (query) {
             var deferred = $q.defer();
             if (globals.settings.Debug) { console.log("LOAD ARCHIVE.ORG COLLECTIONS"); }
@@ -138,7 +139,7 @@ angular.module('jamstash.archive.service', ['jamstash.settings.service', 'jamsta
                             content.album = [];
                             content.song = [];
                             angular.forEach(items, function (item, key) {
-                                content.album.push(mapAlbum(item));
+                                content.album.push(archiveService.mapAlbum(item));
                             });
                             notifications.updateMessage(content.album.length + ' Items Returned', true);
                         } else {
@@ -178,7 +179,7 @@ angular.module('jamstash.archive.service', ['jamstash.settings.service', 'jamsta
                         var items = data.files;
                         if (action == 'add') {
                             angular.forEach(items, function (item, key) {
-                                var song = mapSong(key, item, server, dir, identifier, coverart);
+                                var song = archiveService.mapSong(key, item, server, dir, identifier, coverart);
                                 if (song) {
                                     player.queue.push(song);
                                 }
@@ -187,7 +188,7 @@ angular.module('jamstash.archive.service', ['jamstash.settings.service', 'jamsta
                         } else if (action == 'play') {
                             player.queue = [];
                             angular.forEach(items, function (item, key) {
-                                var song = mapSong(key, item, server, dir, identifier, coverart);
+                                var song = archiveService.mapSong(key, item, server, dir, identifier, coverart);
                                 if (song) {
                                     player.queue.push(song);
                                 }
@@ -199,7 +200,7 @@ angular.module('jamstash.archive.service', ['jamstash.settings.service', 'jamsta
                             content.album = [];
                             content.song = [];
                             angular.forEach(items, function (item, key) {
-                                var song = mapSong(key, item, server, dir, identifier, coverart);
+                                var song = archiveService.mapSong(key, item, server, dir, identifier, coverart);
                                 if (song) {
                                     content.song.push(song);
                                 }
@@ -214,4 +215,5 @@ angular.module('jamstash.archive.service', ['jamstash.settings.service', 'jamsta
             return deferred.promise;
         }
     };
+    return archiveService;
 }]);
