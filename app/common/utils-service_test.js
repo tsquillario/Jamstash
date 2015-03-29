@@ -152,4 +152,13 @@ describe("utils service", function() {
             expect(utils.checkVersionNewer(newer, older)).toBeTruthy();
         });
     });
+
+    it("formatDate() - Given a Date and a text format, when I format a Date, jQuery's format date will be called and a formatted string will be returned", function() {
+        spyOn($.format, 'date');
+        var date = new Date('2015-03-28T16:54:40+01:00');
+
+        utils.formatDate(date, 'yyyy-MM-dd h:mm a');
+
+        expect($.format.date).toHaveBeenCalledWith(date, 'yyyy-MM-dd h:mm a');
+    });
 });

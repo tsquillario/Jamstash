@@ -3,7 +3,7 @@
 // Generated on 2014-10-26 using
 // generator-karma 0.8.3
 
-module.exports = function(config) {
+module.exports = function (config) {
   'use strict';
 
   config.set({
@@ -43,7 +43,7 @@ module.exports = function(config) {
     ],
 
     // list of files / patterns to exclude
-    exclude: ['app/vendor/**/*.js'],
+    // exclude: ['app/vendor/**/*.js'],
 
     preprocessors: {
       'app/**/!(*_test).js': ['coverage']

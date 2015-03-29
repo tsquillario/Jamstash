@@ -270,9 +270,6 @@ angular.module('JamStash')
     $scope.isActive = function (route) {
         return route === $location.path();
     };
-    $rootScope.reloadRoute = function (reload) {
-        utils.reloadRoute(reload);
-    };
     $rootScope.getSplitPosition = function (scope, elm) {
         window.alert(elm.getBoundingClientRect().left);
     };
