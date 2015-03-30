@@ -138,6 +138,25 @@ describe("Player service -", function() {
             expect(player.queue).toEqual([]);
         });
 
+        it("and given the third song was playing, when I shuffle the playing queue, then the third song will be at the first position and the rest of the queue will be shuffled", function() {
+            player._playingSong = thirdSong;
+
+            player.shuffleQueue();
+
+            expect(player.queue[0]).toBe(thirdSong);
+            expect(player.queue).toContain(firstSong);
+            expect(player.queue).toContain(secondSong);
+        });
+
+        it("and given no song was playing, when I shuffle the playing queue, then the whole queue will be shuffled", function() {
+            player.shuffleQueue();
+
+            expect(player.queue).toContain(firstSong);
+            expect(player.queue).toContain(secondSong);
+            expect(player.queue).toContain(thirdSong);
+            expect(player.queue).not.toContain(undefined);
+        });
+
         it("when I get the index of the first song, it returns 0", function() {
             expect(player.indexOfSong(firstSong)).toBe(0);
         });

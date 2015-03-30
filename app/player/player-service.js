@@ -101,7 +101,13 @@ angular.module('jamstash.player.service', ['jamstash.settings.service', 'angular
         },
 
         shuffleQueue: function () {
-            player.queue = _(player.queue).shuffle();
+            var shuffled = _(player.queue).without(player._playingSong);
+            shuffled = _(shuffled).shuffle();
+            if(player._playingSong !== undefined) {
+                shuffled.unshift(player._playingSong);
+                player._playingIndex = 0;
+            }
+            player.queue = shuffled;
             return player;
         },
 
