@@ -391,14 +391,17 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             var exception = {reason: 'No playlist found on the Subsonic server.'};
             var promise = this.subsonicRequest('getPlaylists.view')
             .then(function (subsonicResponse) {
-                if(subsonicResponse.playlists.playlist !== undefined && subsonicResponse.playlists.playlist.length > 0) {
-                    var allPlaylists = _(subsonicResponse.playlists.playlist).partition(function (item) {
-                        return item.owner === globals.settings.Username;
-                    });
-                    return {playlists: allPlaylists[0], playlistsPublic: allPlaylists[1]};
-                } else {
-                    return $q.reject(exception);
+                if(subsonicResponse.playlists.playlist !== undefined) {
+                    var playlistArray = [].concat(subsonicResponse.playlists.playlist);
+                    if (playlistArray.length > 0) {
+                        var allPlaylists = _(playlistArray).partition(function (item) {
+                            return item.owner === globals.settings.Username;
+                        });
+                        return {playlists: allPlaylists[0], playlistsPublic: allPlaylists[1]};
+                    }
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
@@ -410,11 +413,14 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                     id: id
                 }
             }).then(function (subsonicResponse) {
-                if (subsonicResponse.playlist.entry !== undefined && subsonicResponse.playlist.entry.length > 0) {
-                    return map.mapSongs(subsonicResponse.playlist.entry);
-                } else {
-                    return $q.reject(exception);
+                if (subsonicResponse.playlist.entry !== undefined) {
+                    var entryArray = [].concat(subsonicResponse.playlist.entry);
+                    if (entryArray.length > 0) {
+                        return map.mapSongs(entryArray);
+                    }
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
@@ -450,6 +456,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             return this.subsonicRequest('createPlaylist.view', params);
         },
 
+        //TODO: Hyz: move to controller
         songsRemoveSelected: function (songs) {
             var deferred = $q.defer();
             angular.forEach(songs, function (item, key) {
@@ -502,6 +509,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                         return channelArray;
                     }
                 }
+                // We end up here for every else
                 return $q.reject(exception);
             });
             return promise;

@@ -525,6 +525,21 @@ describe("Subsonic service -", function() {
             });
         });
 
+        it("Given that there was only 1 playlist in my Madsonic library and that I owned it, when I get the playlists, then a promise will be resolved with an array containing my playlists and an empty array for public playlists", function() {
+            response["subsonic-response"].playlists = {
+                playlist: myPlaylist
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getPlaylists();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith({
+                playlists: [ myPlaylist ],
+                playlistsPublic: []
+            });
+        });
+
         it("Given that there is only 1 public playlist in my library and that I don't own it, when I get the playlists, it returns an empty array and the public playlist", function() {
             response["subsonic-response"].playlists = {
                 playlist: [ publicPlaylist ]
@@ -555,12 +570,10 @@ describe("Subsonic service -", function() {
         var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getPlaylist.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=9123'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
         it("Given a playlist with 2 songs in it, when I get it, it returns the 2 songs of the playlist", function() {
-            url = 'http://demo.subsonic.com/rest/getPlaylist.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=9123'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
             response["subsonic-response"].playlist = {
                 id: 9123,
                 entry: [
@@ -579,11 +592,26 @@ describe("Subsonic service -", function() {
             ]);
         });
 
+        it("Given a playlist with only 1 song in it in my Madsonic library, when I get it, a promise will be resolved with an array of 1 song", function() {
+            response["subsonic-response"].playlist = {
+                id: 886,
+                entry: { id: 4699 }
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getPlaylist(9123);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                { id: 4699}
+            ]);
+        });
+
         it("Given that the playlist I want to get is empty (0 songs in it), when I get it, it returns an error object with a message", function() {
             response["subsonic-response"].playlist = {};
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
-            var promise = subsonic.getPlaylist();
+            var promise = subsonic.getPlaylist(9123);
             mockBackend.flush();
 
             expect(promise).toBeRejectedWith({reason: 'This playlist is empty.'});
