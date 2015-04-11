@@ -137,7 +137,17 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.indexes !== undefined && (subsonicResponse.indexes.index !== undefined || subsonicResponse.indexes.shortcut !== undefined)) {
-                    return subsonicResponse.indexes;
+                    // Make sure shortcut, index and each index's artist are arrays
+                    // because Madsonic will return objects and not arrays if there is only 1 artist
+                    var formattedResponse = {};
+                    formattedResponse.shortcut = [].concat(subsonicResponse.indexes.shortcut);
+                    formattedResponse.index = [].concat(subsonicResponse.indexes.index);
+                    _(formattedResponse.index).map(function (index) {
+                        var formattedIndex = index;
+                        formattedIndex.artist = [].concat(index.artist);
+                        return formattedIndex;
+                    });
+                    return formattedResponse;
                 } else {
                     return $q.reject(exception);
                 }
@@ -486,11 +496,13 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                 }
             })
             .then(function (subsonicResponse) {
-                if (subsonicResponse.podcasts !== undefined && subsonicResponse.podcasts.channel !== undefined && subsonicResponse.podcasts.channel.length > 0) {
-                    return subsonicResponse.podcasts.channel;
-                } else {
-                    return $q.reject(exception);
+                if (subsonicResponse.podcasts !== undefined && subsonicResponse.podcasts.channel !== undefined) {
+                    var channelArray = [].concat(subsonicResponse.podcasts.channel);
+                    if (channelArray.length > 0) {
+                        return channelArray;
+                    }
                 }
+                return $q.reject(exception);
             });
             return promise;
         },

@@ -392,31 +392,22 @@ describe("Subsonic service -", function() {
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
-        it("Given that I have 2 artists at the top level, when I get the artists, it returns those 2 artists", function() {
+        it("Given that I have 2 artists at the top level, when I get the artists, then a promise will be resolved with an array of two artists", function() {
             response["subsonic-response"].indexes = {
                 shortcut: [
-                    {
-                        id: "8534",
-                        name: "Podcast"
-                    }
+                    { id: 8534, name: "Podcast" }
                 ],
                 index: [
                     {
                         name : "R",
                         artist: [
-                            {
-                                id: "5493",
-                                name: "Ricki Perish"
-                            }
+                            { id: 5493, name: "Ricki Perish" }
                         ]
                     },
                     {
                         name : "T",
                         artist: [
-                            {
-                                id: "4934",
-                                name: "Terese Hoth"
-                            }
+                            { id: 4934, name: "Terese Hoth" }
                         ]
                     }
                 ]
@@ -427,6 +418,46 @@ describe("Subsonic service -", function() {
             mockBackend.flush();
 
             expect(promise).toBeResolvedWith(response["subsonic-response"].indexes);
+        });
+
+        it("Given that I have 2 artist at the top level of my Madsonic library, when I get the artists, then a promise will be resolved with an array of two artist", function() {
+            response["subsonic-response"].indexes = {
+                shortcut: { id: 433, name: "Podcast" },
+                index: [
+                    {
+                        name: "B",
+                        artist: { id: 748, name: "Berneice Trube" }
+                    },
+                    {
+                        name: "J",
+                        artist: { id: 742, name: "Jennine Parrack" }
+                    }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getArtists();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith({
+                shortcut: [
+                    { id: 433, name: "Podcast" }
+                ],
+                index: [
+                    {
+                        name: "B",
+                        artist: [
+                            { id: 748, name: "Berneice Trube" }
+                        ]
+                    },
+                    {
+                        name: "J",
+                        artist: [
+                            { id: 742, name: "Jennine Parrack" }
+                        ]
+                    }
+                ]
+            });
         });
 
         it("When I get the artists of a given folder, it builds the correct url", function() {
@@ -623,6 +654,20 @@ describe("Subsonic service -", function() {
                 { id: 7820 },
                 { id: 5174 },
                 { id: 2404 }
+            ]);
+        });
+
+        it("Given that there was one podcast in my Madsonic library, when I load the podcasts, then a promise will be resolved with an array of one podcast", function() {
+            response["subsonic-response"].podcasts = {
+                channel: { id: 46 }
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getPodcasts();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                {id: 46 }
             ]);
         });
 
