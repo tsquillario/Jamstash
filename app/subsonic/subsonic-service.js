@@ -154,22 +154,25 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             var promise = this.subsonicRequest('getMusicDirectory.view', {
                 params: params
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.directory.child !== undefined && subsonicResponse.directory.child.length > 0) {
-                    content.song = [];
-                    content.album = [];
-                    content.breadcrumb = [];
-                    content.breadcrumb.push({ 'type': 'artist', 'id': id, 'name': name });
-                    angular.forEach(subsonicResponse.directory.child, function (item, key) {
-                        if (item.isDir) {
-                            content.album.push(map.mapAlbum(item));
-                        } else {
-                            content.song.push(map.mapSong(item));
-                        }
-                    });
-                    return content;
-                } else {
-                    return $q.reject(exception);
+                if(subsonicResponse.directory.child !== undefined) {
+                    var childArray = [].concat(subsonicResponse.directory.child);
+                    if(childArray.length > 0) {
+                        content.song = [];
+                        content.album = [];
+                        content.breadcrumb = [];
+                        content.breadcrumb.push({ 'type': 'artist', 'id': id, 'name': name });
+                        angular.forEach(childArray, function (item, key) {
+                            if (item.isDir) {
+                                content.album.push(map.mapAlbum(item));
+                            } else {
+                                content.song.push(map.mapSong(item));
+                            }
+                        });
+                        return content;
+                    }
                 }
+                // all elses end up here
+                return $q.reject(exception);
             });
             return promise;
         },

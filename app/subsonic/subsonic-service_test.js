@@ -127,12 +127,77 @@ describe("Subsonic service -", function() {
         });
     });
 
-    describe("getStarred() -", function() {
+    describe("getAlbums() -", function() {
         var url;
         beforeEach(function() {
-            url = 'http://demo.subsonic.com/rest/getStarred.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            url = 'http://demo.subsonic.com/rest/getMusicDirectory.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=21'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
+
+        it("Given that there was one directory in the given directory id in my library, when I get the albums, then a promise will be resolved with an array of one album", function() {
+            response["subsonic-response"].directory = {
+                child: [
+                    {
+                        id: 299,
+                        name: "Plaintile gullibility",
+                        isDir: true
+                    }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getAlbums(21);
+            //TODO: Hyz: Replace with toBeResolvedWith() when getAlbums() is refactored
+            var success = function (data) {
+                expect(data.album).toEqual([
+                    {
+                        id: 299,
+                        name: "Plaintile gullibility",
+                        isDir: true
+                    }
+                ]);
+                expect(data.song).toEqual([]);
+            };
+            promise.then(success);
+
+            mockBackend.flush();
+
+            expect(promise).toBeResolved();
+        });
+
+        it("Given that there was only one directory in the given directory id in my Madsonic library, when I get the albums, then a promise will be resolved with an array of one album", function() {
+            response["subsonic-response"].directory = {
+                child: {
+                    id: 501,
+                    name: "Applanation attainder",
+                    isDir: true
+                }
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getAlbums(21);
+            //TODO: Hyz: Replace with toBeResolvedWith() when getAlbums() is refactored
+            var success = function (data) {
+                expect(data.album).toEqual([
+                    {
+                        id: 501,
+                        name: "Applanation attainder",
+                        isDir: true
+                    }
+                ]);
+                expect(data.song).toEqual([]);
+            };
+            promise.then(success);
+
+            mockBackend.flush();
+
+            expect(promise).toBeResolved();
+        });
+    });
+
+    describe("getStarred -", function() {
+        var url = 'http://demo.subsonic.com/rest/getStarred.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
 
         it("Given that I have 2 starred albums, 1 starred artist and 3 starred songs in my library, when getting everything starred, it returns them all", function() {
             response["subsonic-response"].starred = {
