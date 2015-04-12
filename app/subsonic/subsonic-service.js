@@ -534,19 +534,24 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                 }
             }).then(function (subsonicResponse) {
                 var episodes = [];
-                if (subsonicResponse.podcasts.channel !== undefined && subsonicResponse.podcasts.channel.length > 0) {
-                    var channel = subsonicResponse.podcasts.channel[0];
-                    if (channel !== null && channel.id === id) {
-                        episodes = _(channel.episode).filter(function (episode) {
-                            return episode.status === "completed";
-                        });
-                        if(episodes.length > 0) {
-                            return map.mapPodcasts(episodes);
-                        } else {
-                            return $q.reject({reason: 'No downloaded episode found for this podcast. Please check the podcast settings.'});
+                if (subsonicResponse.podcasts.channel !== undefined) {
+                    var channelArray = [].concat(subsonicResponse.podcasts.channel);
+                    if (channelArray.length > 0) {
+                        var channel = channelArray[0];
+                        if (channel !== null && channel.id === id) {
+                            var episodesArray = [].concat(channel.episode);
+                            episodes = _(episodesArray).filter(function (episode) {
+                                return episode.status === "completed";
+                            });
+                            if(episodes.length > 0) {
+                                return map.mapPodcasts(episodes);
+                            } else {
+                                return $q.reject({reason: 'No downloaded episode found for this podcast. Please check the podcast settings.'});
+                            }
                         }
                     }
                 }
+                // We end up here for every else
                 return $q.reject(exception);
             });
             return promise;

@@ -875,6 +875,26 @@ describe("Subsonic service -", function() {
             ]);
         });
 
+        it("Given that I had a single podcast in my Madsonic library that only had 1 non-skipped episode, when I get that podcast, then a promise will be resolved with an array of one song", function() {
+            response["subsonic-response"].podcasts = {
+                channel: {
+                    id: 2695,
+                    episode: {
+                        id: 5782,
+                        status: "completed"
+                    }
+                }
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getPodcast(2695);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                { id: 5782, status: "completed" }
+            ]);
+        });
+
         it("Given that the podcast I wanted to get didn't exist in the library, when I load that podcast, then a promise will be rejected with an error message", function() {
             response["subsonic-response"].podcasts = {};
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
