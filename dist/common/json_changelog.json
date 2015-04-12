@@ -1,24 +1,30 @@
-﻿[
-    {   
+[
+    {
+        "date": "4/12/2015", "version": "4.4.5",
+        "changes": [
+        { "text": "- Code refactoring, fixes Madsonic-related bugs when there was only one element in a collection (e.g. one album for an artist)."}
+        ]
+    },
+    {
         "date": "1/17/2015", "version": "4.4.0",
         "changes": [
         { "text": "- Code refactoring from <a href=\"https://github.com/tsquillario/Jamstash/pull/196\" target=\"_blank\">https://github.com/tsquillario/Jamstash/pull/196</a>"}
         ]
     },
-    {   
+    {
         "date": "12/20/2014", "version": "4.3",
         "changes": [
         { "text": "- I'm feeling really good about this one!"},
         { "text": "- jPlayer updated to 2.8.4"}
         ]
     },
-    {   
+    {
         "date": "12/7/2014", "version": "4.2.5",
         "changes": [
         { "text": "- Better mobile support (CSS Media Queries)"}
         ]
     },
-    {   
+    {
         "date": "12/6/2014", "version": "4.2.4",
         "changes": [
         { "text": "- Double click plays album, Single click to select song. Other bug fixes."}
