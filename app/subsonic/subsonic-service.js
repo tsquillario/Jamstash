@@ -11,7 +11,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
     function ($rootScope, $http, $q, globals, utils, map, notifications, player) {
     'use strict';
 
-    var index = { shortcuts: [], artists: [] };
+    //TODO: Hyz: Remove when refactored
     var content = {
         album: [],
         song: [],
@@ -158,7 +158,6 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         getAlbums: function (id, name) {
             var exception = {reason: 'No songs found on the Subsonic server.'};
             var params = {
-                size: globals.settings.AutoAlbumSize,
                 id: id
             };
             var promise = this.subsonicRequest('getMusicDirectory.view', {
@@ -166,7 +165,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.directory.child !== undefined) {
                     var childArray = [].concat(subsonicResponse.directory.child);
-                    if(childArray.length > 0) {
+                    if (childArray.length > 0) {
                         content.song = [];
                         content.album = [];
                         content.breadcrumb = [];
@@ -181,7 +180,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                         return content;
                     }
                 }
-                // all elses end up here
+                // We end up here for every else
                 return $q.reject(exception);
             });
             return promise;
@@ -203,24 +202,27 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             var promise = this.subsonicRequest('getAlbumList.view', {
                 params: params
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.albumList.album !== undefined && subsonicResponse.albumList.album.length > 0) {
-                    content.song = [];
-                    content.album = [];
-                    content.selectedArtist = null;
-                    content.selectedPlaylist = null;
-                    content.selectedAutoAlbum = id;
-                    content.breadcrumb = [];
-                    angular.forEach(subsonicResponse.albumList.album, function (item, key) {
-                        if (item.isDir) {
-                            content.album.push(map.mapAlbum(item));
-                        } else {
-                            content.song.push(map.mapSong(item));
-                        }
-                    });
-                    return content;
-                } else {
-                    return $q.reject(exception);
+                if(subsonicResponse.albumList.album !== undefined) {
+                    var albumArray = [].concat(subsonicResponse.albumList.album);
+                    if (albumArray.length > 0) {
+                        content.song = [];
+                        content.album = [];
+                        content.selectedArtist = null;
+                        content.selectedPlaylist = null;
+                        content.selectedAutoAlbum = id;
+                        content.breadcrumb = [];
+                        angular.forEach(albumArray, function (item, key) {
+                            if (item.isDir) {
+                                content.album.push(map.mapAlbum(item));
+                            } else {
+                                content.song.push(map.mapSong(item));
+                            }
+                        });
+                        return content;
+                    }
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
@@ -258,47 +260,49 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                     id: id
                 }
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.directory.child !== undefined && subsonicResponse.directory.child.length > 0) {
-                    var items = subsonicResponse.directory.child;
-                    content.selectedAlbum = id;
-                    if (action == 'add') {
-                        angular.forEach(items, function (item, key) {
-                            player.queue.push(map.mapSong(item));
-                        });
-                        notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                    } else if (action == 'play') {
-                        player.queue = [];
-                        angular.forEach(items, function (item, key) {
-                            player.queue.push(map.mapSong(item));
-                        });
-                        var next = player.queue[0];
-                        player.play(next);
-                        notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                    } else {
-                        if (subsonicResponse.directory.id != 'undefined') {
-                            var albumId = subsonicResponse.directory.id;
-                            var albumName = subsonicResponse.directory.name;
-                            if (content.breadcrumb.length > 0) { content.breadcrumb.splice(1, (content.breadcrumb.length - 1)); }
-                            content.breadcrumb.push({ 'type': 'album', 'id': albumId, 'name': albumName });
-                        }
-                        content.song = [];
-                        content.album = [];
-                        var albums = [];
-                        angular.forEach(items, function (item, key) {
-                            if (item.isDir) {
-                                albums.push(map.mapAlbum(item));
-                            } else {
-                                content.song.push(map.mapSong(item));
+                if(subsonicResponse.directory.child !== undefined) {
+                    var items = [].concat(subsonicResponse.directory.child);
+                    if (items.length > 0) {
+                        content.selectedAlbum = id;
+                        if (action == 'add') {
+                            angular.forEach(items, function (item, key) {
+                                player.queue.push(map.mapSong(item));
+                            });
+                            notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
+                        } else if (action == 'play') {
+                            player.queue = [];
+                            angular.forEach(items, function (item, key) {
+                                player.queue.push(map.mapSong(item));
+                            });
+                            var next = player.queue[0];
+                            player.play(next);
+                            notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
+                        } else {
+                            if (subsonicResponse.directory.id != 'undefined') {
+                                var albumId = subsonicResponse.directory.id;
+                                var albumName = subsonicResponse.directory.name;
+                                if (content.breadcrumb.length > 0) { content.breadcrumb.splice(1, (content.breadcrumb.length - 1)); }
+                                content.breadcrumb.push({ 'type': 'album', 'id': albumId, 'name': albumName });
                             }
-                        });
-                        if (albums.length > 0) {
-                            content.album = albums;
+                            content.song = [];
+                            content.album = [];
+                            var albums = [];
+                            angular.forEach(items, function (item, key) {
+                                if (item.isDir) {
+                                    albums.push(map.mapAlbum(item));
+                                } else {
+                                    content.song.push(map.mapSong(item));
+                                }
+                            });
+                            if (albums.length > 0) {
+                                content.album = albums;
+                            }
                         }
+                        return content;
                     }
-                    return content;
-                } else {
-                    return $q.reject(exception);
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
