@@ -7,6 +7,7 @@ describe("Subsonic service -", function() {
         // We redefine it because in some tests we need to alter the settings
         mockGlobals = {
             settings: {
+                AutoAlbumSize: 3,
                 AutoPlaylistSize: 3,
                 Username: "Hyzual",
                 Password: "enc:cGFzc3dvcmQ=",
@@ -134,14 +135,11 @@ describe("Subsonic service -", function() {
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=21'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
-        it("Given that there was one child directory in the given directory id in my library, when I get the albums, then a promise will be resolved with an array of one album", function() {
+        it("Given that there were 2 child directory in the given directory id in my library, when I get the albums from that directory, then a promise will be resolved with an array of 2 albums", function() {
             response["subsonic-response"].directory = {
                 child: [
-                    {
-                        id: 299,
-                        name: "Plaintile gullibility",
-                        isDir: true
-                    }
+                    { id: 299, isDir: true },
+                    { id: 1043, isDir: true }
                 ]
             };
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
@@ -150,11 +148,8 @@ describe("Subsonic service -", function() {
             //TODO: Hyz: Replace with toBeResolvedWith() when getAlbums() is refactored
             var success = function (data) {
                 expect(data.album).toEqual([
-                    {
-                        id: 299,
-                        name: "Plaintile gullibility",
-                        isDir: true
-                    }
+                    { id: 299, isDir: true },
+                    { id: 1043, isDir: true }
                 ]);
                 expect(data.song).toEqual([]);
             };
@@ -165,13 +160,9 @@ describe("Subsonic service -", function() {
             expect(promise).toBeResolved();
         });
 
-        it("Given that there was only one child directory in the given directory id in my Madsonic library, when I get the albums, then a promise will be resolved with an array of one album", function() {
+        it("Given that there was only 1 child directory in the given directory id in my Madsonic library, when I get the albums from that directory, then a promise will be resolved with an array of 1 album", function() {
             response["subsonic-response"].directory = {
-                child: {
-                    id: 501,
-                    name: "Applanation attainder",
-                    isDir: true
-                }
+                child: { id: 501, isDir: true }
             };
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -179,11 +170,7 @@ describe("Subsonic service -", function() {
             //TODO: Hyz: Replace with toBeResolvedWith() when getAlbums() is refactored
             var success = function (data) {
                 expect(data.album).toEqual([
-                    {
-                        id: 501,
-                        name: "Applanation attainder",
-                        isDir: true
-                    }
+                    { id: 501, isDir: true }
                 ]);
                 expect(data.song).toEqual([]);
             };
@@ -195,9 +182,124 @@ describe("Subsonic service -", function() {
         });
     });
 
+    describe("getSongs() -", function() {
+        var url;
+        beforeEach(function() {
+            var url = 'http://demo.subsonic.com/rest/getMusicDirectory.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=209'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
+
+        it("Given that there were 2 songs in the given directory id in my library, when I get the songs from that directory, then a promise will be resolved with an array of 2 songs", function() {
+            response["subsonic-response"].directory = {
+                child: [
+                    { id: 778 },
+                    { id: 614 }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getSongs(209);
+            //TODO: Hyz: Replace with toBeResolvedWith() when getSongs() is refactored
+            var success = function (data) {
+                expect(data.album).toEqual([]);
+                expect(data.song).toEqual([
+                    { id: 778 },
+                    { id: 614 }
+                ]);
+            };
+            promise.then(success);
+
+            mockBackend.flush();
+
+            expect(promise).toBeResolved();
+        });
+
+        it("Given that there was only 1 song in the given directory id in my Madsonic library, when I get the songs from that directory, then a promise will be resolved with an array of 1 song", function() {
+            response["subsonic-response"].directory = {
+                child: { id: 402 }
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getSongs(209);
+            //TODO: Hyz: Replace with toBeResolvedWith() when getSongs() is refactored
+            var success = function (data) {
+                expect(data.album).toEqual([]);
+                expect(data.song).toEqual([
+                    { id: 402 }
+                ]);
+            };
+            promise.then(success);
+
+            mockBackend.flush();
+
+            expect(promise).toBeResolved();
+        });
+    });
+
+    describe("getAlbumListBy() -", function() {
+        var url;
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getAlbumList.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&offset=0'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3&type=newest'+'&u=Hyzual&v=1.10.2';
+        });
+
+        describe("Given that the global setting AutoAlbum Size was 3", function() {
+            it("and given that there were more than 3 albums in my library, when I get the newest albums, then a promise will be resolved with an array of 3 albums", function() {
+                response["subsonic-response"].albumList = {
+                    album: [
+                        {id: 124, isDir: true},
+                        {id: 731, isDir: true},
+                        {id: 319, isDir: true}
+                    ]
+                };
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getAlbumListBy('newest');
+                //TODO: Hyz: Replace with toBeResolvedWith() when GetAlbumListBy() is refactored
+                var success = function (data) {
+                    expect(data.album).toEqual([
+                        {id: 124, isDir: true},
+                        {id: 731, isDir: true},
+                        {id: 319, isDir: true}
+                    ]);
+                    expect(data.song).toEqual([]);
+                };
+                promise.then(success);
+
+                mockBackend.flush();
+
+                expect(promise).toBeResolved();
+            });
+
+            it("and given that there was only 1 album in my Madsonic library, when I get the newest albums, then a promise will be resolved with an array of 1 album", function() {
+                response["subsonic-response"].albumList = {
+                    album: {id: 29, isDir: true}
+                };
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getAlbumListBy('newest');
+                //TODO: Hyz: Replace with toBeResolvedWith() when GetAlbumListBy() is refactored
+                var success = function (data) {
+                    expect(data.album).toEqual([
+                        {id: 29, isDir: true},
+                    ]);
+                    expect(data.song).toEqual([]);
+                };
+                promise.then(success);
+
+                mockBackend.flush();
+
+                expect(promise).toBeResolved();
+            });
+        });
+    });
+
     describe("getStarred() -", function() {
-        var url = 'http://demo.subsonic.com/rest/getStarred.view?'+
+        var url
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
 
         it("Given that I there were 2 starred albums, 1 starred artist and 3 starred songs in my library, when I get everything starred, then a promise will be resolved with an object containing an array of 2 albums, an array of 1 artist and an array of 3 songs", function() {
             response["subsonic-response"].starred = {
