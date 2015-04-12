@@ -134,7 +134,7 @@ describe("Subsonic service -", function() {
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=21'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
-        it("Given that there was one directory in the given directory id in my library, when I get the albums, then a promise will be resolved with an array of one album", function() {
+        it("Given that there was one child directory in the given directory id in my library, when I get the albums, then a promise will be resolved with an array of one album", function() {
             response["subsonic-response"].directory = {
                 child: [
                     {
@@ -165,7 +165,7 @@ describe("Subsonic service -", function() {
             expect(promise).toBeResolved();
         });
 
-        it("Given that there was only one directory in the given directory id in my Madsonic library, when I get the albums, then a promise will be resolved with an array of one album", function() {
+        it("Given that there was only one child directory in the given directory id in my Madsonic library, when I get the albums, then a promise will be resolved with an array of one album", function() {
             response["subsonic-response"].directory = {
                 child: {
                     id: 501,
@@ -195,11 +195,11 @@ describe("Subsonic service -", function() {
         });
     });
 
-    describe("getStarred -", function() {
+    describe("getStarred() -", function() {
         var url = 'http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
 
-        it("Given that I have 2 starred albums, 1 starred artist and 3 starred songs in my library, when getting everything starred, it returns them all", function() {
+        it("Given that I there were 2 starred albums, 1 starred artist and 3 starred songs in my library, when I get everything starred, then a promise will be resolved with an object containing an array of 2 albums, an array of 1 artist and an array of 3 songs", function() {
             response["subsonic-response"].starred = {
                 artist: [{id: 2245}],
                 album: [{id: 1799},{id: 20987}],
@@ -217,7 +217,7 @@ describe("Subsonic service -", function() {
             });
         });
 
-        it("Given that there is absolutely nothing starred in my library, when getting everything starred, it returns an error object with a message", function() {
+        it("Given that there was absolutely nothing starred in my library, when I get everything starred, then a promise will be rejected with an error message", function() {
             response["subsonic-response"].starred = {};
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -235,8 +235,8 @@ describe("Subsonic service -", function() {
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
-        describe("Given that the global setting AutoPlaylist Size is 3", function() {
-            it("and given that I have more than 3 starred songs in my library, when getting random starred songs, it returns 3 starred songs", function() {
+        describe("Given that the global setting AutoPlaylist Size was 3", function() {
+            it("and given that there were more than 3 starred songs in my library, when I get random starred songs, then a promise will be resolved with an array of 3 starred songs", function() {
                 var library = [
                     {id: 11841},{id: 12061},{id: 17322},{id: 1547},{id: 14785}
                 ];
@@ -258,7 +258,7 @@ describe("Subsonic service -", function() {
                 }
             });
 
-            it("and given that I have only 1 starred song in my library, when getting random starred songs, it returns my starred song", function() {
+            it("and given that there was only 1 starred song in my library, when I get random starred songs, then a promise will be resolved with an array of 1 song", function() {
                 response["subsonic-response"].starred = {song: [{id: 11841}]};
                 mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -268,7 +268,17 @@ describe("Subsonic service -", function() {
                 expect(promise).toBeResolvedWith([{id: 11841}]);
             });
 
-            it("and given that I don't have any starred song in my library, when getting random starred songs, it returns an error object with a message", function() {
+            it("and given that there was only 1 starred song in my Madsonic library, when I get random starred songs, then a promise will be resolved with an array of 1 song", function() {
+                response["subsonic-response"].starred = { song: { id: 5303} };
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getRandomStarredSongs();
+                mockBackend.flush();
+
+                expect(promise).toBeResolvedWith([ {id: 5303} ]);
+            });
+
+            it("and given there weren't any starred song in my library, when I get random starred songs, then a promise will be rejected with an error message", function() {
                 response["subsonic-response"].starred = {song: []};
                 mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -287,8 +297,8 @@ describe("Subsonic service -", function() {
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
         });
 
-        describe("Given that the global setting AutoPlaylist Size is 3", function() {
-            it("and given that I have more than 3 songs in my library, when getting random songs, it returns 3 songs", function() {
+        describe("Given that the global setting AutoPlaylist Size was 3", function() {
+            it("and given that there were more than 3 songs in my library, when I get random songs, then a promise will be resolved with an array of 3 songs", function() {
                 var library = [
                     {id: 1143},{id: 5864},{id: 7407},{id: 6471},{id: 59}
                 ];
@@ -310,7 +320,7 @@ describe("Subsonic service -", function() {
                 }
             });
 
-            it("and given that I have only 1 song in my library, when getting random songs, it returns that song", function() {
+            it("and given that there was only 1 song in my library, when I get random songs, then a promise will be resolved with an array of 1 song", function() {
                 response["subsonic-response"].randomSongs = {song: [{id: 7793}]};
                 mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -320,7 +330,17 @@ describe("Subsonic service -", function() {
                 expect(promise).toBeResolvedWith([{id: 7793}]);
             });
 
-            it("and given that I don't have any song in my library, when getting random songs, it returns an error object with a message", function() {
+            it("and given that there was only 1 song in my Madsonic library, when I get random songs, then a promise will be resolved with an array of 1 song", function() {
+                response["subsonic-response"].randomSongs = {song: {id: 548} };
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getRandomSongs();
+                mockBackend.flush();
+
+                expect(promise).toBeResolvedWith([ {id: 548} ]);
+            });
+
+            it("and given that there wasn't any song in my library, when I get random songs, then a promise will be rejected with an error message", function() {
                 response["subsonic-response"].randomSongs = {song: []};
                 mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -330,7 +350,7 @@ describe("Subsonic service -", function() {
                 expect(promise).toBeRejectedWith({reason: 'No songs found on the Subsonic server.'});
             });
 
-            it("and given a genre, when getting random songs, it returns 3 songs from the given genre", function() {
+            it("and given a genre, when I get random songs, then a promise will be resolved with an array of 3 songs from the given genre", function() {
                 url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
                     'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&genre=Rock'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
                 var library = [
@@ -345,7 +365,7 @@ describe("Subsonic service -", function() {
                 expect(promise).toBeResolvedWith([{id: 9408},{id: 9470},{id: 6932}]);
             });
 
-            it("and given a folder id, when getting random songs, it returns 3 songs from the given folder", function() {
+            it("and given a folder id, when I get random songs, then a promise will be resolved with an array of 3 songs from the given folder", function() {
                 url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
                     'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&musicFolderId=2'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
                 var library = [
@@ -362,7 +382,7 @@ describe("Subsonic service -", function() {
         });
     });
 
-    it("ping() - when I ping Subsonic, it returns Subsonic's response, containing its REST API version", function() {
+    it("ping() - when I ping Subsonic, then a promise will be resolved with Subsonic's response, containing its REST API version", function() {
         var url = 'http://demo.subsonic.com/rest/ping.view?'+
             'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         mockBackend.expectJSONP(url).respond(JSON.stringify(response));
@@ -373,7 +393,7 @@ describe("Subsonic service -", function() {
         expect(promise).toBeResolvedWith({status: "ok", version: "1.10.2"});
     });
 
-    it("scrobble() - Given a song, when I scrobble it, it returns true if there was no error", function() {
+    it("scrobble() - Given a song, when I scrobble it, then a promise will be resolved with true if there was no error", function() {
         var song = { id: 45872 };
         var url = 'http://demo.subsonic.com/rest/scrobble.view?' +
             'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=45872'+'&p=enc:cGFzc3dvcmQ%3D'+'&submisssion=true'+'&u=Hyzual&v=1.10.2';
@@ -392,7 +412,7 @@ describe("Subsonic service -", function() {
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
-        it("Given that I have 2 artists at the top level, when I get the artists, then a promise will be resolved with an array of two artists", function() {
+        it("Given that there were 2 artists at the top level, when I get the artists, then a promise will be resolved with an array of two artists", function() {
             response["subsonic-response"].indexes = {
                 shortcut: [
                     { id: 8534, name: "Podcast" }
@@ -420,7 +440,7 @@ describe("Subsonic service -", function() {
             expect(promise).toBeResolvedWith(response["subsonic-response"].indexes);
         });
 
-        it("Given that I have 2 artist at the top level of my Madsonic library, when I get the artists, then a promise will be resolved with an array of two artist", function() {
+        it("Given that there were 2 artist at the top level of my Madsonic library, when I get the artists, then a promise will be resolved with an array of two artist", function() {
             response["subsonic-response"].indexes = {
                 shortcut: { id: 433, name: "Podcast" },
                 index: [
@@ -460,7 +480,7 @@ describe("Subsonic service -", function() {
             });
         });
 
-        it("When I get the artists of a given folder, it builds the correct url", function() {
+        it("When I get the artists of a given folder, then the correct url will be called", function() {
             var url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&musicFolderId=42'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
@@ -469,7 +489,7 @@ describe("Subsonic service -", function() {
             mockBackend.flush();
         });
 
-        it("Given that I don't have any artist or shortcut in my library (empty server), when I get the artists, it returns an error object with a message", function() {
+        it("Given that there weren't any artist or shortcut in my library (empty server), when I get the artists, then a promise will be rejected with an error message", function() {
             response["subsonic-response"].indexes = {};
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -495,7 +515,7 @@ describe("Subsonic service -", function() {
             };
         });
 
-        it("Given that there is 1 public playlist and 1 playlist that I own in my library, when I get the playlists, it returns them separated between my playlists and public playlists", function() {
+        it("Given that there was 1 public playlist and 1 playlist that I own in my library, when I get the playlists, then a promise will be resolved with two arrays containing my playlist and the public playlist", function() {
             response["subsonic-response"].playlists = {
                 playlist: [ publicPlaylist, myPlaylist ]
             };
@@ -510,7 +530,7 @@ describe("Subsonic service -", function() {
             });
         });
 
-        it("Given that there is only 1 playlist in my library and that I own it, when I get the playlists, it returns my playlist and an empty array for public playlists", function() {
+        it("Given that there was only 1 playlist in my library and that I own it, when I get the playlists, then a promise will be resolved with an array containing my playlist and an empty array for public playlists", function() {
             response["subsonic-response"].playlists = {
                 playlist: [ myPlaylist ]
             };
@@ -525,7 +545,7 @@ describe("Subsonic service -", function() {
             });
         });
 
-        it("Given that there was only 1 playlist in my Madsonic library and that I owned it, when I get the playlists, then a promise will be resolved with an array containing my playlists and an empty array for public playlists", function() {
+        it("Given that there was only 1 playlist in my Madsonic library and that I own it, when I get the playlists, then a promise will be resolved with an array containing my playlist and an empty array for public playlists", function() {
             response["subsonic-response"].playlists = {
                 playlist: myPlaylist
             };
@@ -540,7 +560,7 @@ describe("Subsonic service -", function() {
             });
         });
 
-        it("Given that there is only 1 public playlist in my library and that I don't own it, when I get the playlists, it returns an empty array and the public playlist", function() {
+        it("Given that there was only 1 public playlist in my library and that I didn't own it, when I get the playlists, then a promise will be resolved with an empty array for my playlists and an array containing the public playlist", function() {
             response["subsonic-response"].playlists = {
                 playlist: [ publicPlaylist ]
             };
@@ -555,7 +575,7 @@ describe("Subsonic service -", function() {
             });
         });
 
-        it("Given that I don't have any playlist in my library, when I get the playlists, it returns an error object with a message", function() {
+        it("Given that there wasn't any playlist in my library, when I get the playlists, then a promise will be rejected with an error message", function() {
             response["subsonic-response"].playlists = {};
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -573,7 +593,7 @@ describe("Subsonic service -", function() {
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=9123'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
-        it("Given a playlist with 2 songs in it, when I get it, it returns the 2 songs of the playlist", function() {
+        it("Given a playlist with 2 songs in it, when I get it, a promise will be resolved with an array containing those 2 songs", function() {
             response["subsonic-response"].playlist = {
                 id: 9123,
                 entry: [
@@ -592,7 +612,7 @@ describe("Subsonic service -", function() {
             ]);
         });
 
-        it("Given a playlist with only 1 song in it in my Madsonic library, when I get it, a promise will be resolved with an array of 1 song", function() {
+        it("Given a playlist with only 1 song in it in my Madsonic library, when I get it, a promise will be resolved with an array containing that song", function() {
             response["subsonic-response"].playlist = {
                 id: 886,
                 entry: { id: 4699 }
@@ -607,7 +627,7 @@ describe("Subsonic service -", function() {
             ]);
         });
 
-        it("Given that the playlist I want to get is empty (0 songs in it), when I get it, it returns an error object with a message", function() {
+        it("Given an empty playlist (0 songs in it), when I get it, a promise will be rejected with an error message", function() {
             response["subsonic-response"].playlist = {};
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -665,7 +685,7 @@ describe("Subsonic service -", function() {
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&includeEpisodes=false'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
-        it("Given that there were podcasts in the library, when I load the podcasts, then a promise will be resolved with an array of podcasts", function() {
+        it("Given that there were podcasts in my library, when I load the podcasts, then a promise will be resolved with an array of podcasts", function() {
             response["subsonic-response"].podcasts = {
                 channel: [
                     { id: 7820 },
@@ -825,6 +845,20 @@ describe("Subsonic service -", function() {
             ]);
         });
 
+        it("Given that only one song containing 'unintersetingly' existed in my Madsonic library, when I search for a song that contains 'unintersetingly', then a promise will be resolved with an array of one song", function() {
+            response["subsonic-response"].searchResult2 = {
+                song: { id: 142, name: "unintersetingly rescue" }
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 0);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                { id: 142, name: "unintersetingly rescue"}
+            ]);
+        });
+
         it("Given that no songs containing 'unintersetingly' existed in my library, when I search for a song that contains 'unintersetingly', then a promise will be rejected with an error message", function() {
             response["subsonic-response"].searchResult2 = {
                 album: []
@@ -862,6 +896,20 @@ describe("Subsonic service -", function() {
                     id: 150,
                     name: "unintersetingly assurance"
                 }
+            ]);
+        });
+
+        it("Given that only one album containing 'unintersetingly' existed in my Madsonic library, when I search for an album that contains 'unintersetingly', then a promise will be resolved with an array of one album", function() {
+            response["subsonic-response"].searchResult2 = {
+                album: { id: 880, name: "Tortoiselike unintersetingly" }
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 1);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                { id: 880, name: "Tortoiselike unintersetingly" }
             ]);
         });
 
@@ -905,6 +953,20 @@ describe("Subsonic service -", function() {
             ]);
         });
 
+        it("Given that only one artist containing 'unintersetingly' existed in my Madsonic library, when I search for an artist that contains 'unintersetingly', then a promise will be resolved with an array of one artist", function() {
+            response["subsonic-response"].searchResult2 = {
+                artist: { id: 99, name: "unintersetingly Vishnavite" }
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 2);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                { id: 99, name: "unintersetingly Vishnavite" }
+            ]);
+        });
+
         it("Given that no artists containing 'unintersetingly' existed in my library, when I search for an artist that contains 'unintersetingly', then a promise will be rejected with an error message", function() {
             response["subsonic-response"].searchResult2 = {
                 song: []
@@ -917,7 +979,7 @@ describe("Subsonic service -", function() {
             expect(promise).toBeRejectedWith({reason: "No results."});
         });
 
-        it("Given that the library didn't contain anything containing 'unintersetingly', when I search for anything that contains 'unintersetingly', then a promise will be rejected with an error message", function() {
+        it("Given that there wasn't anything in the library containing 'unintersetingly', when I search for anything that contains 'unintersetingly', then a promise will be rejected with an error message", function() {
             response["subsonic-response"].searchResult2 = {};
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 

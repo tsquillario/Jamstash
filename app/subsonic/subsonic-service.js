@@ -314,17 +314,17 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                         switch (type) {
                             case 0:
                                 if (subsonicResponse.searchResult2.song !== undefined) {
-                                    return map.mapSongs(subsonicResponse.searchResult2.song);
+                                    return map.mapSongs([].concat(subsonicResponse.searchResult2.song));
                                 }
                                 break;
                             case 1:
                                 if (subsonicResponse.searchResult2.album !== undefined) {
-                                    return map.mapAlbums(subsonicResponse.searchResult2.album);
+                                    return map.mapAlbums([].concat(subsonicResponse.searchResult2.album));
                                 }
                                 break;
                             case 2:
                                 if (subsonicResponse.searchResult2.artist !== undefined) {
-                                    return subsonicResponse.searchResult2.artist;
+                                    return [].concat(subsonicResponse.searchResult2.artist);
                                 }
                                 break;
                         }
@@ -352,11 +352,14 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             var promise = this.subsonicRequest('getRandomSongs.view', {
                 params: params
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.randomSongs !== undefined && subsonicResponse.randomSongs.song.length > 0) {
-                    return map.mapSongs(subsonicResponse.randomSongs.song);
-                } else {
-                    return $q.reject(exception);
+                if(subsonicResponse.randomSongs !== undefined) {
+                    var songArray = [].concat(subsonicResponse.randomSongs.song);
+                    if (songArray.length > 0) {
+                        return map.mapSongs(songArray);
+                    }
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
@@ -376,13 +379,16 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         getRandomStarredSongs: function () {
             var promise = this.getStarred()
                 .then(function (starred) {
-                    if(starred.song !== undefined && starred.song.length > 0) {
-                        // Return random subarray of songs
-                        var songs = [].concat(_(starred.song).sample(globals.settings.AutoPlaylistSize));
-                        return map.mapSongs(songs);
-                    } else {
-                        return $q.reject({reason: 'No starred songs found on the Subsonic server.'});
+                    if(starred.song !== undefined) {
+                        var songArray = [].concat(starred.song);
+                        if (songArray.length > 0) {
+                            // Return random subarray of songs
+                            var songs = [].concat(_(songArray).sample(globals.settings.AutoPlaylistSize));
+                            return map.mapSongs(songs);
+                        }
                     }
+                    // We end up here for every else
+                    return $q.reject({reason: 'No starred songs found on the Subsonic server.'});
                 });
             return promise;
         },
