@@ -11,7 +11,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
     function ($rootScope, $http, $q, globals, utils, map, notifications, player) {
     'use strict';
 
-    var index = { shortcuts: [], artists: [] };
+    //TODO: Hyz: Remove when refactored
     var content = {
         album: [],
         song: [],
@@ -137,7 +137,17 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                 params: params
             }).then(function (subsonicResponse) {
                 if(subsonicResponse.indexes !== undefined && (subsonicResponse.indexes.index !== undefined || subsonicResponse.indexes.shortcut !== undefined)) {
-                    return subsonicResponse.indexes;
+                    // Make sure shortcut, index and each index's artist are arrays
+                    // because Madsonic will return objects and not arrays if there is only 1 artist
+                    var formattedResponse = {};
+                    formattedResponse.shortcut = [].concat(subsonicResponse.indexes.shortcut);
+                    formattedResponse.index = [].concat(subsonicResponse.indexes.index);
+                    _(formattedResponse.index).map(function (index) {
+                        var formattedIndex = index;
+                        formattedIndex.artist = [].concat(index.artist);
+                        return formattedIndex;
+                    });
+                    return formattedResponse;
                 } else {
                     return $q.reject(exception);
                 }
@@ -148,28 +158,30 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         getAlbums: function (id, name) {
             var exception = {reason: 'No songs found on the Subsonic server.'};
             var params = {
-                size: globals.settings.AutoAlbumSize,
                 id: id
             };
             var promise = this.subsonicRequest('getMusicDirectory.view', {
                 params: params
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.directory.child !== undefined && subsonicResponse.directory.child.length > 0) {
-                    content.song = [];
-                    content.album = [];
-                    content.breadcrumb = [];
-                    content.breadcrumb.push({ 'type': 'artist', 'id': id, 'name': name });
-                    angular.forEach(subsonicResponse.directory.child, function (item, key) {
-                        if (item.isDir) {
-                            content.album.push(map.mapAlbum(item));
-                        } else {
-                            content.song.push(map.mapSong(item));
-                        }
-                    });
-                    return content;
-                } else {
-                    return $q.reject(exception);
+                if(subsonicResponse.directory.child !== undefined) {
+                    var childArray = [].concat(subsonicResponse.directory.child);
+                    if (childArray.length > 0) {
+                        content.song = [];
+                        content.album = [];
+                        content.breadcrumb = [];
+                        content.breadcrumb.push({ 'type': 'artist', 'id': id, 'name': name });
+                        angular.forEach(childArray, function (item, key) {
+                            if (item.isDir) {
+                                content.album.push(map.mapAlbum(item));
+                            } else {
+                                content.song.push(map.mapSong(item));
+                            }
+                        });
+                        return content;
+                    }
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
@@ -190,24 +202,27 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             var promise = this.subsonicRequest('getAlbumList.view', {
                 params: params
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.albumList.album !== undefined && subsonicResponse.albumList.album.length > 0) {
-                    content.song = [];
-                    content.album = [];
-                    content.selectedArtist = null;
-                    content.selectedPlaylist = null;
-                    content.selectedAutoAlbum = id;
-                    content.breadcrumb = [];
-                    angular.forEach(subsonicResponse.albumList.album, function (item, key) {
-                        if (item.isDir) {
-                            content.album.push(map.mapAlbum(item));
-                        } else {
-                            content.song.push(map.mapSong(item));
-                        }
-                    });
-                    return content;
-                } else {
-                    return $q.reject(exception);
+                if(subsonicResponse.albumList.album !== undefined) {
+                    var albumArray = [].concat(subsonicResponse.albumList.album);
+                    if (albumArray.length > 0) {
+                        content.song = [];
+                        content.album = [];
+                        content.selectedArtist = null;
+                        content.selectedPlaylist = null;
+                        content.selectedAutoAlbum = id;
+                        content.breadcrumb = [];
+                        angular.forEach(albumArray, function (item, key) {
+                            if (item.isDir) {
+                                content.album.push(map.mapAlbum(item));
+                            } else {
+                                content.song.push(map.mapSong(item));
+                            }
+                        });
+                        return content;
+                    }
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
@@ -245,47 +260,49 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                     id: id
                 }
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.directory.child !== undefined && subsonicResponse.directory.child.length > 0) {
-                    var items = subsonicResponse.directory.child;
-                    content.selectedAlbum = id;
-                    if (action == 'add') {
-                        angular.forEach(items, function (item, key) {
-                            player.queue.push(map.mapSong(item));
-                        });
-                        notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                    } else if (action == 'play') {
-                        player.queue = [];
-                        angular.forEach(items, function (item, key) {
-                            player.queue.push(map.mapSong(item));
-                        });
-                        var next = player.queue[0];
-                        player.play(next);
-                        notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
-                    } else {
-                        if (subsonicResponse.directory.id != 'undefined') {
-                            var albumId = subsonicResponse.directory.id;
-                            var albumName = subsonicResponse.directory.name;
-                            if (content.breadcrumb.length > 0) { content.breadcrumb.splice(1, (content.breadcrumb.length - 1)); }
-                            content.breadcrumb.push({ 'type': 'album', 'id': albumId, 'name': albumName });
-                        }
-                        content.song = [];
-                        content.album = [];
-                        var albums = [];
-                        angular.forEach(items, function (item, key) {
-                            if (item.isDir) {
-                                albums.push(map.mapAlbum(item));
-                            } else {
-                                content.song.push(map.mapSong(item));
+                if(subsonicResponse.directory.child !== undefined) {
+                    var items = [].concat(subsonicResponse.directory.child);
+                    if (items.length > 0) {
+                        content.selectedAlbum = id;
+                        if (action == 'add') {
+                            angular.forEach(items, function (item, key) {
+                                player.queue.push(map.mapSong(item));
+                            });
+                            notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
+                        } else if (action == 'play') {
+                            player.queue = [];
+                            angular.forEach(items, function (item, key) {
+                                player.queue.push(map.mapSong(item));
+                            });
+                            var next = player.queue[0];
+                            player.play(next);
+                            notifications.updateMessage(items.length + ' Song(s) Added to Queue', true);
+                        } else {
+                            if (subsonicResponse.directory.id != 'undefined') {
+                                var albumId = subsonicResponse.directory.id;
+                                var albumName = subsonicResponse.directory.name;
+                                if (content.breadcrumb.length > 0) { content.breadcrumb.splice(1, (content.breadcrumb.length - 1)); }
+                                content.breadcrumb.push({ 'type': 'album', 'id': albumId, 'name': albumName });
                             }
-                        });
-                        if (albums.length > 0) {
-                            content.album = albums;
+                            content.song = [];
+                            content.album = [];
+                            var albums = [];
+                            angular.forEach(items, function (item, key) {
+                                if (item.isDir) {
+                                    albums.push(map.mapAlbum(item));
+                                } else {
+                                    content.song.push(map.mapSong(item));
+                                }
+                            });
+                            if (albums.length > 0) {
+                                content.album = albums;
+                            }
                         }
+                        return content;
                     }
-                    return content;
-                } else {
-                    return $q.reject(exception);
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
@@ -301,17 +318,17 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                         switch (type) {
                             case 0:
                                 if (subsonicResponse.searchResult2.song !== undefined) {
-                                    return map.mapSongs(subsonicResponse.searchResult2.song);
+                                    return map.mapSongs([].concat(subsonicResponse.searchResult2.song));
                                 }
                                 break;
                             case 1:
                                 if (subsonicResponse.searchResult2.album !== undefined) {
-                                    return map.mapAlbums(subsonicResponse.searchResult2.album);
+                                    return map.mapAlbums([].concat(subsonicResponse.searchResult2.album));
                                 }
                                 break;
                             case 2:
                                 if (subsonicResponse.searchResult2.artist !== undefined) {
-                                    return subsonicResponse.searchResult2.artist;
+                                    return [].concat(subsonicResponse.searchResult2.artist);
                                 }
                                 break;
                         }
@@ -339,11 +356,14 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             var promise = this.subsonicRequest('getRandomSongs.view', {
                 params: params
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.randomSongs !== undefined && subsonicResponse.randomSongs.song.length > 0) {
-                    return map.mapSongs(subsonicResponse.randomSongs.song);
-                } else {
-                    return $q.reject(exception);
+                if(subsonicResponse.randomSongs !== undefined) {
+                    var songArray = [].concat(subsonicResponse.randomSongs.song);
+                    if (songArray.length > 0) {
+                        return map.mapSongs(songArray);
+                    }
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
@@ -363,13 +383,16 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
         getRandomStarredSongs: function () {
             var promise = this.getStarred()
                 .then(function (starred) {
-                    if(starred.song !== undefined && starred.song.length > 0) {
-                        // Return random subarray of songs
-                        var songs = [].concat(_(starred.song).sample(globals.settings.AutoPlaylistSize));
-                        return map.mapSongs(songs);
-                    } else {
-                        return $q.reject({reason: 'No starred songs found on the Subsonic server.'});
+                    if(starred.song !== undefined) {
+                        var songArray = [].concat(starred.song);
+                        if (songArray.length > 0) {
+                            // Return random subarray of songs
+                            var songs = [].concat(_(songArray).sample(globals.settings.AutoPlaylistSize));
+                            return map.mapSongs(songs);
+                        }
                     }
+                    // We end up here for every else
+                    return $q.reject({reason: 'No starred songs found on the Subsonic server.'});
                 });
             return promise;
         },
@@ -378,14 +401,17 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             var exception = {reason: 'No playlist found on the Subsonic server.'};
             var promise = this.subsonicRequest('getPlaylists.view')
             .then(function (subsonicResponse) {
-                if(subsonicResponse.playlists.playlist !== undefined && subsonicResponse.playlists.playlist.length > 0) {
-                    var allPlaylists = _(subsonicResponse.playlists.playlist).partition(function (item) {
-                        return item.owner === globals.settings.Username;
-                    });
-                    return {playlists: allPlaylists[0], playlistsPublic: allPlaylists[1]};
-                } else {
-                    return $q.reject(exception);
+                if(subsonicResponse.playlists.playlist !== undefined) {
+                    var playlistArray = [].concat(subsonicResponse.playlists.playlist);
+                    if (playlistArray.length > 0) {
+                        var allPlaylists = _(playlistArray).partition(function (item) {
+                            return item.owner === globals.settings.Username;
+                        });
+                        return {playlists: allPlaylists[0], playlistsPublic: allPlaylists[1]};
+                    }
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
@@ -397,11 +423,14 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                     id: id
                 }
             }).then(function (subsonicResponse) {
-                if (subsonicResponse.playlist.entry !== undefined && subsonicResponse.playlist.entry.length > 0) {
-                    return map.mapSongs(subsonicResponse.playlist.entry);
-                } else {
-                    return $q.reject(exception);
+                if (subsonicResponse.playlist.entry !== undefined) {
+                    var entryArray = [].concat(subsonicResponse.playlist.entry);
+                    if (entryArray.length > 0) {
+                        return map.mapSongs(entryArray);
+                    }
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
@@ -437,6 +466,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             return this.subsonicRequest('createPlaylist.view', params);
         },
 
+        //TODO: Hyz: move to controller
         songsRemoveSelected: function (songs) {
             var deferred = $q.defer();
             angular.forEach(songs, function (item, key) {
@@ -483,11 +513,14 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                 }
             })
             .then(function (subsonicResponse) {
-                if (subsonicResponse.podcasts !== undefined && subsonicResponse.podcasts.channel !== undefined && subsonicResponse.podcasts.channel.length > 0) {
-                    return subsonicResponse.podcasts.channel;
-                } else {
-                    return $q.reject(exception);
+                if (subsonicResponse.podcasts !== undefined && subsonicResponse.podcasts.channel !== undefined) {
+                    var channelArray = [].concat(subsonicResponse.podcasts.channel);
+                    if (channelArray.length > 0) {
+                        return channelArray;
+                    }
                 }
+                // We end up here for every else
+                return $q.reject(exception);
             });
             return promise;
         },
@@ -501,19 +534,24 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                 }
             }).then(function (subsonicResponse) {
                 var episodes = [];
-                if (subsonicResponse.podcasts.channel !== undefined && subsonicResponse.podcasts.channel.length > 0) {
-                    var channel = subsonicResponse.podcasts.channel[0];
-                    if (channel !== null && channel.id === id) {
-                        episodes = _(channel.episode).filter(function (episode) {
-                            return episode.status === "completed";
-                        });
-                        if(episodes.length > 0) {
-                            return map.mapPodcasts(episodes);
-                        } else {
-                            return $q.reject({reason: 'No downloaded episode found for this podcast. Please check the podcast settings.'});
+                if (subsonicResponse.podcasts.channel !== undefined) {
+                    var channelArray = [].concat(subsonicResponse.podcasts.channel);
+                    if (channelArray.length > 0) {
+                        var channel = channelArray[0];
+                        if (channel !== null && channel.id === id) {
+                            var episodesArray = [].concat(channel.episode);
+                            episodes = _(episodesArray).filter(function (episode) {
+                                return episode.status === "completed";
+                            });
+                            if(episodes.length > 0) {
+                                return map.mapPodcasts(episodes);
+                            } else {
+                                return $q.reject({reason: 'No downloaded episode found for this podcast. Please check the podcast settings.'});
+                            }
                         }
                     }
                 }
+                // We end up here for every else
                 return $q.reject(exception);
             });
             return promise;
