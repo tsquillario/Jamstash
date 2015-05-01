@@ -55,13 +55,4 @@ https://github.com/tsquillario/Jamstash/blob/master/gpl-2.0.txt
 
 ## Contributing
 
-Run these commandes to setup the dev environment :
-
-```
-npm install
-# Be patient, this should take a while
-bower install
-# This one should be faster
-grunt serve
-# You're all set !
-```
+Help us improve Jamstash ! [See our wiki page for details on contributing](https://github.com/tsquillario/Jamstash/wiki/Contributing)
