@@ -627,7 +627,7 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         $scope.song.splice(end, 0, $scope.song.splice(start, 1)[0]);
     };
     $scope.playSong = function (song) {
-        player.play(song);
+        player.emptyQueue().addSong(song).playFirstSong();
     };
     $scope.addSongToQueue = function (song) {
         player.addSong(song);
