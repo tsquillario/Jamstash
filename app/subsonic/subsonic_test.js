@@ -7,22 +7,12 @@ describe("Subsonic controller", function() {
     beforeEach(function() {
         jasmine.addCustomEqualityTester(angular.equals);
 
-        module('jamstash.subsonic.controller', function ($provide) {
-            // Mock the player service
-            $provide.decorator('player', function($delegate) {
+        module('jamstash.subsonic.controller');
 
-                $delegate.queue = [];
-                $delegate.play = jasmine.createSpy("play");
-                $delegate.playFirstSong = jasmine.createSpy("playFirstSong");
-                return $delegate;
-            });
-        });
-
-        inject(function (_$controller_, _$rootScope_, utils, globals, map, $q, _player_) {
+        inject(function (_$controller_, _$rootScope_, utils, globals, map, $q) {
             $rootScope = _$rootScope_;
             scope = $rootScope.$new();
             deferred = $q.defer();
-            player = _player_;
 
             $window = jasmine.createSpyObj("$window", [
                 "prompt",
@@ -55,6 +45,19 @@ describe("Subsonic controller", function() {
             subsonic.getPodcasts.and.returnValue($q.defer().promise);
             subsonic.showIndex = false;
 
+            // Mock the player service
+            player = jasmine.createSpyObj("player", [
+                "emptyQueue",
+                "addSong",
+                "addSongs",
+                "play",
+                "playFirstSong"
+            ]);
+            player.emptyQueue.and.returnValue(player);
+            player.addSong.and.returnValue(player);
+            player.addSongs.and.returnValue(player);
+            player.queue = [];
+
             $controller = _$controller_;
             controllerParams = {
                 $scope: scope,
@@ -65,7 +68,8 @@ describe("Subsonic controller", function() {
                 globals: globals,
                 map: map,
                 subsonic: subsonic,
-                notifications: notifications
+                notifications: notifications,
+                player: player
             };
         });
     });
@@ -234,23 +238,22 @@ describe("Subsonic controller", function() {
                     deferred.resolve(response);
                     scope.$apply();
 
-                    expect(player.queue).toEqual([
+                    expect(player.addSongs).toHaveBeenCalledWith([
                         {id: "2548"}, {id: "8986"}, {id: "2986"}
                     ]);
                     expect(notifications.updateMessage).toHaveBeenCalledWith('3 Song(s) Added to Queue', true);
                 });
 
                 it("when I play songs, it plays the first selected song, empties the queue and fills it with the selected songs and it notifies the user", function() {
-                    player.queue = [{id: "7666"}];
-
                     scope.requestSongs(deferred.promise, 'play');
                     deferred.resolve(response);
                     scope.$apply();
 
-                    expect(player.playFirstSong).toHaveBeenCalled();
-                    expect(player.queue).toEqual([
+                    expect(player.emptyQueue).toHaveBeenCalled();
+                    expect(player.addSongs).toHaveBeenCalledWith([
                         {id: "2548"}, {id: "8986"}, {id: "2986"}
                     ]);
+                    expect(player.playFirstSong).toHaveBeenCalled();
                     expect(notifications.updateMessage).toHaveBeenCalledWith('3 Song(s) Added to Queue', true);
                 });
 
@@ -362,12 +365,14 @@ describe("Subsonic controller", function() {
             });
         });
 
-        it("When I call playSong, it calls play in the player service", function() {
+        it("Given a song, when I call playSong, then the player service's queue will be emptied, the song will be added to the queue and played", function() {
             var fakeSong = {"id": 3572};
 
             scope.playSong(fakeSong);
 
-            expect(player.play).toHaveBeenCalledWith(fakeSong);
+            expect(player.emptyQueue).toHaveBeenCalled();
+            expect(player.addSong).toHaveBeenCalledWith({"id": 3572});
+            expect(player.playFirstSong).toHaveBeenCalled();
         });
 
         //TODO: Hyz: all starred
