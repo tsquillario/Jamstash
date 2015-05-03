@@ -279,10 +279,11 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
      * @param  {String} action  the action to be taken with the songs. Must be 'add', 'play' or 'display'
      * @return {Promise}         the original promise passed in first param. That way we can chain it further !
      */
+    //TODO: Hyz: Maybe we should move this to a service
     $scope.requestSongs = function (promise, action) {
         $scope.handleErrors(promise)
         .then(function (songs) {
-            if(action === 'play') {
+            if (action === 'play') {
                 player.emptyQueue().addSongs(songs).playFirstSong();
                 notifications.updateMessage(songs.length + ' Song(s) Added to Queue', true);
             } else if (action === 'add') {
@@ -300,18 +301,33 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
         return promise;
     };
 
-    $scope.getSongs = function (id, action) {
-        subsonic.getSongs(id, action).then(function (data) {
-            $scope.album = data.album;
-            $scope.song = data.song;
-            $scope.BreadCrumbs = data.breadcrumb;
-            $scope.selectedAutoAlbum = data.selectedAutoAlbum;
-            $scope.selectedArtist = data.selectedArtist;
-            $scope.selectedPlaylist = data.selectedPlaylist;
-            if ($scope.SelectedAlbumSort.id != "default") {
-                sortSubsonicAlbums($scope.SelectedAlbumSort.id);
-            }
-        });
+    $scope.getSongs = function (action, id, name) {
+        var promise;
+        if (action === 'play' || action === 'add') {
+            promise = subsonic.recursiveGetSongs(id);
+            $scope.requestSongs(promise, action);
+        } else if (action === 'display') {
+            promise = subsonic.getSongs(id);
+            $scope.handleErrors(promise).then(function (data) {
+                $scope.album = data.directories;
+                $scope.song = data.songs;
+                if ($scope.BreadCrumbs.length > 0) {
+                    $scope.BreadCrumbs.splice(1, ($scope.BreadCrumbs.length - 1));
+                }
+                $scope.BreadCrumbs.push({'type': 'album', 'id': id, 'name': name});
+                $scope.selectedAutoAlbum = null;
+                $scope.selectedArtist = null;
+                $scope.selectedAlbum = id;
+                $scope.selectedAutoPlaylist = null;
+                $scope.selectedPlaylist = null;
+                $scope.selectedPodcast = null;
+                if ($scope.SelectedAlbumSort.id !== "default") {
+                    sortSubsonicAlbums($scope.SelectedAlbumSort.id);
+                }
+            }, function (error) {
+                notifications.updateMessage(error.reason, true);
+            });
+        }
     };
 
     $scope.getRandomStarredSongs = function (action) {
