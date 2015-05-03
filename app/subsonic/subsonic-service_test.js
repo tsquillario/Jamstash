@@ -1,8 +1,8 @@
 describe("Subsonic service -", function() {
     'use strict';
 
-    var subsonic, mockBackend, mockGlobals,
-        response;
+    var subsonic, mockBackend, mockGlobals, $q,
+        response, url;
     beforeEach(function() {
         // We redefine it because in some tests we need to alter the settings
         mockGlobals = {
@@ -46,9 +46,10 @@ describe("Subsonic service -", function() {
             });
         });
 
-        inject(function (_subsonic_, $httpBackend) {
+        inject(function (_subsonic_, $httpBackend, _$q_) {
             subsonic = _subsonic_;
             mockBackend = $httpBackend;
+            $q = _$q_;
         });
         response = {"subsonic-response": {status: "ok", version: "1.10.2"}};
     });
@@ -59,7 +60,7 @@ describe("Subsonic service -", function() {
     });
 
     describe("subsonicRequest() -", function() {
-        var partialUrl, url;
+        var partialUrl;
         beforeEach(function() {
             partialUrl = '/getStarred.view';
             url ='http://demo.subsonic.com/rest/getStarred.view?'+
@@ -129,7 +130,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getAlbums() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getMusicDirectory.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=21'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -182,62 +182,127 @@ describe("Subsonic service -", function() {
         });
     });
 
+    //TODO: Hyz: Rename into getDirectory(), because we don't know if there will be songs or other directories in it
     describe("getSongs() -", function() {
-        var url;
         beforeEach(function() {
-            var url = 'http://demo.subsonic.com/rest/getMusicDirectory.view?'+
+            url = 'http://demo.subsonic.com/rest/getMusicDirectory.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=209'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
-        it("Given that there were 2 songs in the given directory id in my library, when I get the songs from that directory, then a promise will be resolved with an array of 2 songs", function() {
+        it("Given a directory containing 2 songs and 1 subdirectory and given its id, when I get the songs from that directory, then a promise will be resolved with an array of 2 songs and an array of 1 subdirectory", function() {
             response["subsonic-response"].directory = {
                 child: [
                     { id: 778 },
-                    { id: 614 }
+                    { id: 614 },
+                    { id: 205, isDir: true}
                 ]
             };
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getSongs(209);
-            //TODO: Hyz: Replace with toBeResolvedWith() when getSongs() is refactored
-            var success = function (data) {
-                expect(data.album).toEqual([]);
-                expect(data.song).toEqual([
-                    { id: 778 },
-                    { id: 614 }
-                ]);
-            };
-            promise.then(success);
-
             mockBackend.flush();
 
-            expect(promise).toBeResolved();
+            expect(promise).toBeResolvedWith({
+                directories: [{ id: 205, isDir: true}],
+                songs: [{id: 778}, {id: 614}]
+            });
         });
 
-        it("Given that there was only 1 song in the given directory id in my Madsonic library, when I get the songs from that directory, then a promise will be resolved with an array of 1 song", function() {
+        it("Given a directory containing 1 song in my Madsonic library and given its id, when I get the songs from that directory, then a promise will be resolved with an array of 1 song and an empty array of subdirectories", function() {
             response["subsonic-response"].directory = {
                 child: { id: 402 }
             };
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getSongs(209);
-            //TODO: Hyz: Replace with toBeResolvedWith() when getSongs() is refactored
-            var success = function (data) {
-                expect(data.album).toEqual([]);
-                expect(data.song).toEqual([
-                    { id: 402 }
-                ]);
-            };
-            promise.then(success);
-
             mockBackend.flush();
 
-            expect(promise).toBeResolved();
+            expect(promise).toBeResolvedWith({
+                directories: [],
+                songs: [{id: 402}]
+            });
+        });
+
+        it("Given a directory that didn't contain anything and given its id, when I get the songs from that directory, then a promise will be rejected with an error message", function() {
+            response["subsonic-response"].directory = {};
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getSongs(209);
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'This directory is empty.'});
+        });
+    });
+
+    describe("recursiveGetSongs() -", function() {
+        var deferred;
+        beforeEach(function() {
+            deferred = $q.defer();
+            spyOn(subsonic, 'getSongs').and.returnValue(deferred.promise);
+        });
+        it("Given a directory containing 2 songs and a subdirectory itself containing 2 songs and given its id, when I get the songs from that directory, then a promise will be resolved with an array of 4 songs", function() {
+            // Mock getSongs so we are only testing the recursivity
+            var firstDeferred = $q.defer();
+            var secondDeferred = $q.defer();
+            subsonic.getSongs.and.callFake(function (id) {
+                // First call to getSongs
+                if (id === 499) {
+                    return firstDeferred.promise;
+                // Second call to getSongs
+                } else if (id === 553) {
+                    return secondDeferred.promise;
+                }
+            });
+
+            var promise = subsonic.recursiveGetSongs(499);
+            // On the first call to getSongs, we expect 2 songs and a subdirectory
+            firstDeferred.resolve({
+                directories: [{ id: 553, type: 'byfolder' }],
+                songs: [
+                    { id: 695 },
+                    { id: 227 }
+                ]
+            });
+            // On the second call, we expect 2 songs
+            secondDeferred.resolve({
+                directories: [],
+                songs: [
+                    { id: 422 },
+                    { id: 171 }
+                ]
+            });
+
+            expect(promise).toBeResolvedWith([
+                { id: 695 },
+                { id: 227 },
+                { id: 422 },
+                { id: 171 },
+            ]);
+        });
+
+        it("Given a directory containing only 2 songs and given its id, when I get the songs from that directory, then a promise will be resolved with an array of 2 songs", function() {
+            var promise = subsonic.recursiveGetSongs(14);
+            deferred.resolve({
+                directories: [],
+                songs: [
+                    { id: 33 }, { id: 595 }
+                ]
+            });
+
+            expect(promise).toBeResolvedWith([
+                { id: 33 }, { id: 595 }
+            ]);
+        });
+
+        it("Given a directory that didn't contain anything and given its id, when I get the songs from that directory, then a promise will be resolved with an empty array", function() {
+            var promise = subsonic.recursiveGetSongs(710);
+            deferred.reject({reason: 'This directory is empty.'});
+
+            expect(promise).toBeResolvedWith([]);
         });
     });
 
     describe("getAlbumListBy() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getAlbumList.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&offset=0'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3&type=newest'+'&u=Hyzual&v=1.10.2';
@@ -331,7 +396,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getRandomStarredSongs() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -393,7 +457,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getRandomSongs() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
@@ -508,7 +571,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getArtists() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -689,7 +751,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getPlaylist() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getPlaylist.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=9123'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -781,7 +842,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getPodcasts() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getPodcasts.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&includeEpisodes=false'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -833,7 +893,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getPodcast() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getPodcasts.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=2695&includeEpisodes=true'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -933,7 +992,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("search() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/search2.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D'+'&query=unintersetingly'+'&u=Hyzual&v=1.10.2';
