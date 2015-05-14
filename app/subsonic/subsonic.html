@@ -54,7 +54,7 @@
                                 <a class="add hover" href="" title="Add To Play Queue" ng-click="getSongs('add', o.id, o.name)" stop-event="click"></a>
                                 <a class="play hover" href="" title="Play" ng-click="getSongs('play', o.id, o.name)" stop-event="click"></a>
                                 <a class="download hover" href="" ng-click="download(o.id)" title="Download" stop-event="click"></a>
-                                <a title="Favorite hover" href="" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="updateFavorite(o)" stop-event="click"></a>
+                                <a class="hover" href="" title="Star" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="toggleStar(o)" stop-event="click"></a>
                                 <a class="info hover" href="" title="{{'Created: ' + o.date}}"></a>
                             </div>
                             <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
