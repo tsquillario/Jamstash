@@ -14,7 +14,7 @@
     "x37v (https://github.com/x37v)",
     "Hyzual (https://github.com/Hyzual)"
   ],
-  "license": "MIT",
+  "license": "GPL-2.0",
   "homepage": "http://jamstash.com",
   "keywords": [
     "subsonic",
@@ -51,7 +51,7 @@
     "karma": "^0.12.32",
     "karma-chrome-launcher": "^0.1.5",
     "karma-coverage": "^0.2.6",
-    "karma-jasmine": "^0.3.0",
+    "karma-jasmine": "^0.3.5",
     "karma-notify-reporter": "^0.1.1",
     "karma-phantomjs-launcher": "^0.1.4",
     "time-grunt": "^1.0.0"
