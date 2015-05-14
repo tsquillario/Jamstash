@@ -3,9 +3,9 @@
 *
 * Manages the player and playing queue. Use it to play a song, go to next track or add songs to the queue.
 */
-angular.module('jamstash.player.service', ['jamstash.settings.service', 'angular-underscore/utils'])
+angular.module('jamstash.player.service', ['angular-underscore/utils'])
 
-.factory('player', ['globals', function (globals) {
+.factory('player', [function () {
     'use strict';
 
     var playerVolume = 1.0;
@@ -18,6 +18,10 @@ angular.module('jamstash.player.service', ['jamstash.settings.service', 'angular
         pauseSong: false,
         restartSong: false,
         loadSong: false,
+        settings: {
+            repeat: "none",
+            repeatValues: ["queue", "song", "none"]
+        },
 
         play: function (song) {
             // Find the song's index in the queue, if it's in there
@@ -56,11 +60,11 @@ angular.module('jamstash.player.service', ['jamstash.settings.service', 'angular
 
         // Called from the player directive at the end of the current song
         songEnded: function () {
-            if (globals.settings.Repeat) {
+            if (player.settings.repeat === "song") {
                 // repeat current track
                 player.restart();
             } else if (player.isLastSongPlaying() === true) {
-                if (globals.settings.LoopQueue) {
+                if (player.settings.repeat === "queue") {
                     // Loop to first track in queue
                     player.playFirstSong();
                 }
