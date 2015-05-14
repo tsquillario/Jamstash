@@ -325,23 +325,31 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                         query: query
                     }
                 }).then(function (subsonicResponse) {
+                    var searchResult;
                     if (!_.isEmpty(subsonicResponse.searchResult2)) {
+                        searchResult = subsonicResponse.searchResult2;
+                    } else if (!_.isEmpty(subsonicResponse.search2)) {
+                        // We also check search2 because Music Cabinet doesn't respond the same thing
+                        // as everyone else...
+                        searchResult = subsonicResponse.search2;
+                    }
+                    if (!_.isEmpty(searchResult)) {
                         // Make sure that song, album and artist are arrays using concat
                         // because Madsonic will return an object when there's only one element
                         switch (type) {
                             case 0:
-                                if (subsonicResponse.searchResult2.song !== undefined) {
-                                    return map.mapSongs([].concat(subsonicResponse.searchResult2.song));
+                                if (searchResult.song !== undefined) {
+                                    return map.mapSongs([].concat(searchResult.song));
                                 }
                                 break;
                             case 1:
-                                if (subsonicResponse.searchResult2.album !== undefined) {
-                                    return map.mapAlbums([].concat(subsonicResponse.searchResult2.album));
+                                if (searchResult.album !== undefined) {
+                                    return map.mapAlbums([].concat(searchResult.album));
                                 }
                                 break;
                             case 2:
-                                if (subsonicResponse.searchResult2.artist !== undefined) {
-                                    return [].concat(subsonicResponse.searchResult2.artist);
+                                if (searchResult.artist !== undefined) {
+                                    return [].concat(searchResult.artist);
                                 }
                                 break;
                         }
