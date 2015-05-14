@@ -1,21 +1,13 @@
 describe("Player service -", function() {
     'use strict';
 
-    var player, mockGlobals, firstSong, secondSong, thirdSong, newSong;
+    var player, firstSong, secondSong, thirdSong, newSong;
     beforeEach(function() {
-        // We redefine globals because in some tests we need to alter the settings
-        mockGlobals = {
-            settings: {
-                Repeat: false,
-                LoopQueue: false
-            }
-        };
-        module('jamstash.player.service', function ($provide) {
-            $provide.value('globals', mockGlobals);
-        });
+        module('jamstash.player.service');
         inject(function (_player_) {
             player = _player_;
         });
+        player.settings.repeat = "none";
     });
 
     describe("Given that I have 3 songs in my playing queue,", function() {
@@ -206,9 +198,9 @@ describe("Player service -", function() {
             expect(player.nextTrack).toHaveBeenCalled();
         });
 
-        it("and that the 'Repeat song' setting is true, when the current song ends, it restarts it", function() {
+        it("and that the 'Repeat' setting is set to 'song', when the current song ends, it restarts it", function() {
             spyOn(player, "restart");
-            mockGlobals.settings.Repeat = true;
+            player.settings.repeat = "song";
 
             player.songEnded();
 
@@ -220,9 +212,9 @@ describe("Player service -", function() {
                 player._playingIndex = 2;
             });
 
-            it("if the 'Repeat queue' setting is true, it plays the first song of the queue", function() {
+            it("if the 'Repeat' setting is set to 'queue', it plays the first song of the queue", function() {
                 spyOn(player, "playFirstSong");
-                mockGlobals.settings.LoopQueue = true;
+                player.settings.repeat = "queue";
 
                 player.songEnded();
 

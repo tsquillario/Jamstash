@@ -17,7 +17,7 @@
             </div>
             <div id="songdetails">
                 <div id="coverart">
-					<a ng-click="fancyboxOpenImage(getPlayingSong().coverartfull)">
+                    <a ng-click="fancyboxOpenImage(getPlayingSong().coverartfull)">
                         <img ng-src="{{getPlayingSong().coverartthumb}}" src="images/albumdefault_60.jpg" height="30" width="30" />
                     </a>
                 </div>
@@ -27,7 +27,7 @@
                 </ul>
                 <div id="songdetails_controls">
                     <a href="" class="jukebox" title="Jukebox Mode [Beta]" ng-click="toggleSetting('Jukebox')" ng-class="{'hoverSelected': !settings.Jukebox }"></a>
-                    <a href="" class="loop" title="Repeat" ng-click="toggleSetting('Repeat')" ng-class="{'hoverSelected': !settings.Repeat }"></a>
+                    <jamstash-repeat selected-value="playerSettings.repeat" values="playerSettings.repeatValues"></jamstash-repeat>
                     <a href="" id="action_SaveProgress" class="lock" title="Save Track Position: On" ng-show="settings.SaveTrackPosition"></a>
                     <a title="Favorite" href="" ng-class="{'favorite': getPlayingSong().starred, 'rate': !getPlayingSong().starred}" ng-click="toggleStar(getPlayingSong())" stop-event="click"></a>
                     <a href="" id="action_Mute" class="mute" title="Mute"></a>

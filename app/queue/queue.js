@@ -4,7 +4,7 @@
 * Manages the playing queue. Gives access to the player service's queue-related functions,
 * like adding, removing and shuffling the queue.
 */
-angular.module('jamstash.queue.controller', ['jamstash.player.service'])
+angular.module('jamstash.queue.controller', ['jamstash.player.service', 'jamstash.settings.service'])
 
 .controller('QueueController', ['$scope', 'globals', 'player',
 	function ($scope, globals, player) {
