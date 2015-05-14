@@ -71,6 +71,7 @@ angular.module('jamstash.settings.controller', ['jamstash.settings.service', 'ja
                 $rootScope.showIndex = true;
             }, function (error) {
                 //TODO: Hyz: Duplicate from subsonic.js - requestSongs. Find a way to handle this only once.
+                globals.settings.ApiVersion = error.version;
                 var errorNotif;
                 if (error.subsonicError !== undefined) {
                     errorNotif = error.reason + ' ' + error.subsonicError.message;
