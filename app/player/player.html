@@ -29,7 +29,7 @@
                     <a href="" class="jukebox" title="Jukebox Mode [Beta]" ng-click="toggleSetting('Jukebox')" ng-class="{'hoverSelected': !settings.Jukebox }"></a>
                     <a href="" class="loop" title="Repeat" ng-click="toggleSetting('Repeat')" ng-class="{'hoverSelected': !settings.Repeat }"></a>
                     <a href="" id="action_SaveProgress" class="lock" title="Save Track Position: On" ng-show="settings.SaveTrackPosition"></a>
-                    <a title="Favorite" href="" ng-class="{'favorite': getPlayingSong().starred, 'rate': !getPlayingSong().starred}" ng-click="updateFavorite(getPlayingSong())" stop-event="click"></a>
+                    <a title="Favorite" href="" ng-class="{'favorite': getPlayingSong().starred, 'rate': !getPlayingSong().starred}" ng-click="toggleStar(getPlayingSong())" stop-event="click"></a>
                     <a href="" id="action_Mute" class="mute" title="Mute"></a>
                     <a href="" id="action_UnMute" class="unmute" title="Unmute" style="display: none;"></a>
                     <!--<div class="jp-volume-bar"><div class="jp-volume-bar-value"></div></div><a href="" id="action_VolumeMax" class="volume" title="Max Volume"></a>-->

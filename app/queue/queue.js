@@ -65,6 +65,4 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
             end = ui.item.index();
         player.queue.splice(end, 0, player.queue.splice(start, 1)[0]);
     };
-
-    //TODO: Hyz: updateFavorite - leave in rootScope ?
 }]);

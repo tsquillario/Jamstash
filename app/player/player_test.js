@@ -35,6 +35,4 @@ describe("Player controller", function() {
 
         expect(player.nextTrack).toHaveBeenCalled();
     });
-
-    // TODO: updateFavorite
 });

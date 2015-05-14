@@ -570,6 +570,33 @@ describe("Subsonic service -", function() {
         expect(promise).toBeResolvedWith(true);
     });
 
+
+    describe("toggleStar() -", function() {
+        it("Given an item (can be an artist, an album or a song) that wasn't starred, when I toggle its star, then a promise will be resolved with true", function() {
+            var song = { id: 7748, starred: false };
+            var url = 'http://demo.subsonic.com/rest/star.view?' +
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=7748'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.toggleStar(song);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith(true);
+        });
+
+        it("Given an item (can be an artist, an album or a song) that was starred, when I toggle its star, then a promise will be resolved with false", function() {
+            var album = { id: 6631, starred: true };
+            var url = 'http://demo.subsonic.com/rest/unstar.view?' +
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=6631'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.toggleStar(album);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith(false);
+        });
+    });
+
     describe("getArtists() -", function() {
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getIndexes.view?'+

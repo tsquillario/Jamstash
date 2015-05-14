@@ -1,13 +1,14 @@
 describe("Main controller", function() {
     'use strict';
 
-    var controllerParams, $controller, scope, mockGlobals, player, utils, persistence;
+    var controllerParams, $controller, $q, scope, mockGlobals, player, utils, persistence, subsonic, notifications,
+        deferred;
     beforeEach(function() {
         mockGlobals = {
             settings: {
                 SaveTrackPosition: false,
                 ShowQueue: false,
-                Debug: true,
+                Debug: false,
                 Jukebox: false
             }
         };
@@ -30,9 +31,21 @@ describe("Main controller", function() {
             "saveSettings"
         ]);
 
-        inject(function (_$controller_, $rootScope, _$document_, _$window_, _$location_, _$cookieStore_, _utils_, globals, _model_, _notifications_, _Page_) {
+        // Mock the subsonic service
+        subsonic = jasmine.createSpyObj("subsonic", [
+            "toggleStar"
+        ]);
+
+        // Mock the notifications service
+        notifications = jasmine.createSpyObj("notifications", [
+            "updateMessage"
+        ]);
+
+        inject(function (_$controller_, $rootScope, _$q_, _$document_, _$window_, _$location_, _$cookieStore_, _utils_, globals, _model_, _Page_) {
             scope = $rootScope.$new();
             utils = _utils_;
+            $q = _$q_;
+            deferred = $q.defer();
 
             spyOn(utils, "switchTheme");
 
@@ -47,34 +60,12 @@ describe("Main controller", function() {
                 utils: utils,
                 globals: globals,
                 model: _model_,
-                notifications: _notifications_,
+                notifications: notifications,
                 player: player,
                 persistence: persistence,
-                Page: _Page_
+                Page: _Page_,
+                subsonic: subsonic
             };
-        });
-    });
-
-    xdescribe("updateFavorite -", function() {
-
-        xit("when starring a song, it notifies the user that the star was saved", function() {
-
-        });
-
-        xit("when starring an album, it notifies the user that the star was saved", function() {
-
-        });
-
-        xit("when starring an artist, it notifies the user that the star was saved", function() {
-
-        });
-
-        xit("given that the Subsonic server returns an error, when starring something, it notifies the user with the error message", function() {
-            //TODO: move to higher level
-        });
-
-        xit("given that the Subsonic server is unreachable, when starring something, it notifies the user with the HTTP error code", function() {
-            //TODO: move to higher level
         });
     });
 
@@ -190,6 +181,34 @@ describe("Main controller", function() {
                 expect(mockGlobals.settings.Url).toBeUndefined();
             });
 
+        });
+
+        describe("toggleStar() -", function() {
+            beforeEach(function() {
+                subsonic.toggleStar.and.returnValue(deferred.promise);
+            });
+
+            it("Given an artist that was not starred, when I toggle its star, then subsonic service will be called, the artist will be starred and a notification will be displayed", function() {
+                var artist = { id: 4218, starred: false };
+                scope.toggleStar(artist);
+                deferred.resolve(true);
+                scope.$apply();
+
+                expect(subsonic.toggleStar).toHaveBeenCalledWith(artist);
+                expect(artist.starred).toBeTruthy();
+                expect(notifications.updateMessage).toHaveBeenCalledWith('Favorite Updated!', true);
+            });
+
+            it("Given a song that was starred, when I toggle its star, then subsonic service will be called, the song will be starred and a notification will be displayed", function() {
+                var song = { id: 784, starred: true };
+                scope.toggleStar(song);
+                deferred.resolve(false);
+                scope.$apply();
+
+                expect(subsonic.toggleStar).toHaveBeenCalledWith(song);
+                expect(song.starred).toBeFalsy();
+                expect(notifications.updateMessage).toHaveBeenCalledWith('Favorite Updated!', true);
+            });
         });
     });
 

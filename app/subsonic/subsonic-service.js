@@ -5,10 +5,10 @@
 * Also offers more fine-grained functionality that is not part of Subsonic's API.
 */
 angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
-    'jamstash.settings.service', 'jamstash.utils', 'jamstash.model', 'jamstash.notifications', 'jamstash.player.service'])
+    'jamstash.settings.service', 'jamstash.utils', 'jamstash.model'])
 
-.factory('subsonic', ['$rootScope', '$http', '$q', 'globals', 'utils', 'map', 'notifications', 'player',
-    function ($rootScope, $http, $q, globals, utils, map, notifications, player) {
+.factory('subsonic', ['$rootScope', '$http', '$q', 'globals', 'utils', 'map',
+    function ($rootScope, $http, $q, globals, utils, map) {
     'use strict';
 
     //TODO: Hyz: Remove when refactored
@@ -585,6 +585,18 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             }).then(function () {
                 if(globals.settings.Debug) { console.log('Successfully scrobbled song: ' + song.id); }
                 return true;
+            });
+            return promise;
+        },
+
+        toggleStar: function (item) {
+            var partialUrl = (item.starred) ? 'unstar.view' : 'star.view';
+            var promise = subsonicService.subsonicRequest(partialUrl, {
+                params: {
+                    id: item.id
+                }
+            }).then(function () {
+                return !item.starred;
             });
             return promise;
         }
