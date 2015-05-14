@@ -67,33 +67,58 @@ describe("Subsonic service -", function() {
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
-        it("Given that the Subsonic server is not responding, when I make a request to Subsonic it returns an error object with a message", function() {
+        it("Given that the Subsonic server was not responding, when I make a request to Subsonic, then an error object with a message will be returned", function() {
             mockBackend.expectJSONP(url).respond(503, 'Service Unavailable');
 
             var promise = subsonic.subsonicRequest(partialUrl);
             mockBackend.flush();
 
-            expect(promise).toBeRejectedWith({reason: 'Error when contacting the Subsonic server.', httpError: 503});
+            expect(promise).toBeRejectedWith({
+                reason: 'Error when contacting the Subsonic server.',
+                httpError: 503
+            });
         });
 
-        it("Given a missing parameter, when I make a request to Subsonic it returns an error object with a message", function() {
+        it("Given a missing parameter, when I make a request to Subsonic, then an error object with a message will be returned", function() {
             delete mockGlobals.settings.Password;
             var missingPasswordUrl = 'http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&u=Hyzual&v=1.10.2';
-            var errorResponse = {"subsonic-response" : {
-                "status" : "failed",
-                "version" : "1.10.2",
-                "error" : {"code" : 10,"message" : "Required parameter is missing."}
+            var errorResponse = {'subsonic-response' : {
+                status : 'failed',
+                version : '1.10.2',
+                error : {code : 10, message : 'Required parameter is missing.'}
             }};
             mockBackend.expectJSONP(missingPasswordUrl).respond(JSON.stringify(errorResponse));
 
             var promise = subsonic.subsonicRequest(partialUrl);
             mockBackend.flush();
 
-            expect(promise).toBeRejectedWith({reason: 'Error when contacting the Subsonic server.', subsonicError: {code: 10, message:'Required parameter is missing.'}});
+            expect(promise).toBeRejectedWith({
+                reason: 'Error when contacting the Subsonic server.',
+                subsonicError: {code: 10, message:'Required parameter is missing.'},
+                version: '1.10.2'
+            });
         });
 
-        it("Given a partialUrl that does not start with '/', it adds '/' before it and makes a correct request", function() {
+        it("Given that server and Jamstash had different api versions, when I make a request to Subsonic and the server responds an error, then it will return the server's api version in the error object", function() {
+            var errorResponse = {'subsonic-response': {
+                status: 'failed',
+                version: '1.8.0',
+                error: {code: 30, message: 'Incompatible Subsonic REST protocol version. Server must upgrade.'}
+            }};
+            mockBackend.expectJSONP(url).respond(JSON.stringify(errorResponse));
+
+            var promise = subsonic.subsonicRequest(partialUrl);
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({
+                reason: 'Error when contacting the Subsonic server.',
+                subsonicError: {code: 30, message: 'Incompatible Subsonic REST protocol version. Server must upgrade.'},
+                version: '1.8.0'
+            });
+        });
+
+        it("Given a partialUrl that did not start with '/', when I make a request to Subsonic, then a '/' will be added before the partial url", function() {
             partialUrl = 'getStarred.view';
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -101,7 +126,7 @@ describe("Subsonic service -", function() {
             mockBackend.flush();
         });
 
-        it("Given $http config params, it does not overwrite them", function() {
+        it("Given $http config params, when I make a request to Subsonic, then the params won't be overwritten", function() {
             partialUrl = 'scrobble.view';
             url ='http://demo.subsonic.com/rest/scrobble.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&id=75&p=enc:cGFzc3dvcmQ%3D&submission=false&u=Hyzual&v=1.10.2';
@@ -116,7 +141,7 @@ describe("Subsonic service -", function() {
             mockBackend.flush();
         });
 
-        it("Given that the global protocol setting is 'json', when I make a request to Subsonic it uses GET and does not use the JSON_CALLBACK parameter", function() {
+        it("Given that the global protocol setting was 'json', when I make a request to Subsonic, then it will use GET and won't use the JSON_CALLBACK parameter", function() {
             mockGlobals.settings.Protocol = 'json';
             var getUrl = 'http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&f=json&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';

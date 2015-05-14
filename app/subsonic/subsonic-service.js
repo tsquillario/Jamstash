@@ -106,6 +106,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                 } else {
                     if(subsonicResponse.status === 'failed' && subsonicResponse.error !== undefined) {
                         exception.subsonicError = subsonicResponse.error;
+                        exception.version = subsonicResponse.version;
                     }
                     deferred.reject(exception);
                 }
