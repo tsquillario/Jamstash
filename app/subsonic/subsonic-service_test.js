@@ -1077,6 +1077,34 @@ describe("Subsonic service -", function() {
             ]);
         });
 
+        it("Given that songs containing 'unintersetingly' existed in my Music Cabinet library, when I search for a song that contains 'unintersetingly', then a promise will be resolved with an array of songs", function() {
+            response["subsonic-response"].search2 = {
+                song: [
+                    {
+                        id: 7907,
+                        name: "unintersetingly Caragana"
+                    }, {
+                        id: 4089,
+                        name: "attacolite unintersetingly"
+                    }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 0);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                {
+                    id: 7907,
+                    name: "unintersetingly Caragana"
+                }, {
+                    id: 4089,
+                    name: "attacolite unintersetingly"
+                }
+            ]);
+        });
+
         it("Given that only one song containing 'unintersetingly' existed in my Madsonic library, when I search for a song that contains 'unintersetingly', then a promise will be resolved with an array of one song", function() {
             response["subsonic-response"].searchResult2 = {
                 song: { id: 142, name: "unintersetingly rescue" }
