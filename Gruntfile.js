@@ -39,7 +39,7 @@ module.exports = function (grunt) {
     watch: {
       bower: {
         files: ['bower.json'],
-        tasks: ['wiredep']
+        tasks: ['wiredep', 'copy:svg']
       },
       js: {
         files: ['<%= yeoman.app %>/**/*.js', '!<%= yeoman.app %>/**/*_test.js'],
@@ -52,12 +52,17 @@ module.exports = function (grunt) {
         files: ['<%= yeoman.app %>/**/*_test.js'],
         tasks: ['karma:continuous:run']
       },
+      svg: {
+        files: ['<%= yeoman.app %>/images/**/*.svg', '!<%= yeoman.app %>/images/sprite/**'],
+        tasks: ['svg_sprite:dist']
+      },
       gruntfile: {
         files: ['Gruntfile.js']
       },
       livereload: {
         files: [
           '<%= yeoman.app %>/**/*.html',
+          '<%= yeoman.app %>/**/*.css',
           '<%= yeoman.app %>/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
@@ -89,20 +94,6 @@ module.exports = function (grunt) {
           }
         }
       },
-      test: {
-        options: {
-          port: 9001,
-          middleware: function (connect) {
-            return [
-              connect().use(
-                '/bower_components',
-                connect.static('./bower_components')
-              ),
-              connect.static(appConfig.app)
-            ];
-          }
-        }
-      },
       coverage: {
         options: {
           open: true,
@@ -123,7 +114,7 @@ module.exports = function (grunt) {
     // Test settings
     karma: {
       options: {
-        configFile: './karma.conf.js',
+        configFile: './karma.conf.js'
       },
       unit: {
         singleRun: true,
@@ -158,21 +149,6 @@ module.exports = function (grunt) {
           }
         },
         devDependencies: true
-      }
-    },
-
-    // Make sure code styles are up to par and there are no obvious mistakes
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc',
-        reporter: require('jshint-stylish'),
-        force: true //TODO: while I work on correcting those errors, don't block the build
-      },
-      all: {
-        src: [
-          'Gruntfile.js',
-          '<%= yeoman.app %>/**/*.js'
-        ]
       }
     },
 
@@ -217,7 +193,7 @@ module.exports = function (grunt) {
 
     // Performs rewrites based on filerev and the useminPrepare configuration
     usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
+      html: ['<%= yeoman.dist %>/**/*.html'],
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
       js: ['<%= yeoman.dist %>/scripts/*.js'],
       options: {
@@ -263,6 +239,22 @@ module.exports = function (grunt) {
       }
     },
 
+    svg_sprite: {
+      options: {
+        mode: {
+          symbol: {
+            dest: '',
+            sprite: 'jamstash-sprite.svg'
+          }
+        }
+      },
+      dist: {
+        cwd: '<%= yeoman.app %>/images',
+        src: ['**/*.svg', '!sprite/**/*.svg'],
+        dest: '<%= yeoman.app %>/images/sprite'
+      }
+    },
+
     // Minify our CSS files but do not merge them, we still want to have two
     cssmin: {
       styles: {
@@ -270,7 +262,7 @@ module.exports = function (grunt) {
           expand: true,
           cwd: '.tmp/styles',
           src: ['*.css', '!*.min.css'],
-          dest: '<%= yeoman.dist %>/styles',
+          dest: '<%= yeoman.dist %>/styles'
         }]
       }
     },
@@ -311,6 +303,12 @@ module.exports = function (grunt) {
         {
           expand: true,
           cwd: '<%= yeoman.app %>',
+          src: ['images/sprite/*.svg'],
+          dest: '<%= yeoman.dist %>'
+        },
+        {
+          expand: true,
+          cwd: '<%= yeoman.app %>',
           src: ['styles/{,*/}*.css'],
           dest: '.tmp'
         },
@@ -323,6 +321,13 @@ module.exports = function (grunt) {
             'bower_components/fancybox/source/*.{png,gif}'
           ],
           dest: '.tmp/styles'
+        }
+        ]
+      },
+      svg: {
+        files: [{
+          src: ['bower_components/open-iconic/sprite/sprite.svg'],
+          dest: '<%= yeoman.app %>/images/sprite/iconic.svg'
         }]
       }
     },
@@ -364,7 +369,7 @@ module.exports = function (grunt) {
     sftp: {
       test: {
         files: {
-          './': ['<%= yeoman.dist %>/{,*/}*', '<%= yeoman.dist %>/.git*']
+          './': ['<%= yeoman.dist %>/**/*', '<%= yeoman.dist %>/.git*']
         },
         options: {
           path: '/var/www/jamstash',
@@ -387,7 +392,7 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('serve', 'Compile then start a connect web server', function(target) {
+  grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
     }
@@ -400,14 +405,13 @@ module.exports = function (grunt) {
       ]);
   });
 
-  grunt.registerTask('test', 'Run unit tests and jshint', function() {
+  grunt.registerTask('test', 'Run unit tests and jshint', function () {
     return grunt.task.run([
-      'karma:unit',
-      'jshint'
+      'karma:unit'
     ]);
   });
 
-  grunt.registerTask('coverage', 'Run unit tests and display test coverage results on browser', function() {
+  grunt.registerTask('coverage', 'Run unit tests and display test coverage results on browser', function () {
     return grunt.task.run([
       'clean:coverage',
       'karma:unit',
@@ -415,10 +419,11 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('build', 'Concatenate all JS files, minify all JS, CSS, HTML and image files and version all static assets', function() {
+  grunt.registerTask('build', 'Concatenate all JS files, minify all JS, CSS, HTML and image files and version all static assets', function () {
     return grunt.task.run([
       'clean:dist',
       'wiredep:app',
+      'copy:svg',
       'useminPrepare',
       'concat:generated',
       'copy:dist',
@@ -432,7 +437,7 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('deploy', 'Build and deploy to test server', function() {
+  grunt.registerTask('deploy', 'Build and deploy to test server', function () {
     return grunt.task.run([
       'build',
       'sshexec:cleanTest',
