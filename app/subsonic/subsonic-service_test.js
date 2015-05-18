@@ -46,6 +46,8 @@ describe("Subsonic service -", function() {
             });
         });
 
+        installPromiseMatchers();
+
         inject(function (_subsonic_, $httpBackend, _$q_) {
             subsonic = _subsonic_;
             mockBackend = $httpBackend;
@@ -385,7 +387,7 @@ describe("Subsonic service -", function() {
     });
 
     describe("getStarred() -", function() {
-        var url
+        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
