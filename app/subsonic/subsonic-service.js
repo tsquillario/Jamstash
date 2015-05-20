@@ -34,6 +34,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
     var subsonicService = {
         showIndex: $rootScope.showIndex,
         showPlaylist: showPlaylist,
+        //TODO: Hyz: Do we still need this ? it's only used in the songpreview directive
         getSongTemplate: function (callback) {
             var id = '16608';
             var url = globals.BaseURL() + '/getMusicDirectory.view?' + globals.BaseParams() + '&id=' + id;
@@ -121,13 +122,21 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             return subsonicService.subsonicRequest('ping.view');
         },
 
+        getMusicFolders: function () {
+            var exception = {reason: 'No music folder found on the Subsonic server.'};
+            var promise = subsonicService.subsonicRequest('getMusicFolders.view')
+            .then(function (subsonicResponse) {
+                if (subsonicResponse.musicFolders !== undefined && subsonicResponse.musicFolders.musicFolder !== undefined) {
+                    return [].concat(subsonicResponse.musicFolders.musicFolder);
+                } else {
+                    return $q.reject(exception);
+                }
+            });
+            return promise;
+        },
+
         getArtists: function (folder) {
             var exception = {reason: 'No artist found on the Subsonic server.'};
-            // TODO: Hyz: Move loading / saving the music folder to persistence-service
-            if (isNaN(folder) && utils.getValue('MusicFolders')) {
-                var musicFolder = angular.fromJson(utils.getValue('MusicFolders'));
-                folder = musicFolder.id;
-            }
             var params;
             if (!isNaN(folder)) {
                 params = {

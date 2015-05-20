@@ -77,6 +77,19 @@ angular.module('jamstash.persistence', ['angular-locker',
         locker.forget('Volume');
     };
 
+    /* Manage selected music folder */
+    this.getSelectedMusicFolder = function () {
+        return locker.get('MusicFolders');
+    };
+
+    this.saveSelectedMusicFolder = function (selectedMusicFolder) {
+        locker.put('MusicFolders', selectedMusicFolder);
+    };
+
+    this.deleteSelectedMusicFolder = function () {
+        locker.forget('MusicFolders');
+    };
+
     /* Manage user settings */
     this.getSettings = function () {
         // If the latest version from changelog.json is newer than the version stored in local storage,
