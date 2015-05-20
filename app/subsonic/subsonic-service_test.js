@@ -1,7 +1,7 @@
 describe("Subsonic service -", function() {
     'use strict';
 
-    var subsonic, mockBackend, mockGlobals, $q,
+    var $q, mockBackend, subsonic, mockGlobals,
         response, url;
     beforeEach(function() {
         // We redefine it because in some tests we need to alter the settings
@@ -624,6 +624,55 @@ describe("Subsonic service -", function() {
         });
     });
 
+    describe("getMusicFolders() -", function() {
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getMusicFolders.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
+
+        it("Given that there were 2 music folders in my library, when I get the music folders, then a promise will be resolved with an array of 2 music folders", function() {
+            response["subsonic-response"].musicFolders = {
+                musicFolder: [
+                    { id: 80, name: "languageless" },
+                    { id: 38, name: "mala" }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getMusicFolders();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                { id: 80, name: "languageless" },
+                { id: 38, name: "mala" }
+            ]);
+        });
+
+        it("Given that there was 1 music folder in my Madsonic library, when I get the music folders, then a promise will be resolved with an array of 1 music folder", function() {
+            response["subsonic-response"].musicFolders = {
+                musicFolder: {id: 56, name: "dite"}
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getMusicFolders();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                { id: 56, name: "dite"}
+            ]);
+        });
+
+        it("Given that there wasn't any music folder in my library, when I get the music folders, then a promise will be rejected with an error message", function() {
+            response["subsonic-response"].musicFolders = {};
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getMusicFolders();
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'No music folder found on the Subsonic server.'});
+        });
+    });
+
     describe("getArtists() -", function() {
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
@@ -656,6 +705,15 @@ describe("Subsonic service -", function() {
             mockBackend.flush();
 
             expect(promise).toBeResolvedWith(response["subsonic-response"].indexes);
+        });
+
+        it("Given a folder id, when I get the artists, then it will be used as parameter in the request", function() {
+            url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&musicFolderId=54'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            subsonic.getArtists(54);
+            mockBackend.flush();
         });
 
         it("Given that there were 2 artist at the top level of my Madsonic library, when I get the artists, then a promise will be resolved with an array of two artist", function() {

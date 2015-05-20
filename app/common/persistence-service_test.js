@@ -154,6 +154,48 @@ describe("Persistence service", function() {
         expect(locker.forget).toHaveBeenCalledWith('Volume');
     });
 
+    describe("getSelectedMusicFolder() -", function() {
+        it("Given a previously saved selected music folder in local storage, when I get the saved music folder, then an object containing the id and name of the selected music folder will be returned", function() {
+            fakeStorage = {
+                'MusicFolders': {
+                    'id': 74,
+                    'name': 'kooliman unhurled'
+                }
+            };
+
+            var selectedMusicFolder = persistence.getSelectedMusicFolder();
+
+            expect(locker.get).toHaveBeenCalledWith('MusicFolders');
+            expect(selectedMusicFolder).toEqual({
+                'id': 74,
+                'name': 'kooliman unhurled'
+            });
+        });
+
+        it("Given that no selected music folder was previously saved in local storage, when I get the saved music folder, then undefined will be returned", function() {
+            var selectedMusicFolder = persistence.getSelectedMusicFolder();
+
+            expect(locker.get).toHaveBeenCalledWith('MusicFolders');
+            expect(selectedMusicFolder).toBeUndefined();
+        });
+    });
+
+    it("saveSelectedMusicFolder() - given an object containing the id and name of the selected music folder, when I save the music folder, then it will be set in local storage", function() {
+        persistence.saveSelectedMusicFolder({
+            id: 41,
+            name: 'parlormaid carcinolytic'
+        });
+        expect(locker.put).toHaveBeenCalledWith('MusicFolders', {
+            id: 41,
+            name: 'parlormaid carcinolytic'
+        });
+    });
+
+    it("deleteSelectedMusicFolder() - when I delete the selected music folder, then it will be erased from local storage", function() {
+        persistence.deleteSelectedMusicFolder();
+        expect(locker.forget).toHaveBeenCalledWith('MusicFolders');
+    });
+
     describe("getSettings() -", function() {
         beforeEach(function() {
             spyOn(persistence, 'upgradeVersion');

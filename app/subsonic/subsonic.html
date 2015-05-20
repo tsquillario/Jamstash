@@ -86,7 +86,9 @@
             </ul>
             <div class="clear"></div>
             <div id="IndexContainer" class="leftsubsection" ng-show="showIndex">
-                <select id="MusicFolders" class="folders" ng-model="$root.SelectedMusicFolder" ng-options="o.name for o in MusicFolders"></select>
+                <select id="MusicFolders" class="folders" ng-model="SelectedMusicFolder" ng-options="o.name for o in MusicFolders track by o.id">
+                    <option value="">All Folders</option>
+                </select>
                 <div id="AZIndex" ng-show="!settings.HideAZ" class="subactionsfixed">
                     <a href="" ng-click="toggleAZ()" stop-event="click">A-Z</a>
                 </div>

@@ -2,14 +2,14 @@ describe("Subsonic controller", function() {
     'use strict';
 
     var scope, $rootScope, $controller, $window,
-        subsonic, notifications, player, controllerParams, deferred;
+        subsonic, notifications, player, utils, persistence, controllerParams, deferred;
 
     beforeEach(function() {
         jasmine.addCustomEqualityTester(angular.equals);
 
         module('jamstash.subsonic.controller');
 
-        inject(function (_$controller_, _$rootScope_, utils, globals, map, $q) {
+        inject(function (_$controller_, _$rootScope_, globals, map, $q) {
             $rootScope = _$rootScope_;
             scope = $rootScope.$new();
             deferred = $q.defer();
@@ -19,34 +19,42 @@ describe("Subsonic controller", function() {
                 "confirm"
             ]);
             notifications = jasmine.createSpyObj("notifications", ["updateMessage"]);
+            utils = jasmine.createSpyObj("utils", ["getValue"]);
+            persistence = jasmine.createSpyObj("persistence", [
+                "getSelectedMusicFolder",
+                "saveSelectedMusicFolder",
+                "deleteSelectedMusicFolder"
+            ]);
 
             // Mock the subsonic service
             subsonic = jasmine.createSpyObj("subsonic", [
-                "getSongs",
-                "recursiveGetSongs",
+                "deletePlaylist",
                 "getAlbums",
                 "getArtists",
                 "getGenres",
-                "getPlaylists",
-                "getPodcasts",
-                "getRandomStarredSongs",
-                "getRandomSongs",
+                "getMusicFolders",
                 "getPlaylist",
-                "newPlaylist",
-                "deletePlaylist",
-                "savePlaylist",
+                "getPlaylists",
                 "getPodcast",
-                "search"
+                "getPodcasts",
+                "getRandomSongs",
+                "getRandomStarredSongs",
+                "getSongs",
+                "newPlaylist",
+                "recursiveGetSongs",
+                "savePlaylist",
+                "search",
             ]);
             // We make them return different promises and use our deferred variable only when testing
             // a particular function, so that they stay isolated
-            subsonic.getSongs.and.returnValue($q.defer().promise);
-            subsonic.recursiveGetSongs.and.returnValue($q.defer().promise);
             subsonic.getAlbums.and.returnValue($q.defer().promise);
             subsonic.getArtists.and.returnValue($q.defer().promise);
             subsonic.getGenres.and.returnValue($q.defer().promise);
+            subsonic.getMusicFolders.and.returnValue($q.defer().promise);
             subsonic.getPlaylists.and.returnValue($q.defer().promise);
             subsonic.getPodcasts.and.returnValue($q.defer().promise);
+            subsonic.getSongs.and.returnValue($q.defer().promise);
+            subsonic.recursiveGetSongs.and.returnValue($q.defer().promise);
             subsonic.showIndex = false;
 
             // Mock the player service
@@ -73,7 +81,8 @@ describe("Subsonic controller", function() {
                 map: map,
                 subsonic: subsonic,
                 notifications: notifications,
-                player: player
+                player: player,
+                persistence: persistence
             };
         });
     });
@@ -82,6 +91,7 @@ describe("Subsonic controller", function() {
         beforeEach(function() {
             $controller('SubsonicController', controllerParams);
             scope.selectedPlaylist = null;
+            scope.$apply();
         });
 
         describe("getSongs -", function() {
@@ -513,12 +523,36 @@ describe("Subsonic controller", function() {
 
         //TODO: Hyz: all starred
 
-        describe("When I load the artists,", function() {
+        describe("", function() {
+            beforeEach(function() {
+                spyOn(scope, "getArtists");
+            });
+
+            it("Given no previously selected music folder, when I select a music folder, then it will be stored in persistence and the artists will be loaded from subsonic", function() {
+                scope.SelectedMusicFolder = { id: 22, name: "Cascadia" };
+                scope.$apply();
+
+                expect(persistence.saveSelectedMusicFolder).toHaveBeenCalledWith({ id: 22, name: "Cascadia" });
+                expect(scope.getArtists).toHaveBeenCalledWith(22);
+            });
+
+            it("Given a previously selected music folder, when I select the 'All Folders' (undefined) music folder, then the stored value will be deleted from persistence and all the artists will be loaded from subsonic", function() {
+                scope.SelectedMusicFolder = { id: 23, name: "grantable" };
+                scope.$apply();
+                scope.SelectedMusicFolder = undefined;
+                scope.$apply();
+
+                expect(persistence.deleteSelectedMusicFolder).toHaveBeenCalled();
+                expect(scope.getArtists).not.toHaveBeenCalledWith(jasmine.any(Number));
+            });
+        });
+
+        describe("getArtists() -", function() {
             beforeEach(function() {
                 subsonic.getArtists.and.returnValue(deferred.promise);
             });
 
-            it("Given that there are songs in the library, it loads the artists and publishes them to the scope", function() {
+            it("Given that there were artists in the library, when I load the artists, then subsonic will be queried an index array containing the artists and a shortcut array containing the shortcuts (such as Podcasts) will be publisehd to the scope", function() {
                 scope.getArtists();
                 deferred.resolve({
                     index: [
@@ -539,7 +573,15 @@ describe("Subsonic controller", function() {
                 ]);
             });
 
-            it("Given that there aren't any songs in the library, when loading indexes, it notifies the user with an error message", function() {
+            it("Given no folder id and given a selected music folder had been set in the scope, when I get the artists, then the selected music folder's id will be used as parameter to subsonic service", function() {
+                scope.SelectedMusicFolder = { id: 62, name: "dollardee" };
+
+                scope.getArtists();
+
+                expect(subsonic.getArtists).toHaveBeenCalledWith(62);
+            });
+
+            it("Given that there weren't any artist in the library, when I load the artists, then a notification with an error message will be displayed", function() {
                 scope.getArtists();
                 deferred.reject({reason: 'No artist found on the Subsonic server.'});
                 scope.$apply();
@@ -549,11 +591,22 @@ describe("Subsonic controller", function() {
                 expect(notifications.updateMessage).toHaveBeenCalledWith('No artist found on the Subsonic server.', true);
             });
 
-            it("it lets handleErrors handle HTTP and Subsonic errors", function() {
+            it("Given that the server was unreachable, when I get the music folders, then handleErrors() will deal with the error", function() {
                 spyOn(scope, 'handleErrors').and.returnValue(deferred.promise);
                 scope.getArtists();
                 expect(scope.handleErrors).toHaveBeenCalledWith(deferred.promise);
             });
+        });
+
+        it("refreshArtists() - When I refresh the artists, then the selected music folder will be reset to undefined and the artists and playlists will be loaded", function() {
+            spyOn(scope, "getArtists");
+            spyOn(scope, "getPlaylists");
+
+            scope.refreshArtists();
+
+            expect(scope.SelectedMusicFolder).toBeUndefined();
+            expect(scope.getArtists).toHaveBeenCalled();
+            expect(scope.getPlaylists).toHaveBeenCalled();
         });
 
         describe("When I load the playlists,", function() {
@@ -631,7 +684,7 @@ describe("Subsonic controller", function() {
             expect(scope.getPlaylists).toHaveBeenCalled();
         });
 
-        it("Given no selected playlist, when I try to delete a playlist, an error message will be notified", function() {
+        it("Given no selected playlist, when I try to delete a playlist, an error notification will be displayed", function() {
             scope.selectedPlaylist = null;
 
             scope.deletePlaylist();
@@ -663,7 +716,7 @@ describe("Subsonic controller", function() {
             expect(notifications.updateMessage).toHaveBeenCalledWith('Playlist Updated!', true);
         });
 
-        it("Given no selected playlist, when I try to save a playlist, an error message will be notified", function() {
+        it("Given no selected playlist, when I try to save a playlist, an error notification will be displayed", function() {
             scope.selectedPlaylist = null;
 
             scope.savePlaylist();
@@ -702,6 +755,64 @@ describe("Subsonic controller", function() {
                 expect(subsonic.getPodcasts).toHaveBeenCalled();
                 expect(scope.podcasts).toEqual([]);
                 expect(notifications.updateMessage).not.toHaveBeenCalled();
+            });
+        });
+
+        describe("getMusicFolders", function() {
+            beforeEach(function() {
+                subsonic.getMusicFolders.and.returnValue(deferred.promise);
+            });
+
+            it("Given that there were music folders in the library, when I get the music folders, then the folders will be published to the scope", function() {
+                scope.getMusicFolders();
+                deferred.resolve([
+                    { id: 74, name: "scirrhosis"},
+                    { id: 81, name: "drooper"}
+                ]);
+                scope.$apply();
+
+                expect(subsonic.getMusicFolders).toHaveBeenCalled();
+                expect(scope.MusicFolders).toEqual([
+                    { id: 74, name: "scirrhosis"},
+                    { id: 81, name: "drooper"}
+                ]);
+            });
+
+            describe("Given that there was a selected music folder previously saved in persistence", function() {
+                it("and that it matched one of the music folders returned by subsonic, when I get the music folders, then the scope's selected music folder will be set", function() {
+                    persistence.getSelectedMusicFolder.and.returnValue({ id: 79, name: "dismember" });
+
+                    scope.getMusicFolders();
+                    deferred.resolve([
+                        { id: 93, name: "illish" },
+                        { id: 79, name: "dismember" }
+                    ]);
+                    scope.$apply();
+
+                    expect(scope.SelectedMusicFolder).toEqual({ id: 79, name: "dismember" });
+                });
+
+                it("and that it didn't match one of the music folders returned by subsonic, when I get the music folders, then the scope's selected music folder will be undefined", function() {
+                    persistence.getSelectedMusicFolder.and.returnValue({ id: 49, name: "metafulminuric" });
+
+                    scope.getMusicFolders();
+                    deferred.resolve([
+                        { id: 94, name: "dorsiflexor" }
+                    ]);
+                    scope.$apply();
+
+                    expect(scope.SelectedMusicFolder).toBeUndefined();
+                });
+            });
+
+            it("Given that there weren't any music folder in the library, when I get the music folders, then handleErrors() will deal with the error", function() {
+                spyOn(scope, 'handleErrors').and.returnValue(deferred.promise);
+
+                scope.getMusicFolders();
+                deferred.reject({reason: 'No music folder found on the Subsonic server.'});
+                scope.$apply();
+
+                expect(scope.handleErrors).toHaveBeenCalledWith(deferred.promise);
             });
         });
 
