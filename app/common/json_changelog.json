@@ -1,5 +1,17 @@
 [
     {
+        "date": "5/23/2015", "version": "4.5.0",
+        "changes": [
+        { "text": "- The Repeat icon in the player now has 3 states: 'Repeat nothing', 'Repeat the current queue', 'Repeat the current playing song'."},
+        { "text": "- Removed the Loop Queue setting which is now managed only by the icon."},
+        { "text": "- Shuffling the queue will now keep the current playing song at the top of the queue."},
+        { "text": "- Added a Play icon to the songs. Click it to empty the queue and play only this single song."},
+        { "text": "- Clicking the Play icon of a directory will play all its songs and all the songs of its sub-directories recursively."},
+        { "text": "- Fixed a bug that prevented Music Cabinet users from listing all their music folders and from searching songs."},
+        { "text": "- Fixed a bug that prevented users from switching from a recent Subsonic server (high API version) to an older Subsonic server (lower API version)."}
+        ]
+    },
+    {
         "date": "4/12/2015", "version": "4.4.5",
         "changes": [
         { "text": "- Code refactoring, fixes Madsonic-related bugs when there was only one element in a collection (e.g. one album for an artist)."}
