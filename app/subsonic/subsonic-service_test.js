@@ -1,8 +1,8 @@
 describe("Subsonic service -", function() {
     'use strict';
 
-    var subsonic, mockBackend, mockGlobals;
-    var response;
+    var $q, mockBackend, subsonic, mockGlobals,
+        response, url;
     beforeEach(function() {
         // We redefine it because in some tests we need to alter the settings
         mockGlobals = {
@@ -46,9 +46,12 @@ describe("Subsonic service -", function() {
             });
         });
 
-        inject(function (_subsonic_, $httpBackend) {
+        installPromiseMatchers();
+
+        inject(function (_subsonic_, $httpBackend, _$q_) {
             subsonic = _subsonic_;
             mockBackend = $httpBackend;
+            $q = _$q_;
         });
         response = {"subsonic-response": {status: "ok", version: "1.10.2"}};
     });
@@ -59,40 +62,65 @@ describe("Subsonic service -", function() {
     });
 
     describe("subsonicRequest() -", function() {
-        var partialUrl, url;
+        var partialUrl;
         beforeEach(function() {
             partialUrl = '/getStarred.view';
             url ='http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
-        it("Given that the Subsonic server is not responding, when I make a request to Subsonic it returns an error object with a message", function() {
+        it("Given that the Subsonic server was not responding, when I make a request to Subsonic, then an error object with a message will be returned", function() {
             mockBackend.expectJSONP(url).respond(503, 'Service Unavailable');
 
             var promise = subsonic.subsonicRequest(partialUrl);
             mockBackend.flush();
 
-            expect(promise).toBeRejectedWith({reason: 'Error when contacting the Subsonic server.', httpError: 503});
+            expect(promise).toBeRejectedWith({
+                reason: 'Error when contacting the Subsonic server.',
+                httpError: 503
+            });
         });
 
-        it("Given a missing parameter, when I make a request to Subsonic it returns an error object with a message", function() {
+        it("Given a missing parameter, when I make a request to Subsonic, then an error object with a message will be returned", function() {
             delete mockGlobals.settings.Password;
             var missingPasswordUrl = 'http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&u=Hyzual&v=1.10.2';
-            var errorResponse = {"subsonic-response" : {
-                "status" : "failed",
-                "version" : "1.10.2",
-                "error" : {"code" : 10,"message" : "Required parameter is missing."}
+            var errorResponse = {'subsonic-response' : {
+                status : 'failed',
+                version : '1.10.2',
+                error : {code : 10, message : 'Required parameter is missing.'}
             }};
             mockBackend.expectJSONP(missingPasswordUrl).respond(JSON.stringify(errorResponse));
 
             var promise = subsonic.subsonicRequest(partialUrl);
             mockBackend.flush();
 
-            expect(promise).toBeRejectedWith({reason: 'Error when contacting the Subsonic server.', subsonicError: {code: 10, message:'Required parameter is missing.'}});
+            expect(promise).toBeRejectedWith({
+                reason: 'Error when contacting the Subsonic server.',
+                subsonicError: {code: 10, message:'Required parameter is missing.'},
+                version: '1.10.2'
+            });
         });
 
-        it("Given a partialUrl that does not start with '/', it adds '/' before it and makes a correct request", function() {
+        it("Given that server and Jamstash had different api versions, when I make a request to Subsonic and the server responds an error, then it will return the server's api version in the error object", function() {
+            var errorResponse = {'subsonic-response': {
+                status: 'failed',
+                version: '1.8.0',
+                error: {code: 30, message: 'Incompatible Subsonic REST protocol version. Server must upgrade.'}
+            }};
+            mockBackend.expectJSONP(url).respond(JSON.stringify(errorResponse));
+
+            var promise = subsonic.subsonicRequest(partialUrl);
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({
+                reason: 'Error when contacting the Subsonic server.',
+                subsonicError: {code: 30, message: 'Incompatible Subsonic REST protocol version. Server must upgrade.'},
+                version: '1.8.0'
+            });
+        });
+
+        it("Given a partialUrl that did not start with '/', when I make a request to Subsonic, then a '/' will be added before the partial url", function() {
             partialUrl = 'getStarred.view';
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
@@ -100,7 +128,7 @@ describe("Subsonic service -", function() {
             mockBackend.flush();
         });
 
-        it("Given $http config params, it does not overwrite them", function() {
+        it("Given $http config params, when I make a request to Subsonic, then the params won't be overwritten", function() {
             partialUrl = 'scrobble.view';
             url ='http://demo.subsonic.com/rest/scrobble.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&id=75&p=enc:cGFzc3dvcmQ%3D&submission=false&u=Hyzual&v=1.10.2';
@@ -115,7 +143,7 @@ describe("Subsonic service -", function() {
             mockBackend.flush();
         });
 
-        it("Given that the global protocol setting is 'json', when I make a request to Subsonic it uses GET and does not use the JSON_CALLBACK parameter", function() {
+        it("Given that the global protocol setting was 'json', when I make a request to Subsonic, then it will use GET and won't use the JSON_CALLBACK parameter", function() {
             mockGlobals.settings.Protocol = 'json';
             var getUrl = 'http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&f=json&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -129,7 +157,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getAlbums() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getMusicDirectory.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=21'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -182,62 +209,127 @@ describe("Subsonic service -", function() {
         });
     });
 
+    //TODO: Hyz: Rename into getDirectory(), because we don't know if there will be songs or other directories in it
     describe("getSongs() -", function() {
-        var url;
         beforeEach(function() {
-            var url = 'http://demo.subsonic.com/rest/getMusicDirectory.view?'+
+            url = 'http://demo.subsonic.com/rest/getMusicDirectory.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=209'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
         });
 
-        it("Given that there were 2 songs in the given directory id in my library, when I get the songs from that directory, then a promise will be resolved with an array of 2 songs", function() {
+        it("Given a directory containing 2 songs and 1 subdirectory and given its id, when I get the songs from that directory, then a promise will be resolved with an array of 2 songs and an array of 1 subdirectory", function() {
             response["subsonic-response"].directory = {
                 child: [
                     { id: 778 },
-                    { id: 614 }
+                    { id: 614 },
+                    { id: 205, isDir: true}
                 ]
             };
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getSongs(209);
-            //TODO: Hyz: Replace with toBeResolvedWith() when getSongs() is refactored
-            var success = function (data) {
-                expect(data.album).toEqual([]);
-                expect(data.song).toEqual([
-                    { id: 778 },
-                    { id: 614 }
-                ]);
-            };
-            promise.then(success);
-
             mockBackend.flush();
 
-            expect(promise).toBeResolved();
+            expect(promise).toBeResolvedWith({
+                directories: [{ id: 205, isDir: true}],
+                songs: [{id: 778}, {id: 614}]
+            });
         });
 
-        it("Given that there was only 1 song in the given directory id in my Madsonic library, when I get the songs from that directory, then a promise will be resolved with an array of 1 song", function() {
+        it("Given a directory containing 1 song in my Madsonic library and given its id, when I get the songs from that directory, then a promise will be resolved with an array of 1 song and an empty array of subdirectories", function() {
             response["subsonic-response"].directory = {
                 child: { id: 402 }
             };
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
             var promise = subsonic.getSongs(209);
-            //TODO: Hyz: Replace with toBeResolvedWith() when getSongs() is refactored
-            var success = function (data) {
-                expect(data.album).toEqual([]);
-                expect(data.song).toEqual([
-                    { id: 402 }
-                ]);
-            };
-            promise.then(success);
-
             mockBackend.flush();
 
-            expect(promise).toBeResolved();
+            expect(promise).toBeResolvedWith({
+                directories: [],
+                songs: [{id: 402}]
+            });
+        });
+
+        it("Given a directory that didn't contain anything and given its id, when I get the songs from that directory, then a promise will be rejected with an error message", function() {
+            response["subsonic-response"].directory = {};
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getSongs(209);
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'This directory is empty.'});
+        });
+    });
+
+    describe("recursiveGetSongs() -", function() {
+        var deferred;
+        beforeEach(function() {
+            deferred = $q.defer();
+            spyOn(subsonic, 'getSongs').and.returnValue(deferred.promise);
+        });
+        it("Given a directory containing 2 songs and a subdirectory itself containing 2 songs and given its id, when I get the songs from that directory, then a promise will be resolved with an array of 4 songs", function() {
+            // Mock getSongs so we are only testing the recursivity
+            var firstDeferred = $q.defer();
+            var secondDeferred = $q.defer();
+            subsonic.getSongs.and.callFake(function (id) {
+                // First call to getSongs
+                if (id === 499) {
+                    return firstDeferred.promise;
+                // Second call to getSongs
+                } else if (id === 553) {
+                    return secondDeferred.promise;
+                }
+            });
+
+            var promise = subsonic.recursiveGetSongs(499);
+            // On the first call to getSongs, we expect 2 songs and a subdirectory
+            firstDeferred.resolve({
+                directories: [{ id: 553, type: 'byfolder' }],
+                songs: [
+                    { id: 695 },
+                    { id: 227 }
+                ]
+            });
+            // On the second call, we expect 2 songs
+            secondDeferred.resolve({
+                directories: [],
+                songs: [
+                    { id: 422 },
+                    { id: 171 }
+                ]
+            });
+
+            expect(promise).toBeResolvedWith([
+                { id: 695 },
+                { id: 227 },
+                { id: 422 },
+                { id: 171 },
+            ]);
+        });
+
+        it("Given a directory containing only 2 songs and given its id, when I get the songs from that directory, then a promise will be resolved with an array of 2 songs", function() {
+            var promise = subsonic.recursiveGetSongs(14);
+            deferred.resolve({
+                directories: [],
+                songs: [
+                    { id: 33 }, { id: 595 }
+                ]
+            });
+
+            expect(promise).toBeResolvedWith([
+                { id: 33 }, { id: 595 }
+            ]);
+        });
+
+        it("Given a directory that didn't contain anything and given its id, when I get the songs from that directory, then a promise will be resolved with an empty array", function() {
+            var promise = subsonic.recursiveGetSongs(710);
+            deferred.reject({reason: 'This directory is empty.'});
+
+            expect(promise).toBeResolvedWith([]);
         });
     });
 
     describe("getAlbumListBy() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getAlbumList.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&offset=0'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3&type=newest'+'&u=Hyzual&v=1.10.2';
@@ -295,7 +387,7 @@ describe("Subsonic service -", function() {
     });
 
     describe("getStarred() -", function() {
-        var url
+        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -331,7 +423,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getRandomStarredSongs() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getStarred.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -393,7 +484,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getRandomSongs() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getRandomSongs.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D'+'&size=3'+'&u=Hyzual&v=1.10.2';
@@ -507,8 +597,83 @@ describe("Subsonic service -", function() {
         expect(promise).toBeResolvedWith(true);
     });
 
+
+    describe("toggleStar() -", function() {
+        it("Given an item (can be an artist, an album or a song) that wasn't starred, when I toggle its star, then a promise will be resolved with true", function() {
+            var song = { id: 7748, starred: false };
+            var url = 'http://demo.subsonic.com/rest/star.view?' +
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=7748'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.toggleStar(song);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith(true);
+        });
+
+        it("Given an item (can be an artist, an album or a song) that was starred, when I toggle its star, then a promise will be resolved with false", function() {
+            var album = { id: 6631, starred: true };
+            var url = 'http://demo.subsonic.com/rest/unstar.view?' +
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=6631'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.toggleStar(album);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith(false);
+        });
+    });
+
+    describe("getMusicFolders() -", function() {
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getMusicFolders.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
+
+        it("Given that there were 2 music folders in my library, when I get the music folders, then a promise will be resolved with an array of 2 music folders", function() {
+            response["subsonic-response"].musicFolders = {
+                musicFolder: [
+                    { id: 80, name: "languageless" },
+                    { id: 38, name: "mala" }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getMusicFolders();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                { id: 80, name: "languageless" },
+                { id: 38, name: "mala" }
+            ]);
+        });
+
+        it("Given that there was 1 music folder in my Madsonic library, when I get the music folders, then a promise will be resolved with an array of 1 music folder", function() {
+            response["subsonic-response"].musicFolders = {
+                musicFolder: {id: 56, name: "dite"}
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getMusicFolders();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                { id: 56, name: "dite"}
+            ]);
+        });
+
+        it("Given that there wasn't any music folder in my library, when I get the music folders, then a promise will be rejected with an error message", function() {
+            response["subsonic-response"].musicFolders = {};
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getMusicFolders();
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'No music folder found on the Subsonic server.'});
+        });
+    });
+
     describe("getArtists() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -540,6 +705,15 @@ describe("Subsonic service -", function() {
             mockBackend.flush();
 
             expect(promise).toBeResolvedWith(response["subsonic-response"].indexes);
+        });
+
+        it("Given a folder id, when I get the artists, then it will be used as parameter in the request", function() {
+            url = 'http://demo.subsonic.com/rest/getIndexes.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&musicFolderId=54'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            subsonic.getArtists(54);
+            mockBackend.flush();
         });
 
         it("Given that there were 2 artist at the top level of my Madsonic library, when I get the artists, then a promise will be resolved with an array of two artist", function() {
@@ -689,7 +863,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getPlaylist() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getPlaylist.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=9123'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -781,7 +954,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getPodcasts() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getPodcasts.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&includeEpisodes=false'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -833,7 +1005,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("getPodcast() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/getPodcasts.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=2695&includeEpisodes=true'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -933,7 +1104,6 @@ describe("Subsonic service -", function() {
     });
 
     describe("search() -", function() {
-        var url;
         beforeEach(function() {
             url = 'http://demo.subsonic.com/rest/search2.view?'+
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D'+'&query=unintersetingly'+'&u=Hyzual&v=1.10.2';
@@ -963,6 +1133,34 @@ describe("Subsonic service -", function() {
                 }, {
                     id: 489,
                     name: "unintersetingly Labyrinthula"
+                }
+            ]);
+        });
+
+        it("Given that songs containing 'unintersetingly' existed in my Music Cabinet library, when I search for a song that contains 'unintersetingly', then a promise will be resolved with an array of songs", function() {
+            response["subsonic-response"].search2 = {
+                song: [
+                    {
+                        id: 7907,
+                        name: "unintersetingly Caragana"
+                    }, {
+                        id: 4089,
+                        name: "attacolite unintersetingly"
+                    }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.search("unintersetingly", 0);
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith([
+                {
+                    id: 7907,
+                    name: "unintersetingly Caragana"
+                }, {
+                    id: 4089,
+                    name: "attacolite unintersetingly"
                 }
             ]);
         });

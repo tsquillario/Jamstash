@@ -90,6 +90,24 @@ describe("Settings controller", function() {
 
                 expect(subsonic.ping).toHaveBeenCalled();
             });
+
+            it("Given the server and Jamstash had different api versions, when I save the settings and the server responds an error, then the ApiVersion setting will be updated with the one sent from the server", function() {
+                scope.settings.Server = 'http://gallotannate.com/tetranychus/puzzlement?a=stoically&b=mantuamaker#marianolatrist';
+                scope.settings.Username = 'Vandervelden';
+                scope.settings.Password = 'PA3DhdfAu0dy';
+                scope.ApiVersion = '1.10.2';
+                subsonic.ping.and.returnValue(deferred.promise);
+
+                scope.save();
+                deferred.reject({
+                    reason: 'Error when contacting the Subsonic server.',
+                    subsonicError: {code: 30, message: 'Incompatible Subsonic REST protocol version. Server must upgrade.'},
+                    version: '1.8.0'
+                });
+                scope.$apply();
+
+                expect(mockGlobals.settings.ApiVersion).toEqual('1.8.0');
+            });
         });
 
         it("reset() - When I reset the settings, they will be deleted from the persistence service and will be reloaded with default values", function() {

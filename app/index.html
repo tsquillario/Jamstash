@@ -18,6 +18,10 @@
     <link href="styles/Style.css" rel="stylesheet" type="text/css" data-name="main" />
     <link href="styles/Mobile.css" rel="stylesheet" type="text/css" data-name="main" />
     <link href="" rel="stylesheet" type="text/css" data-name="theme" />
+    <!-- build:css(app) styles/concat.min.css -->
+    <link rel="stylesheet" href="player/player.css" />
+    <link rel="stylesheet" href="player/repeat-directive/repeat-directive.css" />
+    <!-- endbuild -->
 </head>
 <body ui-keypress="{'32 179': 'togglePause($event)', '43 61 187': 'turnVolumeUp($event)', '45 95 189': 'turnVolumeDown($event)'}" ui-keydown="{'right 176': 'nextTrack($event)', 'left 177': 'previousTrack($event)'}">
     <div id="container">
@@ -87,13 +91,12 @@
     <script src="bower_components/fancybox/source/jquery.fancybox.js"></script>
     <script src="bower_components/notify.js/notify.js"></script>
     <script src="bower_components/jquery.scrollTo/jquery.scrollTo.js"></script>
+    <script src="bower_components/jquery-dateFormat/dist/jquery-dateFormat.js"></script>
     <script src="bower_components/underscore/underscore.js"></script>
     <script src="bower_components/angular-underscore/angular-underscore.js"></script>
     <script src="bower_components/angular-locker/dist/angular-locker.min.js"></script>
     <script src="bower_components/angular-ui-utils/keypress.js"></script>
     <!-- endbower -->
-    <script src="vendor/jquery.base64.js"></script>
-    <script src="vendor/jquery.dateFormat-1.0.js"></script>
     <!-- endbuild -->
     <!-- our scripts -->
     <!-- build:js(app) scripts/scripts.min.js -->
@@ -113,6 +116,7 @@
     <script src="player/player.js"></script>
     <script src="player/player-directive.js"></script>
     <script src="player/player-service.js"></script>
+    <script src="player/repeat-directive/repeat-directive.js"></script>
     <script src="queue/queue.js"></script>
     <script src="common/filters.js"></script>
     <script src="common/directives.js"></script>

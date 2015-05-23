@@ -1,6 +1,6 @@
 angular.module('JamStash')
-.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence', 'Page',
-    function($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, persistence, Page) {
+.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence', 'Page', 'subsonic',
+    function ($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, persistence, Page, subsonic) {
     'use strict';
 
     $rootScope.settings = globals.settings;
@@ -10,7 +10,6 @@ angular.module('JamStash')
     $rootScope.Genres = [];
     $rootScope.Messages = [];
 
-    $rootScope.SelectedMusicFolder = "";
     $rootScope.unity = null;
     $scope.Page = Page;
     $rootScope.loggedIn = function () {
@@ -380,27 +379,13 @@ angular.module('JamStash')
 		});
 	};
 
-    $scope.updateFavorite = function (item) {
-        var id = item.id;
-        var starred = item.starred;
-        var url;
-        if (starred) {
-            url = globals.BaseURL() + '/unstar.view?' + globals.BaseParams() + '&id=' + id;
-            item.starred = undefined;
-        } else {
-            url = globals.BaseURL() + '/star.view?' + globals.BaseParams() + '&id=' + id;
-            item.starred = true;
-        }
-        $.ajax({
-            url: url,
-            method: 'GET',
-            dataType: globals.settings.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function () {
-                notifications.updateMessage('Favorite Updated!', true);
-            }
+    $scope.toggleStar = function (item) {
+        subsonic.toggleStar(item).then(function (newStarred) {
+            item.starred = newStarred;
+            notifications.updateMessage('Favorite Updated!', true);
         });
     };
+
     $scope.toTrusted = function (html) {
         return $sce.trustAsHtml(html);
     };

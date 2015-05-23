@@ -30,6 +30,7 @@ module.exports = function (config) {
       'bower_components/fancybox/source/jquery.fancybox.js',
       'bower_components/notify.js/notify.js',
       'bower_components/jquery.scrollTo/jquery.scrollTo.js',
+      'bower_components/jquery-dateFormat/dist/jquery-dateFormat.js',
       'bower_components/underscore/underscore.js',
       'bower_components/angular-underscore/angular-underscore.js',
       'bower_components/angular-locker/dist/angular-locker.min.js',
@@ -39,14 +40,21 @@ module.exports = function (config) {
       'bower_components/jasmine-fixture/dist/jasmine-fixture.js',
       // endbower
       'app/**/*.js',
-      'app/**/*_test.js'
+      'app/**/*_test.js',
+      'app/**/*.html'
     ],
 
     // list of files / patterns to exclude
     // exclude: ['app/vendor/**/*.js'],
 
     preprocessors: {
-      'app/**/!(*_test).js': ['coverage']
+      'app/**/!(*_test).js': ['coverage'],
+      'app/**/*.html': ['ng-html2js']
+    },
+
+    ngHtml2JsPreprocessor: {
+        stripPrefix: 'app/',
+        moduleName: 'templates'
     },
 
     // web server port
@@ -60,18 +68,7 @@ module.exports = function (config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    browsers: [
-      'PhantomJS'
-    ],
-
-    // Which plugins to enable
-    plugins: [
-      'karma-chrome-launcher',
-      'karma-phantomjs-launcher',
-      'karma-jasmine',
-      'karma-coverage',
-      'karma-notify-reporter'
-    ],
+    browsers: [],
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
