@@ -41,7 +41,7 @@
                             <div id="BreadCrumbs" class="floatleft">
                                 <div class="crumb"><a ng-click="toggleArtists()" title="Toggle Artists">Artists</a> &gt;</div>
                                 <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'artist'}"><a ng-click="getAlbums(o.id, o.name)">{{o.name}}</a> &gt;</div>
-                                <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'album'}"><a ng-click="getSongs(o.id, '')">{{o.name}}</a> &gt;</div>
+                                <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'album'}"><a ng-click="getSongs('display', o.id, o.name)">{{o.name}}</a> &gt;</div>
                             </div>
                         </div>
                     </li>
@@ -49,12 +49,12 @@
                 <div class="clear"></div>
                 <ul class="simplelist songlist noselect">
                     <div class="" ng-repeat="o in album" ng-switch on="o.type">
-                        <li class="album" ng-switch-when="byfolder" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': settings.DefaultLibraryLayout.id == 'grid'}" ng-click="getSongs(o.id, '')" parentid="{{o.parentid}}">
+                        <li class="album" ng-switch-when="byfolder" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': settings.DefaultLibraryLayout.id == 'grid'}" ng-click="getSongs('display', o.id, o.name)" parentid="{{o.parentid}}">
                             <div class="itemactions">
-                                <a class="add hover" href="" title="Add To Play Queue" ng-click="getSongs(o.id, 'add')" stop-event="click"></a>
-                                <a class="play hover" href="" title="Play" ng-click="getSongs(o.id, 'play')" stop-event="click"></a>
+                                <a class="add hover" href="" title="Add To Play Queue" ng-click="getSongs('add', o.id, o.name)" stop-event="click"></a>
+                                <a class="play hover" href="" title="Play" ng-click="getSongs('play', o.id, o.name)" stop-event="click"></a>
                                 <a class="download hover" href="" ng-click="download(o.id)" title="Download" stop-event="click"></a>
-                                <a title="Favorite hover" href="" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="updateFavorite(o)" stop-event="click"></a>
+                                <a class="hover" href="" title="Star" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="toggleStar(o)" stop-event="click"></a>
                                 <a class="info hover" href="" title="{{'Created: ' + o.date}}"></a>
                             </div>
                             <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
@@ -86,7 +86,9 @@
             </ul>
             <div class="clear"></div>
             <div id="IndexContainer" class="leftsubsection" ng-show="showIndex">
-                <select id="MusicFolders" class="folders" ng-model="$root.SelectedMusicFolder" ng-options="o.name for o in MusicFolders"></select>
+                <select id="MusicFolders" class="folders" ng-model="SelectedMusicFolder" ng-options="o.name for o in MusicFolders track by o.id">
+                    <option value="">All Folders</option>
+                </select>
                 <div id="AZIndex" ng-show="!settings.HideAZ" class="subactionsfixed">
                     <a href="" ng-click="toggleAZ()" stop-event="click">A-Z</a>
                 </div>

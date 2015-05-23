@@ -36,10 +36,14 @@ describe("Queue controller", function() {
         expect($.fancybox.close).toHaveBeenCalled();
     });
 
-    it("When I shuffle the queue, it calls shuffleQueue in the player service", function() {
+    it("When I shuffle the queue, then the player's shuffleQueue will be called and the queue will be scrolled back to the first element", function() {
         spyOn(player, "shuffleQueue");
+        spyOn($.fn, 'scrollTo');
+
         scope.shuffleQueue();
+
         expect(player.shuffleQueue).toHaveBeenCalled();
+        expect($.fn.scrollTo).toHaveBeenCalledWith('.header', jasmine.any(Number));
     });
 
     it("When I add one song to the queue, it calls addSong in the player service", function() {

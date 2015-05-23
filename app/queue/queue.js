@@ -4,7 +4,7 @@
 * Manages the playing queue. Gives access to the player service's queue-related functions,
 * like adding, removing and shuffling the queue.
 */
-angular.module('jamstash.queue.controller', ['jamstash.player.service'])
+angular.module('jamstash.queue.controller', ['jamstash.player.service', 'jamstash.settings.service'])
 
 .controller('QueueController', ['$scope', 'globals', 'player',
 	function ($scope, globals, player) {
@@ -16,21 +16,23 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
         player.play(song);
     };
 
-    $scope.emptyQueue = function() {
+    $scope.emptyQueue = function () {
         player.emptyQueue();
         //TODO: Hyz: Shouldn't it be in a directive ?
         $.fancybox.close();
     };
 
-    $scope.shuffleQueue = function() {
+    $scope.shuffleQueue = function () {
         player.shuffleQueue();
+        //TODO: Hyz: Shouldn't it be in a directive ?
+        $('#SideBar').stop().scrollTo('.header', 400);
     };
 
-    $scope.addSongToQueue = function(song) {
+    $scope.addSongToQueue = function (song) {
         player.addSong(song);
     };
 
-    $scope.removeSongFromQueue = function(song) {
+    $scope.removeSongFromQueue = function (song) {
         player.removeSong(song);
     };
 
@@ -63,6 +65,4 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service'])
             end = ui.item.index();
         player.queue.splice(end, 0, player.queue.splice(start, 1)[0]);
     };
-
-    //TODO: Hyz: updateFavorite - leave in rootScope ?
 }]);

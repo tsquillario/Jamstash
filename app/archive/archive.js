@@ -166,6 +166,10 @@ angular.module('jamstash.archive.controller', ['jamstash.archive.service'])
         $rootScope.removeSong(item, $scope.song);
     };
 
+    $scope.toggleStar = function (item) {
+        //Do nothing: we aren't logged in archive.org, so we can't star anything there.
+    };
+
     /* Launch on Startup */
     //$scope.getArtists();
     $scope.getAlbums();
