@@ -4,7 +4,6 @@
   "eqeqeq": true,
   "esnext": true,
   "freeze": true,
-  "latedef": true,
   "noarg": true,
   "nonbsp": true,
   "nonew": true,
