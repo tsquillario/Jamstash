@@ -510,33 +510,28 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
             deferred.resolve(content);
             return deferred.promise;
         },
-        getGenres: function () {
-            var deferred = $q.defer();
-            var genresStr = 'Acid Rock,Acoustic,Alt Country,Alt/Indie,Alternative & Punk,Alternative Metal,Alternative,AlternRock,Awesome,Bluegrass,Blues,Blues-Rock,Classic Hard Rock,Classic Rock,Comedy,Country,Country-Rock,Dance,Dance-Rock,Deep Funk,Easy Listening,Electronic,Electronica,Electronica/Dance,Folk,Folk/Rock,Funk,Grunge,Hard Rock,Heavy Metal,Holiday,House,Improg,Indie Rock,Indie,International,Irish,Jam Band,Jam,Jazz Fusion,Jazz,Latin,Live Albums,Metal,Music,Oldies,Other,Pop,Pop/Rock,Post Rock,Progressive Rock,Psychedelic Rock,Psychedelic,Punk,R&B,Rap & Hip-Hop,Reggae,Rock & Roll,Rock,Rock/Pop,Roots,Ska,Soft Rock,Soul,Southern Rock,Thrash Metal,Unknown,Vocal,World';
-            genres = genresStr.split(',');
-            /* This is broken in version 4.8, unable to convert XML to JSON
-            $.ajax({
-            url: globals.BaseURL() + '/getGenres.view?' + globals.BaseParams(),
-            method: 'GET',
-            dataType: globals.settings.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function (data) {
-            if (typeof data["subsonic-response"].genres != 'undefined') {
-            var items = [];
-            if (data["subsonic-response"].genres.length > 0) {
-            items = data["subsonic-response"].genres;
-            } else {
-            items[0] = data["subsonic-response"].genres;
-            }
 
-            $rootScope.Genres = items;
-            $scope.$apply();
-            }
-            }
+        getGenres: function () {
+            var exception = {reason: 'No genre found on the Subsonic server.'};
+            var promise = subsonicService.subsonicRequest('getGenres.view')
+            .then(function (subsonicResponse) {
+                if (subsonicResponse.genres !== undefined && subsonicResponse.genres.genre !== undefined) {
+                    var genreArray = [].concat(subsonicResponse.genres.genre);
+                    if (genreArray.length > 0) {
+                        var stringArray;
+                        if (genreArray[0].value) {
+                            stringArray = _.pluck(genreArray, "value");
+                        // Of course, Madsonic doesn't return the same thing as Subsonic...
+                        } else if (genreArray[0].content) {
+                            stringArray = _.pluck(genreArray, "content");
+                        }
+                        return stringArray;
+                    }
+                }
+                // We end up here for every else
+                return $q.reject(exception);
             });
-            */
-            deferred.resolve(genres);
-            return deferred.promise;
+            return promise;
         },
 
         getPodcasts: function () {

@@ -18,7 +18,14 @@ describe("Main controller", function() {
         });
 
         // Mock the player service
-        player = jasmine.createSpyObj("player", ["togglePause", "turnVolumeUp", "turnVolumeDown", "nextTrack", "previousTrack", "setVolume"]);
+        player = jasmine.createSpyObj("player", [
+            "togglePause",
+            "turnVolumeUp",
+            "turnVolumeDown",
+            "nextTrack",
+            "previousTrack",
+            "setVolume"
+        ]);
         player.queue = [];
 
         // Mock the persistence service

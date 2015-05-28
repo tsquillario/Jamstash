@@ -47,14 +47,7 @@ describe("Subsonic controller", function() {
             ]);
             // We make them return different promises and use our deferred variable only when testing
             // a particular function, so that they stay isolated
-            subsonic.getAlbums.and.returnValue($q.defer().promise);
-            subsonic.getArtists.and.returnValue($q.defer().promise);
-            subsonic.getGenres.and.returnValue($q.defer().promise);
-            subsonic.getMusicFolders.and.returnValue($q.defer().promise);
-            subsonic.getPlaylists.and.returnValue($q.defer().promise);
-            subsonic.getPodcasts.and.returnValue($q.defer().promise);
-            subsonic.getSongs.and.returnValue($q.defer().promise);
-            subsonic.recursiveGetSongs.and.returnValue($q.defer().promise);
+            _.chain(subsonic).pluck('and').invoke("returnValue", $q.defer().promise);
             subsonic.showIndex = false;
 
             // Mock the player service
@@ -65,9 +58,7 @@ describe("Subsonic controller", function() {
                 "play",
                 "playFirstSong"
             ]);
-            player.emptyQueue.and.returnValue(player);
-            player.addSong.and.returnValue(player);
-            player.addSongs.and.returnValue(player);
+            _.chain(player).pluck('and').invoke("returnValue", player);
             player.queue = [];
 
             $controller = _$controller_;
@@ -725,12 +716,12 @@ describe("Subsonic controller", function() {
             expect(subsonic.savePlaylist).not.toHaveBeenCalled();
         });
 
-        describe("When I load the podcasts,", function() {
+        describe("getPodcasts() -", function() {
             beforeEach(function() {
                 subsonic.getPodcasts.and.returnValue(deferred.promise);
             });
 
-            it("Given that there were podcasts in the library, then the podcasts will be published to the scope", function() {
+            it("Given that there were podcasts in the library, When I load the podcasts, then the podcasts will be published to the scope", function() {
                 scope.getPodcasts();
                 deferred.resolve([
                     {id: 9775},
@@ -747,7 +738,7 @@ describe("Subsonic controller", function() {
                 ]);
             });
 
-            it("Given that there weren't any podcast in the library, then an empty array will be published to the scope and the user won't be notified with an error message", function() {
+            it("Given that there wasn't any podcast in the library, When I load the podcasts, then an empty array will be published to the scope and the user won't be notified", function() {
                 scope.getPodcasts();
                 deferred.reject({reason: 'No podcast found on the Subsonic server.'});
                 scope.$apply();
@@ -758,7 +749,40 @@ describe("Subsonic controller", function() {
             });
         });
 
-        describe("getMusicFolders", function() {
+        describe("getGenres() -", function() {
+            beforeEach(function() {
+                subsonic.getGenres.and.returnValue(deferred.promise);
+            });
+
+            it("Given that there were music genres in the library, when I get the genres, then the genre names will be published to the scope", function() {
+                scope.getGenres();
+                deferred.resolve([
+                    "matriarchalism",
+                    "Glyptodontidae",
+                    "archcozener"
+                ]);
+                scope.$apply();
+
+                expect(subsonic.getGenres).toHaveBeenCalled();
+                expect(scope.Genres).toEqual([
+                    "matriarchalism",
+                    "Glyptodontidae",
+                    "archcozener"
+                ]);
+            });
+
+            it("Given that there wasn't any music genre in the library, when I get the genres, then an empty array will be published to the scope and the user won't be notified", function() {
+                scope.getGenres();
+                deferred.reject({reason: 'No genre found on the Subsonic server.'});
+                scope.$apply();
+
+                expect(subsonic.getGenres).toHaveBeenCalled();
+                expect(scope.Genres).toEqual([]);
+                expect(notifications.updateMessage).not.toHaveBeenCalled();
+            });
+        });
+
+        describe("getMusicFolders() -", function() {
             beforeEach(function() {
                 subsonic.getMusicFolders.and.returnValue(deferred.promise);
             });
