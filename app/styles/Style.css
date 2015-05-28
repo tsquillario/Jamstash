@@ -349,16 +349,8 @@ span.apiversion
 .leftsubsection {
     border-top: 1px solid #DDDDDD;
 }
-.loading
-{
-    display: none;
-    height: 100%;
-    width: 100%;
-    background: url('../images/ajax-loader.gif') no-repeat center center #f4f4f4;
-}
 #loading
 {
-    display: none;
     width: 64px;
     height: 64px;
     position: fixed;
@@ -373,15 +365,6 @@ span.apiversion
     -o-border-radius: 8px;
     -ms-border-radius: 8px;
     border-radius: 8px;
-}
-#toploading
-{
-    display: none;
-    height: 35px;
-    width: 40px;
-    margin: 0 0 0 2px;
-    background: url('../images/ajax-loader.gif') no-repeat center center;
-    float: left;
 }
 #messages
 {
