@@ -29,7 +29,7 @@
             <div id="messages">
                 <span ng-attr-id="{{ 'msg_' + $index }}" class="message" ng-repeat="item in Messages track by $index" ng-bind-html="item"></span>
             </div>
-            <div id="loading"></div>
+            <div id="loading" ng-show="loading.isLoading"></div>
             <a id="jslogo" title="Jamstash" class="showQueue" href=""></a>
             <a id="sslogo" target="_blank" ng-show="settings.Server" ng-href="{{settings.Server}}" title="{{settings.Server}}"></a>
             <div id="globalactions">
@@ -106,6 +106,7 @@
     <script src="common/model-service.js"></script>
     <script src="common/utils-service.js"></script>
     <script src="common/page-service.js"></script>
+    <script src="common/loading-service.js"></script>
     <script src="common/notification-service.js"></script>
     <script src="common/persistence-service.js"></script>
     <script src="common/main-controller.js"></script>

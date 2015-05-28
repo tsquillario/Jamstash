@@ -1,6 +1,6 @@
 angular.module('JamStash')
-.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence', 'Page', 'subsonic',
-    function ($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, persistence, Page, subsonic) {
+.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence', 'Page', 'subsonic', 'Loading',
+    function ($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, persistence, Page, subsonic, Loading) {
     'use strict';
 
     $rootScope.settings = globals.settings;
@@ -26,6 +26,17 @@ angular.module('JamStash')
     $rootScope.go = function (path) {
         $location.path(path);
     };
+
+    $scope.loading = Loading;
+    // TODO: Hyz: remove when there are no longer jQuery ajax calls
+    $.ajaxSetup({
+        'beforeSend': function () {
+            $("#loading").removeClass('ng-hide');
+        },
+        'complete': function () {
+            $("#loading").addClass('ng-hide');
+        }
+    });
 
     // Reads cookies and sets globals.settings values
     $scope.loadSettings = function () {
@@ -57,15 +68,6 @@ angular.module('JamStash')
         }
         notifications.updateMessage(setting + ' : ' + globals.settings[id], true);
     };
-
-    $.ajaxSetup({
-        'beforeSend': function () {
-            $("#loading").show();
-        },
-        'complete': function () {
-            $("#loading").hide();
-        }
-    });
 
     var submenu_active = false;
     $('div.submenu').mouseenter(function () {
