@@ -46,46 +46,13 @@ angular.module('jamstash.subsonic.service', [
         selectedGenre: null,
         selectedPodcast: null
     };
-    var genres = [];
     var offset = 0;
     var showPlaylist = false;
 
     var subsonicService = {
+        //TODO: Hyz: Remove when refactored
         showIndex: $rootScope.showIndex,
         showPlaylist: showPlaylist,
-        //TODO: Hyz: Do we still need this ? it's only used in the songpreview directive
-        getSongTemplate: function (callback) {
-            var id = '16608';
-            var url = globals.BaseURL() + '/getMusicDirectory.view?' + globals.BaseParams() + '&id=' + id;
-            /*
-            $.ajax({
-                url: url,
-                method: 'GET',
-                dataType: globals.settings.Protocol,
-                timeout: globals.settings.Timeout,
-                success: function (data) {
-
-                }
-            });
-            */
-            $http.get(url).success(function (data) {
-                var items = [];
-                var song = [];
-                if (typeof data["subsonic-response"].directory.child != 'undefined') {
-                    if (data["subsonic-response"].directory.child.length > 0) {
-                        items = data["subsonic-response"].directory.child;
-                    } else {
-                        items[0] = data["subsonic-response"].directory.child;
-                    }
-                    angular.forEach(items, function (item, key) {
-                        if (!item.isDir) {
-                            song.push(map.mapSong(item));
-                        }
-                    });
-                    callback(song);
-                }
-            });
-        },
 
         /**
          * Handles building the URL with the correct parameters and error-handling while communicating with
@@ -184,37 +151,6 @@ angular.module('jamstash.subsonic.service', [
             return promise;
         },
 
-        getAlbums: function (id, name) {
-            var exception = {reason: 'No songs found on the Subsonic server.'};
-            var params = {
-                id: id
-            };
-            var promise = subsonicService.subsonicRequest('getMusicDirectory.view', {
-                params: params
-            }).then(function (subsonicResponse) {
-                if(subsonicResponse.directory.child !== undefined) {
-                    // Make sure this is an array using concat because Madsonic will return an object when there's only one element
-                    var childArray = [].concat(subsonicResponse.directory.child);
-                    if (childArray.length > 0) {
-                        content.song = [];
-                        content.album = [];
-                        content.breadcrumb = [];
-                        content.breadcrumb.push({ 'type': 'artist', 'id': id, 'name': name });
-                        angular.forEach(childArray, function (item, key) {
-                            if (item.isDir) {
-                                content.album.push(map.mapAlbum(item));
-                            } else {
-                                content.song.push(map.mapSong(item));
-                            }
-                        });
-                        return content;
-                    }
-                }
-                // We end up here for every else
-                return $q.reject(exception);
-            });
-            return promise;
-        },
         getAlbumListBy: function (id, off) {
             if (off == 'next') {
                 offset = offset + globals.settings.AutoAlbumSize;
