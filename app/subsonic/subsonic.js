@@ -4,7 +4,7 @@
 * Access and use the Subsonic Server. The Controller is in charge of relaying the Service's messages to the user through the
 * notifications.
 */
-angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'jamstash.player.service', 'jamstash.persistence'])
+angular.module('jamstash.subsonic.controller', ['angular-underscore/utils', 'jamstash.subsonic.service', 'jamstash.player.service', 'jamstash.persistence'])
 
 .controller('SubsonicController', ['$scope', '$rootScope', '$routeParams', '$window', 'utils', 'globals', 'map', 'subsonic', 'notifications', 'player', 'persistence',
     function ($scope, $rootScope, $routeParams, $window, utils, globals, map, subsonic, notifications, player, persistence) {
@@ -574,9 +574,15 @@ angular.module('jamstash.subsonic.controller', ['jamstash.subsonic.service', 'ja
             }
         }
     };
+
     $scope.getGenres = function () {
-        subsonic.getGenres().then(function (data) {
-            $scope.Genres = data;
+        var promise = subsonic.getGenres();
+        $scope.handleErrors(promise).then(function (genres) {
+            $scope.Genres = genres;
+        }, function () {
+            // Do not display a notification, there simply are no genres.
+            // Otherwise, a notification will be displayed at every page reload.
+            $scope.Genres = [];
         });
     };
 

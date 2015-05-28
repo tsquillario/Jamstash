@@ -597,7 +597,6 @@ describe("Subsonic service -", function() {
         expect(promise).toBeResolvedWith(true);
     });
 
-
     describe("toggleStar() -", function() {
         it("Given an item (can be an artist, an album or a song) that wasn't starred, when I toggle its star, then a promise will be resolved with true", function() {
             var song = { id: 7748, starred: false };
@@ -670,6 +669,64 @@ describe("Subsonic service -", function() {
             mockBackend.flush();
 
             expect(promise).toBeRejectedWith({reason: 'No music folder found on the Subsonic server.'});
+        });
+    });
+
+    describe("getGenres() -", function() {
+        beforeEach(function() {
+            url = 'http://demo.subsonic.com/rest/getGenres.view?'+
+                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
+        });
+
+        it("Given that there were 2 music genres, when I get the genres, then a promise will be resolved with an array of genres", function() {
+            response["subsonic-response"].genres = {
+                genre: [
+                    {
+                        value: "copunctal",
+                        songCount: 33,
+                        artistCount: 6,
+                        albumCount: 8
+                    }, {
+                        value: "unsliding",
+                        songCount: 67,
+                        artistCount: 54,
+                        albumCount: 41
+                    }
+                ]
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getGenres();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith(["copunctal", "unsliding"]);
+        });
+
+        it("Given that there was only 1 genre in my Madsonic library, when I get the genres, then a promise will be resolved with an array of 1 genre", function() {
+            response["subsonic-response"].genres = {
+                genre: {
+                    value: "periople",
+                    songCount: 53,
+                    artistCount: 7,
+                    albumCount: 74
+                }
+            };
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getGenres();
+            mockBackend.flush();
+
+            expect(promise).toBeResolvedWith(["periople"]);
+        });
+
+        it("Given that there wasn't any genre in my library, when I get the genres, then a promise will be rejected with an error message", function() {
+            response["subsonic-response"].genres = [];
+            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+            var promise = subsonic.getGenres();
+            mockBackend.flush();
+
+            expect(promise).toBeRejectedWith({reason: 'No genre found on the Subsonic server.'});
         });
     });
 
