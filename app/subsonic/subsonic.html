@@ -40,7 +40,7 @@
                         <div id="BreadCrumb">
                             <div id="BreadCrumbs" class="floatleft">
                                 <div class="crumb"><a ng-click="toggleArtists()" title="Toggle Artists">Artists</a> &gt;</div>
-                                <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'artist'}"><a ng-click="getAlbums(o.id, o.name)">{{o.name}}</a> &gt;</div>
+                                <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'artist'}"><a ng-click="getSongs('display', o.id, o.name)">{{o.name}}</a> &gt;</div>
                                 <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'album'}"><a ng-click="getSongs('display', o.id, o.name)">{{o.name}}</a> &gt;</div>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                             <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
                             <div class="albuminfo">
                                 <div class="title" title="{{o.name}}" ng-bind-html="o.name"></div>
-                                <div class="artist" title="{{o.artist}}"><a href="" id="{{o.parentid}}" ng-click="getAlbums(o.parentid, o.artist)" stop-event="click" ng-bind-html="o.artist"></a></div>
+                                <div class="artist" title="{{o.artist}}"><a href="" id="{{o.parentid}}" ng-click="getSongs('display', o.parentid, o.artist)" stop-event="click" ng-bind-html="o.artist"></a></div>
                             </div>
                             <div class="clear"></div>
                         </li>
@@ -107,14 +107,14 @@
                 <ul class="simplelist mainlist noselect" ng-show="shortcut.length">
                     <li class="index" title="Scroll to Top" data-bind="click: $root.scrollToTop"><a>Shortcuts</a></li>
                     <ul class="simplelist mainlist noselect" ng-repeat="o in shortcut">
-                        <li class="item" id="{{o.id}}" ng-click="getAlbums(o.id, o.name)" ng-class="{'selected': selectedArtist == o.id}"><span ng-bind-html="o.name"></span></li>
+                        <li class="item" id="{{o.id}}" ng-click="getSongs('display', o.id, o.name)" ng-class="{'selected': selectedArtist == o.id}"><span ng-bind-html="o.name"></span></li>
                     </ul>
                 </ul>
                 <!-- Artist -->
                 <ul class="simplelist mainlist noselect" ng-repeat="o in index">
                     <li class="index" title="Scroll to Top" id="{{o.name}}" ng-click="scrollToTop()"><a>{{o.name}}</a></li>
                     <ul class="simplelist mainlist noselect">
-                        <li class="item" id="{{a.id}}" ng-repeat="a in o.artist" ng-class="{'selected': selectedArtist == a.id}" ng-click="getAlbums(a.id, a.name)"><a ng-href="" ng-bind-html="a.name"></a></li>
+                        <li class="item" id="{{a.id}}" ng-repeat="a in o.artist" ng-class="{'selected': selectedArtist == a.id}" ng-click="getSongs('display', a.id, a.name)"><a ng-href="" ng-bind-html="a.name"></a></li>
                     </ul>
                 </ul>
             </div>

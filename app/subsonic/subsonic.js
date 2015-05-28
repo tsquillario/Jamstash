@@ -262,20 +262,6 @@ angular.module('jamstash.subsonic.controller', [
         $scope.getArtists();
         $scope.getPlaylists();
     };
-    $scope.getAlbums = function (id, name) {
-        subsonic.getAlbums(id, name).then(function (data) {
-            $scope.album = data.album;
-            $scope.song = data.song;
-            $scope.BreadCrumbs = data.breadcrumb;
-            $scope.selectedAutoAlbum = data.selectedAutoAlbum;
-            $scope.selectedArtist = data.selectedArtist;
-            $scope.selectedAlbum = data.selectedAlbum;
-            $scope.selectedPlaylist = data.selectedPlaylist;
-            if ($scope.SelectedAlbumSort.id != "default") {
-                sortSubsonicAlbums($scope.SelectedAlbumSort.id);
-            }
-        });
-    };
     $scope.getAlbumListBy = function (id, off) {
         subsonic.getAlbumListBy(id, off).then(function (data) {
             $scope.album = data.album;
@@ -345,6 +331,7 @@ angular.module('jamstash.subsonic.controller', [
     };
 
     $scope.getSongs = function (action, id, name) {
+        notifications.updateMessage('getSongs' + id + ' ' + name, true);
         var promise;
         if (action === 'play' || action === 'add') {
             promise = subsonic.recursiveGetSongs(id);

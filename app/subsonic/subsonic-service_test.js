@@ -156,59 +156,6 @@ describe("Subsonic service -", function() {
         });
     });
 
-    describe("getAlbums() -", function() {
-        beforeEach(function() {
-            url = 'http://demo.subsonic.com/rest/getMusicDirectory.view?'+
-                'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&id=21'+'&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
-        });
-
-        it("Given that there were 2 child directory in the given directory id in my library, when I get the albums from that directory, then a promise will be resolved with an array of 2 albums", function() {
-            response["subsonic-response"].directory = {
-                child: [
-                    { id: 299, isDir: true },
-                    { id: 1043, isDir: true }
-                ]
-            };
-            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
-
-            var promise = subsonic.getAlbums(21);
-            //TODO: Hyz: Replace with toBeResolvedWith() when getAlbums() is refactored
-            var success = function (data) {
-                expect(data.album).toEqual([
-                    { id: 299, isDir: true },
-                    { id: 1043, isDir: true }
-                ]);
-                expect(data.song).toEqual([]);
-            };
-            promise.then(success);
-
-            mockBackend.flush();
-
-            expect(promise).toBeResolved();
-        });
-
-        it("Given that there was only 1 child directory in the given directory id in my Madsonic library, when I get the albums from that directory, then a promise will be resolved with an array of 1 album", function() {
-            response["subsonic-response"].directory = {
-                child: { id: 501, isDir: true }
-            };
-            mockBackend.expectJSONP(url).respond(JSON.stringify(response));
-
-            var promise = subsonic.getAlbums(21);
-            //TODO: Hyz: Replace with toBeResolvedWith() when getAlbums() is refactored
-            var success = function (data) {
-                expect(data.album).toEqual([
-                    { id: 501, isDir: true }
-                ]);
-                expect(data.song).toEqual([]);
-            };
-            promise.then(success);
-
-            mockBackend.flush();
-
-            expect(promise).toBeResolved();
-        });
-    });
-
     //TODO: Hyz: Rename into getDirectory(), because we don't know if there will be songs or other directories in it
     describe("getSongs() -", function() {
         beforeEach(function() {
