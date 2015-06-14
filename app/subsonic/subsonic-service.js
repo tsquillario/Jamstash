@@ -70,13 +70,14 @@ angular.module('jamstash.subsonic.service', [
             // Extend the provided config (if it exists) with our params
             // Otherwise we create a config object
             var actualConfig = config || {};
-            var params = actualConfig.params || {};
-            params.u = globals.settings.Username;
-            params.p = globals.settings.Password;
-            params.f = globals.settings.Protocol;
-            params.v = globals.settings.ApiVersion;
-            params.c = globals.settings.ApplicationName;
-            actualConfig.params = params;
+            actualConfig.params = actualConfig.params || {};
+            _.extend(actualConfig.params,  {
+                u: globals.settings.Username,
+                p: globals.settings.Password,
+                f: globals.settings.Protocol,
+                v: globals.settings.ApiVersion,
+                c: globals.settings.ApplicationName
+            });
             actualConfig.timeout = globals.settings.Timeout;
 
             var httpPromise;

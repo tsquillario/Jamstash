@@ -621,39 +621,6 @@ ul.tablist li a:hover
 {
 	color: #bbb;
 }
-#BreadCrumb
-{
-    float: left;
-    margin: 16px 0 0 0;
-    padding: 2px 0;
-    color: #AEAEA7;
-    border-radius: .4em;
-}
-#BreadCrumb img
-{
-    padding: 2px 0px 2px 0;
-    float: left;
-}
-#BreadCrumbs span
-{
-    margin: 0 2px 0 6px;
-}
-#BreadCrumbs a
-{
-    margin: 0 2px 0 6px;
-    text-decoration: none;
-    color: #829FC0;
-    font-size: 14px;
-}
-#BreadCrumbs a:hover
-{
-  text-decoration: underline;
-}
-#BreadCrumbs .crumb
-{
-    float: left;
-}
-
 #TrackContainer
 {
     margin: 5px 5px 5px 0;

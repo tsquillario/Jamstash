@@ -21,6 +21,7 @@
     <!-- build:css(app) styles/concat.min.css -->
     <link rel="stylesheet" href="player/player.css" />
     <link rel="stylesheet" href="player/repeat-directive/repeat-directive.css" />
+    <link rel="stylesheet" href="subsonic/breadcrumbs-directive/breadcrumbs-directive.css" />
     <!-- endbuild -->
 </head>
 <body ui-keypress="{'32 179': 'togglePause($event)', '43 61 187': 'turnVolumeUp($event)', '45 95 189': 'turnVolumeDown($event)'}" ui-keydown="{'right 176': 'nextTrack($event)', 'left 177': 'previousTrack($event)'}">
@@ -111,6 +112,8 @@
     <script src="common/main-controller.js"></script>
     <script src="subsonic/subsonic.js"></script>
     <script src="subsonic/subsonic-service.js"></script>
+    <script src="subsonic/breadcrumbs-directive/breadcrumbs-service.js"></script>
+    <script src="subsonic/breadcrumbs-directive/breadcrumbs-directive.js"></script>
     <script src="archive/archive.js"></script>
     <script src="archive/archive-service.js"></script>
     <script src="player/player.js"></script>

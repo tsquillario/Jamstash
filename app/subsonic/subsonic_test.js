@@ -2,7 +2,7 @@ describe("Subsonic controller", function() {
     'use strict';
 
     var scope, $rootScope, $controller, $window,
-        _, subsonic, notifications, player, utils, persistence, controllerParams, deferred;
+        _, subsonic, notifications, player, utils, persistence, breadcrumbs, controllerParams, deferred;
 
     beforeEach(function() {
         jasmine.addCustomEqualityTester(angular.equals);
@@ -26,6 +26,11 @@ describe("Subsonic controller", function() {
                 "saveSelectedMusicFolder",
                 "deleteSelectedMusicFolder"
             ]);
+            breadcrumbs = jasmine.createSpyObj("breadcrumbs", [
+                "reset",
+                "push"
+            ]);
+            breadcrumbs.reset.and.returnValue(breadcrumbs);
 
             // Mock the subsonic service
             subsonic = jasmine.createSpyObj("subsonic", [
@@ -74,7 +79,8 @@ describe("Subsonic controller", function() {
                 subsonic: subsonic,
                 notifications: notifications,
                 player: player,
-                persistence: persistence
+                persistence: persistence,
+                breadcrumbs: breadcrumbs
             };
         });
     });
@@ -88,7 +94,6 @@ describe("Subsonic controller", function() {
 
         describe("getSongs -", function() {
             beforeEach(function() {
-                scope.BreadCrumbs = [];
                 scope.SelectedAlbumSort= {
                     id: "default"
                 };
@@ -98,7 +103,7 @@ describe("Subsonic controller", function() {
             });
 
             it("Given a music directory that contained 3 songs and given its id and name, when I display it, then subsonic-service will be called, the breadcrumbs will be updated and the songs will be published to the scope", function() {
-                scope.getSongs('display', 87, 'Covetous Dadayag');
+                scope.getSongs('display', 87, 'Covetous Dadayag', "root");
                 deferred.resolve({
                     directories: [],
                     songs: [
@@ -116,11 +121,11 @@ describe("Subsonic controller", function() {
                     { id: 859 },
                     { id: 545 }
                 ]);
-                expect(scope.BreadCrumbs).toEqual([{
-                    type: 'album',
+                expect(breadcrumbs.reset).toHaveBeenCalled();
+                expect(breadcrumbs.push).toHaveBeenCalledWith({
                     id: 87,
-                    name: 'Covetous Dadayag'
-                }]);
+                    name: "Covetous Dadayag"
+                });
                 expect(scope.selectedAutoAlbum).toBeNull();
                 expect(scope.selectedArtist).toBeNull();
                 expect(scope.selectedAlbum).toBe(87);
@@ -137,24 +142,18 @@ describe("Subsonic controller", function() {
                         name: 'Evan Mestanza'
                     }
                 ];
-                scope.getSongs('display', 883, 'Pitiedly preutilizable');
+                scope.getSongs('display', 883, 'Pitiedly preutilizable', "forward");
                 deferred.resolve({
                     directories: [],
                     songs: []
                 });
                 scope.$apply();
 
-                expect(scope.BreadCrumbs).toEqual([
-                    {
-                        type: 'artist',
-                        id: 73,
-                        name: 'Evan Mestanza'
-                    }, {
-                        type: 'album',
-                        id: 883,
-                        name: 'Pitiedly preutilizable'
-                    }
-                ]);
+                expect(breadcrumbs.reset).not.toHaveBeenCalled();
+                expect(breadcrumbs.push).toHaveBeenCalledWith({
+                    id: 883,
+                    name: "Pitiedly preutilizable"
+                });
             });
 
             it("Given a music directory that contained 2 songs and 1 subdirectory and given its id and name, when I display it, then subsonic-service will be called, the songs and directory will be published to the scope", function() {
