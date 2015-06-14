@@ -1,0 +1,24 @@
+.breadcrumbs {
+    float: left;
+    margin-top: 18px;
+}
+
+.breadcrumb {
+    float: left;
+}
+
+.breadcrumb a {
+    margin: 0 2px 0 6px;
+    text-decoration: none;
+    color: #829FC0;
+    font-size: 14px;
+    ;
+}
+
+.breadcrumb:not(:last-child)::after {
+    content: " >";
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}

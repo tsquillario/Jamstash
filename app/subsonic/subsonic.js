@@ -8,7 +8,9 @@ angular.module('jamstash.subsonic.controller', [
     'ngLodash',
     'jamstash.subsonic.service',
     'jamstash.player.service',
-    'jamstash.persistence'
+    'jamstash.persistence',
+    'jamstash.breadcrumbs.directive',
+    'jamstash.breadcrumbs.service'
 ])
 
 .controller('SubsonicController', [
@@ -24,6 +26,7 @@ angular.module('jamstash.subsonic.controller', [
     'notifications',
     'player',
     'persistence',
+    'breadcrumbs',
     function (
         $scope,
         $rootScope,
@@ -36,7 +39,8 @@ angular.module('jamstash.subsonic.controller', [
         subsonic,
         notifications,
         player,
-        persistence
+        persistence,
+        breadcrumbs
     ) {
     'use strict';
 
@@ -330,8 +334,18 @@ angular.module('jamstash.subsonic.controller', [
         return promise;
     };
 
-    $scope.getSongs = function (action, id, name) {
-        notifications.updateMessage('getSongs' + id + ' ' + name, true);
+    /**
+     * Get songs from the subsonic server. Provide with the id of the directory and its name.
+     * If action is 'play' or 'add', the songs will be retrieved recursively until all sub-directories
+     * of the provided one have been called.
+     * level is the level in the breadcrumbs. Can be 'root' which resets the breadcrumbs to one level
+     * or can be 'forward' which adds a level to the breadcrumbs.
+     * @param  {String} action 'play', 'add' or 'display'
+     * @param  {int} id        the id of the directory to get songs from
+     * @param  {String} name   the name of the directory to get songs from
+     * @param  {String} level  'root' or 'forward'
+     */
+    $scope.getSongs = function (action, id, name, level) {
         var promise;
         if (action === 'play' || action === 'add') {
             promise = subsonic.recursiveGetSongs(id);
@@ -341,10 +355,17 @@ angular.module('jamstash.subsonic.controller', [
             $scope.handleErrors(promise).then(function (data) {
                 $scope.album = data.directories;
                 $scope.song = data.songs;
-                if ($scope.BreadCrumbs.length > 0) {
-                    $scope.BreadCrumbs.splice(1, ($scope.BreadCrumbs.length - 1));
+                if (level === "root") {
+                    breadcrumbs.reset().push({
+                        id: id,
+                        name: name
+                    });
+                } else if (level === "forward") {
+                    breadcrumbs.push({
+                        id: id,
+                        name: name
+                    });
                 }
-                $scope.BreadCrumbs.push({'type': 'album', 'id': id, 'name': name});
                 $scope.selectedAutoAlbum = null;
                 $scope.selectedArtist = null;
                 $scope.selectedAlbum = id;

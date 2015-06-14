@@ -37,22 +37,16 @@
                         <form class="form">
                             <select id="SelectedAlbumSort" ng-model="SelectedAlbumSort.id" ng-show="AlbumSort.length" ng-options="o.id as o.name for o in AlbumSort"></select>
                         </form>
-                        <div id="BreadCrumb">
-                            <div id="BreadCrumbs" class="floatleft">
-                                <div class="crumb"><a ng-click="toggleArtists()" title="Toggle Artists">Artists</a> &gt;</div>
-                                <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'artist'}"><a ng-click="getSongs('display', o.id, o.name)">{{o.name}}</a> &gt;</div>
-                                <div class="crumb" ng-repeat="o in BreadCrumbs | filter:{type:'album'}"><a ng-click="getSongs('display', o.id, o.name)">{{o.name}}</a> &gt;</div>
-                            </div>
-                        </div>
+                        <jamstash-breadcrumbs>
                     </li>
                 </ul>
                 <div class="clear"></div>
                 <ul class="simplelist songlist noselect">
                     <div class="" ng-repeat="o in album" ng-switch on="o.type">
-                        <li class="album" ng-switch-when="byfolder" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': settings.DefaultLibraryLayout.id == 'grid'}" ng-click="getSongs('display', o.id, o.name)" parentid="{{o.parentid}}">
+                        <li class="album" ng-switch-when="byfolder" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': settings.DefaultLibraryLayout.id == 'grid'}" ng-click="getSongs('display', o.id, o.name, 'forward')" parentid="{{o.parentid}}">
                             <div class="itemactions">
-                                <a class="add hover" href="" title="Add To Play Queue" ng-click="getSongs('add', o.id, o.name)" stop-event="click"></a>
-                                <a class="play hover" href="" title="Play" ng-click="getSongs('play', o.id, o.name)" stop-event="click"></a>
+                                <a class="add hover" href="" title="Add To Play Queue" ng-click="getSongs('add', o.id, o.name, 'forward')" stop-event="click"></a>
+                                <a class="play hover" href="" title="Play" ng-click="getSongs('play', o.id, o.name, 'forward')" stop-event="click"></a>
                                 <a class="download hover" href="" ng-click="download(o.id)" title="Download" stop-event="click"></a>
                                 <a class="hover" href="" title="Star" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="toggleStar(o)" stop-event="click"></a>
                                 <a class="info hover" href="" title="{{'Created: ' + o.date}}"></a>
@@ -60,7 +54,7 @@
                             <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
                             <div class="albuminfo">
                                 <div class="title" title="{{o.name}}" ng-bind-html="o.name"></div>
-                                <div class="artist" title="{{o.artist}}"><a href="" id="{{o.parentid}}" ng-click="getSongs('display', o.parentid, o.artist)" stop-event="click" ng-bind-html="o.artist"></a></div>
+                                <div class="artist" title="{{o.artist}}"><a href="" id="{{o.parentid}}" ng-click="getSongs('display', o.parentid, o.artist, 'forward')" stop-event="click" ng-bind-html="o.artist"></a></div>
                             </div>
                             <div class="clear"></div>
                         </li>
@@ -107,14 +101,14 @@
                 <ul class="simplelist mainlist noselect" ng-show="shortcut.length">
                     <li class="index" title="Scroll to Top" data-bind="click: $root.scrollToTop"><a>Shortcuts</a></li>
                     <ul class="simplelist mainlist noselect" ng-repeat="o in shortcut">
-                        <li class="item" id="{{o.id}}" ng-click="getSongs('display', o.id, o.name)" ng-class="{'selected': selectedArtist == o.id}"><span ng-bind-html="o.name"></span></li>
+                        <li class="item" id="{{o.id}}" ng-click="getSongs('display', o.id, o.name, 'root')" ng-class="{'selected': selectedArtist == o.id}"><span ng-bind-html="o.name"></span></li>
                     </ul>
                 </ul>
                 <!-- Artist -->
                 <ul class="simplelist mainlist noselect" ng-repeat="o in index">
                     <li class="index" title="Scroll to Top" id="{{o.name}}" ng-click="scrollToTop()"><a>{{o.name}}</a></li>
                     <ul class="simplelist mainlist noselect">
-                        <li class="item" id="{{a.id}}" ng-repeat="a in o.artist" ng-class="{'selected': selectedArtist == a.id}" ng-click="getSongs('display', a.id, a.name)"><a ng-href="" ng-bind-html="a.name"></a></li>
+                        <li class="item" id="{{a.id}}" ng-repeat="a in o.artist" ng-class="{'selected': selectedArtist == a.id}" ng-click="getSongs('display', a.id, a.name, 'root')"><a ng-href="" ng-bind-html="a.name"></a></li>
                     </ul>
                 </ul>
             </div>
