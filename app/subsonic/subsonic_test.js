@@ -2,17 +2,18 @@ describe("Subsonic controller", function() {
     'use strict';
 
     var scope, $rootScope, $controller, $window,
-        subsonic, notifications, player, utils, persistence, controllerParams, deferred;
+        _, subsonic, notifications, player, utils, persistence, controllerParams, deferred;
 
     beforeEach(function() {
         jasmine.addCustomEqualityTester(angular.equals);
 
         module('jamstash.subsonic.controller');
 
-        inject(function (_$controller_, _$rootScope_, globals, map, $q) {
+        inject(function (_$controller_, _$rootScope_, globals, map, $q, lodash) {
             $rootScope = _$rootScope_;
             scope = $rootScope.$new();
             deferred = $q.defer();
+            _ = lodash;
 
             $window = jasmine.createSpyObj("$window", [
                 "prompt",
@@ -43,11 +44,11 @@ describe("Subsonic controller", function() {
                 "newPlaylist",
                 "recursiveGetSongs",
                 "savePlaylist",
-                "search",
+                "search"
             ]);
             // We make them return different promises and use our deferred variable only when testing
             // a particular function, so that they stay isolated
-            _.chain(subsonic).pluck('and').invoke("returnValue", $q.defer().promise);
+            _.forIn(subsonic, _.method('and.returnValue', $q.defer().promise));
             subsonic.showIndex = false;
 
             // Mock the player service
@@ -58,7 +59,7 @@ describe("Subsonic controller", function() {
                 "play",
                 "playFirstSong"
             ]);
-            _.chain(player).pluck('and').invoke("returnValue", player);
+            _.forIn(player, _.method('and.returnValue', player));
             player.queue = [];
 
             $controller = _$controller_;

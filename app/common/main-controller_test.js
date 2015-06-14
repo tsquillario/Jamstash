@@ -48,7 +48,7 @@ describe("Main controller", function() {
             "updateMessage"
         ]);
 
-        inject(function (_$controller_, $rootScope, _$q_, _$document_, _$window_, _$location_, _$cookieStore_, _utils_, globals, _model_, _Page_) {
+        inject(function (_$controller_, $rootScope, _$q_, _$document_, _$window_, _$location_, _$cookieStore_, lodash, _utils_, globals, _model_, _Page_) {
             scope = $rootScope.$new();
             utils = _utils_;
             $q = _$q_;
@@ -64,6 +64,7 @@ describe("Main controller", function() {
                 $window: _$window_,
                 $location: _$location_,
                 $cookieStore: _$cookieStore_,
+                lodash: lodash,
                 utils: utils,
                 globals: globals,
                 model: _model_,

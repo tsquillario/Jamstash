@@ -5,7 +5,7 @@
 * Provides load, save and delete operations for the current song and queue.
 * Data storage provided by HTML5 localStorage.
 */
-angular.module('jamstash.persistence', ['angular-locker',
+angular.module('jamstash.persistence', ['ngLodash', 'angular-locker',
     'jamstash.settings.service', 'jamstash.player.service', 'jamstash.notifications', 'jamstash.utils'])
 
 .config(['lockerProvider', function (lockerProvider) {
@@ -14,8 +14,8 @@ angular.module('jamstash.persistence', ['angular-locker',
         .setEventsEnabled(false);
 }])
 
-.service('persistence', ['globals', 'player', 'notifications', 'locker', 'json', 'jamstashVersionChangesets', 'utils',
-    function (globals, player, notifications, locker, json, jamstashVersionChangesets, utils) {
+.service('persistence', ['lodash', 'globals', 'player', 'notifications', 'locker', 'json', 'jamstashVersionChangesets', 'utils',
+    function (_, globals, player, notifications, locker, json, jamstashVersionChangesets, utils) {
     /* Manage current track */
     this.loadTrackPosition = function () {
         // Load Saved Song
@@ -121,12 +121,12 @@ angular.module('jamstash.persistence', ['angular-locker',
     this.upgradeVersion = function (currentVersion, finalVersion) {
         var settings = locker.get('Settings');
         // Apply all upgrades older than the final version and newer than the current
-        var allUpgrades = _(jamstashVersionChangesets.versions).filter(function (toApply) {
+        var allUpgrades = _.filter(jamstashVersionChangesets.versions, function (toApply) {
             var olderOrEqualToFinal = utils.checkVersion(finalVersion, toApply.version);
             var newerThanCurrent = utils.checkVersionNewer(toApply.version, currentVersion);
             return olderOrEqualToFinal && newerThanCurrent;
         });
-        _(allUpgrades).each(function (versionUpg) {
+        _.forEach(allUpgrades, function (versionUpg) {
             versionUpg.changeset(settings);
         });
         this.saveSettings(settings);

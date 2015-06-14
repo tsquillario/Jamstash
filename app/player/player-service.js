@@ -3,9 +3,9 @@
 *
 * Manages the player and playing queue. Use it to play a song, go to next track or add songs to the queue.
 */
-angular.module('jamstash.player.service', ['angular-underscore/utils'])
+angular.module('jamstash.player.service', ['ngLodash'])
 
-.factory('player', [function () {
+.factory('player', ['lodash', function (_) {
     'use strict';
 
     var playerVolume = 1.0;
@@ -105,8 +105,8 @@ angular.module('jamstash.player.service', ['angular-underscore/utils'])
         },
 
         shuffleQueue: function () {
-            var shuffled = _(player.queue).without(player._playingSong);
-            shuffled = _(shuffled).shuffle();
+            var shuffled = _.without(player.queue, player._playingSong);
+            shuffled = _.shuffle(shuffled);
             if(player._playingSong !== undefined) {
                 shuffled.unshift(player._playingSong);
                 player._playingIndex = 0;
@@ -132,7 +132,7 @@ angular.module('jamstash.player.service', ['angular-underscore/utils'])
         },
 
         removeSongs: function (songs) {
-            player.queue = _(player.queue).difference(songs);
+            player.queue = _.difference(player.queue, songs);
             return player;
         },
 

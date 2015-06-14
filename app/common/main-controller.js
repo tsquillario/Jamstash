@@ -1,6 +1,6 @@
 angular.module('JamStash')
-.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence', 'Page', 'subsonic', 'Loading',
-    function ($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, persistence, Page, subsonic, Loading) {
+.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'lodash', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence', 'Page', 'subsonic', 'Loading',
+    function ($scope, $rootScope, $document, $window, $location, $cookieStore, $http, _, utils, globals, model, notifications, player, persistence, Page, subsonic, Loading) {
     'use strict';
 
     $rootScope.settings = globals.settings;
@@ -47,10 +47,10 @@ angular.module('JamStash')
         }
         var settings = persistence.getSettings();
         if (settings !== undefined) {
-            var updSettings = _(settings).omit('Url');
+            var updSettings = _.omit(settings, 'Url');
             // We can't just assign settings to globals.settings because it's on the scope
             // TODO: Hyz: remove $rootScope.settings and replace with individual settings
-            _(updSettings).each(function(val, key) {
+            _.each(updSettings, function(val, key) {
                 globals.settings[key] = val;
             });
         }
