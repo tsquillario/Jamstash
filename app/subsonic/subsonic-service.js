@@ -4,11 +4,30 @@
 * Provides access through $http to the Subsonic server's API.
 * Also offers more fine-grained functionality that is not part of Subsonic's API.
 */
-angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
-    'jamstash.settings.service', 'jamstash.utils', 'jamstash.model'])
+angular.module('jamstash.subsonic.service', [
+    'ngLodash',
+    'jamstash.settings.service',
+    'jamstash.utils',
+    'jamstash.model'
+])
 
-.factory('subsonic', ['$rootScope', '$http', '$q', 'globals', 'utils', 'map',
-    function ($rootScope, $http, $q, globals, utils, map) {
+.factory('subsonic', [
+    '$rootScope',
+    '$http',
+    '$q',
+    'lodash',
+    'globals',
+    'utils',
+    'map',
+    function (
+        $rootScope,
+        $http,
+        $q,
+        _,
+        globals,
+        utils,
+        map
+    ) {
     'use strict';
 
     //TODO: Hyz: Remove when refactored
@@ -152,7 +171,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                     var formattedResponse = {};
                     formattedResponse.shortcut = [].concat(subsonicResponse.indexes.shortcut);
                     formattedResponse.index = [].concat(subsonicResponse.indexes.index);
-                    _(formattedResponse.index).map(function (index) {
+                    _.map(formattedResponse.index, function (index) {
                         var formattedIndex = index;
                         formattedIndex.artist = [].concat(index.artist);
                         return formattedIndex;
@@ -277,7 +296,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                     // Make sure this is an array using concat because Madsonic will return an object when there's only one element
                     var children = [].concat(subsonicResponse.directory.child);
                     if (children.length > 0) {
-                        var allChildren = _(children).partition(function (item) {
+                        var allChildren = _.partition(children, function (item) {
                             return item.isDir;
                         });
                         return {
@@ -315,7 +334,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                     // since all of this is asynchronous, we need to wait for all the requests to finish by using $q.all()
                     var allRequestsFinished = $q.all(promises).then(function (data) {
                         // and since $q.all() wraps everything in another array, we use flatten() to end up with only one array of songs
-                        return _(data).flatten();
+                        return _.flatten(data);
                     });
                     deferred.resolve(allRequestsFinished);
                 }
@@ -419,7 +438,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                         var songArray = [].concat(starred.song);
                         if (songArray.length > 0) {
                             // Return random subarray of songs
-                            var songs = [].concat(_(songArray).sample(globals.settings.AutoPlaylistSize));
+                            var songs = [].concat(_.sample(songArray, globals.settings.AutoPlaylistSize));
                             return map.mapSongs(songs);
                         }
                     }
@@ -437,7 +456,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                     // Make sure this is an array using concat because Madsonic will return an object when there's only one element
                     var playlistArray = [].concat(subsonicResponse.playlists.playlist);
                     if (playlistArray.length > 0) {
-                        var allPlaylists = _(playlistArray).partition(function (item) {
+                        var allPlaylists = _.partition(playlistArray, function (item) {
                             return item.owner === globals.settings.Username;
                         });
                         return {playlists: allPlaylists[0], playlistsPublic: allPlaylists[1]};
@@ -572,7 +591,7 @@ angular.module('jamstash.subsonic.service', ['angular-underscore/utils',
                         if (channel !== null && channel.id === id) {
                             // Make sure this is an array using concat because Madsonic will return an object when there's only one element
                             var episodesArray = [].concat(channel.episode);
-                            episodes = _(episodesArray).filter(function (episode) {
+                            episodes = _.filter(episodesArray, function (episode) {
                                 return episode.status === "completed";
                             });
                             if(episodes.length > 0) {

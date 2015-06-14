@@ -1,8 +1,20 @@
 'use strict';
 
 /* Declare app level module */
-angular.module('JamStash', ['ngCookies', 'ngRoute', 'ngSanitize', 'ui.keypress', 'angular-underscore/utils',
-    'jamstash.subsonic.controller', 'jamstash.archive.controller', 'jamstash.player.controller', 'jamstash.queue.controller', 'jamstash.settings.controller', 'jamstash.persistence', 'jamstash.loading'])
+angular.module('JamStash', [
+    'ngCookies',
+    'ngRoute',
+    'ngSanitize',
+    'ngLodash',
+    'ui.keypress',
+    'jamstash.subsonic.controller',
+    'jamstash.archive.controller',
+    'jamstash.player.controller',
+    'jamstash.queue.controller',
+    'jamstash.settings.controller',
+    'jamstash.persistence',
+    'jamstash.loading'
+])
 
 .config(['$routeProvider',function ($routeProvider) {
     $routeProvider
