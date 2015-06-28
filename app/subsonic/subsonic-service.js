@@ -110,8 +110,9 @@ angular.module('jamstash.subsonic.service', [
 
         getMusicFolders: function () {
             var exception = { reason: 'No music folder found on the Subsonic server.' };
-            var promise = subsonicService.subsonicRequest('getMusicFolders.view')
-            .then(function (subsonicResponse) {
+            var promise = subsonicService.subsonicRequest('getMusicFolders.view', {
+                cache: true
+            }).then(function (subsonicResponse) {
                 if (subsonicResponse.musicFolders !== undefined && subsonicResponse.musicFolders.musicFolder !== undefined) {
                     return [].concat(subsonicResponse.musicFolders.musicFolder);
                 } else {
@@ -130,6 +131,7 @@ angular.module('jamstash.subsonic.service', [
                 };
             }
             var promise = subsonicService.subsonicRequest('getIndexes.view', {
+                cache: true,
                 params: params
             }).then(function (subsonicResponse) {
                 if (subsonicResponse.indexes !== undefined && (subsonicResponse.indexes.index !== undefined || subsonicResponse.indexes.shortcut !== undefined)) {
