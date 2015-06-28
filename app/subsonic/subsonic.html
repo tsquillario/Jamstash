@@ -89,11 +89,28 @@
                 <div class="clear"></div>
                 <ul id="AutoAlbumContainer" class="simplelist mainlist noselect">
                     <li class="index" id="auto">Auto Albums</li>
-                    <li class="item" ng-repeat="o in AutoAlbums" id="{{o.id}}" ng-click="getAlbumListBy(o.id)" ng-class="{'selected': selectedAutoAlbum == o.id }">
-                        <span>{{o.name}}</span>
+                    <li
+                        class="item"
+                        ng-repeat="(id, album) in autoAlbums"
+                        ng-click="getAlbumListBy(id)"
+                        ng-class="{'selected': selectedAutoAlbum == id }"
+                    >
+                        <span>{{album.name}}</span>
                         <div class="floatright">
-                            <a href="" class="nextprev hover" id="random" title="Previous" ng-click="getAlbumListBy(o.id, 'prev')" stop-event="click">&lsaquo;</a>
-                            <a href="" class="nextprev hover" id="random" title="Next" ng-click="getAlbumListBy(o.id, 'next')" stop-event="click">&rsaquo;</a>
+                            <a
+                                href=""
+                                class="nextprev hover"
+                                title="Previous"
+                                ng-click="getAlbumListBy(id, 'prev')"
+                                stop-event="click"
+                            >&lsaquo;</a>
+                            <a
+                                href=""
+                                class="nextprev hover"
+                                title="Next"
+                                ng-click="getAlbumListBy(id, 'next')"
+                                stop-event="click"
+                            >&rsaquo;</a>
                         </div>
                     </li>
                 </ul>
