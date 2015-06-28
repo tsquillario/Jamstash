@@ -286,49 +286,85 @@ describe("Subsonic service -", function() {
             it("and given that there were more than 3 albums in my library, when I get the newest albums, then a promise will be resolved with an array of 3 albums", function() {
                 response["subsonic-response"].albumList = {
                     album: [
-                        {id: 124, isDir: true},
-                        {id: 731, isDir: true},
-                        {id: 319, isDir: true}
+                        { id: 124 },
+                        { id: 731 },
+                        { id: 319 }
                     ]
                 };
                 mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
-                var promise = subsonic.getAlbumListBy('newest');
-                //TODO: Hyz: Replace with toBeResolvedWith() when GetAlbumListBy() is refactored
-                var success = function (data) {
-                    expect(data.album).toEqual([
-                        {id: 124, isDir: true},
-                        {id: 731, isDir: true},
-                        {id: 319, isDir: true}
-                    ]);
-                    expect(data.song).toEqual([]);
-                };
-                promise.then(success);
-
+                var promise = subsonic.getAlbumListBy('newest', 0);
                 mockBackend.flush();
 
-                expect(promise).toBeResolved();
+                expect(promise).toBeResolvedWith([
+                    { id: 124 },
+                    { id: 731 },
+                    { id: 319 },
+                ]);
+            });
+
+            it("and given there were 10 most played albums in my library, when I get the 3 first most played albums, then a promise will be resolved with an array of 3 albums", function() {
+                url = 'http://demo.subsonic.com/rest/getAlbumList.view?'+
+                    'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&offset=3'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3&type=frequent'+'&u=Hyzual&v=1.10.2';
+                response["subsonic-response"].albumList = {
+                    album: [
+                        { id: 555 },
+                        { id: 207 },
+                        { id: 100 }
+                    ]
+                };
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getAlbumListBy('frequent', 3);
+                mockBackend.flush();
+
+                expect(promise).toBeResolvedWith([
+                    { id: 555 },
+                    { id: 207 },
+                    { id: 100 }
+                ]);
+            });
+
+            it("and given there were albums in my library, when I get random albums with a negative offset, then the offset will be adjusted to 0", function() {
+                url = 'http://demo.subsonic.com/rest/getAlbumList.view?'+
+                    'c=Jamstash&callback=JSON_CALLBACK&f=jsonp'+'&offset=0'+'&p=enc:cGFzc3dvcmQ%3D'+'&size=3&type=random'+'&u=Hyzual&v=1.10.2';
+                response["subsonic-response"].albumList = {
+                    album: [
+                        { id: 342 },
+                        { id: 904 },
+                        { id: 38 }
+                    ]
+                };
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                subsonic.getAlbumListBy('random', -3);
+                mockBackend.flush();
             });
 
             it("and given that there was only 1 album in my Madsonic library, when I get the newest albums, then a promise will be resolved with an array of 1 album", function() {
                 response["subsonic-response"].albumList = {
-                    album: {id: 29, isDir: true}
+                    album: { id: 29 }
                 };
                 mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
                 var promise = subsonic.getAlbumListBy('newest');
-                //TODO: Hyz: Replace with toBeResolvedWith() when GetAlbumListBy() is refactored
-                var success = function (data) {
-                    expect(data.album).toEqual([
-                        {id: 29, isDir: true},
-                    ]);
-                    expect(data.song).toEqual([]);
-                };
-                promise.then(success);
-
                 mockBackend.flush();
 
-                expect(promise).toBeResolved();
+                expect(promise).toBeResolvedWith([
+                    { id: 29 }
+                ]);
+            });
+
+            it("and given that there were no albums in my library, when I get the newest albums, then a promise will be rejected with an error message", function() {
+                response["subsonic-response"].albumList = {
+                    album: []
+                };
+                mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+
+                var promise = subsonic.getAlbumListBy('newest');
+                mockBackend.flush();
+
+                expect(promise).toBeRejectedWith({reason: 'No matching albums found on the Subsonic server.'});
             });
         });
     });

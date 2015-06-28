@@ -2,14 +2,14 @@ describe("Subsonic controller", function() {
     'use strict';
 
     var scope, $rootScope, $controller, $window,
-        _, subsonic, notifications, player, utils, persistence, breadcrumbs, controllerParams, deferred;
+        _, subsonic, notifications, player, utils, persistence, breadcrumbs, mockGlobals, controllerParams, deferred;
 
     beforeEach(function() {
         jasmine.addCustomEqualityTester(angular.equals);
 
         module('jamstash.subsonic.controller');
 
-        inject(function (_$controller_, _$rootScope_, globals, map, $q, lodash) {
+        inject(function (_$controller_, _$rootScope_, map, $q, lodash) {
             $rootScope = _$rootScope_;
             scope = $rootScope.$new();
             deferred = $q.defer();
@@ -31,11 +31,21 @@ describe("Subsonic controller", function() {
                 "push"
             ]);
             breadcrumbs.reset.and.returnValue(breadcrumbs);
+            mockGlobals = {
+                settings: {
+                    AutoAlbumSize: 3,
+                    DefaultAlbumSort: {
+                        id: "default",
+                        name: "Default Sort"
+                    }
+                }
+            };
 
             // Mock the subsonic service
             subsonic = jasmine.createSpyObj("subsonic", [
                 "deletePlaylist",
                 "getAlbums",
+                "getAlbumListBy",
                 "getArtists",
                 "getGenres",
                 "getMusicFolders",
@@ -74,7 +84,7 @@ describe("Subsonic controller", function() {
                 $routeParams: {},
                 $window: $window,
                 utils: utils,
-                globals: globals,
+                globals: mockGlobals,
                 map: map,
                 subsonic: subsonic,
                 notifications: notifications,
@@ -94,9 +104,6 @@ describe("Subsonic controller", function() {
 
         describe("getSongs -", function() {
             beforeEach(function() {
-                scope.SelectedAlbumSort= {
-                    id: "default"
-                };
                 subsonic.getSongs.and.returnValue(deferred.promise);
                 subsonic.recursiveGetSongs.and.returnValue(deferred.promise);
                 spyOn(scope, "requestSongs").and.returnValue(deferred.promise);
@@ -240,7 +247,7 @@ describe("Subsonic controller", function() {
                     expect(subsonic.getRandomStarredSongs).toHaveBeenCalled();
                     expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
                     expect(scope.album).toEqual([]);
-                    expect(scope.BreadCrumbs).toBeNull();
+                    expect(breadcrumbs.reset).toHaveBeenCalled();
                     expect(scope.selectedAutoAlbum).toBeNull();
                     expect(scope.selectedArtist).toBeNull();
                     expect(scope.selectedAlbum).toBeNull();
@@ -262,7 +269,7 @@ describe("Subsonic controller", function() {
                         expect(subsonic.getRandomSongs).toHaveBeenCalled();
                         expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
                         expect(scope.album).toEqual([]);
-                        expect(scope.BreadCrumbs).toBeNull();
+                        expect(breadcrumbs.reset).toHaveBeenCalled();
                         expect(scope.selectedAutoAlbum).toBeNull();
                         expect(scope.selectedArtist).toBeNull();
                         expect(scope.selectedAlbum).toBeNull();
@@ -279,7 +286,7 @@ describe("Subsonic controller", function() {
                         expect(subsonic.getRandomSongs).toHaveBeenCalledWith('Rock', undefined);
                         expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
                         expect(scope.album).toEqual([]);
-                        expect(scope.BreadCrumbs).toBeNull();
+                        expect(breadcrumbs.reset).toHaveBeenCalled();
                         expect(scope.selectedAutoAlbum).toBeNull();
                         expect(scope.selectedArtist).toBeNull();
                         expect(scope.selectedAlbum).toBeNull();
@@ -296,7 +303,7 @@ describe("Subsonic controller", function() {
                         expect(subsonic.getRandomSongs).toHaveBeenCalledWith('', 1);
                         expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
                         expect(scope.album).toEqual([]);
-                        expect(scope.BreadCrumbs).toBeNull();
+                        expect(breadcrumbs.reset).toHaveBeenCalled();
                         expect(scope.selectedAutoAlbum).toBeNull();
                         expect(scope.selectedArtist).toBeNull();
                         expect(scope.selectedAlbum).toBeNull();
@@ -320,7 +327,7 @@ describe("Subsonic controller", function() {
                         expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
                         expect(scope.song).toEqual([]);
                         expect(scope.album).toEqual([]);
-                        expect(scope.BreadCrumbs).toBeNull();
+                        expect(breadcrumbs.reset).toHaveBeenCalled();
                         expect(scope.selectedAutoAlbum).toBeNull();
                         expect(scope.selectedArtist).toBeNull();
                         expect(scope.selectedAlbum).toBeNull();
@@ -349,7 +356,7 @@ describe("Subsonic controller", function() {
                     expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'whatever action');
                     expect(scope.song).toEqual([]);
                     expect(scope.album).toEqual([]);
-                    expect(scope.BreadCrumbs).toBeNull();
+                    expect(breadcrumbs.reset).toHaveBeenCalled();
                     expect(scope.selectedAutoAlbum).toBeNull();
                     expect(scope.selectedArtist).toBeNull();
                     expect(scope.selectedAlbum).toBeNull();
@@ -543,24 +550,24 @@ describe("Subsonic controller", function() {
                 subsonic.getArtists.and.returnValue(deferred.promise);
             });
 
-            it("Given that there were artists in the library, when I load the artists, then subsonic will be queried an index array containing the artists and a shortcut array containing the shortcuts (such as Podcasts) will be publisehd to the scope", function() {
+            it("Given that there were artists in the library, when I load the artists, then subsonic will be queried and an index array containing the artists and a shortcut array containing the shortcuts (such as Podcasts) will be publisehd to the scope", function() {
                 scope.getArtists();
                 deferred.resolve({
                     index: [
-                        {id: "520"}
+                        {id: 520}
                     ],
                     shortcut: [
-                        {id: "342"}
+                        {id: 342}
                     ]
                 });
                 scope.$apply();
 
                 expect(subsonic.getArtists).toHaveBeenCalled();
                 expect(scope.index).toEqual([
-                    {id: "520"}
+                    {id: 520}
                 ]);
                 expect(scope.shortcut).toEqual([
-                    {id: "342"}
+                    {id: 342}
                 ]);
             });
 
@@ -589,6 +596,76 @@ describe("Subsonic controller", function() {
             });
         });
 
+        describe("getAlbumListBy() - Given that the global setting AutoAlbum Size was 3,", function() {
+            beforeEach(function() {
+                subsonic.getAlbumListBy.and.returnValue(deferred.promise);
+            });
+
+            it("and given that there were albums in the library, when I get the newest albums, then subsonic will be queried and the albums will be published on the scope", function() {
+                scope.getAlbumListBy("newest");
+                deferred.resolve([
+                    { id: 85, isDir: true },
+                    { id: 581, isDir: true },
+                    { id: 415, isDir: true }
+                ]);
+                scope.$apply();
+
+                expect(subsonic.getAlbumListBy).toHaveBeenCalledWith("newest", 0);
+                expect(scope.song).toEqual([]);
+                expect(scope.album).toEqual([
+                    { id: 85, isDir: true },
+                    { id: 581, isDir: true },
+                    { id: 415, isDir: true }
+                ]);
+                expect(breadcrumbs.reset).toHaveBeenCalled();
+                expect(scope.selectedAutoAlbum).toBe("newest");
+                expect(scope.selectedArtist).toBeNull();
+                expect(scope.selectedAlbum).toBeNull();
+                expect(scope.selectedAutoPlaylist).toBeNull();
+                expect(scope.selectedPlaylist).toBeNull();
+                expect(scope.selectedPodcast).toBeNull();
+            });
+
+            describe("and given that we had already queried the first 3 most played albums,", function() {
+                beforeEach(function() {
+                    scope.autoAlbums['frequent'].offset = 3;
+                });
+
+                it("when I get the next most played albums, then subsonic will be queried with an offset of 6", function() {
+                    scope.getAlbumListBy("frequent", "next");
+
+                    expect(subsonic.getAlbumListBy).toHaveBeenCalledWith("frequent", 6);
+                });
+
+                it("when I get the previous most played albums, then subsonic will be queried with an offset of 0", function() {
+                    scope.getAlbumListBy("frequent", "prev");
+
+                    expect(subsonic.getAlbumListBy).toHaveBeenCalledWith("frequent", 0);
+                });
+
+                it("when I get the first 3 top rated albums, then the 'most played' offset will be ignored and subsonic will be queried with an offset of 0", function() {
+                    scope.getAlbumListBy("highest");
+
+                    expect(subsonic.getAlbumListBy).toHaveBeenCalledWith("highest", 0);
+                });
+            });
+
+            it("Given that there weren't any albums in the library, when I get the newest albums, then a notification with an error message will be displayed", function() {
+                scope.getAlbumListBy("frequent");
+                deferred.reject({reason: 'No matching albums found on the Subsonic server.'});
+                scope.$apply();
+
+                expect(scope.album).toEqual([]);
+                expect(notifications.updateMessage).toHaveBeenCalledWith('No matching albums found on the Subsonic server.', true);
+            });
+
+            it("Given that the server was unreachable, when I get the newest albums, then handleErrors() will deal with the error", function() {
+                spyOn(scope, 'handleErrors').and.returnValue(deferred.promise);
+                scope.getAlbumListBy("newest");
+                expect(scope.handleErrors).toHaveBeenCalledWith(deferred.promise);
+            });
+        });
+
         it("refreshArtists() - When I refresh the artists, then the selected music folder will be reset to undefined and the artists and playlists will be loaded", function() {
             spyOn(scope, "getArtists");
             spyOn(scope, "getPlaylists");
@@ -609,20 +686,20 @@ describe("Subsonic controller", function() {
                 scope.getPlaylists();
                 deferred.resolve({
                     playlists: [
-                        {id: "588"}
+                        {id: 588}
                     ],
                     playlistsPublic: [
-                        {id: "761"}
+                        {id: 761}
                     ]
                 });
                 scope.$apply();
 
                 expect(subsonic.getPlaylists).toHaveBeenCalled();
                 expect(scope.playlists).toEqual([
-                    {id: "588"}
+                    {id: 588}
                 ]);
                 expect(scope.playlistsPublic).toEqual([
-                    {id: "761"}
+                    {id: 761}
                 ]);
             });
 
@@ -861,7 +938,7 @@ describe("Subsonic controller", function() {
                     {id: 643, name: "fireboarding stalactical"}
                 ]);
                 expect(scope.album).toEqual([]);
-                expect(scope.BreadCrumbs).toBeNull();
+                expect(breadcrumbs.reset).toHaveBeenCalled();
             });
 
             it("Given that albums containing 'neolalia' existed in my library, when I search for an album that contains 'neolalia', then the scope's albums will be filled with an array containing those albums and the other scope arrays will be emptied", function() {
@@ -880,7 +957,7 @@ describe("Subsonic controller", function() {
                     {id: 19, name: "neolaliaviator"},
                 ]);
                 expect(scope.song).toEqual([]);
-                expect(scope.BreadCrumbs).toBeNull();
+                expect(breadcrumbs.reset).toHaveBeenCalled();
             });
 
             it("Given that artists containing 'brazenly' existed in my library, when I search for an artist that contains 'brazenly', then the scope's shortcuts will be filled with an array containing those artists and the other scope arrays will be emptied", function() {
@@ -900,7 +977,7 @@ describe("Subsonic controller", function() {
                 ]);
                 expect(scope.song).toEqual([]);
                 expect(scope.album).toEqual([]);
-                expect(scope.BreadCrumbs).toBeNull();
+                expect(breadcrumbs.reset).toHaveBeenCalled();
             });
 
             it("Given any type of search and given that the library didn't contain anything containing 'shindig', when I search for 'shindig', then an error notification will be displayed", function() {

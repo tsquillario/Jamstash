@@ -30,7 +30,7 @@ angular.module('jamstash.subsonic.service', [
     ) {
     'use strict';
 
-    //TODO: Hyz: Remove when refactored
+    // TODO: Hyz: Remove when refactored
     var content = {
         album: [],
         song: [],
@@ -46,11 +46,10 @@ angular.module('jamstash.subsonic.service', [
         selectedGenre: null,
         selectedPodcast: null
     };
-    var offset = 0;
     var showPlaylist = false;
 
     var subsonicService = {
-        //TODO: Hyz: Remove when refactored
+        // TODO: Hyz: Remove when refactored
         showIndex: $rootScope.showIndex,
         showPlaylist: showPlaylist,
 
@@ -81,18 +80,18 @@ angular.module('jamstash.subsonic.service', [
             actualConfig.timeout = globals.settings.Timeout;
 
             var httpPromise;
-            if(globals.settings.Protocol === 'jsonp') {
+            if (globals.settings.Protocol === 'jsonp') {
                 actualConfig.params.callback = 'JSON_CALLBACK';
                 httpPromise = $http.jsonp(url, actualConfig);
             } else {
                 httpPromise = $http.get(url, actualConfig);
             }
             httpPromise.success(function (data) {
-                var subsonicResponse = (data['subsonic-response'] !== undefined) ? data['subsonic-response'] : {status: 'failed'};
+                var subsonicResponse = (data['subsonic-response'] !== undefined) ? data['subsonic-response'] : { status: 'failed' };
                 if (subsonicResponse.status === 'ok') {
                     deferred.resolve(subsonicResponse);
                 } else {
-                    if(subsonicResponse.status === 'failed' && subsonicResponse.error !== undefined) {
+                    if (subsonicResponse.status === 'failed' && subsonicResponse.error !== undefined) {
                         exception.subsonicError = subsonicResponse.error;
                         exception.version = subsonicResponse.version;
                     }
@@ -110,7 +109,7 @@ angular.module('jamstash.subsonic.service', [
         },
 
         getMusicFolders: function () {
-            var exception = {reason: 'No music folder found on the Subsonic server.'};
+            var exception = { reason: 'No music folder found on the Subsonic server.' };
             var promise = subsonicService.subsonicRequest('getMusicFolders.view')
             .then(function (subsonicResponse) {
                 if (subsonicResponse.musicFolders !== undefined && subsonicResponse.musicFolders.musicFolder !== undefined) {
@@ -123,9 +122,9 @@ angular.module('jamstash.subsonic.service', [
         },
 
         getArtists: function (folder) {
-            var exception = {reason: 'No artist found on the Subsonic server.'};
+            var exception = { reason: 'No artist found on the Subsonic server.' };
             var params;
-            if (!isNaN(folder)) {
+            if (! isNaN(folder)) {
                 params = {
                     musicFolderId: folder
                 };
@@ -133,7 +132,7 @@ angular.module('jamstash.subsonic.service', [
             var promise = subsonicService.subsonicRequest('getIndexes.view', {
                 params: params
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.indexes !== undefined && (subsonicResponse.indexes.index !== undefined || subsonicResponse.indexes.shortcut !== undefined)) {
+                if (subsonicResponse.indexes !== undefined && (subsonicResponse.indexes.index !== undefined || subsonicResponse.indexes.shortcut !== undefined)) {
                     // Make sure shortcut, index and each index's artist are arrays
                     // because Madsonic will return an object when there's only one element
                     var formattedResponse = {};
@@ -152,48 +151,6 @@ angular.module('jamstash.subsonic.service', [
             return promise;
         },
 
-        getAlbumListBy: function (id, off) {
-            if (off == 'next') {
-                offset = offset + globals.settings.AutoAlbumSize;
-            } else if (off == 'prev') {
-                offset = offset - globals.settings.AutoAlbumSize;
-            } else {
-                offset = 0;
-            }
-            var exception = {reason: 'No songs found on the Subsonic server.'};
-            var params = {
-                size: globals.settings.AutoAlbumSize,
-                type: id,
-                offset: offset
-            };
-            var promise = subsonicService.subsonicRequest('getAlbumList.view', {
-                params: params
-            }).then(function (subsonicResponse) {
-                if(subsonicResponse.albumList.album !== undefined) {
-                    // Make sure this is an array using concat because Madsonic will return an object when there's only one element
-                    var albumArray = [].concat(subsonicResponse.albumList.album);
-                    if (albumArray.length > 0) {
-                        content.song = [];
-                        content.album = [];
-                        content.selectedArtist = null;
-                        content.selectedPlaylist = null;
-                        content.selectedAutoAlbum = id;
-                        content.breadcrumb = [];
-                        angular.forEach(albumArray, function (item, key) {
-                            if (item.isDir) {
-                                content.album.push(map.mapAlbum(item));
-                            } else {
-                                content.song.push(map.mapSong(item));
-                            }
-                        });
-                        return content;
-                    }
-                }
-                // We end up here for every else
-                return $q.reject(exception);
-            });
-            return promise;
-        },
         getAlbumByTag: function (id) { // Gets Album by ID3 tag: NOT Being Used Currently 1/24/2015
             var deferred = $q.defer();
             $.ajax({
@@ -223,13 +180,13 @@ angular.module('jamstash.subsonic.service', [
         },
 
         getSongs: function (id) {
-            var exception = {reason: 'This directory is empty.'};
+            var exception = { reason: 'This directory is empty.' };
             var promise = subsonicService.subsonicRequest('getMusicDirectory.view', {
                 params: {
                     id: id
                 }
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.directory.child !== undefined) {
+                if (subsonicResponse.directory.child !== undefined) {
                     // Make sure this is an array using concat because Madsonic will return an object when there's only one element
                     var children = [].concat(subsonicResponse.directory.child);
                     if (children.length > 0) {
@@ -283,22 +240,46 @@ angular.module('jamstash.subsonic.service', [
             return deferred.promise;
         },
 
+        getAlbumListBy: function (type, offset) {
+            var actualOffset = (offset > 0) ? offset : 0;
+            var exception = { reason: 'No matching albums found on the Subsonic server.' };
+            var params = {
+                size: globals.settings.AutoAlbumSize,
+                type: type,
+                offset: actualOffset
+            };
+            var promise = subsonicService.subsonicRequest('getAlbumList.view', {
+                params: params
+            }).then(function (subsonicResponse) {
+                if (subsonicResponse.albumList.album !== undefined) {
+                    // Make sure this is an array using concat because Madsonic will return an object when there's only one element
+                    var albumArray = [].concat(subsonicResponse.albumList.album);
+                    if (albumArray.length > 0) {
+                        return map.mapAlbums(albumArray);
+                    }
+                }
+                // We end up here for every else
+                return $q.reject(exception);
+            });
+            return promise;
+        },
+
         search: function (query, type) {
-            if(_([0, 1, 2]).contains(type)) {
+            if (_([0, 1, 2]).contains(type)) {
                 var promise = subsonicService.subsonicRequest('search2.view', {
                     params: {
                         query: query
                     }
                 }).then(function (subsonicResponse) {
                     var searchResult;
-                    if (!_.isEmpty(subsonicResponse.searchResult2)) {
+                    if (! _.isEmpty(subsonicResponse.searchResult2)) {
                         searchResult = subsonicResponse.searchResult2;
-                    } else if (!_.isEmpty(subsonicResponse.search2)) {
+                    } else if (! _.isEmpty(subsonicResponse.search2)) {
                         // We also check search2 because Music Cabinet doesn't respond the same thing
                         // as everyone else...
                         searchResult = subsonicResponse.search2;
                     }
-                    if (!_.isEmpty(searchResult)) {
+                    if (! _.isEmpty(searchResult)) {
                         // Make sure that song, album and artist are arrays using concat
                         // because Madsonic will return an object when there's only one element
                         switch (type) {
@@ -320,29 +301,29 @@ angular.module('jamstash.subsonic.service', [
                         }
                     }
                     // We end up here for every else
-                    return $q.reject({reason: 'No results.'});
+                    return $q.reject({ reason: 'No results.' });
                 });
                 return promise;
             } else {
-                return $q.reject({reason: 'Wrong search type.'});
+                return $q.reject({ reason: 'Wrong search type.' });
             }
         },
 
         getRandomSongs: function (genre, folder) {
-            var exception = {reason: 'No songs found on the Subsonic server.'};
+            var exception = { reason: 'No songs found on the Subsonic server.' };
             var params = {
                 size: globals.settings.AutoPlaylistSize
             };
             if (genre !== undefined && genre !== '' && genre !== 'Random') {
                 params.genre = genre;
             }
-            if (!isNaN(folder)) {
+            if (! isNaN(folder)) {
                 params.musicFolderId = folder;
             }
             var promise = subsonicService.subsonicRequest('getRandomSongs.view', {
                 params: params
             }).then(function (subsonicResponse) {
-                if(subsonicResponse.randomSongs !== undefined) {
+                if (subsonicResponse.randomSongs !== undefined) {
                     // Make sure this is an array using concat because Madsonic will return an object when there's only one element
                     var songArray = [].concat(subsonicResponse.randomSongs.song);
                     if (songArray.length > 0) {
@@ -358,8 +339,8 @@ angular.module('jamstash.subsonic.service', [
         getStarred: function () {
             var promise = subsonicService.subsonicRequest('getStarred.view', { cache: true })
                 .then(function (subsonicResponse) {
-                    if(angular.equals(subsonicResponse.starred, {})) {
-                        return $q.reject({reason: 'Nothing is starred on the Subsonic server.'});
+                    if (angular.equals(subsonicResponse.starred, {})) {
+                        return $q.reject({ reason: 'Nothing is starred on the Subsonic server.' });
                     } else {
                         return subsonicResponse.starred;
                     }
@@ -370,7 +351,7 @@ angular.module('jamstash.subsonic.service', [
         getRandomStarredSongs: function () {
             var promise = subsonicService.getStarred()
                 .then(function (starred) {
-                    if(starred.song !== undefined) {
+                    if (starred.song !== undefined) {
                         // Make sure this is an array using concat because Madsonic will return an object when there's only one element
                         var songArray = [].concat(starred.song);
                         if (songArray.length > 0) {
@@ -380,23 +361,23 @@ angular.module('jamstash.subsonic.service', [
                         }
                     }
                     // We end up here for every else
-                    return $q.reject({reason: 'No starred songs found on the Subsonic server.'});
+                    return $q.reject({ reason: 'No starred songs found on the Subsonic server.' });
                 });
             return promise;
         },
 
         getPlaylists: function () {
-            var exception = {reason: 'No playlist found on the Subsonic server.'};
+            var exception = { reason: 'No playlist found on the Subsonic server.' };
             var promise = subsonicService.subsonicRequest('getPlaylists.view')
             .then(function (subsonicResponse) {
-                if(subsonicResponse.playlists.playlist !== undefined) {
+                if (subsonicResponse.playlists.playlist !== undefined) {
                     // Make sure this is an array using concat because Madsonic will return an object when there's only one element
                     var playlistArray = [].concat(subsonicResponse.playlists.playlist);
                     if (playlistArray.length > 0) {
                         var allPlaylists = _.partition(playlistArray, function (item) {
                             return item.owner === globals.settings.Username;
                         });
-                        return {playlists: allPlaylists[0], playlistsPublic: allPlaylists[1]};
+                        return { playlists: allPlaylists[0], playlistsPublic: allPlaylists[1] };
                     }
                 }
                 // We end up here for every else
@@ -406,7 +387,7 @@ angular.module('jamstash.subsonic.service', [
         },
 
         getPlaylist: function (id) {
-            var exception = {reason: 'This playlist is empty.'};
+            var exception = { reason: 'This playlist is empty.' };
             var promise = subsonicService.subsonicRequest('getPlaylist.view', {
                 params: {
                     id: id
@@ -468,7 +449,7 @@ angular.module('jamstash.subsonic.service', [
         },
 
         getGenres: function () {
-            var exception = {reason: 'No genre found on the Subsonic server.'};
+            var exception = { reason: 'No genre found on the Subsonic server.' };
             var promise = subsonicService.subsonicRequest('getGenres.view')
             .then(function (subsonicResponse) {
                 if (subsonicResponse.genres !== undefined && subsonicResponse.genres.genre !== undefined) {
@@ -476,10 +457,10 @@ angular.module('jamstash.subsonic.service', [
                     if (genreArray.length > 0) {
                         var stringArray;
                         if (genreArray[0].value) {
-                            stringArray = _.pluck(genreArray, "value");
+                            stringArray = _.pluck(genreArray, 'value');
                         // Of course, Madsonic doesn't return the same thing as Subsonic...
                         } else if (genreArray[0].content) {
-                            stringArray = _.pluck(genreArray, "content");
+                            stringArray = _.pluck(genreArray, 'content');
                         }
                         return stringArray;
                     }
@@ -491,7 +472,7 @@ angular.module('jamstash.subsonic.service', [
         },
 
         getPodcasts: function () {
-            var exception = {reason: 'No podcast found on the Subsonic server.'};
+            var exception = { reason: 'No podcast found on the Subsonic server.' };
             var promise = subsonicService.subsonicRequest('getPodcasts.view', {
                 params: {
                     includeEpisodes: false
@@ -512,7 +493,7 @@ angular.module('jamstash.subsonic.service', [
         },
 
         getPodcast: function (id) {
-            var exception = {reason: 'This podcast was not found on the Subsonic server.'};
+            var exception = { reason: 'This podcast was not found on the Subsonic server.' };
             var promise = subsonicService.subsonicRequest('getPodcasts.view', {
                 params: {
                     id: id,
@@ -529,12 +510,12 @@ angular.module('jamstash.subsonic.service', [
                             // Make sure this is an array using concat because Madsonic will return an object when there's only one element
                             var episodesArray = [].concat(channel.episode);
                             episodes = _.filter(episodesArray, function (episode) {
-                                return episode.status === "completed";
+                                return episode.status === 'completed';
                             });
-                            if(episodes.length > 0) {
+                            if (episodes.length > 0) {
                                 return map.mapPodcasts(episodes);
                             } else {
-                                return $q.reject({reason: 'No downloaded episode found for this podcast. Please check the podcast settings.'});
+                                return $q.reject({ reason: 'No downloaded episode found for this podcast. Please check the podcast settings.' });
                             }
                         }
                     }
@@ -552,7 +533,7 @@ angular.module('jamstash.subsonic.service', [
                     submisssion: true
                 }
             }).then(function () {
-                if(globals.settings.Debug) { console.log('Successfully scrobbled song: ' + song.id); }
+                if (globals.settings.Debug) { console.log('Successfully scrobbled song: ' + song.id); }
                 return true;
             });
             return promise;
@@ -565,7 +546,7 @@ angular.module('jamstash.subsonic.service', [
                     id: item.id
                 }
             }).then(function () {
-                return !item.starred;
+                return ! item.starred;
             });
             return promise;
         }
