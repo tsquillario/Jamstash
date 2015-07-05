@@ -1,17 +1,18 @@
-describe("Breadcrumbs service -", function() {
+// jscs:disable validateQuoteMarks
+describe("Breadcrumbs service -", function () {
     'use strict';
 
     var breadcrumbs;
-    beforeEach(function() {
+    beforeEach(function () {
         module('jamstash.breadcrumbs.service');
 
-        inject(function(_breadcrumbs_) {
+        inject(function (_breadcrumbs_) {
             breadcrumbs = _breadcrumbs_;
         });
     });
 
-    describe("push() -", function() {
-        it("Given an item with an id and a name and given the breadcrumbs were empty, when I push it to the breadcrumbs and I get them, then an array of 1 item containing an id and name will be returned", function() {
+    describe("push() -", function () {
+        it("Given an item with an id and a name and given the breadcrumbs were empty, when I push it to the breadcrumbs and I get them, then an array of 1 item containing an id and name will be returned", function () {
             breadcrumbs.push({
                 id: 240,
                 name: "Renee Stuekerjuerge"
@@ -25,7 +26,7 @@ describe("Breadcrumbs service -", function() {
             ]);
         });
 
-        it("Given an item with an id and a name and given the breadcrumbs already contained another item, when I push the item to the breadcrumbs and I get them, then an array of 2 items will be returned and the item I pushed will be the second one", function() {
+        it("Given an item with an id and a name and given the breadcrumbs already contained another item, when I push the item to the breadcrumbs and I get them, then an array of 2 items will be returned and the item I pushed will be the second one", function () {
             breadcrumbs.push({
                 id: 150,
                 name: "Collen Kampmann"
@@ -46,8 +47,8 @@ describe("Breadcrumbs service -", function() {
         });
     });
 
-    describe("popUntil() -", function() {
-        it("Given an item with an id and a name, and given the breadcrumbs already contained this item as first element and 2 others, when I pop breadcrumbs until finding the provided item, then an array containing only the provided item will be returned", function() {
+    describe("popUntil() -", function () {
+        it("Given an item with an id and a name, and given the breadcrumbs already contained this item as first element and 2 others, when I pop breadcrumbs until finding the provided item, then an array containing only the provided item will be returned", function () {
             breadcrumbs.push({
                 id: 979,
                 name: "telescopic Sivatheriinae"
@@ -72,7 +73,7 @@ describe("Breadcrumbs service -", function() {
             ]);
         });
 
-        it("Given an item with an id and a name, and given the breadcrumbs already contained this item as last element and 2 others, when I pop breadcrumbs until finding the provided item, then an array containing all 3 items will be returned", function() {
+        it("Given an item with an id and a name, and given the breadcrumbs already contained this item as last element and 2 others, when I pop breadcrumbs until finding the provided item, then an array containing all 3 items will be returned", function () {
             breadcrumbs.push({
                 id: 474,
                 name: "Kolinsky"
@@ -103,7 +104,7 @@ describe("Breadcrumbs service -", function() {
             ]);
         });
 
-        it("Given an item with an id and a name that didn't exist in the breadcrumbs, and given the breadcrumbs contained 3 items, when I pop breadcrumbs until finding the provided item, then an array containing all 3 breadcrumbs will be returned", function() {
+        it("Given an item with an id and a name that didn't exist in the breadcrumbs, and given the breadcrumbs contained 3 items, when I pop breadcrumbs until finding the provided item, then an array containing all 3 breadcrumbs will be returned", function () {
             breadcrumbs.push({
                 id: 46,
                 name: "Cordell"
@@ -134,7 +135,7 @@ describe("Breadcrumbs service -", function() {
             ]);
         });
 
-        it("Given an item with an id and a name, and given the breadcrumbs were empty, when I pop breadcrumbs until finding the provided item, then an empty array will be returned", function() {
+        it("Given an item with an id and a name, and given the breadcrumbs were empty, when I pop breadcrumbs until finding the provided item, then an empty array will be returned", function () {
             var list = breadcrumbs.popUntil({
                 id: 605,
                 name: "spacecraft"
@@ -145,7 +146,7 @@ describe("Breadcrumbs service -", function() {
     });
 
     describe("reset() -", function () {
-        it("Given a breadcrumb had been previously set, when I reset the breadcrumbs, then they will be empty", function() {
+        it("Given a breadcrumb had been previously set, when I reset the breadcrumbs, then they will be empty", function () {
             breadcrumbs.push({
                 id: 350,
                 name: "exterritoriality dubious"
@@ -156,7 +157,7 @@ describe("Breadcrumbs service -", function() {
             expect(list).toEqual([]);
         });
 
-        it("Given the breadcrumbs were empty, when I reset them, then they will be empty", function() {
+        it("Given the breadcrumbs were empty, when I reset them, then they will be empty", function () {
             var list = breadcrumbs.reset().get();
 
             expect(list).toEqual([]);
