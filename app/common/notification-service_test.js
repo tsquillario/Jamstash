@@ -1,9 +1,10 @@
-describe("Notifications service - ", function() {
+// jscs:disable validateQuoteMarks
+describe("Notifications service - ", function () {
     'use strict';
 
     var notifications, $window, $interval, player, utils, mockGlobals,
         NotificationObj;
-    beforeEach(function() {
+    beforeEach(function () {
         mockGlobals = {
             settings: {
                 Timeout: 30000
@@ -34,21 +35,21 @@ describe("Notifications service - ", function() {
         });
     });
 
-    it("can check whether we have the permission to display notifications in the current browser", function() {
+    it("can check whether we have the permission to display notifications in the current browser", function () {
         $window.Notify.needsPermission.and.returnValue(false);
 
         expect(notifications.hasPermission()).toBeTruthy();
         expect($window.Notify.needsPermission).toHaveBeenCalled();
     });
 
-    it("can check whether the current browser supports notifications", function() {
+    it("can check whether the current browser supports notifications", function () {
         $window.Notify.isSupported.and.returnValue(true);
 
         expect(notifications.isSupported()).toBeTruthy();
         expect($window.Notify.isSupported).toHaveBeenCalled();
     });
 
-    it("can request Notification permission for the current browser", function() {
+    it("can request Notification permission for the current browser", function () {
         spyOn(notifications, "isSupported").and.returnValue(true);
         spyOn(notifications, "hasPermission").and.returnValue(false);
 
@@ -57,9 +58,9 @@ describe("Notifications service - ", function() {
         expect($window.Notify.requestPermission).toHaveBeenCalled();
     });
 
-    describe("When I show a notification, given a song,", function() {
+    describe("When I show a notification, given a song,", function () {
         var song;
-        beforeEach(function() {
+        beforeEach(function () {
             song = {
                 coverartthumb: "https://backjaw.com/overquantity/outpitch?a=redredge&b=omnivoracious#promotement",
                 name: "Unhorny",
@@ -68,7 +69,7 @@ describe("Notifications service - ", function() {
             };
             spyOn(notifications, "hasPermission").and.returnValue(true);
         });
-        it("it checks the permissions, displays the title, the artist's name and the album picture in a notification", function() {
+        it("it checks the permissions, displays the title, the artist's name and the album picture in a notification", function () {
             notifications.showNotification(song);
 
             expect(notifications.hasPermission).toHaveBeenCalled();
@@ -80,7 +81,7 @@ describe("Notifications service - ", function() {
             expect(NotificationObj.show).toHaveBeenCalled();
         });
 
-        it("when I click on it, it plays the next track of the queue", function() {
+        it("when I click on it, it plays the next track of the queue", function () {
             notifications.showNotification(song);
             NotificationObj.simulateClick();
 
@@ -88,7 +89,7 @@ describe("Notifications service - ", function() {
             expect(NotificationObj.close).toHaveBeenCalled();
         });
 
-        it("given that the global Timeout setting is set to 10 seconds, it closes itself after 10 seconds", function() {
+        it("given that the global Timeout setting is set to 10 seconds, it closes itself after 10 seconds", function () {
             mockGlobals.settings.Timeout = 10000;
 
             notifications.showNotification(song);
@@ -97,7 +98,7 @@ describe("Notifications service - ", function() {
             expect(NotificationObj.close).toHaveBeenCalled();
         });
 
-        it("if we don't have the permission to display notifications, nothing happens", function() {
+        it("if we don't have the permission to display notifications, nothing happens", function () {
             notifications.hasPermission.and.returnValue(false);
 
             notifications.showNotification(song);

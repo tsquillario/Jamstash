@@ -1,11 +1,12 @@
-describe("breadcrumbs directive", function() {
+// jscs:disable validateQuoteMarks
+describe("breadcrumbs directive", function () {
     'use strict';
 
     var $q, deferred, element, scope, controller, subsonic, notifications, breadcrumbs;
 
-    beforeEach(module ('templates'));
-    beforeEach(function() {
-        module('jamstash.breadcrumbs.directive', function($provide) {
+    beforeEach(module('templates'));
+    beforeEach(function () {
+        module('jamstash.breadcrumbs.directive', function ($provide) {
             subsonic = jasmine.createSpyObj("subsonic", ["getSongs"]);
             $provide.value('subsonic', subsonic);
             notifications = jasmine.createSpyObj("notifications", ["updateMessage"]);
@@ -32,7 +33,7 @@ describe("breadcrumbs directive", function() {
         };
     });
 
-    it("Given a music directory that contained 2 songs and 1 subdirectory and given its id and name, when I display its songs, then subsonic service will be called, the breadcrumbs will be popped until they only display the directory and the songs and directory will be published to the scope", function() {
+    it("Given a music directory that contained 2 songs and 1 subdirectory and given its id and name, when I display its songs, then subsonic service will be called, the breadcrumbs will be popped until they only display the directory and the songs and directory will be published to the scope", function () {
         controller.displaySongs({
             id: 680,
             name: "henchman unstormy"
@@ -60,19 +61,19 @@ describe("breadcrumbs directive", function() {
         });
     });
 
-    it("Given a music directory, when I display it, then handleErrors will handle HTTP and Subsonic errors", function() {
+    it("Given a music directory, when I display it, then handleErrors will handle HTTP and Subsonic errors", function () {
         controller.displaySongs({
             id: 628
         });
         expect(scope.handleErrors).toHaveBeenCalledWith(deferred.promise);
     });
 
-    it("Given a music directory that didn't contain anything, when I display it, then an error notification will be displayed", function() {
+    it("Given a music directory that didn't contain anything, when I display it, then an error notification will be displayed", function () {
         controller.displaySongs({
             id: 242,
             name: "discinoid"
         });
-        deferred.reject({reason: 'This directory is empty.'});
+        deferred.reject({ reason: 'This directory is empty.' });
         scope.$apply();
 
         expect(notifications.updateMessage).toHaveBeenCalledWith('This directory is empty.', true);

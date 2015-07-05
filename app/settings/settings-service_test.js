@@ -1,15 +1,16 @@
-describe("Settings service", function() {
+// jscs:disable validateQuoteMarks
+describe("Settings service", function () {
     'use strict';
 
     var globals;
-    beforeEach(function() {
+    beforeEach(function () {
         module('jamstash.settings.service');
         inject(function (_globals_) {
             globals = _globals_;
         });
     });
 
-    it("Given 'http://subsonic.org/demo', when calling BaseURL() then I get 'http://subsonic.org/demo/rest'", function() {
+    it("Given 'http://subsonic.org/demo', when calling BaseURL() then I get 'http://subsonic.org/demo/rest'", function () {
         globals.settings.Server = "http://subsonic.org/demo";
         expect(globals.BaseURL()).toBe("http://subsonic.org/demo/rest");
     });
