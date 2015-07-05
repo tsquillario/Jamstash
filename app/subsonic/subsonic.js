@@ -181,7 +181,7 @@ angular.module('jamstash.subsonic.controller', [
             }
         }
     };
-    $scope.$watch("SelectedAlbumSort.id", function (newValue, oldValue) {
+    $scope.$watch('SelectedAlbumSort.id', function (newValue, oldValue) {
         if (newValue !== oldValue) {
             if ($scope.song.length > 0) {
                 sortSubsonicSongs(newValue);
@@ -197,7 +197,7 @@ angular.module('jamstash.subsonic.controller', [
         }
     });
 
-    $scope.$watch("SelectedMusicFolder", function (newValue, oldValue) {
+    $scope.$watch('SelectedMusicFolder', function (newValue, oldValue) {
         if (newValue !== oldValue) {
             var folderId;
             if (newValue) {
@@ -481,6 +481,7 @@ angular.module('jamstash.subsonic.controller', [
             }
         });
     };
+
     $scope.getAlbumByTag = function (id) { // Gets Album by ID3 tag
         subsonic.getAlbumByTag(id).then(function (data) {
             $scope.album = data.album;
@@ -491,6 +492,7 @@ angular.module('jamstash.subsonic.controller', [
             $scope.selectedPlaylist = data.selectedPlaylist;
         });
     };
+
     $scope.search = function (query, type) {
         if (query && query.length > 0) {
             var promise = subsonic.search(query, type);
@@ -514,6 +516,7 @@ angular.module('jamstash.subsonic.controller', [
             });
         }
     };
+
     $scope.toggleAZ = function () {
         $scope.toggleSubmenu('#submenu_AZIndex', '#AZIndex', 'right', 44);
     };
@@ -585,36 +588,17 @@ angular.module('jamstash.subsonic.controller', [
         }
     };
 
-    $scope.loadPlaylistsForMenu = function (data, event) {
-        $.ajax({
-            url: globals.BaseURL() + '/getPlaylists.view?' + globals.BaseParams(),
-            method: 'GET',
-            dataType: globals.settings.Protocol,
-            timeout: globals.settings.Timeout,
-            success: function (data) {
-                var playlists = [];
-                $scope.playlistMenu = [];
-                if (typeof data["subsonic-response"].playlists.playlist != 'undefined') {
-                    if (data["subsonic-response"].playlists.playlist.length > 0) {
-                        playlists = data["subsonic-response"].playlists.playlist;
-                    } else {
-                        playlists[0] = data["subsonic-response"].playlists.playlist;
-                    }
-                    angular.forEach(playlists, function (item, key) {
-                        if (item.owner == globals.settings.Username) {
-                            $scope.playlistMenu.push(map.mapPlaylist(item));
-                        }
-                    });
-                    if ($scope.playlistMenu.length > 0) {
-                        $scope.$apply();
-                        $scope.toggleSubmenu('#submenu_AddToPlaylist', '#action_AddToPlaylist', 'left', 124);
-                    } else {
-                        notifications.updateMessage('No Playlists :(', true);
-                    }
-                }
-            }
+    $scope.loadPlaylistsForMenu = function () {
+        var promise = subsonic.getPlaylists();
+        $scope.handleErrors(promise).then(function (data) {
+            $scope.playlistMenu = data.playlists.concat(data.playlistsPublic);
+            // TODO: Hyz: Refactor using some kind of directive ?
+            $scope.toggleSubmenu('#submenu_AddToPlaylist', '#action_AddToPlaylist', 'left', 124);
+        }, function (error) {
+            notifications.updateMessage(error.reason, true);
         });
     };
+
     $scope.addToPlaylist = function (id) {
         var songs = [];
         if ($scope.selectedSongs.length !== 0) {

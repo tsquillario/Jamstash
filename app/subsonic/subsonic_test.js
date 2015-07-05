@@ -727,6 +727,45 @@ describe("Subsonic controller", function () {
             });
         });
 
+        describe("loadPlaylistsForMenu() -", function () {
+            beforeEach(function () {
+                subsonic.getPlaylists.and.returnValue(deferred.promise);
+                // TODO: Hyz: Remove when refactored. It's from main-controller.js
+                scope.toggleSubmenu = jasmine.createSpy("toggleSubmenu");
+            });
+
+            it("Given that there were playlists in the library, when I load the playlists for the 'Add to playlist' menu, then the playlists will be retrieved from subsonic and published to the scope", function () {
+                scope.loadPlaylistsForMenu();
+                deferred.resolve({
+                    playlists: [
+                        { id: 733 }
+                    ],
+                    playlistsPublic: [
+                        { id: 962 }
+                    ]
+                });
+                scope.$apply();
+
+                expect(subsonic.getPlaylists).toHaveBeenCalled();
+                expect(scope.playlistMenu).toEqual([
+                    { id: 733 },
+                    { id: 962 }
+                ]);
+                expect(scope.toggleSubmenu).toHaveBeenCalledWith('#submenu_AddToPlaylist', '#action_AddToPlaylist', 'left', 124);
+            });
+
+            it("Given that there weren't any playlists in the library, when I load the playlists for the 'Add to playlist' menu, then an error notification will be displayed", function () {
+                scope.loadPlaylistsForMenu();
+                deferred.reject({ reason: 'No playlist found on the Subsonic server.' });
+                scope.$apply();
+
+                expect(subsonic.getPlaylists).toHaveBeenCalled();
+                expect(scope.playlistMenu).toEqual([]);
+                expect(notifications.updateMessage).toHaveBeenCalledWith('No playlist found on the Subsonic server.', true);
+                expect(scope.toggleSubmenu).not.toHaveBeenCalled();
+            });
+        });
+
         it("When I create a playlist, then it will ask for a name, use subsonic-service and reload the playlists", function () {
             $window.prompt.and.returnValue('declassicize');
             subsonic.newPlaylist.and.returnValue(deferred.promise);
