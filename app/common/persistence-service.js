@@ -33,9 +33,11 @@ lockerConfig.$inject = ['lockerProvider'];
 
 function lockerConfig(lockerProvider) {
     'use strict';
-    lockerProvider.setDefaultDriver('local')
-        .setDefaultNamespace(false)
-        .setEventsEnabled(false);
+    lockerProvider.defaults({
+        driver: 'local',
+        namespace: false,
+        eventsEnabled: false
+    });
 }
 
 persistenceService.$inject = [
