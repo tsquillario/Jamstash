@@ -56,8 +56,9 @@ function persistenceService(_, globals, player, notifications, locker, json, jam
           CURRENT_QUEUE = 'CurrentQueue',
           VOLUME        = 'Volume',
           MUSIC_FOLDERS = 'MusicFolders',
-          GENRES        = 'SavedGenres',
-          SETTINGS      = 'Settings';
+          GENRES        = 'GenrePlaylists',
+          SETTINGS      = 'Settings',
+          VERSION       = 'JamstashVersion';
 
     // jshint validthis: true
     var self = this;
@@ -194,7 +195,7 @@ function persistenceService(_, globals, player, notifications, locker, json, jam
     }
 
     function getVersion() {
-        return locker.get('JamstashVersion');
+        return locker.get(VERSION);
     }
 
     function upgradeVersion(currentVersion, finalVersion) {
@@ -209,7 +210,7 @@ function persistenceService(_, globals, player, notifications, locker, json, jam
             versionUpg.changeset(settings);
         });
         self.saveSettings(settings);
-        locker.put('JamstashVersion', finalVersion);
+        locker.put(VERSION, finalVersion);
         notifications.updateMessage('Version ' + currentVersion + ' to ' + finalVersion, true);
     }
 }
