@@ -210,18 +210,6 @@ angular.module('jamstash.subsonic.controller', [
         }
     });
 
-    $scope.searching = {
-        query: '',
-        typeId: globals.settings.DefaultSearchType,
-        types: globals.SearchTypes
-    };
-    $scope.playlistsGenre = globals.SavedGenres;
-    $scope.$watch('selectedGenre', function (newValue, oldValue) {
-        if (newValue !== oldValue) {
-            globals.SavedGenres.push(newValue);
-            utils.setValue('SavedGenres', globals.SavedGenres.join(), false);
-        }
-    });
     $scope.rescanLibrary = function (data, event) {
         $.ajax({
             url: globals.BaseURL() + '/getUser.view?' + globals.BaseParams() + '&username=' + globals.settings.Username,
@@ -663,6 +651,28 @@ angular.module('jamstash.subsonic.controller', [
         });
     };
 
+    $scope.$watch('selectedGenre', function (newValue, oldValue) {
+        if (newValue && newValue !== oldValue) {
+            $scope.genrePlaylists = _($scope.genrePlaylists)
+                .push(newValue)
+                .uniq()
+                .value();
+            persistence.saveSelectedGenreNames($scope.genrePlaylists);
+        }
+    });
+
+    $scope.loadGenrePlaylists = function () {
+        $scope.genrePlaylists = persistence.loadSelectedGenreNames();
+    };
+
+    $scope.deleteGenrePlaylist = function (genrePlaylist) {
+        _.remove($scope.genrePlaylists, function (playlist) {
+            return playlist === genrePlaylist;
+        });
+        persistence.deleteSelectedGenreNames();
+        persistence.saveSelectedGenreNames($scope.genrePlaylists);
+    };
+
     $scope.getPodcasts = function () {
         var promise = subsonic.getPodcasts();
         $scope.handleErrors(promise).then(function (podcasts) {
@@ -722,10 +732,18 @@ angular.module('jamstash.subsonic.controller', [
     };
 
     /* Launch on Startup */
+    $scope.searching = {
+        query: '',
+        typeId: globals.settings.DefaultSearchType,
+        types: globals.SearchTypes
+    };
+    $scope.genrePlaylists = [];
+    $scope.MusicFolders = [];
     $scope.getMusicFolders();
     $scope.getArtists();
     $scope.getPlaylists();
     $scope.getGenres();
+    $scope.loadGenrePlaylists();
     $scope.getPodcasts();
     $scope.openDefaultSection();
     if ($routeParams.artistId && $routeParams.albumId) {

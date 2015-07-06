@@ -6,8 +6,6 @@ angular.module('JamStash')
     $rootScope.settings = globals.settings;
     $rootScope.song = [];
     $rootScope.playingSong = null;
-    $rootScope.MusicFolders = [];
-    $rootScope.Genres = [];
     $rootScope.Messages = [];
 
     $rootScope.unity = null;
@@ -56,7 +54,6 @@ angular.module('JamStash')
         }
         if (utils.getValue("SavedCollections")) { globals.SavedCollections = utils.getValue("SavedCollections").split(","); }
         if (utils.getValue("DefaultCollection")) { globals.DefaultCollection = utils.getValue("DefaultCollection"); }
-        if (utils.getValue("SavedGenres")) { globals.SavedGenres = utils.getValue("SavedGenres").split(","); }
         if (globals.settings.Debug) { console.log('Loaded Settings: ' + JSON.stringify(globals.settings, null, 2)); }
     };
     $scope.toggleSetting = function (setting) {
