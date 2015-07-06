@@ -29,8 +29,8 @@ angular.module('jamstash.breadcrumbs.directive', [
         replace: true
     };
 
-    breadcrumbsController.$inject = ['$scope'];
-    function breadcrumbsController($scope) {
+    breadcrumbsController.$inject = ['$scope', 'lodash'];
+    function breadcrumbsController($scope, _) {
         var self = this;
 
         _.extend(self, {
@@ -47,7 +47,7 @@ angular.module('jamstash.breadcrumbs.directive', [
                     $scope.selectedAutoPlaylist = null;
                     $scope.selectedPlaylist = null;
                     $scope.selectedPodcast = null;
-                    if ($scope.SelectedAlbumSort.id !== "default") {
+                    if ($scope.SelectedAlbumSort.id !== 'default') {
                         $scope.sortSubsonicAlbums($scope.SelectedAlbumSort.id);
                     }
                 }, function (error) {

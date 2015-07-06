@@ -62,7 +62,6 @@ function persistenceService(_, globals, player, notifications, locker, json, jam
           SETTINGS      = 'Settings',
           VERSION       = 'JamstashVersion';
 
-    // jshint validthis: true
     var self = this;
     _.extend(self, {
         loadTrackPosition        : loadTrackPosition,
@@ -86,8 +85,6 @@ function persistenceService(_, globals, player, notifications, locker, json, jam
         getVersion               : getVersion,
         upgradeVersion           : upgradeVersion
     });
-
-    return self;
 
     function loadTrackPosition() {
         // Load Saved Song
