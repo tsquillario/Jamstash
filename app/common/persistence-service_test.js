@@ -200,31 +200,31 @@ describe("Persistence service", function () {
     describe("loadSelectedGenreNames() -", function () {
         it("Given a previously saved array of genre names  in local storage, when I get the saved genre names, then an array of genre names will be returned", function () {
             fakeStorage = {
-                SavedGenres: ['thermetrograph', 'balandra transrhodanian', 'loverdom codeposit']
+                GenrePlaylists: ['thermetrograph', 'balandra transrhodanian', 'loverdom codeposit']
             };
 
             var selectedGenreNames = persistence.loadSelectedGenreNames();
 
-            expect(locker.get).toHaveBeenCalledWith('SavedGenres');
+            expect(locker.get).toHaveBeenCalledWith('GenrePlaylists');
             expect(selectedGenreNames).toEqual(['thermetrograph', 'balandra transrhodanian', 'loverdom codeposit']);
         });
 
         it("Given that no selected genre name was previously saved in local storage, when I get the saved genre names, then an empty array will be returned", function () {
             var selectedGenreNames = persistence.loadSelectedGenreNames();
 
-            expect(locker.get).toHaveBeenCalledWith('SavedGenres');
+            expect(locker.get).toHaveBeenCalledWith('GenrePlaylists');
             expect(selectedGenreNames).toEqual([]);
         });
     });
 
     it("saveSelectedGenreNames() - Given an array of genre names, when I save the genre names, then the array will be set in local storage", function () {
         persistence.saveSelectedGenreNames(['verascope', 'diode encephalotome', 'already squabbly']);
-        expect(locker.put).toHaveBeenCalledWith('SavedGenres', ['verascope', 'diode encephalotome', 'already squabbly']);
+        expect(locker.put).toHaveBeenCalledWith('GenrePlaylists', ['verascope', 'diode encephalotome', 'already squabbly']);
     });
 
     it("deleteSelectedGenreNames() - When I delete the genre names, then they will be erased from local storage", function () {
         persistence.deleteSelectedGenreNames();
-        expect(locker.forget).toHaveBeenCalledWith('SavedGenres');
+        expect(locker.forget).toHaveBeenCalledWith('GenrePlaylists');
     });
 
     describe("getSettings() -", function () {
