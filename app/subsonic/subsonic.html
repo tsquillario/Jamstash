@@ -148,15 +148,51 @@
                         <div class="title">Random</div>
                     </li>
                     <li class="index" id="auto">Genre Playlists</li>
-                    <select id="Genres" name="Genres" class="large" ng-model="selectedGenre" ng-options="o for o in Genres">
+                    <select
+                        id="Genres"
+                        name="Genres"
+                        class="large"
+                        ng-model="selectedGenre"
+                        ng-options="o for o in Genres"
+                    >
                         <option value="">[Select Genre]</option>
                     </select>
-                    <li class="item" ng-repeat="o in playlistsGenre" ng-click="getRandomSongs('display', o)" ng-class="{'selected': selectedAutoPlaylist == o}">
+                    <li
+                        class="item"
+                        ng-repeat="genrePlaylist in genrePlaylists track by $index"
+                        ng-click="getRandomSongs('display', genrePlaylist)"
+                        ng-class="{'selected': selectedAutoPlaylist === genrePlaylist}"
+                    >
                         <div class="itemactions">
-                            <a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add', o)" stop-event="click"></a>
-                            <a class="play" href="" title="Play" ng-click="getRandomSongs('play', o)" stop-event="click"></a>
+                            <a
+                                class="add"
+                                href=""
+                                title="Add To Play Queue"
+                                ng-click="getRandomSongs('add', genrePlaylist)"
+                                stop-event="click"
+                            ></a>
+                            <a
+                                class="play"
+                                href=""
+                                title="Play"
+                                ng-click="getRandomSongs('play', genrePlaylist)"
+                                stop-event="click"
+                            ></a>
                         </div>
-                        <div class="title">{{o}}</div>
+                        <span class="title">
+                            {{ genrePlaylist }}
+                        </span>
+                        <div
+                            title="Remove this auto-playlist"
+                            class="list-item-remove"
+                            ng-click="deleteGenrePlaylist(genrePlaylist)"
+                            stop-event="click"
+                        >
+                            <svg class="icon">
+                                <title>Remove this auto-playlist</title>
+                                <use xlink:href="images/sprite/iconic.svg#x" class="icon-remove"></use>
+                            </svg>
+                        </div>
                     </li>
                 </ul>
                 <ul class="simplelist mainlist noselect">
