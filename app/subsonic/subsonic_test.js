@@ -60,9 +60,9 @@ describe("Subsonic controller", function () {
                 "getPodcasts",
                 "getRandomSongs",
                 "getRandomStarredSongs",
-                "getSongs",
+                "getDirectory",
                 "newPlaylist",
-                "recursiveGetSongs",
+                "recursiveGetDirectory",
                 "savePlaylist",
                 "search"
             ]);
@@ -210,15 +210,15 @@ describe("Subsonic controller", function () {
             expect(player.playFirstSong).toHaveBeenCalled();
         });
 
-        describe("getSongs() -", function () {
+        describe("getDirectory() -", function () {
             beforeEach(function () {
-                subsonic.getSongs.and.returnValue(deferred.promise);
-                subsonic.recursiveGetSongs.and.returnValue(deferred.promise);
+                subsonic.getDirectory.and.returnValue(deferred.promise);
+                subsonic.recursiveGetDirectory.and.returnValue(deferred.promise);
                 spyOn(scope, "requestSongs").and.returnValue(deferred.promise);
             });
 
             it("Given a music directory that contained 3 songs and given its id and name, when I display it, then subsonic-service will be called, the breadcrumbs will be updated and the songs will be published to the scope", function () {
-                scope.getSongs('display', 87, 'Covetous Dadayag', "root");
+                scope.getDirectory('display', 87, 'Covetous Dadayag', "root");
                 deferred.resolve({
                     directories: [],
                     songs: [
@@ -229,7 +229,7 @@ describe("Subsonic controller", function () {
                  });
                 scope.$apply();
 
-                expect(subsonic.getSongs).toHaveBeenCalledWith(87);
+                expect(subsonic.getDirectory).toHaveBeenCalledWith(87);
                 expect(scope.album).toEqual([]);
                 expect(scope.song).toEqual([
                     { id: 660 },
@@ -257,7 +257,7 @@ describe("Subsonic controller", function () {
                         name: 'Evan Mestanza'
                     }
                 ];
-                scope.getSongs('display', 883, 'Pitiedly preutilizable', "forward");
+                scope.getDirectory('display', 883, 'Pitiedly preutilizable', "forward");
                 deferred.resolve({
                     directories: [],
                     songs: []
@@ -272,7 +272,7 @@ describe("Subsonic controller", function () {
             });
 
             it("Given a music directory that contained 2 songs and 1 subdirectory and given its id and name, when I display it, then subsonic-service will be called, the songs and directory will be published to the scope", function () {
-                scope.getSongs('display', 6, 'Potsander dormilona');
+                scope.getDirectory('display', 6, 'Potsander dormilona');
                 deferred.resolve({
                     directories: [{ id: 387, type: 'byfolder' }],
                     songs: [
@@ -293,12 +293,12 @@ describe("Subsonic controller", function () {
 
             it("Given a music directory, when I display it, then handleErrors will handle HTTP and Subsonic errors", function () {
                 spyOn(scope, 'handleErrors').and.returnValue(deferred.promise);
-                scope.getSongs('display', 88);
+                scope.getDirectory('display', 88);
                 expect(scope.handleErrors).toHaveBeenCalledWith(deferred.promise);
             });
 
             it("Given a music directory that didn't contain anything, when I display it, then an error notification will be displayed", function () {
-                scope.getSongs('display', 214, 'Upside bunemost');
+                scope.getDirectory('display', 214, 'Upside bunemost');
                 deferred.reject({ reason: 'This directory is empty.' });
                 scope.$apply();
 
@@ -306,7 +306,7 @@ describe("Subsonic controller", function () {
             });
 
             it("Given a music directory that contained 3 songs and given its id, when I add it to the playing queue, then requestSongs() will be called", function () {
-                scope.getSongs('add', 720);
+                scope.getDirectory('add', 720);
                 deferred.resolve([
                     { id: 927 },
                     { id: 598 },
@@ -314,12 +314,12 @@ describe("Subsonic controller", function () {
                 ]);
                 scope.$apply();
 
-                expect(subsonic.recursiveGetSongs).toHaveBeenCalledWith(720);
+                expect(subsonic.recursiveGetDirectory).toHaveBeenCalledWith(720);
                 expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'add');
             });
 
             it("Given a music directory that contained 3 songs and given its id, when I play it, then requestSongs() will be called", function () {
-                scope.getSongs('play', 542);
+                scope.getDirectory('play', 542);
                 deferred.resolve([
                     { id: 905 },
                     { id: 181 },
@@ -327,7 +327,7 @@ describe("Subsonic controller", function () {
                 ]);
                 scope.$apply();
 
-                expect(subsonic.recursiveGetSongs).toHaveBeenCalledWith(542);
+                expect(subsonic.recursiveGetDirectory).toHaveBeenCalledWith(542);
                 expect(scope.requestSongs).toHaveBeenCalledWith(deferred.promise, 'play');
             });
         });

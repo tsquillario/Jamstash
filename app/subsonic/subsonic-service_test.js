@@ -157,8 +157,7 @@ describe("Subsonic service -", function () {
         });
     });
 
-    // TODO: Hyz: Rename into getDirectory(), because we don't know if there will be songs or other directories in it
-    describe("getSongs() -", function () {
+    describe("getDirectory() -", function () {
         beforeEach(function () {
             url = 'http://demo.subsonic.com/rest/getMusicDirectory.view?' +
                 'c=Jamstash&callback=JSON_CALLBACK&f=jsonp' + '&id=209' + '&p=enc:cGFzc3dvcmQ%3D&u=Hyzual&v=1.10.2';
@@ -174,7 +173,7 @@ describe("Subsonic service -", function () {
             };
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
-            var promise = subsonic.getSongs(209);
+            var promise = subsonic.getDirectory(209);
             mockBackend.flush();
 
             expect(promise).toBeResolvedWith({
@@ -189,7 +188,7 @@ describe("Subsonic service -", function () {
             };
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
-            var promise = subsonic.getSongs(209);
+            var promise = subsonic.getDirectory(209);
             mockBackend.flush();
 
             expect(promise).toBeResolvedWith({
@@ -202,35 +201,35 @@ describe("Subsonic service -", function () {
             response["subsonic-response"].directory = {};
             mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
-            var promise = subsonic.getSongs(209);
+            var promise = subsonic.getDirectory(209);
             mockBackend.flush();
 
             expect(promise).toBeRejectedWith({ reason: 'This directory is empty.' });
         });
     });
 
-    describe("recursiveGetSongs() -", function () {
+    describe("recursiveGetDirectory() -", function () {
         var deferred;
         beforeEach(function () {
             deferred = $q.defer();
-            spyOn(subsonic, 'getSongs').and.returnValue(deferred.promise);
+            spyOn(subsonic, 'getDirectory').and.returnValue(deferred.promise);
         });
         it("Given a directory containing 2 songs and a subdirectory itself containing 2 songs and given its id, when I get the songs from that directory, then a promise will be resolved with an array of 4 songs", function () {
-            // Mock getSongs so we are only testing the recursivity
+            // Mock getDirectory so we are only testing the recursivity
             var firstDeferred = $q.defer();
             var secondDeferred = $q.defer();
-            subsonic.getSongs.and.callFake(function (id) {
-                // First call to getSongs
+            subsonic.getDirectory.and.callFake(function (id) {
+                // First call to getDirectory
                 if (id === 499) {
                     return firstDeferred.promise;
-                // Second call to getSongs
+                // Second call to getDirectory
                 } else if (id === 553) {
                     return secondDeferred.promise;
                 }
             });
 
-            var promise = subsonic.recursiveGetSongs(499);
-            // On the first call to getSongs, we expect 2 songs and a subdirectory
+            var promise = subsonic.recursiveGetDirectory(499);
+            // On the first call to getDirectory, we expect 2 songs and a subdirectory
             firstDeferred.resolve({
                 directories: [{ id: 553, type: 'byfolder' }],
                 songs: [
@@ -256,7 +255,7 @@ describe("Subsonic service -", function () {
         });
 
         it("Given a directory containing only 2 songs and given its id, when I get the songs from that directory, then a promise will be resolved with an array of 2 songs", function () {
-            var promise = subsonic.recursiveGetSongs(14);
+            var promise = subsonic.recursiveGetDirectory(14);
             deferred.resolve({
                 directories: [],
                 songs: [
@@ -272,7 +271,7 @@ describe("Subsonic service -", function () {
         });
 
         it("Given a directory that didn't contain anything and given its id, when I get the songs from that directory, then a promise will be resolved with an empty array", function () {
-            var promise = subsonic.recursiveGetSongs(710);
+            var promise = subsonic.recursiveGetDirectory(710);
             deferred.reject({ reason: 'This directory is empty.' });
 
             expect(promise).toBeResolvedWith([]);

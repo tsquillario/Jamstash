@@ -7,7 +7,7 @@ describe("breadcrumbs directive", function () {
     beforeEach(module('templates'));
     beforeEach(function () {
         module('jamstash.breadcrumbs.directive', function ($provide) {
-            subsonic = jasmine.createSpyObj("subsonic", ["getSongs"]);
+            subsonic = jasmine.createSpyObj("subsonic", ["getDirectory"]);
             $provide.value('subsonic', subsonic);
             notifications = jasmine.createSpyObj("notifications", ["updateMessage"]);
             $provide.value('notifications', notifications);
@@ -26,7 +26,7 @@ describe("breadcrumbs directive", function () {
             controller = element.controller('jamstashBreadcrumbs');
         });
 
-        subsonic.getSongs.and.returnValue(deferred.promise);
+        subsonic.getDirectory.and.returnValue(deferred.promise);
         scope.handleErrors = jasmine.createSpy("handleErrors").and.returnValue(deferred.promise);
         scope.SelectedAlbumSort = {
             id: "default"
@@ -47,7 +47,7 @@ describe("breadcrumbs directive", function () {
         });
         scope.$apply();
 
-        expect(subsonic.getSongs).toHaveBeenCalledWith(680);
+        expect(subsonic.getDirectory).toHaveBeenCalledWith(680);
         expect(scope.album).toEqual([
             { id: 569, type: 'byfolder' }
         ]);

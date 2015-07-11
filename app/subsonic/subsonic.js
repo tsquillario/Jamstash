@@ -358,13 +358,13 @@ angular.module('jamstash.subsonic.controller', [
      * @param  {String} name   the name of the directory to get songs from
      * @param  {String} level  'root' or 'forward'
      */
-    $scope.getSongs = function (action, id, name, level) {
+    $scope.getDirectory = function (action, id, name, level) {
         var promise;
         if (action === 'play' || action === 'add') {
-            promise = subsonic.recursiveGetSongs(id);
+            promise = subsonic.recursiveGetDirectory(id);
             $scope.requestSongs(promise, action);
         } else if (action === 'display') {
-            promise = subsonic.getSongs(id);
+            promise = subsonic.getDirectory(id);
             $scope.handleErrors(promise).then(function (data) {
                 $scope.album = data.directories;
                 $scope.song = data.songs;

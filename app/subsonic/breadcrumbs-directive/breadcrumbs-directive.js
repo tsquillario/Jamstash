@@ -36,7 +36,7 @@ angular.module('jamstash.breadcrumbs.directive', [
         _.extend(self, {
             getBreadcrumbs: breadcrumbs.get,
             displaySongs: function (item) {
-                var promise = subsonic.getSongs(item.id);
+                var promise = subsonic.getDirectory(item.id);
                 $scope.handleErrors(promise).then(function (data) {
                     $scope.album = data.directories;
                     $scope.song = data.songs;
