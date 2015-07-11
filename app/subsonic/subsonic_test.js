@@ -3,7 +3,7 @@ describe("Subsonic controller", function () {
     'use strict';
 
     var scope, $rootScope, $controller, $window,
-        _, subsonic, notifications, player, utils, persistence, breadcrumbs, mockGlobals, controllerParams, deferred;
+        _, subsonic, notifications, player, utils, persistence, breadcrumbs, mockGlobals, SelectedSongs, controllerParams, deferred;
 
     beforeEach(function () {
         jasmine.addCustomEqualityTester(angular.equals);
@@ -47,9 +47,10 @@ describe("Subsonic controller", function () {
 
             // Mock the subsonic service
             subsonic = jasmine.createSpyObj("subsonic", [
+                "addToPlaylist",
                 "deletePlaylist",
-                "getAlbums",
                 "getAlbumListBy",
+                "getAlbums",
                 "getArtists",
                 "getGenres",
                 "getMusicFolders",
@@ -81,6 +82,16 @@ describe("Subsonic controller", function () {
             _.forIn(player, _.method('and.returnValue', player));
             player.queue = [];
 
+            SelectedSongs = jasmine.createSpyObj("SelectedSongs", [
+                "add",
+                "addSongs",
+                "get",
+                "remove",
+                "reset"
+            ]);
+            _.forIn(SelectedSongs, _.method('and.returnValue', SelectedSongs));
+            SelectedSongs.get.and.returnValue([]);
+
             $controller = _$controller_;
             controllerParams = {
                 $scope: scope,
@@ -94,7 +105,8 @@ describe("Subsonic controller", function () {
                 notifications: notifications,
                 player: player,
                 persistence: persistence,
-                breadcrumbs: breadcrumbs
+                breadcrumbs: breadcrumbs,
+                SelectedSongs: SelectedSongs
             };
         });
     });
@@ -106,7 +118,99 @@ describe("Subsonic controller", function () {
             scope.$apply();
         });
 
-        describe("getSongs -", function () {
+        it("selectAll() - Given 2 songs in the scope, when I select all songs, then the SelectedSongs service will be called", function () {
+            scope.song = [
+                { id: 5612 },
+                { id: 8206 }
+            ];
+
+            scope.selectAll();
+
+            expect(SelectedSongs.addSongs).toHaveBeenCalledWith([
+                { id: 5612 },
+                { id: 8206 }
+            ]);
+        });
+
+        describe("addSelectedSongsToQueue() -", function () {
+            it("Given 2 selected songs, when I add them to the queue, then the selected songs will be added to the player's queue, the selection will be reset and a notification will be displayed", function () {
+                SelectedSongs.get.and.returnValue([
+                    { id: 5485 },
+                    { id: 71 }
+                ]);
+
+                scope.addSelectedSongsToQueue();
+
+                expect(player.addSongs).toHaveBeenCalledWith([
+                    { id: 5485 },
+                    { id: 71 }
+                ]);
+                expect(notifications.updateMessage).toHaveBeenCalledWith('2 Song(s) Added to Queue', true);
+                expect(SelectedSongs.reset).toHaveBeenCalled();
+            });
+
+            it("Given that there were no selected songs, when I try to add them to the queue, then nothing will happen", function () {
+                SelectedSongs.get.and.returnValue([]);
+
+                scope.addSelectedSongsToQueue();
+
+                expect(player.addSongs).not.toHaveBeenCalled();
+                expect(notifications.updateMessage).not.toHaveBeenCalled();
+            });
+        });
+
+        it("playAll() - Given 2 songs in the scope, when I play all songs, then the player's queue will be emptied, 2 songs will be added to the queue and the first song of the queue will be played", function () {
+            scope.song = [
+                { id: 9397 },
+                { id: 2586 }
+            ];
+
+            scope.playAll();
+
+            expect(player.emptyQueue).toHaveBeenCalled();
+            expect(player.addSongs).toHaveBeenCalledWith([
+                { id: 9397 },
+                { id: 2586 }
+            ]);
+            expect(player.playFirstSong).toHaveBeenCalled();
+        });
+
+        it("playFrom() - Given 3 songs in the scope, when I play all songs from the second, then the player's queue will be emptied, the last 2 songs will be added to the queue and the first song of the queue will be played", function () {
+            scope.song = [
+                { id: 6548 },
+                { id: 5069 },
+                { id: 4325 }
+            ];
+
+            scope.playFrom(1);
+
+            expect(player.emptyQueue).toHaveBeenCalled();
+            expect(player.addSongs).toHaveBeenCalledWith([
+                { id: 5069 },
+                { id: 4325 }
+            ]);
+            expect(player.playFirstSong).toHaveBeenCalled();
+        });
+
+        it("addSongToQueue() - Given a song, when I add it to the queue, then the song will be added to the player's queue", function () {
+            var fakeSong = { id: 4308 };
+
+            scope.addSongToQueue(fakeSong);
+
+            expect(player.addSong).toHaveBeenCalledWith({ id: 4308 });
+        });
+
+        it("playSong() - Given a song, when I play it, then the player service's queue will be emptied, the song will be added to the queue and played", function () {
+            var fakeSong = { id: 3572 };
+
+            scope.playSong(fakeSong);
+
+            expect(player.emptyQueue).toHaveBeenCalled();
+            expect(player.addSong).toHaveBeenCalledWith({ id: 3572 });
+            expect(player.playFirstSong).toHaveBeenCalled();
+        });
+
+        describe("getSongs() -", function () {
             beforeEach(function () {
                 subsonic.getSongs.and.returnValue(deferred.promise);
                 subsonic.recursiveGetSongs.and.returnValue(deferred.promise);
@@ -521,16 +625,6 @@ describe("Subsonic controller", function () {
             });
         });
 
-        it("Given a song, when I call playSong, then the player service's queue will be emptied, the song will be added to the queue and played", function () {
-            var fakeSong = { id: 3572 };
-
-            scope.playSong(fakeSong);
-
-            expect(player.emptyQueue).toHaveBeenCalled();
-            expect(player.addSong).toHaveBeenCalledWith({ id: 3572 });
-            expect(player.playFirstSong).toHaveBeenCalled();
-        });
-
         // TODO: Hyz: all starred
 
         describe("", function () {
@@ -689,12 +783,12 @@ describe("Subsonic controller", function () {
             expect(scope.getPlaylists).toHaveBeenCalled();
         });
 
-        describe("When I load the playlists,", function () {
+        describe("getPlaylists() -", function () {
             beforeEach(function () {
                 subsonic.getPlaylists.and.returnValue(deferred.promise);
             });
 
-            it("Given that there are playlists in the library, it loads the playlists and publishes them to the scope", function () {
+            it("Given that there are playlists in the library, when I load the playlists, it loads the playlists and publishes them to the scope", function () {
                 scope.getPlaylists();
                 deferred.resolve({
                     playlists: [
@@ -715,7 +809,7 @@ describe("Subsonic controller", function () {
                 ]);
             });
 
-            it("Given that there aren't any playlists in the library, it publishes an empty array to the scope and does not notify the user with the error message", function () {
+            it("Given that there aren't any playlists in the library, when I load the playlists, it publishes an empty array to the scope and does not notify the user with the error message", function () {
                 scope.getPlaylists();
                 deferred.reject({ reason: 'No playlist found on the Subsonic server.' });
                 scope.$apply();
@@ -766,82 +860,120 @@ describe("Subsonic controller", function () {
             });
         });
 
-        it("When I create a playlist, then it will ask for a name, use subsonic-service and reload the playlists", function () {
-            $window.prompt.and.returnValue('declassicize');
-            subsonic.newPlaylist.and.returnValue(deferred.promise);
-            spyOn(scope, 'getPlaylists');
+        describe("newPlaylist() -", function () {
+            it("When I create a playlist, then it will ask for a name, use subsonic-service and reload the playlists", function () {
+                $window.prompt.and.returnValue('declassicize');
+                subsonic.newPlaylist.and.returnValue(deferred.promise);
+                spyOn(scope, 'getPlaylists');
 
-            scope.newPlaylist();
-            deferred.resolve();
-            scope.$apply();
+                scope.newPlaylist();
+                deferred.resolve();
+                scope.$apply();
 
-            expect($window.prompt).toHaveBeenCalledWith("Choose a name for your new playlist.", "");
-            expect(subsonic.newPlaylist).toHaveBeenCalledWith('declassicize');
-            expect(scope.getPlaylists).toHaveBeenCalled();
+                expect($window.prompt).toHaveBeenCalledWith("Choose a name for your new playlist.", "");
+                expect(subsonic.newPlaylist).toHaveBeenCalledWith('declassicize');
+                expect(scope.getPlaylists).toHaveBeenCalled();
+            });
+
+            it("When I create a playlist and provide no name, then the playlist won't be created", function () {
+                $window.prompt.and.returnValue(null);
+
+                scope.newPlaylist();
+
+                expect(subsonic.newPlaylist).not.toHaveBeenCalled();
+            });
         });
 
-        it("When I create a playlist and provide no name, then the playlist won't be created", function () {
-            $window.prompt.and.returnValue(null);
+        describe("deletePlaylist() -", function () {
+            it("Given a selected playlist, when I delete that playlist, it will ask for confirmation, use subsonic-service and reload the playlists", function () {
+                $window.confirm.and.returnValue(true);
+                subsonic.deletePlaylist.and.returnValue(deferred.promise);
+                spyOn(scope, 'getPlaylists');
+                scope.selectedPlaylist = 8885;
 
-            scope.newPlaylist();
+                scope.deletePlaylist();
+                deferred.resolve();
+                scope.$apply();
 
-            expect(subsonic.newPlaylist).not.toHaveBeenCalled();
+                expect($window.confirm).toHaveBeenCalledWith('Are you sure you want to delete the selected playlist?');
+                expect(subsonic.deletePlaylist).toHaveBeenCalledWith(8885);
+                expect(scope.getPlaylists).toHaveBeenCalled();
+            });
+
+            it("Given no selected playlist, when I try to delete a playlist, an error notification will be displayed", function () {
+                scope.selectedPlaylist = null;
+
+                scope.deletePlaylist();
+
+                expect(notifications.updateMessage).toHaveBeenCalledWith('Please select a playlist to delete.');
+                expect(subsonic.deletePlaylist).not.toHaveBeenCalled();
+            });
         });
 
-        it("Given a selected playlist, when I delete that playlist, it will ask for confirmation, use subsonic-service and reload the playlists", function () {
-            $window.confirm.and.returnValue(true);
-            subsonic.deletePlaylist.and.returnValue(deferred.promise);
-            spyOn(scope, 'getPlaylists');
-            scope.selectedPlaylist = 8885;
+        describe("addToPlaylist() -", function () {
+            it("Given selected songs and a playlist id, when I add songs to that playlist, then the subsonic-service will be called, the selected songs will be unselected and a notification message will be displayed", function () {
+                subsonic.addToPlaylist.and.returnValue(deferred.promise);
+                SelectedSongs.get.and.returnValue([
+                    { id: 1673 },
+                    { id: 9126 },
+                    { id: 6275 }
+                ]);
 
-            scope.deletePlaylist();
-            deferred.resolve();
-            scope.$apply();
+                scope.addToPlaylist(298);
+                deferred.resolve();
+                scope.$apply();
 
-            expect($window.confirm).toHaveBeenCalledWith('Are you sure you want to delete the selected playlist?');
-            expect(subsonic.deletePlaylist).toHaveBeenCalledWith(8885);
-            expect(scope.getPlaylists).toHaveBeenCalled();
+                expect(subsonic.addToPlaylist).toHaveBeenCalledWith(298, [
+                    { id: 1673 },
+                    { id: 9126 },
+                    { id: 6275 }
+                ]);
+                expect(SelectedSongs.reset).toHaveBeenCalled();
+                expect(notifications.updateMessage).toHaveBeenCalledWith('Playlist Updated!', true);
+            });
+
+            it("Given no selected songs and a playlist id, when I try to add songs to to that playlist, then an error notification will be displayed", function () {
+                scope.selectedSongs = [];
+
+                scope.addToPlaylist(70);
+
+                expect(notifications.updateMessage).toHaveBeenCalledWith('Please select a song to add to that playlist.');
+                expect(subsonic.addToPlaylist).not.toHaveBeenCalled();
+            });
         });
 
-        it("Given no selected playlist, when I try to delete a playlist, an error notification will be displayed", function () {
-            scope.selectedPlaylist = null;
+        describe("savePlaylist() -", function () {
+            it("Given a selected playlist, when I save that playlist, the displayed songs will be sent to subsonic-service, the playlist will be displayed again and a notification message will be displayed", function () {
+                subsonic.savePlaylist.and.returnValue(deferred.promise);
+                spyOn(scope, 'getPlaylist');
+                scope.selectedPlaylist = 8469;
+                scope.song = [
+                    { id: 3352 },
+                    { id: 1518 },
+                    { id: 5179 }
+                ];
 
-            scope.deletePlaylist();
+                scope.savePlaylist();
+                deferred.resolve();
+                scope.$apply();
 
-            expect(notifications.updateMessage).toHaveBeenCalledWith('Please select a playlist to delete.');
-            expect(subsonic.deletePlaylist).not.toHaveBeenCalled();
-        });
+                expect(subsonic.savePlaylist).toHaveBeenCalledWith(8469, [
+                    { id: 3352 },
+                    { id: 1518 },
+                    { id: 5179 }
+                ]);
+                expect(scope.getPlaylist).toHaveBeenCalledWith('display', 8469);
+                expect(notifications.updateMessage).toHaveBeenCalledWith('Playlist Updated!', true);
+            });
 
-        it("Given a selected playlist, when I save that playlist, the displayed songs will be sent to subsonic-service, the playlist will be displayed again and a notification message will be displayed", function () {
-            subsonic.savePlaylist.and.returnValue(deferred.promise);
-            spyOn(scope, 'getPlaylist');
-            scope.selectedPlaylist = 8469;
-            scope.song = [
-                { id: 3352 },
-                { id: 1518 },
-                { id: 5179 }
-            ];
+            it("Given no selected playlist, when I try to save a playlist, an error notification will be displayed", function () {
+                scope.selectedPlaylist = null;
 
-            scope.savePlaylist();
-            deferred.resolve();
-            scope.$apply();
+                scope.savePlaylist();
 
-            expect(subsonic.savePlaylist).toHaveBeenCalledWith(8469, [
-                { id: 3352 },
-                { id: 1518 },
-                { id: 5179 }
-            ]);
-            expect(scope.getPlaylist).toHaveBeenCalledWith('display', 8469);
-            expect(notifications.updateMessage).toHaveBeenCalledWith('Playlist Updated!', true);
-        });
-
-        it("Given no selected playlist, when I try to save a playlist, an error notification will be displayed", function () {
-            scope.selectedPlaylist = null;
-
-            scope.savePlaylist();
-
-            expect(notifications.updateMessage).toHaveBeenCalledWith('Please select a playlist to save.');
-            expect(subsonic.savePlaylist).not.toHaveBeenCalled();
+                expect(notifications.updateMessage).toHaveBeenCalledWith('Please select a playlist to save.');
+                expect(subsonic.savePlaylist).not.toHaveBeenCalled();
+            });
         });
 
         describe("getPodcasts() -", function () {

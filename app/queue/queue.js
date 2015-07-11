@@ -4,10 +4,10 @@
 * Manages the playing queue. Gives access to the player service's queue-related functions,
 * like adding, removing and shuffling the queue.
 */
-angular.module('jamstash.queue.controller', ['jamstash.player.service', 'jamstash.settings.service'])
+angular.module('jamstash.queue.controller', ['jamstash.player.service', 'jamstash.settings.service', 'jamstash.selectedsongs'])
 
-.controller('QueueController', ['$scope', 'globals', 'player',
-	function ($scope, globals, player) {
+.controller('QueueController', ['$scope', 'globals', 'player', 'SelectedSongs',
+	function ($scope, globals, player, SelectedSongs) {
 	'use strict';
     $scope.settings = globals.settings;
     $scope.player = player;
@@ -37,7 +37,7 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service', 'jamstas
     };
 
     $scope.removeSelectedSongsFromQueue = function () {
-        player.removeSongs($scope.selectedSongs);
+        player.removeSongs(SelectedSongs.get());
     };
 
     $scope.isPlayingSong = function (song) {
@@ -64,5 +64,9 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service', 'jamstas
         var start = ui.item.data('start'),
             end = ui.item.index();
         player.queue.splice(end, 0, player.queue.splice(start, 1)[0]);
+    };
+
+    $scope.toggleSelection = function (song) {
+        SelectedSongs.toggle(song);
     };
 }]);

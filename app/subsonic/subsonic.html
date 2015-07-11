@@ -22,7 +22,7 @@
             <a href="" class="button" id="action_PlayAlbum" title="Play Album" ng-click="playAll()"><img src="images/play_gl_6x8.png"></a>
             <a href="" class="button" id="action_SelectAll" title="Select All" ng-click="selectAll()">All</a>
             <a href="" class="button" id="action_SelectNone" title="Select None" ng-click="selectNone()">None</a>
-            <a href="" class="button" id="action_AddToQueue" title="Add To Queue" ng-click="addSongsToQueue()">+ Queue</a>
+            <a href="" class="button" id="action_AddToQueue" title="Add To Queue" ng-click="addSelectedSongsToQueue()">+ Queue</a>
             <a href="" class="button" id="action_AddToPlaylist" title="Add Selected To Playlist" ng-click="loadPlaylistsForMenu()">+ Playlist</a>
             <div id="submenu_AddToPlaylist" class="submenu shadow" style="display: none;">
                 <a href="" ng-repeat="o in playlistMenu" ng-click="addToPlaylist(o.id)">{{o.name}}</a>

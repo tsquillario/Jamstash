@@ -703,7 +703,7 @@ describe("Subsonic service -", function () {
         it("Given that there was only 1 genre in my Madsonic library, when I get the genres, then a promise will be resolved with an array of 1 genre", function () {
             response["subsonic-response"].genres = {
                 genre: {
-                    value: "periople",
+                    content: "periople",
                     songCount: 53,
                     artistCount: 7,
                     albumCount: 74
@@ -966,6 +966,24 @@ describe("Subsonic service -", function () {
 
             expect(promise).toBeRejectedWith({ reason: 'This playlist is empty.' });
         });
+    });
+
+    it("addToPlaylist() - Given a playlist id and an array of songs, when I add those songs to the playlist, then an empty resolved promise will be returned", function () {
+        var url = 'http://demo.subsonic.com/rest/updatePlaylist.view?' +
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp&p=enc:cGFzc3dvcmQ%3D' + '&playlistId=85' +
+            '&songIdToAdd=644&songIdToAdd=275&songIdToAdd=383' +
+            '&u=Hyzual&v=1.10.2';
+        mockBackend.expectJSONP(url).respond(JSON.stringify(response));
+        var songs = [
+            { id: 644 },
+            { id: 275 },
+            { id: 383 }
+        ];
+
+        var promise = subsonic.addToPlaylist(85, songs);
+        mockBackend.flush();
+
+        expect(promise).toBeResolved();
     });
 
     it("newPlaylist() - Given a name, when I create a new playlist, an empty resolved promise will be returned", function () {

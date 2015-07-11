@@ -7,32 +7,31 @@
 angular.module('jamstash.subsonic.service', [
     'ngLodash',
     'jamstash.settings.service',
-    'jamstash.utils',
     'jamstash.model'
 ])
 
 .service('subsonic', subsonicService);
 
 subsonicService.$inject = [
-    '$rootScope',
     '$http',
     '$q',
     'lodash',
     'globals',
-    'utils',
     'map'
 ];
 
-function subsonicService($rootScope, $http, $q, _, globals, utils, map) {
+function subsonicService(
+    $http,
+    $q,
+    _,
+    globals,
+    map
+) {
     'use strict';
-
-    var showPlaylist = false;
 
     var self = this;
     _.extend(self, {
-        // TODO: Hyz: Remove when refactored
-        showIndex: $rootScope.showIndex,
-        showPlaylist: showPlaylist,
+        addToPlaylist        : addToPlaylist,
         deletePlaylist       : deletePlaylist,
         getAlbumByTag        : getAlbumByTag,
         getAlbumListBy       : getAlbumListBy,
@@ -53,7 +52,6 @@ function subsonicService($rootScope, $http, $q, _, globals, utils, map) {
         savePlaylist         : savePlaylist,
         scrobble             : scrobble,
         search               : search,
-        songsRemoveSelected  : songsRemoveSelected,
         subsonicRequest      : subsonicRequest,
         toggleStar           : toggleStar
     });
@@ -439,37 +437,35 @@ function subsonicService($rootScope, $http, $q, _, globals, utils, map) {
         return promise;
     }
 
-    function deletePlaylist(id) {
+    function deletePlaylist(playlistId) {
         var promise = self.subsonicRequest('deletePlaylist.view', {
             params: {
-                id: id
+                id: playlistId
+            }
+        });
+        return promise;
+    }
+
+    function addToPlaylist(playlistId, songs) {
+        var songIds = _.pluck(songs, 'id');
+        var promise = self.subsonicRequest('updatePlaylist.view', {
+            params: {
+                playlistId :  playlistId,
+                songIdToAdd: songIds
             }
         });
         return promise;
     }
 
     function savePlaylist(playlistId, songs) {
-        var params = {
+        var songIds = _.pluck(songs, 'id');
+        var promise = self.subsonicRequest('createPlaylist.view', {
             params: {
                 playlistId: playlistId,
-                songId: []
+                songId    : songIds
             }
-        };
-        for (var i = 0; i < songs.length; i++) {
-            params.params.songId.push(songs[i].id);
-        }
-        return self.subsonicRequest('createPlaylist.view', params);
-    }
-
-    //TODO: Hyz: move to controller
-    function songsRemoveSelected(songs) {
-        var deferred = $q.defer();
-        angular.forEach(songs, function (item, key) {
-            var index = content.song.indexOf(item)
-            content.song.splice(index, 1);
         });
-        deferred.resolve(content);
-        return deferred.promise;
+        return promise;
     }
 
     function getGenres() {
