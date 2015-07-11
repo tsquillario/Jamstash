@@ -347,7 +347,7 @@ describe("Subsonic controller", function () {
                     spyOn(scope, "requestSongs").and.returnValue(deferred.promise);
                 });
 
-                it("when I request random starred songs, then subsonic-service will be called, displaying, adding or playing songs will be delegated to requestSongs and the current playlist will be published to the scope", function () {
+                it("getRandomStarredSongs() - When I request random starred songs, then subsonic-service will be called, displaying, adding or playing songs will be delegated to requestSongs and the current playlist will be published to the scope", function () {
                     subsonic.getRandomStarredSongs.and.returnValue(deferred.promise);
 
                     scope.getRandomStarredSongs('whatever action');
@@ -366,7 +366,7 @@ describe("Subsonic controller", function () {
                     expect(scope.selectedPodcast).toBeNull();
                 });
 
-                describe("when I request random songs", function () {
+                describe("getRandomSongs() - when I request random songs", function () {
                     beforeEach(function () {
                         subsonic.getRandomSongs.and.returnValue(deferred.promise);
                     });
@@ -423,7 +423,7 @@ describe("Subsonic controller", function () {
                     });
                 });
 
-                describe("given a playlist that contained those 3 songs,", function () {
+                describe("getPlaylist() - Given a playlist that contained those 3 songs,", function () {
                     beforeEach(function () {
                         subsonic.getPlaylist.and.returnValue(deferred.promise);
                     });
@@ -455,7 +455,7 @@ describe("Subsonic controller", function () {
                     });
                 });
 
-                it("given a podcast that contained those 3 songs as episodes, when I request it, then subsonic-service will be called, displaying adding or playing songs will be delegated to requestSongs and the current selected podcast will be published to the scope", function () {
+                it("getPodcast() - Given a podcast that contained those 3 songs as episodes, when I request it, then subsonic-service will be called, displaying adding or playing songs will be delegated to requestSongs and the current selected podcast will be published to the scope", function () {
                     subsonic.getPodcast.and.returnValue(deferred.promise);
 
                     scope.getPodcast('whatever action', 45);
@@ -476,7 +476,7 @@ describe("Subsonic controller", function () {
                 });
             });
 
-            describe("requestSongs -", function () {
+            describe("requestSongs() -", function () {
                 it("when I display songs, it sets the scope with the selected songs", function () {
                     scope.requestSongs(deferred.promise, 'display');
                     deferred.resolve(response);
@@ -553,7 +553,7 @@ describe("Subsonic controller", function () {
             });
         });
 
-        describe("handleErrors -", function () {
+        describe("handleErrors() -", function () {
             it("when I make a request, it returns a promise so that I can chain it further", function () {
                 var success = jasmine.createSpy("success");
 
@@ -624,8 +624,6 @@ describe("Subsonic controller", function () {
                 ]);
             });
         });
-
-        // TODO: Hyz: all starred
 
         describe("", function () {
             beforeEach(function () {
@@ -1042,7 +1040,7 @@ describe("Subsonic controller", function () {
             });
         });
 
-        it("Given a genre name, when I delete a genre playlist, then the list of genre playlists will be deleted from persistence and saved again without the given genre, and it will be removed from the list of genre playlists in the scope", function () {
+        it("deleteGenrePlaylist() - Given a genre name, when I delete a genre playlist, then the list of genre playlists will be deleted from persistence and saved again without the given genre, and it will be removed from the list of genre playlists in the scope", function () {
             scope.genrePlaylists = ['Olivella gravitometer', 'Antonina', 'recondemnation interact'];
 
             scope.deleteGenrePlaylist('Antonina');
@@ -1073,7 +1071,7 @@ describe("Subsonic controller", function () {
             });
         });
 
-        it("When I load the selected genre playlists, the genre playlists will be loaded from persistence and published on the scope ", function () {
+        it("loadGenrePlaylists() - When I load the selected genre playlists, the genre playlists will be loaded from persistence and published on the scope ", function () {
             persistence.loadSelectedGenreNames.and.returnValue(['clabber diffidentness', 'perturbancy', 'unnavigable']);
 
             scope.loadGenrePlaylists();

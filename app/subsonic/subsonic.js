@@ -459,15 +459,6 @@ angular.module('jamstash.subsonic.controller', [
         $scope.selectedPodcast = null;
     };
 
-    $scope.getStarred = function (action, type) {
-        subsonic.getStarred(action, type).then(function (data) {
-            $scope.album = data.album;
-            $scope.song = data.song;
-            $scope.selectedAutoPlaylist = data.selectedAutoPlaylist;
-            $scope.selectedPlaylist = data.selectedPlaylist;
-        });
-    };
-
     $scope.getArtistByTag = function (id) { // Gets Artist by ID3 tag
         $scope.selectedAutoAlbum = null;
         $scope.selectedArtist = id;
@@ -701,6 +692,7 @@ angular.module('jamstash.subsonic.controller', [
         });
     };
 
+    // TODO: Hyz: Replace with ui-sortable
     /**
      * Change the order of playlists through jQuery UI's sortable
      */
