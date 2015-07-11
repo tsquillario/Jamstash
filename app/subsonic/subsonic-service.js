@@ -44,11 +44,11 @@ function subsonicService(
         getPodcasts          : getPodcasts,
         getRandomSongs       : getRandomSongs,
         getRandomStarredSongs: getRandomStarredSongs,
-        getSongs             : getSongs,
+        getDirectory         : getDirectory,
         getStarred           : getStarred,
         newPlaylist          : newPlaylist,
         ping                 : ping,
-        recursiveGetSongs    : recursiveGetSongs,
+        recursiveGetDirectory: recursiveGetDirectory,
         savePlaylist         : savePlaylist,
         scrobble             : scrobble,
         search               : search,
@@ -201,7 +201,7 @@ function subsonicService(
         return deferred.promise;
     }
 
-    function getSongs(id) {
+    function getDirectory(id) {
         var exception = { reason: 'This directory is empty.' };
         var promise = self.subsonicRequest('getMusicDirectory.view', {
             params: {
@@ -228,10 +228,10 @@ function subsonicService(
     }
 
     // This is used when we add or play a directory, so we recursively get all its contents
-    function recursiveGetSongs(id) {
+    function recursiveGetDirectory(id) {
         var deferred = $q.defer();
-        // We first use getSongs() to get the contents of the root directory
-        self.getSongs(id).then(function (data) {
+        // We first use getDirectory() to get the contents of the root directory
+        self.getDirectory(id).then(function (data) {
             var directories = data.directories;
             var songs = data.songs;
             // If there are only songs, we return them immediately: this is a leaf directory and the end of the recursion
@@ -241,7 +241,7 @@ function subsonicService(
                 // otherwise, for each directory, we call ourselves
                 var promises = [];
                 angular.forEach(directories, function (dir) {
-                    var subdirectoryRequest = self.recursiveGetSongs(dir.id).then(function (data) {
+                    var subdirectoryRequest = self.recursiveGetDirectory(dir.id).then(function (data) {
                         // This is where we join all the songs together in a single array
                         return songs.concat(data);
                     });
@@ -255,7 +255,7 @@ function subsonicService(
                 deferred.resolve(allRequestsFinished);
             }
         }, function () {
-            // Even if getSongs returns an error, we resolve with an empty array. Otherwise one empty directory somewhere
+            // Even if getDirectory returns an error, we resolve with an empty array. Otherwise one empty directory somewhere
             // would keep us from playing all the songs of a directory recursively
             deferred.resolve([]);
         });
