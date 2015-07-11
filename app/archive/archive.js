@@ -3,10 +3,10 @@
 *
 * Access Archive.org
 */
-angular.module('jamstash.archive.controller', ['jamstash.archive.service'])
+angular.module('jamstash.archive.controller', ['jamstash.archive.service', 'jamstash.selectedsongs'])
 
-.controller('ArchiveController', ['$scope', '$rootScope', '$location', '$routeParams', '$http', '$timeout', 'utils', 'globals', 'model', 'notifications', 'player', 'archive', 'json',
-    function($scope, $rootScope, $location, $routeParams, $http, $timeout, utils, globals, model, notifications, player, archive, json){
+.controller('ArchiveController', ['$scope', '$rootScope', '$location', '$routeParams', '$http', '$timeout', 'utils', 'globals', 'model', 'notifications', 'player', 'archive', 'json', 'SelectedSongs',
+    function($scope, $rootScope, $location, $routeParams, $http, $timeout, utils, globals, model, notifications, player, archive, json, SelectedSongs){
     'use strict';
 
     $scope.settings = globals.settings;
@@ -150,18 +150,52 @@ angular.module('jamstash.archive.controller', ['jamstash.archive.service'])
     $scope.scrollToTop = function () {
         $('#Artists').stop().scrollTo('#auto', 400);
     };
+
     $scope.selectAll = function () {
-        $rootScope.selectAll($scope.song);
+        SelectedSongs.addSongs($scope.song);
     };
+
+    $scope.addSelectedSongsToQueue = function () {
+        if (SelectedSongs.get().length === 0) {
+            return;
+        }
+        player.addSongs(SelectedSongs.get());
+        notifications.updateMessage(SelectedSongs.get().length + ' Song(s) Added to Queue', true);
+        SelectedSongs.reset();
+    };
+
+    $scope.toggleSelection = function (song) {
+        SelectedSongs.toggle(song);
+    };
+
     $scope.selectNone = function () {
-        $rootScope.selectNone($scope.song);
+        SelectedSongs.reset();
     };
+
     $scope.playAll = function () {
-        $rootScope.playAll($scope.song);
+        player.emptyQueue()
+            .addSongs($scope.song)
+            .playFirstSong();
     };
+
     $scope.playFrom = function (index) {
-        $rootScope.playFrom(index, $scope.song);
+        var songsToPlay = $scope.song.slice(index, $scope.song.length);
+        player.emptyQueue()
+            .addSongs(songsToPlay)
+            .playFirstSong();
     };
+
+    $scope.addSongToQueue = function (song) {
+        player.addSong(song);
+    };
+
+    $scope.playSong = function (song) {
+        player.emptyQueue()
+            .addSong(song)
+            .playFirstSong();
+    };
+
+    // Hyz: Replace
     $scope.removeSong = function (item) {
         $rootScope.removeSong(item, $scope.song);
     };

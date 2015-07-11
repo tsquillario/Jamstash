@@ -10,7 +10,8 @@ angular.module('jamstash.subsonic.controller', [
     'jamstash.player.service',
     'jamstash.persistence',
     'jamstash.breadcrumbs.directive',
-    'jamstash.breadcrumbs.service'
+    'jamstash.breadcrumbs.service',
+    'jamstash.selectedsongs'
 ])
 
 .controller('SubsonicController', [
@@ -27,6 +28,7 @@ angular.module('jamstash.subsonic.controller', [
     'player',
     'persistence',
     'breadcrumbs',
+    'SelectedSongs',
     function (
         $scope,
         $rootScope,
@@ -40,7 +42,8 @@ angular.module('jamstash.subsonic.controller', [
         notifications,
         player,
         persistence,
-        breadcrumbs
+        breadcrumbs,
+        SelectedSongs
     ) {
     'use strict';
 
@@ -72,19 +75,59 @@ angular.module('jamstash.subsonic.controller', [
                 offset: 0
             }
         },
-        itemType: 'ss',
-        playlistMenu: [],
+        itemType         : 'ss',
+        playlistMenu     : [],
+        selectedSongs    : SelectedSongs.get(),
         SelectedAlbumSort: globals.settings.DefaultAlbumSort,
-        Server: globals.settings.Server,
-        settings: globals.settings
+        Server           : globals.settings.Server,
+        settings         : globals.settings,
+        addSelectedSongsToQueue: addSelectedSongsToQueue,
+        addSongToQueue         : addSongToQueue,
+        playAll                : playAll,
+        playFrom               : playFrom,
+        playSong               : playSong,
+        selectAll              : selectAll,
+        selectNone             : SelectedSongs.reset,
+        toggleSelection        : SelectedSongs.toggle
     });
 
-    $rootScope.showIndex = subsonic.showIndex;
-    $scope.$watch("showIndex", function (newValue, oldValue) {
-        if (newValue !== oldValue) {
-            subsonic.showIndex = $rootScope.showIndex;
+    function selectAll() {
+        SelectedSongs.addSongs($scope.song);
+    }
+
+    function addSelectedSongsToQueue() {
+        if (SelectedSongs.get().length === 0) {
+            return;
         }
-    });
+        player.addSongs(SelectedSongs.get());
+        notifications.updateMessage(SelectedSongs.get().length + ' Song(s) Added to Queue', true);
+        SelectedSongs.reset();
+    }
+
+    function playAll() {
+        player.emptyQueue()
+            .addSongs($scope.song)
+            .playFirstSong();
+    }
+
+    function playFrom(index) {
+        var songsToPlay = $scope.song.slice(index, $scope.song.length);
+        player.emptyQueue()
+            .addSongs(songsToPlay)
+            .playFirstSong();
+    }
+
+    function addSongToQueue(song) {
+        player.addSong(song);
+    }
+
+    function playSong(song) {
+        player.emptyQueue()
+            .addSong(song)
+            .playFirstSong();
+    }
+
+    $rootScope.showIndex = false;
     $scope.toggleIndex = function () {
         if ($rootScope.showIndex) {
             $rootScope.showIndex = false;
@@ -95,12 +138,7 @@ angular.module('jamstash.subsonic.controller', [
         }
         $scope.saveDefaultSection('index');
     };
-    $scope.showPlaylist = subsonic.showPlaylist;
-    $scope.$watch("showPlaylist", function (newValue, oldValue) {
-        if (newValue !== oldValue) {
-            subsonic.showPlaylist = $scope.showPlaylist;
-        }
-    });
+    $scope.showPlaylist = false;
     $scope.togglePlaylist = function () {
         if ($scope.showPlaylist) {
             $scope.showPlaylist = false;
@@ -111,12 +149,7 @@ angular.module('jamstash.subsonic.controller', [
         }
         $scope.saveDefaultSection('playlist');
     };
-    $scope.showPodcast = subsonic.showPodcast;
-    $scope.$watch("showPodcast", function (newValue, oldValue) {
-        if (newValue !== oldValue) {
-            subsonic.showPodcast = $scope.showPodcast;
-        }
-    });
+    $scope.showPodcast = false;
     $scope.togglePodcast = function () {
         if ($scope.showPodcast) {
             $scope.showPodcast = false;
@@ -226,30 +259,14 @@ angular.module('jamstash.subsonic.controller', [
             }
         });
     };
-    $scope.selectAll = function () {
-        $rootScope.selectAll($scope.song);
-    };
-    $scope.selectNone = function () {
-        $rootScope.selectNone($scope.song);
-    };
-    // TODO: Hyz: Replace
-    $scope.playAll = function () {
-        $rootScope.playAll($scope.song);
-    };
-    // TODO: Hyz: Replace
-    $scope.playFrom = function (index) {
-        $rootScope.playFrom(index, $scope.song);
-    };
+
     // TODO: Hyz: Replace
     $scope.removeSong = function (item) {
         $rootScope.removeSong(item, $scope.song);
     };
-    // TODO: Hyz: Replace
+
     $scope.songsRemoveSelected = function () {
-        subsonic.songsRemoveSelected($scope.selectedSongs).then(function (data) {
-            $scope.album = data.album;
-            $scope.song = data.song;
-        });
+        $scope.song = _.difference($scope.song, SelectedSongs.get());
     };
 
     $scope.getArtists = function (folder) {
@@ -563,29 +580,41 @@ angular.module('jamstash.subsonic.controller', [
     };
 
     $scope.deletePlaylist = function () {
-        if ($scope.selectedPlaylist !== null) {
-            var ok = $window.confirm('Are you sure you want to delete the selected playlist?');
-            if (ok) {
-                var promise = subsonic.deletePlaylist($scope.selectedPlaylist);
-                $scope.handleErrors(promise).then(function () {
-                    $scope.getPlaylists();
-                });
-            }
-        } else {
+        if (! $scope.selectedPlaylist) {
             notifications.updateMessage('Please select a playlist to delete.');
+            return;
+        }
+        var ok = $window.confirm('Are you sure you want to delete the selected playlist?');
+        if (ok) {
+            var promise = subsonic.deletePlaylist($scope.selectedPlaylist);
+            $scope.handleErrors(promise).then(function () {
+                $scope.getPlaylists();
+            });
         }
     };
 
-    $scope.savePlaylist = function () {
-        if ($scope.selectedPlaylist !== null) {
-            var promise = subsonic.savePlaylist($scope.selectedPlaylist, $scope.song);
-            $scope.handleErrors(promise).then(function () {
-                $scope.getPlaylist('display', $scope.selectedPlaylist);
-                notifications.updateMessage('Playlist Updated!', true);
-            });
-        } else {
-            notifications.updateMessage('Please select a playlist to save.');
+    $scope.addToPlaylist = function (playlistId) {
+        if (SelectedSongs.get().length === 0) {
+            notifications.updateMessage('Please select a song to add to that playlist.');
+            return;
         }
+        var promise = subsonic.addToPlaylist(playlistId, SelectedSongs.get());
+        $scope.handleErrors(promise).then(function () {
+            SelectedSongs.reset();
+            notifications.updateMessage('Playlist Updated!', true);
+        });
+    };
+
+    $scope.savePlaylist = function () {
+        if (! $scope.selectedPlaylist) {
+            notifications.updateMessage('Please select a playlist to save.');
+            return;
+        }
+        var promise = subsonic.savePlaylist($scope.selectedPlaylist, $scope.song);
+        $scope.handleErrors(promise).then(function () {
+            $scope.getPlaylist('display', $scope.selectedPlaylist);
+            notifications.updateMessage('Playlist Updated!', true);
+        });
     };
 
     $scope.loadPlaylistsForMenu = function () {
@@ -597,31 +626,6 @@ angular.module('jamstash.subsonic.controller', [
         }, function (error) {
             notifications.updateMessage(error.reason, true);
         });
-    };
-
-    $scope.addToPlaylist = function (id) {
-        var songs = [];
-        if ($scope.selectedSongs.length !== 0) {
-            angular.forEach($scope.selectedSongs, function (item) {
-                songs.push(item.id);
-            });
-            var runningVersion = utils.parseVersionString(globals.settings.ApiVersion);
-            var minimumVersion = utils.parseVersionString('1.8.0');
-            if (utils.checkVersion(runningVersion, minimumVersion)) { // is 1.8.0 or newer
-                $.ajax({
-                    type: 'GET',
-                    url: globals.BaseURL() + '/updatePlaylist.view?' + globals.BaseParams(),
-                    dataType: globals.settings.Protocol,
-                    timeout: globals.settings.Timeout,
-                    data: { playlistId: id, songIdToAdd: songs },
-                    success: function () {
-                        $scope.selectedSongs.length = 0;
-                        notifications.updateMessage('Playlist Updated!', true);
-                    },
-                    traditional: true // Fixes POST with an array in JQuery 1.4
-                });
-            }
-        }
     };
 
     $scope.getGenres = function () {
@@ -707,12 +711,6 @@ angular.module('jamstash.subsonic.controller', [
         var start = ui.item.data('start'),
             end = ui.item.index();
         $scope.song.splice(end, 0, $scope.song.splice(start, 1)[0]);
-    };
-    $scope.playSong = function (song) {
-        player.emptyQueue().addSong(song).playFirstSong();
-    };
-    $scope.addSongToQueue = function (song) {
-        player.addSong(song);
     };
 
     /* Launch on Startup */

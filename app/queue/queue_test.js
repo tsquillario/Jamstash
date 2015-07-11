@@ -2,11 +2,13 @@
 describe("Queue controller", function () {
     'use strict';
 
-    var player, scope;
+    var player, scope, SelectedSongs;
     var song;
 
     beforeEach(function () {
         module('jamstash.queue.controller');
+
+        SelectedSongs = jasmine.createSpyObj("SelectedSongs", ["get"]);
 
         inject(function ($controller, $rootScope, globals, _player_) {
             scope = $rootScope.$new();
@@ -15,7 +17,8 @@ describe("Queue controller", function () {
             $controller('QueueController', {
                 $scope: scope,
                 globals: globals,
-                player: player
+                player: player,
+                SelectedSongs: SelectedSongs
             });
         });
         song = { id: 7310 };
@@ -62,7 +65,7 @@ describe("Queue controller", function () {
     it("When I remove all the selected songs from the queue, it calls removeSongs in the player service", function () {
         spyOn(player, "removeSongs");
         var secondSong = { id: 6791 };
-        scope.selectedSongs = [song, secondSong];
+        SelectedSongs.get.and.returnValue([song, secondSong]);
         scope.removeSelectedSongsFromQueue();
         expect(player.removeSongs).toHaveBeenCalledWith([song, secondSong]);
     });

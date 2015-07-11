@@ -214,52 +214,7 @@ angular.module('JamStash')
     $scope.scrollToTop = function () {
         $('#left-component').stop().scrollTo('#MusicFolders', 400);
     };
-    $rootScope.selectAll = function (songs) {
-        angular.forEach(songs, function (item, key) {
-            $scope.selectedSongs.push(item);
-            item.selected = true;
-        });
-    };
-    $rootScope.selectNone = function (songs) {
-        angular.forEach(songs, function (item, key) {
-            $scope.selectedSongs = [];
-            item.selected = false;
-        });
-    };
-    $rootScope.playAll = function (songs) {
-        // TODO: Hyz: Replace
-        player.queue = [];
-        $rootScope.selectAll(songs);
-        $rootScope.addSongsToQueue();
-        var next = player.queue[0];
-        player.play(next);
-    };
-    $rootScope.playFrom = function (index, songs) {
-        // TODO: Hyz: Replace
-        var from = songs.slice(index,songs.length);
-        $scope.selectedSongs = [];
-        angular.forEach(from, function (item, key) {
-            $scope.selectedSongs.push(item);
-            item.selected = true;
-        });
-        if ($scope.selectedSongs.length > 0) {
-            player.queue = [];
-            $rootScope.addSongsToQueue();
-            var next = player.queue[0];
-            player.play(next);
-        }
-    };
-    $rootScope.addSongsToQueue = function () {
-        // TODO: Hyz: Replace
-        if ($scope.selectedSongs.length !== 0) {
-            angular.forEach($scope.selectedSongs, function (item, key) {
-                player.queue.push(item);
-                item.selected = false;
-            });
-            notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
-            $scope.selectedSongs.length = 0;
-        }
-    };
+
     $rootScope.removeSong = function (item, songs) {
         // TODO: Hyz: Replace
         var index = songs.indexOf(item);
@@ -289,17 +244,6 @@ angular.module('JamStash')
                 }
             }
         });
-    };
-    $scope.selectedSongs = [];
-    $scope.selectSong = function (data) {
-        var i = $scope.selectedSongs.indexOf(data);
-        if (i >= 0) {
-            $scope.selectedSongs.splice(i, 1);
-            data.selected = false;
-        } else {
-            $scope.selectedSongs.push(data);
-            data.selected = true;
-        }
     };
 
     /**
