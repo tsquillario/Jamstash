@@ -53,7 +53,7 @@
 
             <div class="clear"></div>
         </div><!-- end #content -->
-        <div id="SideBar" ng-include src="'queue/queue.html'" ng-controller="QueueController">
+        <div id="SideBar" ng-include src="'queue/queue.html'" ng-controller="QueueController as vm">
             <!--
             <div id="NowPlaying">
                 <div class="header"><img src="images/rss_12x12.png" /> Now Playing</div>
@@ -97,6 +97,7 @@
     <script src="bower_components/angular-locker/dist/angular-locker.min.js"></script>
     <script src="bower_components/angular-ui-utils/keypress.js"></script>
     <script src="bower_components/ng-lodash/build/ng-lodash.js"></script>
+    <script src="bower_components/angular-ui-sortable/sortable.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
     <!-- our scripts -->

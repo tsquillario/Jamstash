@@ -41,7 +41,8 @@
     "angular-locker": "~2.0.1",
     "angular-ui-utils": "bower-keypress",
     "open-iconic": "~1.1.1",
-    "ng-lodash": "~0.2.3"
+    "ng-lodash": "~0.2.3",
+    "angular-ui-sortable": "~0.13.4"
   },
   "overrides": {
     "fancybox": {

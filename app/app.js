@@ -20,7 +20,6 @@ angular.module('JamStash', [
     $routeProvider
         .when('/index', { redirectTo: '/library' })
         .when('/settings', { templateUrl: 'settings/settings.html', controller: 'SettingsController' })
-        .when('/queue', { templateUrl: 'queue/queue.html', controller: 'QueueController' })
         .when('/library', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController' })
         .when('/library/:artistId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController', reloadOnSearch: false })
         .when('/library/:artistId/:albumId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController', reloadOnSearch: false })

@@ -297,6 +297,77 @@ describe("Player service -", function () {
         });
     });
 
+    describe("reorderQueue() -", function () {
+        it("Given an old index and a new index, when I move a song from the old index in the queue to the new, then it will be removed from its previous index and inserted at the given new index and the service itself will be returned to allow chaining", function () {
+            player.queue = [
+                { id: 9116 },
+                { id: 5568 },
+                { id: 2010 }
+            ];
+
+            var result = player.reorderQueue(0, 2);
+
+            expect(player.queue).toEqual([
+                { id: 5568 },
+                { id: 2010 },
+                { id: 9116 }
+            ]);
+            expect(result).toBe(player);
+        });
+
+        it("Given a negative old index, when I try to move a song from the old index to the new, then the queue won't be modified", function () {
+            var untouchedQueue = [
+                { id: 8178 },
+                { id: 406 },
+                { id: 2413 }
+            ];
+            player.queue = untouchedQueue;
+
+            player.reorderQueue(-1, 2);
+
+            expect(player.queue).toBe(untouchedQueue);
+        });
+
+        it("Given an old index that is outside the queue's bounds, when I try to move a song from the old index to the new, then the queue won't be modified", function () {
+            var untouchedQueue = [
+                { id: 3843 },
+                { id: 1519 },
+                { id: 1271 }
+            ];
+            player.queue = untouchedQueue;
+
+            player.reorderQueue(3, 2);
+
+            expect(player.queue).toBe(untouchedQueue);
+        });
+
+        it("Given a negative new index, when I try to move a song from the old index to the new, then the queue won't be modified", function () {
+            var untouchedQueue = [
+                { id: 692 },
+                { id: 9079 },
+                { id: 8620 }
+            ];
+            player.queue = untouchedQueue;
+
+            player.reorderQueue(0, -1);
+
+            expect(player.queue).toBe(untouchedQueue);
+        });
+
+        it("Given a new index that is outside the queue's bounds, when I try to move a song from the old index to the new, then the queue won't be modified", function () {
+            var untouchedQueue = [
+                { id: 6318 },
+                { id: 3905 },
+                { id: 9826 }
+            ];
+            player.queue = untouchedQueue;
+
+            player.reorderQueue(0, 3);
+
+            expect(player.queue).toBe(untouchedQueue);
+        });
+    });
+
     describe("When I turn the volume up,", function () {
         it("it sets the player's volume up by 10%", function () {
             player.setVolume(0.5);
