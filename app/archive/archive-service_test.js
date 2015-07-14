@@ -1,10 +1,10 @@
-describe("archive service", function() {
+// jscs:disable validateQuoteMarks
+describe("archive service", function () {
     'use strict';
 
-    var archive, mockBackend, mockGlobals, utils,
-        response;
+    var archive, mockBackend, mockGlobals, utils;
 
-    beforeEach(function() {
+    beforeEach(function () {
 
         mockGlobals = {
             archiveUrl: "http://hysterotomy.com/hippolytus/quercitrin?a=chillagite&b=savour#superfecundation"
@@ -32,13 +32,13 @@ describe("archive service", function() {
         });
     });
 
-    afterEach(function() {
+    afterEach(function () {
         mockBackend.verifyNoOutstandingExpectation();
         mockBackend.verifyNoOutstandingRequest();
     });
 
-    describe("mapAlbum() -", function() {
-        it("Given album data with a publicDate defined, when I map it to an Album, then utils.formatDate will be called", function() {
+    describe("mapAlbum() -", function () {
+        it("Given album data with a publicDate defined, when I map it to an Album, then utils.formatDate will be called", function () {
             var albumData = {
                 id: 504,
                 publicDate: "2015-03-29T18:22:06.000Z",

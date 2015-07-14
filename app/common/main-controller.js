@@ -1,13 +1,11 @@
 angular.module('JamStash')
-.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence', 'Page', 'subsonic',
-    function ($scope, $rootScope, $document, $window, $location, $cookieStore, $http, utils, globals, model, notifications, player, persistence, Page, subsonic) {
+.controller('AppController', ['$scope', '$rootScope', '$document', '$window', '$location', '$cookieStore', '$http', 'lodash', 'utils', 'globals', 'model', 'notifications', 'player', 'persistence', 'Page', 'subsonic', 'Loading',
+    function ($scope, $rootScope, $document, $window, $location, $cookieStore, $http, _, utils, globals, model, notifications, player, persistence, Page, subsonic, Loading) {
     'use strict';
 
     $rootScope.settings = globals.settings;
     $rootScope.song = [];
     $rootScope.playingSong = null;
-    $rootScope.MusicFolders = [];
-    $rootScope.Genres = [];
     $rootScope.Messages = [];
 
     $rootScope.unity = null;
@@ -27,6 +25,17 @@ angular.module('JamStash')
         $location.path(path);
     };
 
+    $scope.loading = Loading;
+    // TODO: Hyz: remove when there are no longer jQuery ajax calls
+    $.ajaxSetup({
+        'beforeSend': function () {
+            $("#loading").removeClass('ng-hide');
+        },
+        'complete': function () {
+            $("#loading").addClass('ng-hide');
+        }
+    });
+
     // Reads cookies and sets globals.settings values
     $scope.loadSettings = function () {
         // Temporary Code to Convert Cookies added 2/2/2014
@@ -36,16 +45,15 @@ angular.module('JamStash')
         }
         var settings = persistence.getSettings();
         if (settings !== undefined) {
-            var updSettings = _(settings).omit('Url');
+            var updSettings = _.omit(settings, 'Url');
             // We can't just assign settings to globals.settings because it's on the scope
             // TODO: Hyz: remove $rootScope.settings and replace with individual settings
-            _(updSettings).each(function(val, key) {
+            _.each(updSettings, function(val, key) {
                 globals.settings[key] = val;
             });
         }
         if (utils.getValue("SavedCollections")) { globals.SavedCollections = utils.getValue("SavedCollections").split(","); }
         if (utils.getValue("DefaultCollection")) { globals.DefaultCollection = utils.getValue("DefaultCollection"); }
-        if (utils.getValue("SavedGenres")) { globals.SavedGenres = utils.getValue("SavedGenres").split(","); }
         if (globals.settings.Debug) { console.log('Loaded Settings: ' + JSON.stringify(globals.settings, null, 2)); }
     };
     $scope.toggleSetting = function (setting) {
@@ -57,15 +65,6 @@ angular.module('JamStash')
         }
         notifications.updateMessage(setting + ' : ' + globals.settings[id], true);
     };
-
-    $.ajaxSetup({
-        'beforeSend': function () {
-            $("#loading").show();
-        },
-        'complete': function () {
-            $("#loading").hide();
-        }
-    });
 
     var submenu_active = false;
     $('div.submenu').mouseenter(function () {
@@ -215,52 +214,7 @@ angular.module('JamStash')
     $scope.scrollToTop = function () {
         $('#left-component').stop().scrollTo('#MusicFolders', 400);
     };
-    $rootScope.selectAll = function (songs) {
-        angular.forEach(songs, function (item, key) {
-            $scope.selectedSongs.push(item);
-            item.selected = true;
-        });
-    };
-    $rootScope.selectNone = function (songs) {
-        angular.forEach(songs, function (item, key) {
-            $scope.selectedSongs = [];
-            item.selected = false;
-        });
-    };
-    $rootScope.playAll = function (songs) {
-        // TODO: Hyz: Replace
-        player.queue = [];
-        $rootScope.selectAll(songs);
-        $rootScope.addSongsToQueue();
-        var next = player.queue[0];
-        player.play(next);
-    };
-    $rootScope.playFrom = function (index, songs) {
-        // TODO: Hyz: Replace
-        var from = songs.slice(index,songs.length);
-        $scope.selectedSongs = [];
-        angular.forEach(from, function (item, key) {
-            $scope.selectedSongs.push(item);
-            item.selected = true;
-        });
-        if ($scope.selectedSongs.length > 0) {
-            player.queue = [];
-            $rootScope.addSongsToQueue();
-            var next = player.queue[0];
-            player.play(next);
-        }
-    };
-    $rootScope.addSongsToQueue = function () {
-        // TODO: Hyz: Replace
-        if ($scope.selectedSongs.length !== 0) {
-            angular.forEach($scope.selectedSongs, function (item, key) {
-                player.queue.push(item);
-                item.selected = false;
-            });
-            notifications.updateMessage($scope.selectedSongs.length + ' Song(s) Added to Queue', true);
-            $scope.selectedSongs.length = 0;
-        }
-    };
+
     $rootScope.removeSong = function (item, songs) {
         // TODO: Hyz: Replace
         var index = songs.indexOf(item);
@@ -290,17 +244,6 @@ angular.module('JamStash')
                 }
             }
         });
-    };
-    $scope.selectedSongs = [];
-    $scope.selectSong = function (data) {
-        var i = $scope.selectedSongs.indexOf(data);
-        if (i >= 0) {
-            $scope.selectedSongs.splice(i, 1);
-            data.selected = false;
-        } else {
-            $scope.selectedSongs.push(data);
-            data.selected = true;
-        }
     };
 
     /**

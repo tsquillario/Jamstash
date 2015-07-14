@@ -1,32 +1,41 @@
 {
-  "bitwise": true,
-  "curly": true,
-  "eqeqeq": true,
-  "esnext": true,
-  "freeze": true,
-  "latedef": true,
-  "noarg": true,
-  "nonbsp": true,
-  "nonew": true,
-  "notypeof": true,
-  "shadow": false,
-  "strict": true,
-  "undef": true,
-  "unused": true,
-  "globals": {
-    "_": false,
-    "affix": false,
-    "after": false,
-    "angular": false,
-    "before": false,
-    "browser": false,
-    "console": false,
-    "expect": false,
-    "inject": false,
-    "installPromiseMatchers": false,
-    "module": false
-  },
-  "browser": true,
-  "jquery": true,
-  "jasmine": true
+    "bitwise": true,
+    "boss": true,
+    "curly": true,
+    "eqeqeq": true,
+    "eqnull": true,
+    "esnext": true,
+    "forin": true,
+    "freeze": true,
+    "latedef": "nofunc",
+    "newcap": true,
+    "noarg": true,
+    "nonbsp": true,
+    "nonew": true,
+    "shadow": false,
+    "strict": true,
+    "sub": true,
+    "undef": true,
+    "unused": true,
+    "globals": {
+        /* angular.js */
+        "angular": false,
+        "inject": false,
+        "module": false,
+        /* protractor.js */
+        "browser": false,
+        "by": false,
+        "element": false,
+        /* jasmine-fixtures */
+        "affix": false,
+        /* jasmine-promise-matchers */
+        "installPromiseMatchers": false,
+        /* lodash */
+        "_": false
+    },
+    // environments
+    "browser": true,
+    "devel": true,
+    "jasmine": true,
+    "jquery": true
 }
