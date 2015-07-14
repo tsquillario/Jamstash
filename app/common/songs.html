@@ -1,4 +1,4 @@
-<li class="row song" ng-repeat="o in song" ng-click="selectSong(o)" ng-dblclick="playFrom($index)" ng-class="{'selected': o.selected, 'playing': o.playing}">
+<li class="row song" ng-repeat="o in song" ng-click="toggleSelection(o)" ng-dblclick="playFrom($index)" ng-class="{'selected': o.selected, 'playing': o.playing}">
     <div class="itemactions">
         <a class="add" href="" title="Add To Queue" ng-click="addSongToQueue(o)" stop-event="click"></a>
         <!--<a class="remove" href="" title="Remove Song" ng-click="removeSongFromQueue(o)" stop-event="click"></a>-->

@@ -1,3 +1,5 @@
+[![Dependency Status](https://www.versioneye.com/user/projects/55545c4c774ff250e20000ba/badge.svg?style=flat)](https://www.versioneye.com/user/projects/55545c4c774ff250e20000ba)
+
 Jamstash - HTML5 Music Streamer
 -------------------------------
 

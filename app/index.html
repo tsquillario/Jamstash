@@ -20,7 +20,9 @@
     <link href="" rel="stylesheet" type="text/css" data-name="theme" />
     <!-- build:css(app) styles/concat.min.css -->
     <link rel="stylesheet" href="player/player.css" />
+    <link rel="stylesheet" href="subsonic/subsonic.css" />
     <link rel="stylesheet" href="player/repeat-directive/repeat-directive.css" />
+    <link rel="stylesheet" href="subsonic/breadcrumbs-directive/breadcrumbs-directive.css" />
     <!-- endbuild -->
 </head>
 <body ui-keypress="{'32 179': 'togglePause($event)', '43 61 187': 'turnVolumeUp($event)', '45 95 189': 'turnVolumeDown($event)'}" ui-keydown="{'right 176': 'nextTrack($event)', 'left 177': 'previousTrack($event)'}">
@@ -29,7 +31,7 @@
             <div id="messages">
                 <span ng-attr-id="{{ 'msg_' + $index }}" class="message" ng-repeat="item in Messages track by $index" ng-bind-html="item"></span>
             </div>
-            <div id="loading"></div>
+            <div id="loading" ng-show="loading.isLoading"></div>
             <a id="jslogo" title="Jamstash" class="showQueue" href=""></a>
             <a id="sslogo" target="_blank" ng-show="settings.Server" ng-href="{{settings.Server}}" title="{{settings.Server}}"></a>
             <div id="globalactions">
@@ -51,7 +53,7 @@
 
             <div class="clear"></div>
         </div><!-- end #content -->
-        <div id="SideBar" ng-include src="'queue/queue.html'" ng-controller="QueueController">
+        <div id="SideBar" ng-include src="'queue/queue.html'" ng-controller="QueueController as vm">
             <!--
             <div id="NowPlaying">
                 <div class="header"><img src="images/rss_12x12.png" /> Now Playing</div>
@@ -80,22 +82,22 @@
     </script>
     <!-- build:js({.,app}) scripts/vendor.min.js -->
     <!-- bower:js -->
-    <script src="bower_components/jquery/jquery.js"></script>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
-    <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
     <script src="bower_components/jplayer/dist/jplayer/jquery.jplayer.js"></script>
     <script src="bower_components/fancybox/source/jquery.fancybox.js"></script>
     <script src="bower_components/notify.js/notify.js"></script>
     <script src="bower_components/jquery.scrollTo/jquery.scrollTo.js"></script>
     <script src="bower_components/jquery-dateFormat/dist/jquery-dateFormat.js"></script>
-    <script src="bower_components/underscore/underscore.js"></script>
-    <script src="bower_components/angular-underscore/angular-underscore.js"></script>
     <script src="bower_components/angular-locker/dist/angular-locker.min.js"></script>
     <script src="bower_components/angular-ui-utils/keypress.js"></script>
+    <script src="bower_components/ng-lodash/build/ng-lodash.js"></script>
+    <script src="bower_components/angular-ui-sortable/sortable.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
     <!-- our scripts -->
@@ -106,11 +108,15 @@
     <script src="common/model-service.js"></script>
     <script src="common/utils-service.js"></script>
     <script src="common/page-service.js"></script>
+    <script src="common/loading-service.js"></script>
     <script src="common/notification-service.js"></script>
     <script src="common/persistence-service.js"></script>
     <script src="common/main-controller.js"></script>
+    <script src="common/selectedsongs-service.js"></script>
     <script src="subsonic/subsonic.js"></script>
     <script src="subsonic/subsonic-service.js"></script>
+    <script src="subsonic/breadcrumbs-directive/breadcrumbs-service.js"></script>
+    <script src="subsonic/breadcrumbs-directive/breadcrumbs-directive.js"></script>
     <script src="archive/archive.js"></script>
     <script src="archive/archive-service.js"></script>
     <script src="player/player.js"></script>

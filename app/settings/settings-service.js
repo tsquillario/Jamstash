@@ -62,7 +62,6 @@ angular.module('jamstash.settings.service', [])
         ShowQueue: false
     };
     this.SavedCollections = [];
-    this.SavedGenres = [];
     this.Player1 = '#playdeck_1';
     this.archiveUrl = 'https://archive.org/';
     this.ChangeLog = null;

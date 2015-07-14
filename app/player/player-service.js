@@ -3,9 +3,9 @@
 *
 * Manages the player and playing queue. Use it to play a song, go to next track or add songs to the queue.
 */
-angular.module('jamstash.player.service', ['angular-underscore/utils'])
+angular.module('jamstash.player.service', ['ngLodash'])
 
-.factory('player', [function () {
+.factory('player', ['lodash', function (_) {
     'use strict';
 
     var playerVolume = 1.0;
@@ -27,7 +27,7 @@ angular.module('jamstash.player.service', ['angular-underscore/utils'])
             // Find the song's index in the queue, if it's in there
             var index = player.indexOfSong(song);
             player._playingIndex = (index !== undefined) ? index : -1;
-            if(player._playingSong === song) {
+            if (player._playingSong === song) {
                 // We call restart because the _playingSong hasn't changed and the directive won't
                 // play the song again
                 player.restart();
@@ -78,7 +78,7 @@ angular.module('jamstash.player.service', ['angular-underscore/utils'])
             var index = player.indexOfSong(player._playingSong);
             player._playingIndex = (index !== undefined) ? index : -1;
 
-            if((player._playingIndex + 1) < player.queue.length) {
+            if ((player._playingIndex + 1) < player.queue.length) {
                 var nextTrack = player.queue[player._playingIndex + 1];
                 player._playingIndex++;
                 player.play(nextTrack);
@@ -90,7 +90,7 @@ angular.module('jamstash.player.service', ['angular-underscore/utils'])
             var index = player.indexOfSong(player._playingSong);
             player._playingIndex = (index !== undefined) ? index : -1;
 
-            if((player._playingIndex - 1) > 0) {
+            if ((player._playingIndex - 1) > 0) {
                 var previousTrack = player.queue[player._playingIndex - 1];
                 player._playingIndex--;
                 player.play(previousTrack);
@@ -105,9 +105,9 @@ angular.module('jamstash.player.service', ['angular-underscore/utils'])
         },
 
         shuffleQueue: function () {
-            var shuffled = _(player.queue).without(player._playingSong);
-            shuffled = _(shuffled).shuffle();
-            if(player._playingSong !== undefined) {
+            var shuffled = _.without(player.queue, player._playingSong);
+            shuffled = _.shuffle(shuffled);
+            if (player._playingSong !== undefined) {
                 shuffled.unshift(player._playingSong);
                 player._playingIndex = 0;
             }
@@ -132,7 +132,17 @@ angular.module('jamstash.player.service', ['angular-underscore/utils'])
         },
 
         removeSongs: function (songs) {
-            player.queue = _(player.queue).difference(songs);
+            player.queue = _.difference(player.queue, songs);
+            return player;
+        },
+
+        reorderQueue: function (oldIndex, newIndex) {
+            if (oldIndex < 0 || oldIndex >= player.queue.length || newIndex < 0 || newIndex >= player.queue.length) {
+                return player;
+            }
+            var song = player.queue[oldIndex];
+            player.queue.splice(oldIndex, 1);
+            player.queue.splice(newIndex, 0, song);
             return player;
         },
 
@@ -141,7 +151,7 @@ angular.module('jamstash.player.service', ['angular-underscore/utils'])
         },
 
         isLastSongPlaying: function () {
-            return ((player._playingIndex +1) === player.queue.length);
+            return ((player._playingIndex + 1) === player.queue.length);
         },
 
         indexOfSong: function (song) {
@@ -178,8 +188,11 @@ angular.module('jamstash.player.service', ['angular-underscore/utils'])
         },
 
         setVolume: function (volume) {
-            if (volume > 1) { volume = 1; }
-            else if(volume < 0) { volume = 0; }
+            if (volume > 1) {
+                volume = 1;
+            } else if (volume < 0) {
+                volume = 0;
+            }
             playerVolume = Math.round(volume * 100) / 100;
             return player;
         }
