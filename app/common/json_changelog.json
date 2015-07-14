@@ -1,5 +1,14 @@
 [
     {
+        "date": "7/14/2015", "version": "4.6.0",
+        "changes": [
+        { "text": "- The spinning loading gif is now displayed again for all requests to Subsonic."},
+        { "text": "- The genre list in the Playlist tab is now retrieved from the Subsonic server. As a result, your saved genre list has been reset."},
+        { "text": "- Genre auto-playlists can now be removed by clicking on the X icon."},
+        { "text": "- Breadcrumbs are no longer limited to 2 levels and will display correctly no matter the directory depth."}
+        ]
+    },
+    {
         "date": "5/23/2015", "version": "4.5.0",
         "changes": [
         { "text": "- The Repeat icon in the player now has 3 states: 'Repeat nothing', 'Repeat the current queue', 'Repeat the current playing song'."},
