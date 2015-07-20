@@ -208,7 +208,7 @@ describe("Main controller", function () {
                 expect(notifications.updateMessage).toHaveBeenCalledWith('Favorite Updated!', true);
             });
 
-            it("Given a song that was starred, when I toggle its star, then subsonic service will be called, the song will be starred and a notification will be displayed", function () {
+            it("Given a song that was starred, when I toggle its star, then subsonic service will be called, the song will no longer be starred and a notification will be displayed", function () {
                 var song = { id: 784, starred: true };
                 scope.toggleStar(song);
                 deferred.resolve(false);

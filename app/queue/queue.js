@@ -7,7 +7,9 @@
 angular.module('jamstash.queue.controller', [
     'ngLodash',
     'jamstash.player.service',
+    'jamstash.subsonic.service',
     'jamstash.selectedsongs',
+    'jamstash.notifications',
     'ui.sortable'
 ])
 
@@ -17,28 +19,32 @@ QueueController.$inject = [
     '$scope',
     'lodash',
     'player',
-    'SelectedSongs'
+    'SelectedSongs',
+    'subsonic',
+    'notifications'
 ];
 
 function QueueController(
     $scope,
     _,
     player,
-    SelectedSongs
+    SelectedSongs,
+    subsonic,
+    notifications
 ) {
     'use strict';
 
     var self = this;
     _.extend(self, {
         player: player,
-        addSongToQueue              : player.addSong,
         emptyQueue                  : emptyQueue,
         isPlayingSong               : isPlayingSong,
         playSong                    : player.play,
         removeSelectedSongsFromQueue: removeSelectedSongsFromQueue,
         removeSongFromQueue         : player.removeSong,
         shuffleQueue                : shuffleQueue,
-        toggleSelection             : SelectedSongs.toggle
+        toggleSelection             : SelectedSongs.toggle,
+        toggleStar                  : toggleStar
     });
 
     function emptyQueue() {
@@ -59,6 +65,17 @@ function QueueController(
         player.shuffleQueue();
         // TODO: Hyz: Shouldn't it be in a directive ?
         $('#SideBar').stop().scrollTo('.header', 400);
+    }
+
+    // TODO: Hyz: Duplicate of main-controller's toggleStar.
+    // Refactor in a SubsonicSong service that'll hold all the common operations done on songs.
+    function toggleStar(song) {
+        var promise = subsonic.toggleStar(song).then(function (newState) {
+            song.starred = newState;
+            notifications.updateMessage('Favorite Updated!', true);
+        });
+
+        return promise;
     }
 
     $scope.$watch(function () {
