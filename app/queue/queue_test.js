@@ -2,13 +2,14 @@
 describe("Queue controller", function () {
     'use strict';
 
-    var QueueContoller, $scope, player, SelectedSongs;
-    var song;
+    var QueueContoller, $scope, player, subsonic, SelectedSongs, notifications, $q, deferred, song;
 
     beforeEach(function () {
         module('jamstash.queue.controller');
 
-        SelectedSongs = jasmine.createSpyObj("SelectedSongs", ["get"]);
+        SelectedSongs = jasmine.createSpyObj("SelectedSongs", [
+            "get"
+        ]);
 
         player = jasmine.createSpyObj("player", [
             "emptyQueue",
@@ -18,13 +19,27 @@ describe("Queue controller", function () {
             "shuffleQueue"
         ]);
 
-        inject(function ($controller, $rootScope) {
+        subsonic = jasmine.createSpyObj("subsonic", [
+            "toggleStar"
+        ]);
+
+        notifications = jasmine.createSpyObj("notifications", [
+            "updateMessage"
+        ]);
+
+        inject(function ($controller, $rootScope, _$q_, lodash) {
+            $q = _$q_;
+            deferred = $q.defer();
+
             $scope = $rootScope.$new();
 
             QueueContoller = $controller('QueueController', {
                 $scope       : $scope,
+                _            : lodash,
                 player       : player,
-                SelectedSongs: SelectedSongs
+                SelectedSongs: SelectedSongs,
+                subsonic     : subsonic,
+                notifications: notifications
             });
         });
         player.queue = [];
@@ -80,4 +95,34 @@ describe("Queue controller", function () {
 
         expect($.fn.scrollTo).toHaveBeenCalled();
     });
+
+    describe("toggleStar() -", function () {
+        beforeEach(function () {
+            subsonic.toggleStar.and.returnValue(deferred.promise);
+        });
+
+        it("Given a song that was not starred, when I toggle its star, then subsonic service will be called, the song will be starred and a notification will be displayed", function () {
+            song = { id: 4218, starred: false };
+
+            QueueContoller.toggleStar(song);
+            deferred.resolve(true);
+            $scope.$apply();
+
+            expect(subsonic.toggleStar).toHaveBeenCalledWith(song);
+            expect(song.starred).toBeTruthy();
+            expect(notifications.updateMessage).toHaveBeenCalledWith('Favorite Updated!', true);
+        });
+
+        it("Given a song that was starred, when I toggle its star, then subsonic service will be called, the song will be starred and a notification will be displayed", function () {
+            song = { id: 784, starred: true };
+
+            QueueContoller.toggleStar(song);
+            deferred.resolve(false);
+            $scope.$apply();
+
+            expect(subsonic.toggleStar).toHaveBeenCalledWith(song);
+            expect(song.starred).toBeFalsy();
+            expect(notifications.updateMessage).toHaveBeenCalledWith('Favorite Updated!', true);
+        });
+        });
 });
