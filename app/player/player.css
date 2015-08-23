@@ -4,7 +4,6 @@
     display: block;
 }
 .icon-wrap {
-    margin-left: 2px;
-    margin-right: 2px;
+    margin: 4px 2px;
     float: left;
 }
