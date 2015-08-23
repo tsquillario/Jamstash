@@ -62,8 +62,5 @@
     "node_modules"
   ],
   "private": true,
-  "appPath": "app",
-  "resolutions": {
-    "angular": "~1.4.1"
-  }
+  "appPath": "app"
 }
