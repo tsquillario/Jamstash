@@ -21,6 +21,21 @@ angular.module('jamstash.queue.controller', ['jamstash.player.service', 'jamstas
         //TODO: Hyz: Shouldn't it be in a directive ?
         $.fancybox.close();
     };
+	
+	$scope.selectAllQueue = function () {
+        var songs = player.queue;
+		var selected = songs[1].selected;
+		angular.forEach(songs, function (item, key) {
+			if(selected){
+				//$scope.selectedSongs = [];
+				//item.selected = false;
+			}
+			else{
+				$scope.selectedSongs.push(item);
+				item.selected = true;
+			}
+		});
+    };
 
     $scope.shuffleQueue = function () {
         player.shuffleQueue();
