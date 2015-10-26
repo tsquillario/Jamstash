@@ -2,13 +2,15 @@
 describe("Queue controller", function () {
     'use strict';
 
-    var QueueContoller, $scope, player, subsonic, SelectedSongs, notifications, $q, deferred, song;
+    var QueueContoller, _, $scope, player, subsonic, SelectedSongs, notifications, $q, deferred, song;
 
     beforeEach(function () {
         module('jamstash.queue.controller');
 
         SelectedSongs = jasmine.createSpyObj("SelectedSongs", [
-            "get"
+            "addSongs",
+            "get",
+            "reset"
         ]);
 
         player = jasmine.createSpyObj("player", [
@@ -30,12 +32,13 @@ describe("Queue controller", function () {
         inject(function ($controller, $rootScope, _$q_, lodash) {
             $q = _$q_;
             deferred = $q.defer();
+            _ = lodash;
 
             $scope = $rootScope.$new();
 
             QueueContoller = $controller('QueueController', {
                 $scope       : $scope,
-                _            : lodash,
+                _            : _,
                 player       : player,
                 SelectedSongs: SelectedSongs,
                 subsonic     : subsonic,
@@ -52,6 +55,60 @@ describe("Queue controller", function () {
 
         expect(player.emptyQueue).toHaveBeenCalled();
         expect($.fancybox.close).toHaveBeenCalled();
+    });
+
+    describe("selectAll() - Given that there were 2 songs in the queue", function() {
+        beforeEach(function() {
+            SelectedSongs.addSongs.and.callFake(function (songs) {
+                _.forEach(songs, function (song) {
+                    song.selected = true;
+                });
+            });
+
+            SelectedSongs.reset.and.callFake(function () {
+                _.forEach(player.queue, function (song) {
+                    song.selected = false;
+                });
+            });
+
+            player.queue = [
+                { id: 7322 },
+                { id: 5347 }
+            ];
+        });
+
+        it("and none was selected, when I select all songs, then the 2 songs will be selected", function() {
+            player.queue[0].selected = false;
+            player.queue[1].selected = false;
+
+            QueueContoller.selectAll();
+
+            expect(SelectedSongs.addSongs).toHaveBeenCalledWith(player.queue);
+            expect(player.queue[0].selected).toBeTruthy();
+            expect(player.queue[1].selected).toBeTruthy();
+        });
+
+        it("and one was selected, when I select all songs, then the 2 songs will be selected", function() {
+            player.queue[0].selected = false;
+            player.queue[1].selected = true;
+
+            QueueContoller.selectAll();
+
+            expect(SelectedSongs.addSongs).toHaveBeenCalledWith(player.queue);
+            expect(player.queue[0].selected).toBeTruthy();
+            expect(player.queue[1].selected).toBeTruthy();
+        });
+
+        it("and all were selected, when I select all songs, then the 2 songs will be unselected", function() {
+            player.queue[0].selected = true;
+            player.queue[1].selected = true;
+
+            QueueContoller.selectAll();
+
+            expect(SelectedSongs.reset).toHaveBeenCalled();
+            expect(player.queue[0].selected).toBeFalsy();
+            expect(player.queue[1].selected).toBeFalsy();
+        });
     });
 
     it("shuffleQueue() - When I shuffle the queue, then the player's shuffleQueue will be called and the queue will be scrolled back to the first element", function () {
@@ -124,5 +181,5 @@ describe("Queue controller", function () {
             expect(song.starred).toBeFalsy();
             expect(notifications.updateMessage).toHaveBeenCalledWith('Favorite Updated!', true);
         });
-        });
+    });
 });
