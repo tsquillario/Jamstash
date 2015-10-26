@@ -1,5 +1,11 @@
 [
     {
+        "date": "10/26/2015", "version": "4.6.3",
+        "changes": [
+        { "text": "- Added an icon to select all the songs in the queue. If all songs are selected, it resets the selection."}
+        ]
+    },
+    {
         "date": "7/14/2015", "version": "4.6.0",
         "changes": [
         { "text": "- The spinning loading gif is now displayed again for all requests to Subsonic."},
