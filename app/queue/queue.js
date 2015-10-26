@@ -36,12 +36,13 @@ function QueueController(
 
     var self = this;
     _.extend(self, {
-        player: player,
+        player                      : player,
         emptyQueue                  : emptyQueue,
         isPlayingSong               : isPlayingSong,
         playSong                    : player.play,
         removeSelectedSongsFromQueue: removeSelectedSongsFromQueue,
         removeSongFromQueue         : player.removeSong,
+        selectAll                   : selectAll,
         shuffleQueue                : shuffleQueue,
         toggleSelection             : SelectedSongs.toggle,
         toggleStar                  : toggleStar
@@ -51,6 +52,15 @@ function QueueController(
         player.emptyQueue();
         // TODO: Hyz: Shouldn't it be in a directive ?
         $.fancybox.close();
+    }
+
+    function selectAll() {
+        var allSelected = _.every(player.queue, 'selected');
+        if (allSelected) {
+            SelectedSongs.reset();
+        } else {
+            SelectedSongs.addSongs(player.queue);
+        }
     }
 
     function isPlayingSong(song) {

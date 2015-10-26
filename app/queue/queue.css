@@ -1,0 +1,14 @@
+.queue .icon {
+    height: 12px;
+    width:  12px;
+}
+
+.queue .icon-wrap {
+    float:  left;
+    cursor:  pointer;
+    padding:  6px;
+}
+
+.queue .icon-select-all {
+    fill: #4C4C4C;
+}
