@@ -1040,12 +1040,13 @@ ul.songlist li:hover
 }
 .subactions
 {
+    float: left;
     height: 30px;
-    width: 345px;
-    /* width: 660px; */
-    margin: 6px 125px 0 5px;
-    padding: 0;
-    float: right;
+    width: 630px;
+    margin: 6px 0 0 0;
+}
+.subactions > a.button {
+    padding:  6px 5px;
 }
 #globalactions
 {
