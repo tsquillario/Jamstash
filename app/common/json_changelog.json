@@ -1,5 +1,11 @@
 [
     {
+        "date": "5/7/2017", "version": "4.6.4",
+        "changes": [
+        { "text": "- The add song to playlist ('+ Playlist') and New playlist ('+') buttons should be visible again"}
+        ]
+    },
+    {
         "date": "10/26/2015", "version": "4.6.3",
         "changes": [
         { "text": "- Added an icon to select all the songs in the queue. If all songs are selected, it resets the selection."}
