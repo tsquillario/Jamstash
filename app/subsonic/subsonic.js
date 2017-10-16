@@ -129,35 +129,23 @@ angular.module('jamstash.subsonic.controller', [
 
     $rootScope.showIndex = false;
     $scope.toggleIndex = function () {
-        if ($rootScope.showIndex) {
-            $rootScope.showIndex = false;
-        } else {
-            $rootScope.showIndex = true;
-            $scope.showPlaylist = false;
-            $scope.showPodcast = false;
-        }
+        $rootScope.showIndex = true;
+        $scope.showPlaylist = false;
+        $scope.showPodcast = false;
         $scope.saveDefaultSection('index');
     };
     $scope.showPlaylist = false;
     $scope.togglePlaylist = function () {
-        if ($scope.showPlaylist) {
-            $scope.showPlaylist = false;
-        } else {
-            $scope.showPlaylist = true;
-            $rootScope.showIndex = false;
-            $scope.showPodcast = false;
-        }
+        $rootScope.showIndex = false;
+        $scope.showPlaylist = true;
+        $scope.showPodcast = false;
         $scope.saveDefaultSection('playlist');
     };
     $scope.showPodcast = false;
     $scope.togglePodcast = function () {
-        if ($scope.showPodcast) {
-            $scope.showPodcast = false;
-        } else {
-            $scope.showPodcast = true;
-            $scope.showPlaylist = false;
-            $rootScope.showIndex = false;
-        }
+        $rootScope.showIndex = false;
+        $scope.showPlaylist = false;
+        $scope.showPodcast = true;
         $scope.saveDefaultSection('podcast');
     };
     $scope.saveDefaultSection = function (val) {
