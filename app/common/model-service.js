@@ -94,7 +94,7 @@ angular.module('jamstash.model', ['jamstash.utils'])
         var url, title, artist, track, rating, starred, contenttype, suffix, description;
         var specs = '', coverartthumb = '', coverartfull = '';
         if (typeof song.coverArt != 'undefined') {
-            coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=30&id=' + song.coverArt;
+            coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=45&id=' + song.coverArt;
             coverartfull = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&id=' + song.coverArt;
         } else {
             coverartthumb = 'images/albumdefault_60.jpg';
