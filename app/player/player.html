@@ -18,11 +18,12 @@
             <div id="songdetails">
                 <div id="coverart">
                     <a ng-click="fancyboxOpenImage(getPlayingSong().coverartfull)">
-                        <img ng-src="{{getPlayingSong().coverartthumb}}" src="images/albumdefault_60.jpg" height="30" width="30" />
+                        <img ng-src="{{getPlayingSong().coverartthumb}}" src="images/albumdefault_60.jpg" height="45" width="45" />
                     </a>
                 </div>
                 <ul>
                     <li class="song" id="{{getPlayingSong().id}}" ng-bind-html="getPlayingSong().name" title="{{getPlayingSong().specs}}"></li>
+                    <li class="artist" ng-bind-html="getPlayingSong().artist"></li>
                     <li class="album" ng-bind-html="getPlayingSong().album"></li>
                 </ul>
                 <div id="songdetails_controls">
