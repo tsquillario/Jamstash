@@ -33,7 +33,6 @@ module.exports = function (config) {
       'bower_components/jquery.scrollTo/jquery.scrollTo.js',
       'bower_components/jquery-dateFormat/dist/jquery-dateFormat.js',
       'bower_components/angular-locker/dist/angular-locker.min.js',
-      'bower_components/angular-ui-utils/keypress.js',
       'bower_components/ng-lodash/build/ng-lodash.js',
       'bower_components/angular-ui-sortable/sortable.js',
       'bower_components/angular-mocks/angular-mocks.js',

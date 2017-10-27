@@ -39,7 +39,6 @@
     "jquery.scrollTo": "~1.4.5",
     "jquery-dateFormat": "~1.0.2",
     "angular-locker": "~2.0.1",
-    "angular-ui-utils": "bower-keypress",
     "open-iconic": "~1.1.1",
     "ng-lodash": "~0.2.3",
     "angular-ui-sortable": "~0.13.4"

@@ -85,7 +85,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                         var p = event.jPlayer.status.currentPercentAbsolute;
                         var isPlaying = !event.jPlayer.status.paused;
                         if (!scope.scrobbled && p > 30 && isPlaying) {
-                            if (globals.settings.Debug) { console.log('LAST.FM SCROBBLE - Percent Played: ' + p); }
+                            if (globals.settings.Debug) { console.log('Scrobbling - Percent Played: ' + p); }
                             subsonic.scrobble(scope.currentSong);
                             scope.scrobbled = true;
                         }
