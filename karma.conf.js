@@ -20,13 +20,13 @@ module.exports = function (config) {
     files: [
       // bower:
       'bower_components/jquery/dist/jquery.js',
+      'bower_components/jquery-ui/jquery-ui.js',
+      'bower_components/jplayer/dist/jplayer/jquery.jplayer.js',
       'bower_components/angular/angular.js',
       'bower_components/angular-route/angular-route.js',
       'bower_components/angular-sanitize/angular-sanitize.js',
       'bower_components/angular-cookies/angular-cookies.js',
       'bower_components/angular-resource/angular-resource.js',
-      'bower_components/jquery-ui/jquery-ui.js',
-      'bower_components/jplayer/dist/jplayer/jquery.jplayer.js',
       'bower_components/jquery-mousewheel/jquery.mousewheel.js',
       'bower_components/fancybox/source/jquery.fancybox.js',
       'bower_components/notify.js/notify.js',
