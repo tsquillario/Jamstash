@@ -46,14 +46,14 @@
                         href=""
                         title="Remove Song"
                         ng-click="vm.removeSongFromQueue(song)"
-                        stop-event="click"
+                        stop-event="click,dblclick"
                     ></a>
                     <a
                         href=""
                         title="Star"
                         ng-class="{'favorite': song.starred, 'rate': ! song.starred}"
                         ng-click="vm.toggleStar(song)"
-                        stop-event="click"
+                        stop-event="click,dblclick"
                     ></a>
                     <div class="clear"></div>
                 </div>

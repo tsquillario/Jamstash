@@ -1,10 +1,10 @@
 <li class="row song" ng-repeat="o in song" ng-click="toggleSelection(o)" ng-dblclick="playFrom($index)" ng-class="{'selected': o.selected, 'playing': o.playing}">
     <div class="itemactions">
-        <a class="add" href="" title="Add To Queue" ng-click="addSongToQueue(o)" stop-event="click"></a>
-        <!--<a class="remove" href="" title="Remove Song" ng-click="removeSongFromQueue(o)" stop-event="click"></a>-->
-        <a class="play" href="" title="Play this song" ng-click="playSong(o)" stop-event="click"></a>
-        <!--<a class="download" href="" title="Download Song" ng-click="download(o.id)"></a>-->
-        <a href="" title="Star" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="toggleStar(o)" stop-event="click"></a>
+        <a class="add" href="" title="Add To Queue" ng-click="addSongToQueue(o)" stop-event="click,dblclick"></a>
+        <!--<a class="remove" href="" title="Remove Song" ng-click="removeSongFromQueue(o)" stop-event="click,dblclick"></a>-->
+        <a class="play" href="" title="Play this song" ng-click="playSong(o)" stop-event="click,dblclick"></a>
+        <!--<a class="download" href="" title="Download Song" ng-click="download(o.id)" stop-event="click,dblclick"></a>-->
+        <a href="" title="Star" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="toggleStar(o)" stop-event="click,dblclick"></a>
         <div class="clear"></div>
     </div>
     <div class="track floatleft" ng-bind-html="o.track"></div>
