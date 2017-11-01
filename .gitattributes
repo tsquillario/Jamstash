@@ -1,0 +1,6 @@
+# Don't show diffs for lock files
+package-lock.json binary
+yarn.lock binary
+
+# Everything in the dist folder is considered a binary
+dist/** binary
