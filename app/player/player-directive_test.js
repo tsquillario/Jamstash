@@ -76,11 +76,12 @@ describe("jplayer directive", function () {
 
         it("if the global setting Jukebox is true, it mutes jPlayer and adds the song to subsonic's Jukebox", function () {
             mockGlobals.settings.Jukebox = true;
-            scope.addToJukebox = jasmine.createSpy("addToJukebox");
+            spyOn(subsonic, "addToJukebox")
 
             scope.$apply();
             expect($player.jPlayer).toHaveBeenCalledWith('mute', true);
-            expect(scope.addToJukebox).toHaveBeenCalledWith(playingSong.id);
+            expect(subsonic.addToJukebox).toHaveBeenCalledWith(
+                jasmine.objectContaining({ id: playingSong.id}))
         });
 
         it("if the player service's loadSong flag is true, it does not play the song, it displays the player controls and sets the player to the song's supplied position", function () {
@@ -142,6 +143,7 @@ describe("jplayer directive", function () {
     describe("", function () {
         beforeEach(function () {
             $.fn.jPlayer.and.stub();
+            spyOn(subsonic, "sendToJukebox")
         });
 
         it("When the player service's restartSong flag is true, it restarts the current song, resets the restart flag to false and resets the scrobbled flag to false", function () {
@@ -168,6 +170,25 @@ describe("jplayer directive", function () {
             playerService.pauseSong = false;
             scope.$apply();
             expect($player.jPlayer).toHaveBeenCalledWith('play');
+        });
+
+        it("When the player service's pauseSong is true and jukebox is enabled, 'stop' is sent to the jukebox", function () {
+            mockGlobals.settings.Jukebox = true;
+            playerService.pauseSong = true;
+            scope.$apply();
+
+            expect(subsonic.sendToJukebox).toHaveBeenCalledWith('stop');
+        });
+
+        it("Given that the current song is paused and jukebox is enabled, 'start' is sent to the jukebox when it's unpaused", function () {
+            mockGlobals.settings.Jukebox = true;
+
+            playerService.pauseSong = true;
+            scope.$apply();
+            playerService.pauseSong = false;
+            scope.$apply();
+
+            expect(subsonic.sendToJukebox).toHaveBeenCalledWith('start');
         });
 
         it("When the player service's volume changes, it sets jPlayer's volume", function () {
