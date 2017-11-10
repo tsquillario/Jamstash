@@ -25,6 +25,9 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
+  // Serve static files
+  var serveStatic = require('serve-static');
+
   // Paths to ssh config & private key
   var sshConfigFile = '.ssh/testServer.json';
   var sshKeyFile = '.ssh/test-server-key/';
@@ -87,9 +90,9 @@ module.exports = function (grunt) {
             return [
               connect().use(
                 '/bower_components',
-                connect.static('./bower_components')
+                serveStatic('./bower_components')
               ),
-              connect.static(appConfig.app)
+              serveStatic(appConfig.app)
             ];
           }
         }
