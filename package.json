@@ -54,6 +54,7 @@
     "karma-jasmine": "^1.0.2",
     "karma-ng-html2js-preprocessor": "^1.0.0",
     "karma-notify-reporter": "^1.0.1",
+    "serve-static": "^1.13.1",
     "time-grunt": "^1.2.1"
   },
   "engines": {
