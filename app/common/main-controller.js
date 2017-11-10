@@ -258,35 +258,6 @@ angular.module('JamStash')
         });
     };
 
-	$rootScope.addToJukebox = function (id) {
-		if (globals.settings.Debug) { console.log("LOAD JUKEBOX"); }
-		$.ajax({
-			url: globals.BaseURL() + '/jukeboxControl.view?' + globals.BaseParams() + '&action=set&id=' + id,
-			method: 'GET',
-			dataType: globals.settings.Protocol,
-			timeout: globals.settings.Timeout,
-			success: function (data) {
-				/*
-				if (data["subsonic-response"].podcasts.channel !== undefined) {
-				}
-				deferred.resolve(podcasts);
-				*/
-				$.get(globals.BaseURL() + '/jukeboxControl.view?' + globals.BaseParams() + '&action=start');
-			}
-		});
-	};
-	$rootScope.sendToJukebox = function (action) {
-		if (globals.settings.Debug) { console.log("SEND JUKEBOX " + action); }
-		$.ajax({
-			url: globals.BaseURL() + '/jukeboxControl.view?' + globals.BaseParams() + '&action=' + action,
-			method: 'GET',
-			dataType: globals.settings.Protocol,
-			timeout: globals.settings.Timeout,
-			success: function (data) {
-			}
-		});
-	};
-
     $scope.toggleStar = function (item) {
         subsonic.toggleStar(item).then(function (newStarred) {
             item.starred = newStarred;

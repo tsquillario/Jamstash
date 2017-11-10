@@ -123,7 +123,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     $player.jPlayer('setMedia', media);
                     if (globals.settings.Jukebox) {
                         $player.jPlayer('mute', true);
-                        scope.addToJukebox(newSong.id);
+                        subsonic.addToJukebox(newSong);
                     }
                     if (playerService.loadSong === true || globals.settings.Jukebox) {
                         // Do not play, only load
@@ -152,10 +152,9 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
             scope.$watch(function () {
                 return playerService.pauseSong;
             }, function (newVal) {
-                if(newVal === true) {
-                    $player.jPlayer('pause');
-                } else {
-                    $player.jPlayer('play');
+                $player.jPlayer(newVal ? 'pause' : 'play');
+                if(globals.settings.Jukebox){
+                    subsonic.sendToJukebox(newVal ? 'stop' : 'start');
                 }
             });
 
