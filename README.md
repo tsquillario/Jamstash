@@ -35,7 +35,7 @@ You will need a Subsonic server to be able to play your own music. Subsonic is a
 
 * Getting Started https://github.com/tsquillario/Jamstash/wiki/Getting-Started
 * Twitter (Release Announcements): https://twitter.com/JamstashApp
-* Live Beta: http://jamstash.com/beta
+* Live Beta: http://beta.jamstash.com/
 * Github Repo: https://github.com/tsquillario/Jamstash
 * Chrome App: https://chrome.google.com/webstore/detail/minisub/jccdpflnecheidefpofmlblgebobbloc
 * Forum: http://forum.subsonic.org/forum/viewforum.php?f=12
