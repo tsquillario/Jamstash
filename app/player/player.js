@@ -15,22 +15,8 @@ angular.module('jamstash.player.controller', ['jamstash.player.service', 'jamsta
     $scope.settings = globals.settings;
     $scope.playerSettings = player.settings;
 
-    $scope.play = function () {
-        if (globals.settings.Jukebox) {
-            $scope.sendToJukebox('start');
-        } else {
-            player.togglePause();
-        }
-    };
-
-    $scope.pause = function () {
-        if (globals.settings.Jukebox) {
-            $scope.sendToJukebox('stop');
-        } else {
-            player.togglePause();
-        }
-    };
-
+    $scope.play = player.togglePause;
+    $scope.pause = player.togglePause;
     $scope.previousTrack = player.previousTrack;
     $scope.nextTrack = player.nextTrack;
 }]);

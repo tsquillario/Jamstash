@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('JamStash').directive('sortable', function () {
+angular.module('JamStash')
+.directive('sortable', function () {
     return {
         link: function (scope, elm, attrs) {
             elm.sortable({
@@ -46,30 +47,6 @@ angular.module('JamStash').directive('sortable', function () {
         }
     };
 }])
-.directive('stopEvent', function () {
-    return {
-        restrict: 'A',
-        link: function (scope, element, attr) {
-            element.bind(attr.stopEvent, function (e) {
-                e.stopPropagation();
-            });
-        }
-    };
-})
-.directive('ngEnter', function () {
-    return {
-        scope: { onEnter: '&' },
-        link: function (scope, element) {
-            console.log(scope);
-            element.bind("keydown keypress", function (event) {
-                if (event.which === 13) {
-                    scope.onEnter();
-                    scope.$apply();
-                }
-            });
-        }
-    };
-})
 .directive('ngDownload', ['$compile', function ($compile) {
     return {
         restrict: 'E',
@@ -92,16 +69,20 @@ angular.module('JamStash').directive('sortable', function () {
         }
     };
 }])
-.directive('stopEvent', function () {
+.directive('stopEvent', ['lodash', function (_) {
     return {
         restrict: 'A',
         link: function (scope, element, attr) {
-            element.bind(attr.stopEvent, function (e) {
-                e.stopPropagation();
-            });
+            if (attr && attr.stopEvent) {
+                _.forEach(attr.stopEvent.split(','), function (eventName) {
+                    element.bind(eventName, function (e) {
+                        e.stopPropagation();
+                    });
+                });
+            }
         }
     };
-})
+}])
 .directive('ngEnter', function () {
     return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {
@@ -113,23 +94,5 @@ angular.module('JamStash').directive('sortable', function () {
                 event.preventDefault();
             }
         });
-    };
-})
-.directive("ngMsgs", function() {
-    /* Not Using */
-    return {
-        restrict: 'E',
-        transclude : false,
-        scope: {
-             msgs: "="
-          },
-        template: '<span id="msg_{{$index}}" class="message">{{ item }}</span>',
-        link: function (scope, elm, attrs) {
-            scope.$watch(scope.Messages, function () {
-                var content = $compile((template)(scope));
-                elm.append(content);
-                $(elm).parent().fadeIn();
-            });
-        }
     };
 });

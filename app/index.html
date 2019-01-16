@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="subsonic/breadcrumbs-directive/breadcrumbs-directive.css" />
     <!-- endbuild -->
 </head>
-<body ui-keypress="{'32 179': 'togglePause($event)', '43 61 187': 'turnVolumeUp($event)', '45 95 189': 'turnVolumeDown($event)'}" ui-keydown="{'right 176': 'nextTrack($event)', 'left 177': 'previousTrack($event)'}">
+<body>
     <div id="container">
         <div id="header">
             <div id="messages">
@@ -84,20 +84,19 @@
     <!-- build:js({.,app}) scripts/vendor.min.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
+    <script src="bower_components/jplayer/dist/jplayer/jquery.jplayer.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
-    <script src="bower_components/jquery-ui/jquery-ui.js"></script>
-    <script src="bower_components/jplayer/dist/jplayer/jquery.jplayer.js"></script>
     <script src="bower_components/jquery-mousewheel/jquery.mousewheel.js"></script>
     <script src="bower_components/fancybox/source/jquery.fancybox.js"></script>
     <script src="bower_components/notify.js/notify.js"></script>
     <script src="bower_components/jquery.scrollTo/jquery.scrollTo.js"></script>
     <script src="bower_components/jquery-dateFormat/dist/jquery-dateFormat.js"></script>
     <script src="bower_components/angular-locker/dist/angular-locker.min.js"></script>
-    <script src="bower_components/angular-ui-utils/keypress.js"></script>
     <script src="bower_components/ng-lodash/build/ng-lodash.js"></script>
     <script src="bower_components/angular-ui-sortable/sortable.js"></script>
     <!-- endbower -->

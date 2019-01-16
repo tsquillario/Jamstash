@@ -6,7 +6,6 @@ angular.module('JamStash', [
     'ngRoute',
     'ngSanitize',
     'ngLodash',
-    'ui.keypress',
     'jamstash.subsonic.controller',
     'jamstash.archive.controller',
     'jamstash.player.controller',

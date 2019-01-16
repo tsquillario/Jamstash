@@ -154,9 +154,9 @@ angular.module('JamStash')
         });
     };
 
-	$(document).on("click", ".message", function(){
-	   $(this).remove();
-	});
+    $(document).on("click", ".message", function(){
+       $(this).remove();
+    });
 
     // Global Functions
     window.onbeforeunload = function () {
@@ -171,39 +171,51 @@ angular.module('JamStash')
         $(this).fadeOut(function () { $(this).remove(); });
         return false;
     })
-    $document.keydown(function (e) {
-        $scope.scrollToIndex(e);
+
+    // Shortcut processing
+    $(document).keydown(function (e) {
+        $scope.processKeyEvent(e);
     });
     $scope.scrollToIndex = function (e) {
-        var source = e.target.id;
-        if (e.target.tagName.toUpperCase() != 'INPUT') {
-            var unicode = e.charCode ? e.charCode : e.keyCode;
-            if (globals.settings.Debug) { console.log('Keycode Triggered: ' + unicode); }
-            if (unicode == 49) { // 1
-                $('#action_Queue').click();
-            } else if (unicode == 50) {
-                $('#action_Library').click();
-            } else if (unicode == 51) {
-                $('#action_Archive').click();
-            } else if (unicode == 52) {
-                $('#action_Settings').click();
-            } else if (unicode == 53) {
-            } else if (unicode == 54) { // 6
+        $scope.processKeyEvent(e);
+        return true;
+    };
+    $scope.processKeyEvent = function (e) {
+        if (e.isDefaultPrevented() ||
+            e.repeat ||
+            e.altKey || e.metaKey || e.ctrlKey ||
+            (e.target && _.contains(['input', 'textarea', 'select'], e.target.tagName.toLowerCase()))) {
+          return;
+        }
+
+        var key = e.key;
+        if (globals.settings.Debug) { console.log('Key pressed: ' + key); }
+        if (key == "Esc" || key == "Escape") {
+            $rootScope.hideQueue();
+        } else if (key == " " || key == "Space") {
+            player.togglePause();
+        } else if (key == "ArrowLeft" || key == "Left") {
+            player.previousTrack();
+        } else if (key == "ArrowRight" || key == "Right") {
+            player.nextTrack();
+        } else if (key == "-" || key == "_") {
+            persistence.saveVolume(player.turnVolumeDown());
+        } else if (key == "=" || key == "+") {
+            persistence.saveVolume(player.turnVolumeUp());
+        } else if (/^[a-z]$/i.test(key) && $('#tabLibrary').is(':visible')) {
+            if (/^[x-z]$/i.test(key)) {
+                key = 'x-z';
             }
-            if (unicode >= 65 && unicode <= 90 && $('#tabLibrary').is(':visible')) { // a-z
-                var key = utils.findKeyForCode(unicode);
-                if (key == 'x' || key == 'y' || key == 'z') {
-                    key = 'x-z';
-                }
-                var el = '#' + key.toUpperCase();
-                if ($(el).length > 0) {
-                    $('#left-component').stop().scrollTo(el, 400);
-                }
-            } else if (unicode == 36 && $('#tabLibrary').is(':visible')) { // home
-                $('#left-component').stop().scrollTo('#MusicFolders', 400);
+            var el = '#' + key.toUpperCase();
+            if ($(el).length > 0) {
+                $('#left-component').stop().scrollTo(el, 400);
             }
         }
-        return true;
+        else{
+          return;
+        }
+        $scope.$apply();
+        e.preventDefault();
     };
     $scope.scrollToIndexName = function (index) {
         var el = '#' + index;
@@ -245,82 +257,6 @@ angular.module('JamStash')
             }
         });
     };
-
-    /**
-     * Returns true if the target of this event is an input
-     * @param  {jQuery event}  event
-     * @return {Boolean}
-     */
-    function isTargetInput (event) {
-        return (event && event.target.tagName === "INPUT");
-    }
-
-    /* We define player-related methods here instead of in player controller
-        in order to bind keypresses to <body> and have global shortcuts.
-        We also check the event so we don't do anything if it's on an input */
-    $scope.togglePause = function (event) {
-        if(!isTargetInput(event)) {
-            if(globals.settings.Jukebox) {
-                $scope.sendToJukebox('stop');
-            } else {
-                player.togglePause();
-            }
-        }
-    };
-
-    $scope.turnVolumeUp = function (event) {
-        if(!isTargetInput(event)) {
-            var volume = player.turnVolumeUp();
-            persistence.saveVolume(volume);
-        }
-    };
-
-    $scope.turnVolumeDown = function (event) {
-        if(!isTargetInput(event)) {
-            var volume = player.turnVolumeDown();
-            persistence.saveVolume(volume);
-        }
-    };
-
-    $scope.nextTrack = function (event) {
-        if(!isTargetInput(event)) {
-            player.nextTrack();
-        }
-    };
-    $scope.previousTrack = function (event) {
-        if(!isTargetInput(event)) {
-            player.previousTrack();
-        }
-    };
-
-	$rootScope.addToJukebox = function (id) {
-		if (globals.settings.Debug) { console.log("LOAD JUKEBOX"); }
-		$.ajax({
-			url: globals.BaseURL() + '/jukeboxControl.view?' + globals.BaseParams() + '&action=set&id=' + id,
-			method: 'GET',
-			dataType: globals.settings.Protocol,
-			timeout: globals.settings.Timeout,
-			success: function (data) {
-				/*
-				if (data["subsonic-response"].podcasts.channel !== undefined) {
-				}
-				deferred.resolve(podcasts);
-				*/
-				$.get(globals.BaseURL() + '/jukeboxControl.view?' + globals.BaseParams() + '&action=start');
-			}
-		});
-	};
-	$rootScope.sendToJukebox = function (action) {
-		if (globals.settings.Debug) { console.log("SEND JUKEBOX " + action); }
-		$.ajax({
-			url: globals.BaseURL() + '/jukeboxControl.view?' + globals.BaseParams() + '&action=' + action,
-			method: 'GET',
-			dataType: globals.settings.Protocol,
-			timeout: globals.settings.Timeout,
-			success: function (data) {
-			}
-		});
-	};
 
     $scope.toggleStar = function (item) {
         subsonic.toggleStar(item).then(function (newStarred) {

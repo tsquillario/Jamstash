@@ -85,7 +85,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                         var p = event.jPlayer.status.currentPercentAbsolute;
                         var isPlaying = !event.jPlayer.status.paused;
                         if (!scope.scrobbled && p > 30 && isPlaying) {
-                            if (globals.settings.Debug) { console.log('LAST.FM SCROBBLE - Percent Played: ' + p); }
+                            if (globals.settings.Debug) { console.log('Scrobbling - Percent Played: ' + p); }
                             subsonic.scrobble(scope.currentSong);
                             scope.scrobbled = true;
                         }
@@ -123,7 +123,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     $player.jPlayer('setMedia', media);
                     if (globals.settings.Jukebox) {
                         $player.jPlayer('mute', true);
-                        scope.addToJukebox(newSong.id);
+                        subsonic.addToJukebox(newSong);
                     }
                     if (playerService.loadSong === true || globals.settings.Jukebox) {
                         // Do not play, only load
@@ -152,10 +152,9 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
             scope.$watch(function () {
                 return playerService.pauseSong;
             }, function (newVal) {
-                if(newVal === true) {
-                    $player.jPlayer('pause');
-                } else {
-                    $player.jPlayer('play');
+                $player.jPlayer(newVal ? 'pause' : 'play');
+                if(globals.settings.Jukebox){
+                    subsonic.sendToJukebox(newVal ? 'stop' : 'start');
                 }
             });
 

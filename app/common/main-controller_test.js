@@ -3,7 +3,7 @@ describe("Main controller", function () {
     'use strict';
 
     var controllerParams, $controller, $q, scope, mockGlobals, player, utils, persistence, subsonic, notifications,
-        deferred;
+        deferred, mockKeypress;
     beforeEach(function () {
         mockGlobals = {
             settings: {
@@ -17,6 +17,16 @@ describe("Main controller", function () {
         module('JamStash', function ($provide) {
             $provide.value('globals', mockGlobals);
         });
+
+        // Mock a keypress to the application
+        mockKeypress = function(scope, key, target){
+            scope.processKeyEvent({
+                key: key,
+                target: target,
+                isDefaultPrevented: function(){},
+                preventDefault: function(){}
+            });
+        }
 
         // Mock the player service
         player = jasmine.createSpyObj("player", [
@@ -78,10 +88,6 @@ describe("Main controller", function () {
         });
     });
 
-    xdescribe("toggleSetting -", function () {
-
-    });
-
     describe("", function () {
         beforeEach(function () {
             $controller('AppController', controllerParams);
@@ -99,24 +105,16 @@ describe("Main controller", function () {
             expect(scope.showQueue).toHaveBeenCalled();
         });
 
-        describe("When I toggle pause,", function () {
-            it("given that we're using the Jukebox mode, it sends a 'stop' command to the jukebox", function () {
-                mockGlobals.settings.Jukebox = true;
-                spyOn(scope, "sendToJukebox");
-
-                scope.togglePause();
-                expect(scope.sendToJukebox).toHaveBeenCalledWith('stop');
-            });
-
-            it("it toggles pause using the player service", function () {
-                scope.togglePause();
+        describe("When I toggle pause using the keyboard shortcut,", function () {
+            it("it toggles pause on the player service", function () {
+                mockKeypress(scope, ' ');
                 expect(player.togglePause).toHaveBeenCalled();
             });
         });
 
         it("When I turn the volume up, it sets the player's volume up and saves it using the persistence service", function () {
             player.turnVolumeUp.and.returnValue(0.6);
-            scope.turnVolumeUp();
+            mockKeypress(scope, '+');
 
             expect(player.turnVolumeUp).toHaveBeenCalled();
             expect(persistence.saveVolume).toHaveBeenCalledWith(0.6);
@@ -124,52 +122,49 @@ describe("Main controller", function () {
 
         it("When I turn the volume down, it sets the player's volume down and saves it using the persistence service", function () {
             player.turnVolumeDown.and.returnValue(0.4);
-            scope.turnVolumeDown();
+            mockKeypress(scope, '-');
 
             expect(player.turnVolumeDown).toHaveBeenCalled();
             expect(persistence.saveVolume).toHaveBeenCalledWith(0.4);
         });
 
         it("When I go to the next track, it calls next track on the player", function () {
-            scope.nextTrack();
+            mockKeypress(scope, 'ArrowRight');
             expect(player.nextTrack).toHaveBeenCalled();
         });
 
         it("When I go to the previous track, it calls previous track on the player", function () {
-            scope.previousTrack();
+            mockKeypress(scope, 'ArrowLeft');
             expect(player.previousTrack).toHaveBeenCalled();
         });
 
         describe("Given that I am targeting an input,", function () {
-            var event;
-            beforeEach(function () {
-                event = { target: { tagName: "INPUT" } };
-            });
+            var target = { 'tagName': "iNPUt" } ;
 
             it("when I use a shortcut to toggle pause, it doesn't do anything", function () {
-                scope.togglePause(event);
+                mockKeypress(scope, ' ', target);
                 expect(player.togglePause).not.toHaveBeenCalled();
             });
 
             it("when I use a shortcut to turn the volume up, it doesn't do anything", function () {
-                scope.turnVolumeUp(event);
+                mockKeypress(scope, '+', target);
                 expect(player.turnVolumeUp).not.toHaveBeenCalled();
                 expect(persistence.saveVolume).not.toHaveBeenCalled();
             });
 
             it("when I use a shortcut to turn the volume down, it doesn't do anything", function () {
-                scope.turnVolumeDown(event);
+                mockKeypress(scope, '-', target);
                 expect(player.turnVolumeDown).not.toHaveBeenCalled();
                 expect(persistence.saveVolume).not.toHaveBeenCalled();
             });
 
             it("when I use a shortcut to go to the next track, it doesn't do anything", function () {
-                scope.nextTrack(event);
+                mockKeypress(scope, 'RightArrow', target);
                 expect(player.nextTrack).not.toHaveBeenCalled();
             });
 
             it("when I use a shortcut to go to the previous track, it doesn't do anything", function () {
-                scope.previousTrack(event);
+                mockKeypress(scope, 'LeftArrow', target);
                 expect(player.previousTrack).not.toHaveBeenCalled();
             });
         });
