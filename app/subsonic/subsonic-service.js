@@ -109,7 +109,7 @@ function subsonicService(
             httpPromise = $http.get(url, actualConfig);
         }
         httpPromise.success(function (data) {
-            var subsonicResponse = (data['subsonic-response'] !== undefined) ? data['subsonic-response'] : { status: 'failed' };
+            var subsonicResponse = (data && data !== undefined && data['subsonic-response'] !== undefined) ? data['subsonic-response'] : { status: 'failed' };
             if (subsonicResponse.status === 'ok') {
                 deferred.resolve(subsonicResponse);
             } else {
