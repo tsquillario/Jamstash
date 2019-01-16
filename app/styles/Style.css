@@ -1218,7 +1218,7 @@ ul.songlist li:hover
 .audiojs
 {
     width: auto;
-    height: 45px;
+    height: 60px;
     margin: 0 10px 0 0;
     background: none;
     font-family: inherit;
@@ -1233,7 +1233,7 @@ ul.songlist li:hover
 .audiojs .scrubber
 {
     height: 4px;
-    margin: 20px 5px 0px 5px;
+    margin: 25px 5px 0px 5px;
     float: none;
     width: auto;
     position: relative;
@@ -1285,8 +1285,9 @@ ul.songlist li:hover
 }
 .playeractions
 {
-    margin: 12px 9px 7px 20px;
-	width: 85px;
+    height: 25px;
+    margin: 18px 0px 18px 9px;
+    width: 85px;
 }
 #playermiddle
 {
@@ -1296,8 +1297,8 @@ ul.songlist li:hover
 #preview { display: none; }
 #coverart
 {
-    width: 30px;
-    height: 30px;
+    width: 45px;
+    height: 45px;
     overflow: hidden;
     margin: 1px 8px 0 1px;
     float: left;
@@ -1305,7 +1306,7 @@ ul.songlist li:hover
 }
 #songdetails
 {
-    width: 322px;
+    width: 342px;
     margin: 6px;
     float: left;
     cursor: pointer;
@@ -1337,7 +1338,7 @@ ul.songlist li:hover
 	list-style-type: none;
 	margin: 4px 0 2px 0;
 	padding: 0;
-	width: 205px;
+	width: 225px;
 	overflow: hidden;
 	white-space: nowrap;
 	float: left;
@@ -1353,6 +1354,11 @@ ul.songlist li:hover
     font-weight: bold;
     line-height: 14px;
     margin: 0 0 2px 0;
+}
+#songdetails li.artist
+{
+    font-size: 11px;
+    line-height: 14px;
 }
 #songdetails li.album
 {
