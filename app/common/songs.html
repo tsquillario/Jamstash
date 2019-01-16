@@ -11,7 +11,7 @@
     <div class="title floatleft" title="{{o.description}}" ng-bind-html="o.name"></div>
     <span class="artist floatleft" ng-bind-html="o.artist"></span>
     <div ng-show="o.album && itemType !== 'archive'">
-        <img ng-src="{{o.coverartfull}}">
+        <img ng-src="{{o.coverartthumb}}">
         <a ng-href="#/library/0/{{o.albumId}}" class="albumblock floatleft" stop-event="click" ng-bind-html="o.album" title="{{o.album}}"></a>
     </div>
     <a ng-show="o.album && itemType === 'archive'" ng-href="#/archive/{{o.artist}}/{{o.parentid}}" class="albumblock floatleft" stop-event="click" ng-bind-html="o.album" title="{{o.album}}"></a>
