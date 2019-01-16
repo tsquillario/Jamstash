@@ -111,6 +111,9 @@ angular.module('jamstash.model', ['jamstash.utils'])
         if (suffix == 'ogg') { suffix = 'oga'; }
         var salt = Math.floor(Math.random() * 100000);
         url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.id + '&salt=' + salt;
+        if (globals.settings.EstimateLength){
+            url += "&estimateContentLength=true";
+        }
         return new model.Song(song.id, song.parent, track, title, artist, song.artistId, song.album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
     };
 
@@ -147,6 +150,9 @@ angular.module('jamstash.model', ['jamstash.utils'])
         if (suffix == 'ogg') { suffix = 'oga'; }
         var salt = Math.floor(Math.random() * 100000);
         url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.streamId + '&salt=' + salt;
+        if (globals.settings.EstimateLength){
+            url += "&estimateContentLength=true";
+        }
         return new model.Song(song.streamId, song.parent, track, title, artist, song.artistId, album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
     };
 
