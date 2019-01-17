@@ -3,8 +3,6 @@
 Jamstash - HTML5 Music Streamer
 -------------------------------
 
-*** I will be letting the domain Jamstash.com expire as of April 2019. We are looking for maintainers of this repo as well. ***
-
 Imagine you can stream all your music from home, to any device, where ever you are. That is Subsonic! Now imagine having a Web App to stream your music that is as beautiful and well designed as it is functional, that is Jamstash!
 
 What?
