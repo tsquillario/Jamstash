@@ -1,0 +1,383 @@
+[
+    {
+        "date": "11/01/2017", "version": "4.6.5",
+        "changes": [
+        { "text": "- Thanks to <a href=\"https://github.com/pR0Ps\">pR0Ps</a> for contributing!" },
+        { "text": "- Tabs no longer disappear when toggling them" },
+        { "text": "- Fixed a bug causing incorrect album image requests" }
+        ]
+    },
+    {
+        "date": "5/7/2017", "version": "4.6.4",
+        "changes": [
+        { "text": "- The add song to playlist ('+ Playlist') and New playlist ('+') buttons should be visible again"}
+        ]
+    },
+    {
+        "date": "10/26/2015", "version": "4.6.3",
+        "changes": [
+        { "text": "- Added an icon to select all the songs in the queue. If all songs are selected, it resets the selection."}
+        ]
+    },
+    {
+        "date": "7/14/2015", "version": "4.6.0",
+        "changes": [
+        { "text": "- The spinning loading gif is now displayed again for all requests to Subsonic."},
+        { "text": "- The genre list in the Playlist tab is now retrieved from the Subsonic server. As a result, your saved genre list has been reset."},
+        { "text": "- Genre auto-playlists can now be removed by clicking on the X icon."},
+        { "text": "- Breadcrumbs are no longer limited to 2 levels and will display correctly no matter the directory depth."}
+        ]
+    },
+    {
+        "date": "5/23/2015", "version": "4.5.0",
+        "changes": [
+        { "text": "- The Repeat icon in the player now has 3 states: 'Repeat nothing', 'Repeat the current queue', 'Repeat the current playing song'."},
+        { "text": "- Removed the Loop Queue setting which is now managed only by the icon."},
+        { "text": "- Shuffling the queue will now keep the current playing song at the top of the queue."},
+        { "text": "- Added a Play icon to the songs. Click it to empty the queue and play only this single song."},
+        { "text": "- Clicking the Play icon of a directory will play all its songs and all the songs of its sub-directories recursively."},
+        { "text": "- Fixed a bug that prevented Music Cabinet users from listing all their music folders and from searching songs."},
+        { "text": "- Fixed a bug that prevented users from switching from a recent Subsonic server (high API version) to an older Subsonic server (lower API version)."}
+        ]
+    },
+    {
+        "date": "4/12/2015", "version": "4.4.5",
+        "changes": [
+        { "text": "- Code refactoring, fixes Madsonic-related bugs when there was only one element in a collection (e.g. one album for an artist)."}
+        ]
+    },
+    {
+        "date": "1/17/2015", "version": "4.4.0",
+        "changes": [
+        { "text": "- Code refactoring from <a href=\"https://github.com/tsquillario/Jamstash/pull/196\" target=\"_blank\">https://github.com/tsquillario/Jamstash/pull/196</a>"}
+        ]
+    },
+    {
+        "date": "12/20/2014", "version": "4.3",
+        "changes": [
+        { "text": "- I'm feeling really good about this one!"},
+        { "text": "- jPlayer updated to 2.8.4"}
+        ]
+    },
+    {
+        "date": "12/7/2014", "version": "4.2.5",
+        "changes": [
+        { "text": "- Better mobile support (CSS Media Queries)"}
+        ]
+    },
+    {
+        "date": "12/6/2014", "version": "4.2.4",
+        "changes": [
+        { "text": "- Double click plays album, Single click to select song. Other bug fixes."}
+        ]
+    },
+    {
+        "date": "11/21/2014", "version": "4.2.3",
+        "changes": [
+        { "text": "- Responsive design upgrades for mobile & smaller screens!"},
+        { "text": "- Album Art will change with song if Preview is already open."},
+        { "text": "- Removed Sway.fm, try <a href=\"https://github.com/borismus/keysocket\" target=\"_blank\">key-socket-media-keys</a> Chrome Extension for Media Key support."}
+        ]
+    },
+    {
+        "date": "11/17/2014", "version": "4.2.1",
+        "changes": [
+        { "text": "- Drag & drop sorting for all playlists."},
+        { "text": "- Fixed deep nested albums not loading."}
+        ]
+    },
+    {
+        "date": "11/9/2014", "version": "4.1.0",
+        "changes": [
+        { "text": "- Changed the \"Starred\" Auto Playlist so it selects random starred songs."}
+        ]
+    },
+	{
+        "date": "10/18/2014", "version": "4.0.1",
+        "changes": [
+		{ "text": "- Moved Queue to the right side. You don't have to click to see it now!" },
+        { "text": "- Style refresh, thanks to <a href=\"https://twitter.com/erase_me\" target=\"_blank\">@erase_me</a> for the CSS magic :)" },
+		{ "text": "- Fixed \"Rescan Library\" button" },
+		{ "text": "- Jukebox support added [Beta]" }
+        ]
+    },
+    {
+        "date": "7/28/2014", "version": "3.4.2",
+        "changes": [
+        { "text": "- jPlayer updated to 2.6.3 & patched for <a href=\"https://github.com/happyworm/jPlayer/issues/223\" target=\"_blank\">https://github.com/happyworm/jPlayer/issues/223</a>" }
+        ]
+    },
+    {
+        "date": "5/4/2014", "version": "3.4.1",
+        "changes": [
+        { "text": "- Tab state saved, consolidated Subsonic artists, playlist and podcasts" },
+        { "text": "- Archive.org tab, Collection search, added breadcrumb" }
+        ]
+    },
+    {
+        "date": "4/11/2014", "version": "3.3.1",
+        "changes": [
+        { "text": "- Added player controls to queue, fixed song actions" }
+        ]
+    },
+    {
+        "date": "3/29/2014", "version": "3.3",
+        "changes": [
+        { "text": "- Queue opens in modal window, feels easier to use. Other bug fixes." },
+        { "text": "- Notifications support in Firefox via <a href=\"https://github.com/alexgibson/notify.js\" target=\"_blank\">Notify.js</a>. Thanks to jerbob92 <a href=\"https://github.com/tsquillario/Jamstash/pull/160\" target=\"_blank\">https://github.com/tsquillario/Jamstash/pull/160</a>" }
+        ]
+    },
+    {
+        "date": "2/22/2014", "version": "3.2.3",
+        "changes": [
+        { "text": "- Usability tweaks, reticulated splines" }
+        ]
+    },
+    {
+        "date": "2/7/2014", "version": "3.2.2",
+        "changes": [
+        { "text": "- Bug fixes!" },
+        { "text": "- Legacy version of <a href=\"http://jamstash.com/mini\" target=\"_blank\">MiniSub</a>" }
+        ]
+    },
+    {
+        "date": "2/2/2014", "version": "3.2.1",
+        "changes": [
+        { "text": "- Switched to HTML5 localStorage for Settings" }
+        ]
+    },
+{
+    "date": "1/12/2014", "version": "3.2",
+    "changes": [
+    { "text": "- Redesigned Queue, moved buttons" },
+    { "text": "- Added Play button to play current song list" },
+    { "text": "- Fixed drag & drop sorting, Artist list will refresh on Folder change" }
+    ]
+},
+{ "date": "12/5/2013", "version": "3.1.2",
+    "changes": [
+	{ "text": "- Improved linking between tabs, + Playlist fixed" }
+    ]
+},
+{ "date": "10/31/2013", "version": "3.1.1",
+    "changes": [
+	{ "text": "- Sway.fm Media Keys plugin fixed" },
+	{ "text": "- Fixed issue with multiple sub-folders levels, other bug fixes" },
+	{ "text": "- Ability to star playing song" }
+    ]
+},
+{ "date": "9/26/2013", "version": "3.1.0",
+    "changes": [
+	{ "text": "- ReRewrite of the code using <a href=\"http://angularjs.org\" target=\"_blank\">AngularJS</a>" },
+	{ "text": "- Fixed Starred Playlist" }
+    ]
+},
+{ "date": "5/1/2013", "version": "3.0.8",
+    "changes": [
+	{ "text": "- Added back Folder playlists as well as editing support for playlists" },
+	{ "text": "- Switched to the jQuery UI Layout Plug-in <a href=\"http://layout.jquery-dev.net\" target=\"_blank\">http://layout.jquery-dev.net</a> for layout panes" }
+    ]
+},
+{ "date": "4/15/2013", "version": "3.0.5",
+    "changes": [
+    { "text": "- <strike>Rewrite of code using <a href=\"http://requirejs.org\" target=\"_blank\">Require.js</a>, <a href=\"http://knockoutjs.com\" target=\"_blank\">Knockout.js</a> & <a href=\"http://sammyjs.org\" target=\"_blank\">Sammy.js</a> (Expect missing features/bugs)</strike>" },
+    { "text": "- New name, new logo!" },
+    { "text": "- Basic support for <a href=\"http://www.archive.org/details/etree\" target=\"_blank\">Archive.org</a> streaming" }
+    ]
+},
+{ "date": "1/15/2013", "version": "2.4.1", "changes": [
+	{ "text": "- Column alignment, moved pager, bug fixes"}]
+},
+{ "date": "12/21/2012", "version": "2.3.8",
+    "changes": [
+{ "text": "- Added support for the <a href=\"https://chrome.google.com/webstore/detail/swayfm-unified-music-medi/icckhjgjjompfgoiidainoapgjepncej\" target=\"_blank\">Sway.fm Unified Music Media Keys</a> Chrome extension" },
+{ "text": "- Added Artist links" },
+{ "text": "- Fixed click behavior of song notification popup" },
+{ "text": "- Search is now displayed globally" }
+]
+},
+{ "date": "12/6/2012", "version": "2.3.6",
+    "changes": [
+{ "text": "- Added Setting to toggle JSONP (This is for cross-domain requests, aka Subsonic is hosted on a different domain than Jamstash)" },
+{ "text": "- Switched back to URL authentication (Including coverArt)" }
+]
+},
+{ "date": "12/3/2012", "version": "2.3.5",
+    "changes": [
+{ "text": "- Added keyboard volume controls back. Use the plus (=/+) and minus (-/_) keys" },
+{ "text": "- Change Save Current Position to Save Progress, added an indicator next to volume" },
+{ "text": "- Fixed Last.fm scrobble feature, this works again!" },
+{ "text": "- Switch to Basic Authentication" }
+]
+},
+{ "date": "11/27/2012", "version": "2.3.4",
+    "changes": [
+{ "text": "- Basic Breadcrumb navigation implemented" }
+]
+},
+{ "date": "11/1/2012", "version": "2.3.1",
+    "changes": [
+{ "text": "- Autopilot & Auto Playlists will use the currently selected Music Folder" },
+{ "text": "- Volume slider, mute button added" },
+{ "text": "- Added Created Date to Albums" },
+{ "text": "- Click song notification to skip to next track" }
+]
+},
+{ "date": "10/30/2012", "version": "2.2.7",
+    "changes": [
+{ "text": "- Added Shortcuts!" },
+{ "text": "- Upgraded to FancyBox2" },
+{ "text": "- Switched to <a href=\"http://www.jplayer.org\" target=\"_blank\">jPlayer</a> for HTML5/Flash audio+video, video support coming soon!" }
+]
+},
+{ "date": "10/26/2012", "version": "2.2.6",
+    "changes": [
+{ "text": "- Re-enabled Drag and Drop sorting on Current Playlist" },
+{ "text": "- Started passing the contentType directly (hopefully supporting Ogg, as well as others depending on your browser)" },
+{ "text": "- Taking a lot of crap for the \"Access your data on all websites\", sorry I have no other choice! (If you want to help star this issue: <a href=\"http://code.google.com/p/chromium/issues/detail?id=158004\" target=\"_blank\">http://code.google.com/p/chromium/issues/detail?id=158004</a>)" }
+]
+},
+{ "date": "10/15/2012", "version": "2.2.0",
+    "changes": [
+{ "text": "- Column sorting for all headers in all tables! (Thanks to <a href=\"https://github.com/joequery/Stupid-Table-Plugin\" target=\"_blank\">joequery</a>)" },
+{ "text": "- Fancy Webkit styled scrollbars for those of you with browsers that don't suck (Works with Dark theme)" },
+{ "text": "- Auto Albums feature Next & Previous links to page through results" },
+{ "text": "- Forced to include permissions (\"http://*/*\" & \"https://*/*\"). Your Subsonic server can be at any URL. Will be asked to accept \"Access your data on all websites\"." }
+]
+},
+{ "date": "10/8/2012", "version": "2.1.5",
+    "changes": [
+{ "text": "- Added song count and total time to Current Playlist" },
+{ "text": "- Migrated to version 2 of Chrome App manifest.json" }
+]
+},
+{ "date": "10/7/2012", "version": "2.1.2",
+    "changes": [
+{ "text": "- Current Playlist will stay focused on the current track (Thanks <a href=\"https://github.com/tsquillario/Jamstash/issues/42\" target=\"_blank\">Concept211</a>)" },
+{ "text": "- Option to save track position & the Current Playlist automatically, will persist on a browser refresh/close" },
+{ "text": "- Added Autopilot feature to start playing random songs with one click, this will continue to load more songs" },
+{ "text": "- Made it easier to skip to a certain position in the current song (Hover over the progress bar)" },
+{ "text": "- Tab change fades in for a little eye candy" },
+{ "text": "- Volume controls! Use the plus (=/+) and minus (-/_) keys" }
+]
+},
+{ "date": "9/30/2012", "version": "2.1",
+    "changes": [
+{ "text": "Moved ratings to stars (5 star ratings will reappear eventually)" }
+]
+},
+{ "date": "9/30/2012", "version": "2.0.9",
+    "changes": [
+{ "text": "Added Dark Theme" },
+{ "text": "Fixed issue with track duration display" }
+]
+},
+{ "date": "9/30/2012", "version": "2.0.8",
+    "changes": [
+{ "text": "Removed \"http://*/\" permission from manifest.json (This was what caused the permissions alert, more info <a href=\"http://developer.chrome.com/extensions/permission_warnings.html\" target=\"_blank\">here</a>)" }
+]
+},
+{ "date": "9/29/2012", "version": "2.0.7",
+    "changes": [
+{ "text": "Updated to SoundManager2 v297a-20120916" },
+{ "text": "Implemented <i>updatePlaylist</i> API method. Allows for larger playlists." },
+{ "text": "Added support for Podcasts (Thanks to <a href=\"https://github.com/nithinphilips/MiniSub\" target=\"_blank\">nithinphilips</a>)" },
+{ "text": "Added Genre support for Auto Playlists (Thanks to <a href=\"https://github.com/Concept211/MiniSub\" target=\"_blank\">Concept211</a> & <a href=\"https://github.com/orangepeelbeef/MiniSub\" target=\"_blank\">orangepeelbeef</a>)" }
+]
+},
+{ "date": "8/13/2012", "version": "2.0.6",
+    "changes": [
+{ "text": "Minor bugfix" }
+]
+},
+{ "date": "7/20/2012", "version": "2.0.5",
+    "changes": [
+{ "text": "Fixed Mp3 only folder issue" },
+{ "text": "Launch server URL from the Subsonic icon!" },
+{ "text": "Added \"Now Playing\" notification option" }
+]
+},
+{ "date": "7/15/2012", "version": "2.0.4",
+    "changes": [
+{ "text": "Minor bug fix" }
+]
+},
+{ "date": "7/15/2012", "version": "2.0.3",
+    "changes": [
+{ "text": "Fixed double click bug" },
+{ "text": "Fixed plaintext password issue" }
+]
+},
+{ "date": "7/5/2012", "version": "2.0.2",
+    "changes": [
+{ "text": "Added ability to force Flash on the sound plugin" }
+]
+},
+{ "date": "5/22/2012", "version": "2.0.1",
+    "changes": [
+{ "text": "Drag and drop sorting for Current and all other Playlists" },
+{ "text": "Fixed bug with artist index list" }
+]
+},
+{ "date": "5/21/2012", "version": "1.9.8",
+    "changes": [
+{ "text": "Support for 4.7beta1 in preparation for next full release" },
+{ "text": "Ability to download Playlist or Song" },
+{ "text": "Playing a song from a Playlist or Album will add the rest of the songs to the Current Playlist" },
+{ "text": "Clicking an album takes you to the album (helpful from a playlist)" },
+{ "text": "Added ability to search Albums or Songs" },
+{ "text": "Ability to create new Playlist from any selected songs" },
+{ "text": "Change track position while playing (lost after switch to SM2)" },
+{ "text": "Added song rating to Player" }
+]
+},
+{ "date": "4/3/2012", "version": "1.9.4",
+    "changes": [
+{ "text": "URL Querystring support for setting of variables" },
+{ "text": "Added legacy support for Subsonic 4.5" },
+{ "text": "Fixed Chrome audio bugs" }
+]
+},
+{ "date": "3/31/2012", "version": "1.9",
+    "changes": [
+{ "text": "Switched to SoundManager2 audio library (changing track position currently not functional, next update)" },
+{ "text": "Other minor bug fixes" }
+]
+},
+{ "date": "3/27/2012", "version": "1.8",
+    "changes": [
+{ "text": "Added Download link to Albums" },
+{ "text": "Fixed bug with Next/Previous keyboard shortcuts" },
+{ "text": "Moved navigation since most displays are widescreen" },
+{ "text": "Added folder picker, choice will be saved in cookie" }
+]
+},
+{ "date": "3/9/2012", "version": "1.7",
+    "changes": [
+{ "text": "- Ability to hide A-Z bar on Artists list" },
+{ "text": "- Desktop Notifications on browsers that support <span class=\"code\">webkitNotifications</span> }," },
+{ "text": "- Redesigned player to utilize entire width of screen" }
+]
+},
+{ "date": "3/6/2012", "version": "", "changes": [{ "text": ".022 can be installed anywhere, Chrome App support, JSONP implementation"}] },
+{ "date": "2/22/2012", "version": "", "changes": [{ "text": ".021 added sidebar for chat and now playing, bug fixes"}] },
+{ "date": "1/25/2012", "version": "", "changes": [{ "text": ".020 table layout for songs, bug fixes, display tweaks"}] },
+{ "date": "1/18/2012", "version": "", "changes": [{ "text": ".019 rating support, random playlist, new preferences added"}] },
+{ "date": "1/9/2012", "version": "", "changes": [{ "text": ".018 added media keyboard bindings from @itchy"}] },
+{ "date": "1/5/2012", "version": "", "changes": [{ "text": ".017 added FancyBox to CoverArt, improved current playlist functions"}] },
+{ "date": "11/22/2011", "version": "", "changes": [{ "text": ".016 single artist bug fix, added API error notification"}] },
+{ "date": "11/15/2011", "version": "", "changes": [{ "text": ".015 fixed search issue, added last.fm support from @smrq"}] },
+{ "date": "10/14/2011", "version": "", "changes": [{ "text": ".014 multiple api call issue fix"}] },
+{ "date": "10/14/2011", "version": "", "changes": [{ "text": ".013 moved auto playlists, album display tweaks"}] },
+{ "date": "10/13/2011", "version": "", "changes": [{ "text": ".012 added Current Playlist, fixed some bugs"}] },
+{ "date": "10/2/2011", "version": "", "changes": [{ "text": ".011 added play button from album list"}] },
+{ "date": "10/1/2011", "version": "", "changes": [{ "text": ".010 fix for subdirectory custom installs"}] },
+{ "date": "9/30/2011", "version": "", "changes": [{ "text": ".009 now playing support, added back button to track list, other tweaks"}] },
+{ "date": "9/17/2011", "version": "", "changes": [{ "text": ".008 pause/play button tweak"}] },
+{ "date": "9/17/2011", "version": "", "changes": [{ "text": ".007 display tweaks for tablet, chat feature added"}] },
+{ "date": "8/25/2011", "version": "", "changes": [{ "text": ".006 flexible layout, added buttons to player"}] },
+{ "date": "8/24/2011", "version": "", "changes": [{ "text": ".005 playlist fixes, added auto playlists"}] },
+{ "date": "8/17/2011", "version": "", "changes": [{ "text": ".004 https fix, audio player tweaks"}] },
+{ "date": "8/15/2011", "version": "", "changes": [{ "text": ".003 Fixed song details on player"}] },
+{ "date": "8/15/2011", "version": "", "changes": [{ "text": ".001 Initial Release"}] }
+]

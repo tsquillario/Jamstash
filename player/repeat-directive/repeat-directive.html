@@ -1,0 +1,20 @@
+<a href="javascript:void(0)" class="icon-wrap" ng-click="cycleRepeat()">
+    <span title="Repeat the playing queue" ng-show="selectedValue === 'queue'">
+        <svg class="icon">
+            <title>Repeat the playing queue</title>
+            <use xlink:href="images/sprite/iconic.44fed91f.svg#loop" class="icon-loop-queue"></use>
+        </svg>
+    </span>
+    <span title="Repeat the current song" ng-show="selectedValue === 'song'">
+        <svg class="icon">
+            <title>Repeat the current song</title>
+            <use xlink:href="images/sprite/jamstash-sprite.93e155f2.svg#loop-single" class="icon-loop-single"></use>
+        </svg>
+    </span>
+    <span title="Disable repeat" ng-show="selectedValue === 'none'">
+        <svg class="icon">
+            <title>Disable repeat</title>
+            <use xlink:href="images/sprite/iconic.44fed91f.svg#loop" class="icon-loop-none"></use>
+        </svg>
+    </span>
+</a>
