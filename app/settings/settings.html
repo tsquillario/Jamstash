@@ -46,10 +46,10 @@
                         <div class="clear"></div>
                         <select id="DefaultLibraryLayout" name="DefaultLibraryLayout" class="" ng-model="settings.DefaultLibraryLayout.id" ng-options="o.id as o.name for o in Layouts" title="Library Layout"></select>
                         <div class="clear"></div>
-						<label for="DefaultSearchType">Default Search Type</label>
-						<div class="clear"></div>
+                        <label for="DefaultSearchType">Default Search Type</label>
+                        <div class="clear"></div>
                         <select id="DefaultSearchType" name="DefaultSearchType" class="" ng-model="settings.DefaultSearchType" ng-options="o.id as o.name for o in SearchTypes" title="Subsonic Album Layout"></select>
-						<div class="clear"></div>
+                        <div class="clear"></div>
                     </fieldset>
                     <div class="clear"></div>
                     <fieldset id="HTML5">
@@ -80,6 +80,9 @@
                         <legend class="aligncenter">Advanced</legend>
                         <div class="inputwrap"><input type="checkbox" id="Debug" name="Debug" value="1" title="Enable Debug Mode (Events will be logged to the Javascript Console)" ng-model="settings.Debug" /></div>
                         <label for="Debug">Debug Mode</label>
+                        <div class="clear"></div>
+                        <div class="inputwrap"><input type="checkbox" id="EstimateLength" name="EstimateLength" value="1" title="Ask the server to estimate the filesize of transcoded media" ng-model="settings.EstimateLength" /></div>
+                        <label for="EstimateLength">Estimate content length</label>
                         <div class="clear"></div>
                         <div class="inputwrap"><input type="checkbox" id="ForceFlash" name="ForceFlash" value="1" title="Force Flash Plugin for Audio (Option doesn't work with Chrome App)" ng-model="settings.ForceFlash" /></div>
                         <label for="ForceFlash">Force Flash</label>
