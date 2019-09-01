@@ -45,10 +45,6 @@ span.apiversion
 .aligncenter { text-align: center; }
 .padright { padding: 0 10px 0 0; }
 .hide { display: none; }
-/* Old: Using CSS3
-.odd { background: #fff; }
-.even { background: #f4f4f4; }
-*/
 .red { color: #E64F4C; }
 .codesyntax { font-family: "Courier New"; }
 .italic { font-style: italic; }
@@ -603,35 +599,6 @@ ul.mainlist li.item .submenu a {
 ul.mainlist li.item .submenu a:hover {
     text-decoration: underline;
 }
-ul.tablist
-{
-	list-style-type: none;
-	margin: 5px 0 0 5px;
-	padding: 0;
-}
-ul.tablist li
-{
-    float: left;
-    background: #f8f8f8;
-    border: 1px solid #DDDDDD;
-    font-size: 13px;
-    font-weight: bold;
-    margin: 0 3px 0 0;
-    padding: 5px 6px;
-    width: 136px;
-    text-align: center;
-}
-ul.tablist li a
-{
-    color: #6B6B6B;
-    font-variant: small-caps;
-    font-size: 15px;
-    text-decoration: none;
-}
-ul.tablist li a:hover
-{
-	color: #bbb;
-}
 #TrackContainer
 {
     margin: 5px 5px 5px 0;
@@ -985,59 +952,6 @@ ul.songlist li:hover
 }
 #ArtistContainer
 {
-}
-#AZIndex
-{
-    float: left;
-    margin: 0 5px 0 0;
-}
-#AZIndex a
-{
-    color: #7EA8D5;
-    font-size: 24px;
-    text-decoration: none;
-    padding: 5px 5px 0 5px;
-    display: block;
-}
-#AZIndex a:hover { text-decoration: underline; }
-#submenu_AZIndex
-{
-    display: none;
-    width: 200px;
-    height: 100px;
-    position: fixed;
-    background: #f9f9f9;
-    border: 1px solid #C3C3C3;
-    z-index: 999;
-}
-#submenu_AZIndex ul
-{
-    list-style-type: none;
-    margin: 0;
-    padding: 0 0 0 10px;
-}
-#submenu_AZIndex li
-{
-    float: left;
-    height: 18px;
-    padding: 0 2px 5px 2px;
-}
-#submenu_AZIndex li a
-{
-    color: #4B95E5;
-    text-decoration: none;
-    font-size: 24px;
-    padding: 0 5px 0 0;
-    cursor: pointer;
-}
-#submenu_AZIndex li a:hover
-{
-    text-decoration: underline;
-}
-#submenu_AZIndex a.close {
-    font-size: 12px;
-    padding: 6px 16px;
-    display: block;
 }
 #submenu_AddToPlaylist {
     width: 100px;
@@ -1583,7 +1497,7 @@ span.code
 /* Button Style */
 a.button {
     color: #6e6e6e;
-    font: bold 12px Helvetica, Arial, sans-serif;
+    font: 400 12px Helvetica, Arial, sans-serif;
     text-decoration: none;
     padding: 6px 12px;
     position: relative;
@@ -1791,6 +1705,7 @@ select#SelectedAlbumSort
 {
     font: 100% Trebuchet MS, Arial, Helvetica, sans-serif;
     color: #5b5b4e;
+    background: #fff;
     text-align: center;
     text-align-last:center;
     font-size: 12px;
@@ -1803,6 +1718,7 @@ select.folders
 {
     font: 100% Trebuchet MS, Arial, Helvetica, sans-serif;
     color: #5b5b4e;
+    background: #fff;
     text-align: center;
     text-align-last:center;
     font-size: 13px;

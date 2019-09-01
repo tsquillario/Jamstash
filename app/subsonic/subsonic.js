@@ -29,6 +29,7 @@ angular.module('jamstash.subsonic.controller', [
     'persistence',
     'breadcrumbs',
     'SelectedSongs',
+    '$location',
     function (
         $scope,
         $rootScope,
@@ -43,7 +44,8 @@ angular.module('jamstash.subsonic.controller', [
         player,
         persistence,
         breadcrumbs,
-        SelectedSongs
+        SelectedSongs,
+        $location
     ) {
     'use strict';
 
@@ -663,7 +665,11 @@ angular.module('jamstash.subsonic.controller', [
     $scope.getPlaylists();
     $scope.getGenres();
     $scope.loadGenrePlaylists();
-    $scope.openDefaultSection();
+    if ($location.path() == "/playlists") {
+        $scope.showPlaylist = true;
+    } else {
+        $scope.openDefaultSection();
+    }
     if ($routeParams.artistId && $routeParams.albumId) {
         $scope.getAlbumByTag($routeParams.albumId);
     } else if ($routeParams.artistId) {

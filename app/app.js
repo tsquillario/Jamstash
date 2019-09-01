@@ -20,6 +20,7 @@ angular.module('JamStash', [
         .when('/index', { redirectTo: '/library' })
         .when('/settings', { templateUrl: 'settings/settings.html', controller: 'SettingsController' })
         .when('/library', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController' })
+        .when('/playlists', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController' })
         .when('/library/:artistId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController', reloadOnSearch: false })
         .when('/library/:artistId/:albumId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController', reloadOnSearch: false })
         .otherwise({ redirectTo: '/index' });

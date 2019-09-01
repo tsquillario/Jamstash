@@ -83,10 +83,6 @@
             </div>
         </div>
         <div id="left-component" class="smcolumn noselect" tabindex="0">
-            <ul class="tablist">
-                <li class="" ng-click="toggleIndex()"><a href="">Artists</a></li>
-                <li class="" ng-click="togglePlaylist()"><a href="">Playlists</a></li>
-            </ul>
             <div class="clear"></div>
             <div id="IndexContainer" class="leftsubsection" ng-show="showIndex">
           <a href="" class="button" id="action_RefreshArtists" title="Refresh List" ng-click="refreshArtists()"><img class="pad" src="images/reload_9x11.png" /></a>
@@ -197,7 +193,7 @@
                 </ul>
                 <ul class="simplelist mainlist noselect">
                     <li class="index" id="folder">Folder Playlists</li>
-                    <li class="item" ng-repeat="o in MusicFolders | musicfolder" ng-click=" getRandomSongs('display', '' , o.id)" ng-class="{'selected': o.id == selectedAutoPlaylist}">
+                    <li class="item" ng-repeat="o in MusicFolders" ng-click=" getRandomSongs('display', '' , o.id)" ng-class="{'selected': o.id == selectedAutoPlaylist}">
                         <div class="itemactions">
                             <a class="add" href="" title="Add To Play Queue" ng-click="getRandomSongs('add', '', o.id)" stop-event="click"></a>
                             <a class="play" href="" title="Play" ng-click="getRandomSongs('play', '', o.id)" stop-event="click"></a>
@@ -230,13 +226,6 @@
                 </ul>
             </div>
             <div class="colspacer"></div>
-        </div>
-        <div id="submenu_AZIndex" class="submenu shadow" style="display: none;">
-            <ul>
-                <li ng-repeat="o in index"><a href="" ng-click="scrollToIndexName(o.name)">{{o.name}}</a></li>
-                <li><a href="" class="close" ng-click="scrollToIndexName('AZIndex')">[Top]</a></li>
-                <li><a href="" class="close" ng-click="toggleAZ()">[Close]</a></li>
-            </ul>
         </div>
     </div>
 <div class="clear"></div>
