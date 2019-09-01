@@ -492,6 +492,7 @@ ul.actionlist li
 }
 ul.actionlist li .form {
     border: 0px;
+    float: right;
 }
 
 #AutoAlbumContainer li.item
