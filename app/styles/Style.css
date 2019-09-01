@@ -8,6 +8,8 @@ body
 	text-align: center;
 	color: #5b5b4e;
 }
+:focus {outline:none;}
+::-moz-focus-inner {border:0;}
 img
 {
 	border: none;
@@ -909,7 +911,7 @@ ul.songlist .row a.remove:hover
     background: url('../images/minus_8x2.png') no-repeat 6px center #DEECFB;
 }
 ul.songlist li:nth-child(odd) { background-color:#f7f7f7; }
-ul.songlist li:nth-child(even) { background-color:none; }
+ul.songlist li:nth-child(even) { background-color:transparent; }
 ul.songlist li.playing
 {
     background-image: url('../images/play_alt_gd_16x16.png');
@@ -972,11 +974,13 @@ ul.songlist li:hover
 {
     float: right;
     height: 30px;
-    width: 630px;
-    margin: 6px 55px 0 0;
+    width: 635px;
+    margin: 6px 65px 0 0;
 }
 .subactions > a.button {
     padding:  6px 5px;
+    min-width: 20px;
+    text-align: center;
 }
 #globalactions
 {
@@ -1650,7 +1654,8 @@ input#Search {
     font:  100% Trebuchet MS, Arial, Helvetica, sans-serif;
     color:  #5b5b4e;
     text-align: left;
-    font-size: 12px;
+    font-size: 13px;
+    padding: 6px;
     border: 1px solid #DCDCDC;
     width: 140px;
     background-color: #EDEDED;
@@ -1671,6 +1676,7 @@ select#Genres
 {
     font: 100% Trebuchet MS, Arial, Helvetica, sans-serif;
     color: #5b5b4e;
+    background: #fff;
     text-align: center;
     text-align-last:center;
     font-size: 13px;
@@ -1696,8 +1702,9 @@ select#SearchType
     background-color: #EDEDED;
     text-align: center;
     text-align-last:center;
-    font-size: 12px;
+    font-size: 13px;
     margin: 0;
+    height: 30px;
     -moz-appearance: none;
     -webkit-appearance: none;
 }
@@ -1705,6 +1712,7 @@ select#SelectedAlbumSort
 {
     font: 100% Trebuchet MS, Arial, Helvetica, sans-serif;
     color: #5b5b4e;
+    border: 0px;
     background: #fff;
     text-align: center;
     text-align-last:center;
@@ -1784,6 +1792,7 @@ legend
     font-weight: bold;
 }
 #action_ToggleArtists {
+    display: none;
     position: absolute;
     left: 10px;
     top: 6px;

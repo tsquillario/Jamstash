@@ -202,7 +202,6 @@ ul.simplelist li:hover
 }
 ul.simplelist li.index
 {
-    background: #232323;
     border-bottom: 1px solid #171717;
     color: #f2f2f2;
 }
@@ -306,7 +305,7 @@ ul.preferences li em
 }
 .form {
     border: 1px solid #1A1A1A;
-    background: #292929;
+    background: transparent;
     overflow: auto;
     float: left;
 }
@@ -402,18 +401,16 @@ input#Search {
 }
 select#SearchType {
     background: #323232;
-    color: #fff; /*color: #d6d469;*/
+    color: #939393;
     border: 1px solid #171717;
 }
 select#SelectedAlbumSort {
-    background: #232323;
-    color: #fff; /*color: #d6d469;*/
-    border: 1px solid #171717;
-    border-radius: 5px;
+    background: #323232;
+    color: #5b5b4e;
 }
 select.large {
     background: #232323;
-    color: #fff; /*color: #d6d469;*/
+    color: #fff;
     border: 0px;
 }
 

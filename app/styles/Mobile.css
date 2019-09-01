@@ -12,6 +12,9 @@
         	visibility: hidden;
         	display: none;
 	}
+        #action_ToggleArtists {
+                display: initial;
+        }
 }
 @media only screen and (max-width: 840px) {
 	#search  {
@@ -90,10 +93,13 @@
 	}
 	#SettingsForm {
 	}
+        #action_ToggleArtists {
+                display: initial;
+        }
 }
 @media only screen and (max-width: 600px) {
 	.smcolumn {
-		width: 75%;
+		width: 100%;
 		border-bottom; none;
 		min-width: 292px;
 		top: 41px;
@@ -113,4 +119,7 @@
 	#search {
 		margin: 11px 5px 0px 5px;
 	}
+        #action_ToggleArtists {
+                display: initial;
+        }
 }
