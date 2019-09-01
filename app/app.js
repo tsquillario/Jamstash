@@ -8,7 +8,6 @@ angular.module('JamStash', [
     'ngLodash',
     'ui.keypress',
     'jamstash.subsonic.controller',
-    'jamstash.archive.controller',
     'jamstash.player.controller',
     'jamstash.queue.controller',
     'jamstash.settings.controller',
@@ -23,10 +22,6 @@ angular.module('JamStash', [
         .when('/library', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController' })
         .when('/library/:artistId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController', reloadOnSearch: false })
         .when('/library/:artistId/:albumId', { templateUrl: 'subsonic/subsonic.html', controller: 'SubsonicController', reloadOnSearch: false })
-        .when('/podcasts', { templateUrl: 'podcasts/podcasts.html', controller: 'PodcastController' })
-        .when('/archive', { templateUrl: 'archive/archive.html', controller: 'ArchiveController' })
-        .when('/archive/:artist', { templateUrl: 'archive/archive.html', controller: 'ArchiveController' })
-        .when('/archive/:artist/:album', { templateUrl: 'archive/archive.html', controller: 'ArchiveController' })
         .otherwise({ redirectTo: '/index' });
 }])
 

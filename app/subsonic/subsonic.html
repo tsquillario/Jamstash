@@ -2,9 +2,7 @@
 <div id="tab1" class="tabcontent">
     <div id="tabLibrary">
         <div class="actions floatleft">
-            <a href="" class="button" id="action_RefreshArtists" title="Refresh List" ng-click="refreshArtists()"><img class="pad" src="images/reload_9x11.png" /></a>
-            <a href="" class="button" id="action_RescanLibrary" title="Rescan Library" ng-click="rescanLibrary()"><img class="pad" src="images/loop_alt1_gd_12x9.png" /></a>
-            <a href="" class="button" id="action_ToggleArtists" ng-click="toggleArtists()" title="Toggle Artists"><img src="images/arrow_right_gl_8x8.png" /></a>
+            <a href="" class="button" id="action_ToggleArtists" ng-click="toggleArtists()" title="Toggle Artists"><img src="images/hamburger.png" width="15px" /></a>
         </div>
         <div id="search">
             <input type="text" id="Search" name="Search" class="medium" title="Wildcards (*) supported" placeholder="Search..." ng-model="searching.query" ng-enter="search(searching.query, searching.typeId)"/>
@@ -32,6 +30,18 @@
         <div id="SubsonicAlbums" class="lgsection" split>
             <!-- Album -->
             <div id="right-component" class="lgcolumn" ng-class="{'lgcolumn_expanded' : !$rootScope.settings.ShowQueue}">
+
+
+
+<div class="blurred_overlay">
+    <div class="artist_backdrop"></div>
+        <div class="artist_image"><img src="https://lastfm-img2.akamaized.net/i/u/770x0/e7090eb6d05349ae8e0932264910d875.jpg#e7090eb6d05349ae8e0932264910d875">
+         <div class="artist_name">Pink Floyd</div>
+     </div>
+</div>
+
+                  
+
                 <ul class="actionlist">
                     <li>
                         <form class="form">
@@ -76,16 +86,13 @@
             <ul class="tablist">
                 <li class="" ng-click="toggleIndex()"><a href="">Artists</a></li>
                 <li class="" ng-click="togglePlaylist()"><a href="">Playlists</a></li>
-                <li class="" ng-click="togglePodcast()"><a href="">Podcasts</a></li>
             </ul>
             <div class="clear"></div>
             <div id="IndexContainer" class="leftsubsection" ng-show="showIndex">
+          <a href="" class="button" id="action_RefreshArtists" title="Refresh List" ng-click="refreshArtists()"><img class="pad" src="images/reload_9x11.png" /></a>
                 <select id="MusicFolders" class="folders" ng-model="SelectedMusicFolder" ng-options="o.name for o in MusicFolders track by o.id">
                     <option value="">All Folders</option>
                 </select>
-                <div id="AZIndex" ng-show="!settings.HideAZ" class="subactionsfixed">
-                    <a href="" ng-click="toggleAZ()" stop-event="click">A-Z</a>
-                </div>
                 <div class="clear"></div>
                 <ul id="AutoAlbumContainer" class="simplelist mainlist noselect">
                     <li class="index" id="auto">Auto Albums</li>
@@ -113,13 +120,6 @@
                             >&rsaquo;</a>
                         </div>
                     </li>
-                </ul>
-                <!-- Shortcut -->
-                <ul class="simplelist mainlist noselect" ng-show="shortcut.length">
-                    <li class="index" title="Scroll to Top" data-bind="click: $root.scrollToTop"><a>Shortcuts</a></li>
-                    <ul class="simplelist mainlist noselect" ng-repeat="o in shortcut">
-                        <li class="item" id="{{o.id}}" ng-click="getDirectory('display', o.id, o.name, 'root')" ng-class="{'selected': selectedArtist == o.id}"><span ng-bind-html="o.name"></span></li>
-                    </ul>
                 </ul>
                 <!-- Artist -->
                 <ul class="simplelist mainlist noselect" ng-repeat="o in index">
@@ -213,16 +213,6 @@
                             <a class="play" href="" title="Play" ng-click="getPlaylist('play', o.id)" stop-event="click"></a>
                         </div>
                         <div class="title" title="{{'Songs: ' + o.songCount + ', Public: ' + o.public}}">{{o.name}}</div>
-                    </li>
-                </ul>
-                <ul class="simplelist mainlist noselect">
-                    <li class="index" id="auto">Shared Playlists</li>
-                    <li class="item" ng-repeat="o in playlistsPublic" ng-click="getPlaylist('display', o.id)" ng-class="{'selected': o.id == selectedPlaylist}">
-                        <div class="itemactions">
-                            <a class="add" href="" title="Add To Play Queue" ng-click="getPlaylist('add', o.id)" stop-event="click"></a>
-                            <a class="play" href="" title="Play" ng-click="getPlaylist('play', o.id)" stop-event="click"></a>
-                        </div>
-                        <div class="title" title="{{'Owner: ' + o.owner + ' Songs: ' + o.songCount}}">{{o.name}}</div>
                     </li>
                 </ul>
             </div>

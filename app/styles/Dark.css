@@ -1,7 +1,7 @@
 body
 {
-	background: #222222;
-	color: #d6d469;
+	background: #333;
+	color: #fff; /*color: #d6d469;*/
 }
 a
 {
@@ -9,7 +9,7 @@ a
 }
 a:hover
 {
-    color: #d6d469;
+    color: #fff; /*color: #d6d469;*/
 }
 h3.title {
     color: #f2f2f2;
@@ -21,7 +21,7 @@ span.apiversion
 
 #content
 {
-    background: #222222;
+    background: #333;
 }
 .lgsection
 {
@@ -44,18 +44,15 @@ span.apiversion
 }
 .smcolumn
 {
-    background: none;
+    background: #323232;
     border-right: 1px solid #1D1D1D;
     border-top: 1px solid #1D1D1D;
 }
 ul.tablist li {
 	background: #232323;
-	border-top: 1px solid #171717;
-	border-left: 1px solid #171717;
-	border-right: 1px solid #171717;
+	border: 1px solid #171717;
 }
 .leftsubsection {
-	border-top: 1px solid #171717;
 }
 #nav a
 {
@@ -95,7 +92,7 @@ ul.tablist li {
 }
 #messages .message
 {
-    color: #d6d469;
+    color: #fff; /*color: #d6d469;*/
     background: #323232;
     border: 1px solid #1d1d1d;
 }
@@ -107,7 +104,10 @@ ul.tablist li {
 }
 .status a
 {
-    color: #d6d469;
+    color: #fff; /*color: #d6d469;*/
+}
+#blurwrapper {
+    background: #323232;
 }
 #player
 {
@@ -116,6 +116,9 @@ ul.tablist li {
     border-bottom: 1px solid #1a1a1a;
 }
 #playercontainer {
+    background: #323232;
+}
+#globalactions a.button {
     background: #323232;
 }
 .vertshade {
@@ -195,7 +198,7 @@ ul.simplelist li
 ul.simplelist li a
 {
     text-decoration: none;
-    color: #d6d469;
+    color: #fff; /*color: #d6d469;*/
 }
 ul.simplelist li:hover
 {
@@ -217,12 +220,11 @@ ul.simplelist li.selected
 }
 #BreadCrumb
 {
-    color: #D6D469;
+    color: #fff;
     background: #222222;
 }
 #BreadCrumb a
 {
-    color: #D6D469;
 }
 #submenu_AZIndex
 {
@@ -245,13 +247,14 @@ ul.songlist li.album:hover
 {
     background: #1d1d1d;
 }
-ul.songlist li.album
+ul.songlist li.albumgrid
 {
-    border-bottom: 1px solid #232323;
+   border-bottom: none!important;
 }
 ul.songlist li.album
 {
     color: #f2f2f2;
+    border-bottom: 1px solid #272727;
 }
 ul.songlist li.album .albumart img
 {
@@ -278,22 +281,21 @@ ul.songlist li.row td.album img
 }
 ul.songlist li.row td.album a
 {
-    color: #D6D469;
+    color: #fff; /*color: #D6D469;*/
 }
 ul.songlist li.row td.album a:hover
 {
-    color: #d6d469;
+    color: #fff; /*color: #d6d469;*/
     text-decoration: underline;
 }
-ul.songlist li:nth-child(odd)   { background-color: #272727; }
-ul.songlist li:nth-child(even)  { background-color: #2e2e2e; }
+ul.songlist li:nth-child(odd)   { background-color: transparent; }
+ul.songlist li:nth-child(even)  { background-color: transparent; }
 ul.songlist li.playing {
     background-color: #161616;
 }
 ul.songlist li.selected
 {
     background-color: #3a3a3a;
-    border-bottom: 1px solid #232323;
 }
 #submenu_CurrentPlaylist
 {
@@ -311,7 +313,6 @@ ul.preferences li em
     background: #292929;
     overflow: auto;
     float: left;
-    margin: 10px;
 }
 .inputwrap
 {
@@ -323,7 +324,7 @@ fieldset
 }
 label
 {
-    color: #D6D469;
+    color: #fff; /*color: #D6D469;*/
 }
 #donate {
     background: #232323;
@@ -364,7 +365,7 @@ label
 }
 
 #queue {
-    color: #d6d469;
+    color: #fff; /*color: #d6d469;*/
 }
 
 #QueuePreview {
@@ -389,6 +390,35 @@ label
 }
 #QueuePreview .queueactions {
     border-right: 1px solid #000000;
+}
+select.folders {
+    background: #232323;
+    color: #fff; /*color: #d6d469;*/
+    border: 0px;
+}
+#action_RefreshArtists {
+    background: #232323;
+}
+input#Search {
+    background: #323232;
+    color: #fff; /*color: #d6d469;*/
+    border: 1px solid #171717!important;
+}
+select#SearchType {
+    background: #323232;
+    color: #fff; /*color: #d6d469;*/
+    border: 1px solid #171717;
+}
+select#SelectedAlbumSort {
+    background: #232323;
+    color: #fff; /*color: #d6d469;*/
+    border: 1px solid #171717;
+    border-radius: 5px;
+}
+select.large {
+    background: #232323;
+    color: #fff; /*color: #d6d469;*/
+    border: 0px;
 }
 
 /* jQuery Splitter Style */

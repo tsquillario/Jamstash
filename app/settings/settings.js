@@ -6,27 +6,20 @@ angular.module('jamstash.settings.controller', ['jamstash.settings.service', 'ja
     $rootScope.hideQueue();
     $scope.settings = globals.settings; /* See service.js */
     $scope.Timeouts = [
-        { id: 10000, name: 10 },
-        { id: 20000, name: 20 },
-        { id: 30000, name: 30 },
-        { id: 40000, name: 40 },
-        { id: 50000, name: 50 },
-        { id: 60000, name: 60 },
-        { id: 90000, name: 90 },
-        { id: 120000, name: 120 }
+        { id: 1000, name: 1 },
+        { id: 2000, name: 2 },
+        { id: 3000, name: 3 },
+        { id: 4000, name: 4 },
+        { id: 5000, name: 5 },
+        { id: 6000, name: 6 },
+        { id: 9000, name: 9 },
+        { id: 10000, name: 10 }
     ];
     $scope.Protocols = ["json", "jsonp"];
     $scope.Themes = ["Default", "Dark"];
     $scope.SearchTypes = globals.SearchTypes;
     $scope.Layouts = globals.Layouts;
 
-    $scope.$watch('settings.HideAZ', function () {
-        if (globals.settings.HideAZ) {
-            $('#AZIndex').hide();
-        } else {
-            $('#AZIndex').show();
-        }
-    });
     $scope.reset = function () {
         persistence.deleteSettings();
         $scope.loadSettings();
@@ -92,19 +85,6 @@ angular.module('jamstash.settings.controller', ['jamstash.settings.service', 'ja
         json.getChangeLog(function (data) {
             $scope.changeLog = data;
         });
-    };
-    $scope.setupDemo = function () {
-        var Username = "android-guest";
-        var Password = "guest";
-        var Server = "http://demo.subsonic.org";
-        var Tab = "tabLibrary";
-        if (utils.confirmDelete("Do you want to connect to the Subsonic Demo server?")) {
-            globals.settings.Username = Username;
-            globals.settings.Password = Password;
-            globals.settings.Server = Server;
-            $location.path('/library').replace();
-            $rootScope.showIndex = true;
-        }
     };
 
     /* Load on Startup */

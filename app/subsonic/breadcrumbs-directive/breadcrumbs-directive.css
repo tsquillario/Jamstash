@@ -1,6 +1,7 @@
 .breadcrumbs {
     float: left;
-    margin-top: 18px;
+    margin-top: 11px;
+    margin-bottom: 3px;
 }
 
 .breadcrumb {
@@ -10,13 +11,12 @@
 .breadcrumb a {
     margin: 0 2px 0 6px;
     text-decoration: none;
-    color: #829FC0;
-    font-size: 14px;
-    ;
+    color: #5b5b4e;
+    font-size: 12px;
 }
 
 .breadcrumb:not(:last-child)::after {
-    content: " >";
+    content: " -";
 }
 
 .breadcrumb a:hover {

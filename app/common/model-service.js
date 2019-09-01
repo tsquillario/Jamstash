@@ -127,35 +127,4 @@ angular.module('jamstash.model', ['jamstash.utils'])
         return new model.Artist(data.id, data.name);
     };
 
-    this.mapPodcast = function (data) {
-        var song = data;
-        var url, track, rating, starred, contenttype, suffix, description, artist, album, title;
-        var specs = '', coverartthumb = '', coverartfull = '';
-        if (typeof song.coverArt != 'undefined') {
-            coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=60&id=' + song.coverArt;
-            coverartfull = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&id=' + song.coverArt;
-        }
-        if (typeof song.album == 'undefined') { album = '&nbsp;'; } else { album = song.album.toString(); }
-        if (typeof song.artist == 'undefined') { artist = '&nbsp;'; } else { artist = song.artist.toString(); }
-        if (typeof song.title == 'undefined') { title = '&nbsp;'; } else { title = song.title.toString(); }
-        if (typeof song.description == 'undefined') { description = ''; } else { description = song.description; }
-        if (typeof song.track == 'undefined') { track = '&nbsp;'; } else { track = song.track.toString(); }
-        if (typeof song.starred !== 'undefined') { starred = true; } else { starred = false; }
-        if (song.bitRate !== undefined) { specs += song.bitRate + ' Kbps'; }
-        if (song.transcodedSuffix !== undefined) { specs += ', transcoding:' + song.suffix + ' > ' + song.transcodedSuffix; } else { specs += ', ' + song.suffix; }
-        if (song.transcodedSuffix !== undefined) { suffix = song.transcodedSuffix; } else { suffix = song.suffix; }
-        if (suffix == 'ogg') { suffix = 'oga'; }
-        var salt = Math.floor(Math.random() * 100000);
-        url = globals.BaseURL() + '/stream.view?' + globals.BaseParams() + '&id=' + song.streamId + '&salt=' + salt;
-        return new model.Song(song.streamId, song.parent, track, title, artist, song.artistId, album, song.albumId, coverartthumb, coverartfull, song.duration, song.userRating, starred, suffix, specs, url, 0, description);
-    };
-
-    this.mapPodcasts = function (episodes) {
-        var mappedEpisodes = [];
-        var mapEpisode = this.mapPodcast;
-        angular.forEach(episodes, function (episode) {
-            mappedEpisodes.push(mapEpisode(episode));
-        });
-        return mappedEpisodes;
-    };
 }]);

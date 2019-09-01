@@ -26,24 +26,17 @@ angular.module('jamstash.settings.service', [])
     ];
     this.settings = {
         // Subsonic
-        /* Demo Server
-        Username: "android-guest"),
-        Password: "guest"),
-        Server: "http://subsonic.org/demo"),
-        */
-        Url: "http://jamstash.com/#/archive/",
         Username: "",
         Password: "",
         Server: "",
-        Timeout: 20000,
+        Timeout: 1000,
         Protocol: "jsonp",
         ApplicationName: "Jamstash",
         ApiVersion: "1.6.0",
         AutoPlaylists: "",
-        AutoPlaylistSize: 25,
-        AutoAlbumSize: 15,
+        AutoPlaylistSize: 50,
+        AutoAlbumSize: 50,
         // General
-        HideAZ: false,
         ScrollTitle: true,
         NotificationSong: true,
         NotificationNowPlaying: false,
@@ -63,7 +56,6 @@ angular.module('jamstash.settings.service', [])
     };
     this.SavedCollections = [];
     this.Player1 = '#playdeck_1';
-    this.archiveUrl = 'https://archive.org/';
     this.ChangeLog = null;
     this.Messages = [];
 
@@ -76,9 +68,6 @@ angular.module('jamstash.settings.service', [])
     'use strict';
 
     return {
-        getCollections: function (callback) {
-            $http.get('archive/json_collections.json').success(callback);
-        },
         getChangeLog: function (callback) {
             $http.get('common/json_changelog.json').success(callback);
         }

@@ -301,11 +301,6 @@ angular.module('JamStash')
 			dataType: globals.settings.Protocol,
 			timeout: globals.settings.Timeout,
 			success: function (data) {
-				/*
-				if (data["subsonic-response"].podcasts.channel !== undefined) {
-				}
-				deferred.resolve(podcasts);
-				*/
 				$.get(globals.BaseURL() + '/jukeboxControl.view?' + globals.BaseParams() + '&action=start');
 			}
 		});

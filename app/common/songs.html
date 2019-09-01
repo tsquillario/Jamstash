@@ -10,11 +10,10 @@
     <div class="track floatleft" ng-bind-html="o.track"></div>
     <div class="title floatleft" title="{{o.description}}" ng-bind-html="o.name"></div>
     <span class="artist floatleft" ng-bind-html="o.artist"></span>
-    <div ng-show="o.album && itemType !== 'archive'">
+    <div ng-show="o.album>
         <img ng-src="{{o.coverartfull}}">
         <a ng-href="#/library/0/{{o.albumId}}" class="albumblock floatleft" stop-event="click" ng-bind-html="o.album" title="{{o.album}}"></a>
     </div>
-    <a ng-show="o.album && itemType === 'archive'" ng-href="#/archive/{{o.artist}}/{{o.parentid}}" class="albumblock floatleft" stop-event="click" ng-bind-html="o.album" title="{{o.album}}"></a>
     <div class="albumblock floatleft" ng-show="!o.album">&nbsp;</div>
     <div class="time floatleft">{{o.time}}</div>
     <div class="clear"></div>

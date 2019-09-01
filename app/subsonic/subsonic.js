@@ -131,22 +131,13 @@ angular.module('jamstash.subsonic.controller', [
     $scope.toggleIndex = function () {
         $rootScope.showIndex = true;
         $scope.showPlaylist = false;
-        $scope.showPodcast = false;
         $scope.saveDefaultSection('index');
     };
     $scope.showPlaylist = false;
     $scope.togglePlaylist = function () {
         $rootScope.showIndex = false;
         $scope.showPlaylist = true;
-        $scope.showPodcast = false;
         $scope.saveDefaultSection('playlist');
-    };
-    $scope.showPodcast = false;
-    $scope.togglePodcast = function () {
-        $rootScope.showIndex = false;
-        $scope.showPlaylist = false;
-        $scope.showPodcast = true;
-        $scope.saveDefaultSection('podcast');
     };
     $scope.saveDefaultSection = function (val) {
         utils.setValue('DefaultSection', val, false);
@@ -159,9 +150,6 @@ angular.module('jamstash.subsonic.controller', [
                 break;
             case 'playlist':
                 $scope.showPlaylist = true;
-                break;
-            case 'podcast':
-                $scope.showPodcast = true;
                 break;
             default:
                 break;
@@ -372,7 +360,6 @@ angular.module('jamstash.subsonic.controller', [
                 $scope.selectedAlbum = id;
                 $scope.selectedAutoPlaylist = null;
                 $scope.selectedPlaylist = null;
-                $scope.selectedPodcast = null;
                 if ($scope.SelectedAlbumSort.id !== 'default') {
                     sortSubsonicAlbums($scope.SelectedAlbumSort.id);
                 }
@@ -410,7 +397,6 @@ angular.module('jamstash.subsonic.controller', [
         $scope.selectedAlbum = null;
         $scope.selectedAutoPlaylist = null;
         $scope.selectedPlaylist = null;
-        $scope.selectedPodcast = null;
     };
 
     $scope.getRandomStarredSongs = function (action) {
@@ -424,7 +410,6 @@ angular.module('jamstash.subsonic.controller', [
         $scope.selectedAlbum = null;
         $scope.selectedAutoPlaylist = 'starred';
         $scope.selectedPlaylist = null;
-        $scope.selectedPodcast = null;
     };
 
     $scope.getRandomSongs = function (action, genre, folder) {
@@ -444,7 +429,6 @@ angular.module('jamstash.subsonic.controller', [
         $scope.selectedArtist = null;
         $scope.selectedAlbum = null;
         $scope.selectedPlaylist = null;
-        $scope.selectedPodcast = null;
     };
 
     $scope.getArtistByTag = function (id) { // Gets Artist by ID3 tag
@@ -545,7 +529,6 @@ angular.module('jamstash.subsonic.controller', [
         $scope.selectedAlbum = null;
         $scope.selectedAutoPlaylist = null;
         $scope.selectedPlaylist = id;
-        $scope.selectedPodcast = null;
     };
 
     $scope.newPlaylist = function () {
@@ -640,32 +623,6 @@ angular.module('jamstash.subsonic.controller', [
         persistence.saveSelectedGenreNames($scope.genrePlaylists);
     };
 
-    $scope.getPodcasts = function () {
-        var promise = subsonic.getPodcasts();
-        $scope.handleErrors(promise).then(function (podcasts) {
-            $scope.podcasts = podcasts;
-        }, function () {
-            // Do not display a notification, there simply are no podcasts.
-            // Otherwise, a notification will be displayed at every page reload.
-            $scope.podcasts = [];
-        });
-    };
-
-    $scope.getPodcast = function (action, id) {
-        var promise = subsonic.getPodcast(id);
-        $scope.requestSongs(promise, action);
-
-        $scope.song = [];
-        $scope.album = [];
-        breadcrumbs.reset();
-        $scope.selectedAutoAlbum = null;
-        $scope.selectedArtist = null;
-        $scope.selectedAlbum = null;
-        $scope.selectedAutoPlaylist = null;
-        $scope.selectedPlaylist = null;
-        $scope.selectedPodcast = id;
-    };
-
     $scope.getMusicFolders = function () {
         var promise = subsonic.getMusicFolders();
         $scope.handleErrors(promise).then(function (musicFolders) {
@@ -706,7 +663,6 @@ angular.module('jamstash.subsonic.controller', [
     $scope.getPlaylists();
     $scope.getGenres();
     $scope.loadGenrePlaylists();
-    $scope.getPodcasts();
     $scope.openDefaultSection();
     if ($routeParams.artistId && $routeParams.albumId) {
         $scope.getAlbumByTag($routeParams.albumId);

@@ -94,7 +94,6 @@ span.apiversion
     position: absolute;
     top: 2px;
     left: 50px;
-    z-index: 99;
 }
 #nav ul
 {
@@ -136,7 +135,9 @@ span.apiversion
 	border: 1px solid #CBCBCB;
 	border-bottom: none;
 	padding: 8px 12px 9px 12px;
-	box-shadow: -2px 1px 2px -2px rgba(0, 0, 0, 0.25);
+	box-shadow: -2px 0px 2px -2px rgba(0, 0, 0, 0.25);
+    position: relative;
+    z-index: 99;
 }
 #nav a.active:hover
 {
@@ -219,31 +220,36 @@ span.apiversion
 {
     margin: 0;
 }
+.tab {
+    border-radius: 5px 5px 0 0;
+}
 .smcolumn
 {
+    scrollbar-width: none;
     height: 100%;
     overflow-y: auto;
     outline: none;
-	width: 312px;
+    width: 312px;
 	/*
     float: left;
 	margin-left: -100%;
 	*/
-	border-right: 1px solid #ddd;
+    border-right: 1px solid #ddd;
     border-top: 1px solid #cbcbcb;
-	position: fixed;
-	top: 40px;
-	left: 0;
-	margin-bottom: -42px;
+    position: fixed;
+    top: 40px;
+    left: 0;
+    margin-bottom: -42px;
     background: #fff;
 }
-.smcolumn .leftactions {
+.smcolumn .left-actions {
     margin: 6px 0px 0 0;
     position: fixed;
     left: 264px;
 }
 .lgcolumn
 {
+    scrollbar-width: none;
     height: 100%;
     overflow-y: auto;
     outline: none;
@@ -282,6 +288,7 @@ span.apiversion
 }
 #SideBar
 {
+    scrollbar-width: none;
     display: none;
 	min-height: 100%;
 	height: 100%;
@@ -326,7 +333,7 @@ span.apiversion
     border-bottom: 1px solid #cbcbcb;
     position: absolute;
     top: 40px;
-    bottom: 84px;
+    bottom: 40px;
     width: 100%;
 }
 .padder
@@ -347,7 +354,6 @@ span.apiversion
     margin: 0 5px;
 }
 .leftsubsection {
-    border-top: 1px solid #DDDDDD;
 }
 #loading
 {
@@ -484,6 +490,10 @@ ul.actionlist li
     cursor: pointer;
     padding: 0;
 }
+ul.actionlist li .form {
+    border: 0px;
+}
+
 #AutoAlbumContainer li.item
 {
     padding: 6px 8px;
@@ -512,7 +522,7 @@ ul.simplelist li.index
 {
     color: #bbb;
     font-size: 11px;
-    font-weight: bold;
+    font-weight: 600;
     margin: 2px 0;
     padding: 6px 4px;
 	text-align: center;
@@ -602,13 +612,13 @@ ul.tablist li
 {
     float: left;
     background: #f8f8f8;
-    border-top: 1px solid #DDDDDD;
-    border-left: 1px solid #DDDDDD;
-    border-right: 1px solid #DDDDDD;
+    border: 1px solid #DDDDDD;
     font-size: 13px;
     font-weight: bold;
     margin: 0 3px 0 0;
-    padding: 8px 6px;
+    padding: 5px 6px;
+    width: 136px;
+    text-align: center;
 }
 ul.tablist li a
 {
@@ -689,6 +699,9 @@ ul.songlist .album .albumart img
     margin: 3px 10px 0 10px;
     padding: 2px;
     width: 50px;
+    max-height: 50px;
+    object-fit: contain;
+    border-radius: 5px;
 }
 ul.songlist .album .title
 {
@@ -758,6 +771,7 @@ ul.songlist .albumgrid .title
 ul.songlist .albumgrid .albumart img {
     width: 160px;
     height: 160px;
+    max-height: 160px;
     background: url(../images/albumdefault_160.jpg) no-repeat;
     margin: 3px 0 0 18px;
     padding: 0px;
@@ -765,6 +779,7 @@ ul.songlist .albumgrid .albumart img {
     /* REMOVED:  Slows scroll performance of albums;
     -webkit-box-reflect: below 1px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(80%, transparent), to(rgba(255,255,255,0.2)));
     */
+    border-radius: 10px;
 }
 ul.songlist li:hover .albumgrid  .albumart img {
 	border: 4px solid #ccc;
@@ -1040,10 +1055,10 @@ ul.songlist li:hover
 }
 .subactions
 {
-    float: left;
+    float: right;
     height: 30px;
     width: 630px;
-    margin: 6px 0 0 0;
+    margin: 6px 55px 0 0;
 }
 .subactions > a.button {
     padding:  6px 5px;
@@ -1051,10 +1066,11 @@ ul.songlist li:hover
 #globalactions
 {
     position: absolute;
-    top: 0px;
-    right: 65px;
-    height: 29px;
-    margin: 6px 0 0 0;
+    bottom: 12px;
+    right: 12px;
+}
+#globalactions a.button {
+    background: #747779;
 }
 #search
 {
@@ -1208,9 +1224,31 @@ ul.songlist li:hover
     left: 0;
     width: 100%; /* As wide as it's allowed */
     z-index: 100;
+    overflow: hidden;
+}
+#blurwrapper{
+    background-repeat: no-repeat!important;
+    background-size: cover!important;
+    background: #fff;
+    width: 100%;
+    height: 200px;
+    position: absolute;
+    bottom: 0;
+    z-index: -1;
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -ms-filter: blur(5px);
+    -o-filter: blur(5px);
+    filter: blur(5px);
+    background-position: 0 50%;
+    margin-bottom: -10px;
+    padding: 10px;
 }
 #playercontainer {
-    background: linear-gradient(to bottom, #000000 0%,#3d3d3d 100%);
+    z-index: 3;
+    background: #747779;
+    opacity: .8;
+    z-index: 99;
 }
 #audiocontainer
 {
@@ -1219,10 +1257,11 @@ ul.songlist li:hover
 {
     width: auto;
     height: 45px;
-    margin: 0 10px 0 0;
+    margin: 0 55px 0 0;
     background: none;
     font-family: inherit;
     font-size: 10px;
+    color: #fff;
     box-shadow: none;
     overflow: hidden;
 }
@@ -1560,6 +1599,7 @@ a.button {
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     cursor: pointer;
+    border-radius: 5px;
 }
 a.button:hover {
     color: #333;
@@ -1646,13 +1686,14 @@ a.hoverSelected { opacity: .6; }
     background: #fcfcfc;
     overflow: auto;
     float: left;
-    margin: 5px 5px 0 5px;
+    margin: 3px 5px 0 5px;
 }
 input
 {
     font-family:   Calibri, Arial, Verdana;
     font-size: 14px;
     padding: 5px;
+    border-radius: 5px;
 }
 input.sm
 {
@@ -1690,10 +1731,14 @@ input.chat
     width: 150px;
     margin: 5px;
 }
-input#Search
-{
+input#Search {
+    font:  100% Trebuchet MS, Arial, Helvetica, sans-serif;
+    color:  #5b5b4e;
+    text-align: left;
+    font-size: 12px;
     border: 1px solid #DCDCDC;
     width: 140px;
+    background-color: #EDEDED;
 }
 select
 {
@@ -1701,23 +1746,69 @@ select
     padding: 5px;
     margin: 5px;
     border: 1px solid #d6d6d6;
+    border-radius: 5px;
 }
 select.m
 {
     width: 100px;
 }
-select.large
+select#Genres 
 {
-    width: 192px;
+    font: 100% Trebuchet MS, Arial, Helvetica, sans-serif;
+    color: #5b5b4e;
+    text-align: center;
+    text-align-last:center;
+    font-size: 13px;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    width: 98%;
 }
-select#SearchType
+select.large 
 {
+    font: 100% Trebuchet MS, Arial, Helvetica, sans-serif;
+    color: #5b5b4e;
+    text-align: center;
+    text-align-last:center;
+    font-size: 14px;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    width: 295px;
+}
+select#SearchType 
+{
+    font: 100% Trebuchet MS, Arial, Helvetica, sans-serif;
+    color: #5b5b4e;
+    background-color: #EDEDED;
+    text-align: center;
+    text-align-last:center;
+    font-size: 12px;
     margin: 0;
+    -moz-appearance: none;
+    -webkit-appearance: none;
 }
+select#SelectedAlbumSort 
+{
+    font: 100% Trebuchet MS, Arial, Helvetica, sans-serif;
+    color: #5b5b4e;
+    text-align: center;
+    text-align-last:center;
+    font-size: 12px;
+    margin: 2px;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+
 select.folders
 {
-    width: 152px;
-    margin: 5px;
+    font: 100% Trebuchet MS, Arial, Helvetica, sans-serif;
+    color: #5b5b4e;
+    text-align: center;
+    text-align-last:center;
+    font-size: 13px;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    width: 84%;
+    margin: 4px;
     float: left;
 }
 .submit
@@ -1774,4 +1865,54 @@ legend
     font-size: 14px;
     font-variant: small-caps;
     font-weight: bold;
+}
+#action_ToggleArtists {
+    position: absolute;
+    left: 10px;
+    top: 6px;
+    border: 0px;
+    background: transparent;
+}
+#action_RefreshArtists {
+    margin-top: 4px;
+    background: #fff;
+}
+
+
+
+/** Under Construction ***/
+.artist_backdrop{
+    background-image: url('https://lastfm-img2.akamaized.net/i/u/770x0/e7090eb6d05349ae8e0932264910d875.jpg#e7090eb6d05349ae8e0932264910d875');
+    background-size: cover;
+    height: 200px;
+    overflow: hidden;
+    margin: -170px;
+    -webkit-filter: blur(25px);
+    -moz-filter: blur(25px);
+    -ms-filter: blur(25px);
+    -o-filter: blur(25px);
+    filter: blur(25px);
+    background-position: 0 40%;
+}
+.blurred_overlay{
+   background: linear-gradient(180deg, rgb(2, 0, 36) 0%, rgba(255,255,255,0.024229760263480338) 0%, transparent 76%);
+   height: 130px;
+   z-index: 7;
+   overflow: hidden;
+}
+.artist_image{
+   z-index: 9;
+   margin-top: 155px;
+   text-align: left;
+}
+.artist_image img {
+   border-radius: 50%;
+   margin-left: 30px;
+   height: 100px;
+   float: left;
+}
+.artist_name {
+   margin-left: 160px;
+   font-size: 40px;
+   padding-top: 25px;
 }

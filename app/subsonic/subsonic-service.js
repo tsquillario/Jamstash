@@ -40,8 +40,6 @@ function subsonicService(
         getMusicFolders      : getMusicFolders,
         getPlaylist          : getPlaylist,
         getPlaylists         : getPlaylists,
-        getPodcast           : getPodcast,
-        getPodcasts          : getPodcasts,
         getRandomSongs       : getRandomSongs,
         getRandomStarredSongs: getRandomStarredSongs,
         getDirectory         : getDirectory,
@@ -70,7 +68,6 @@ function subsonicService(
         selectedPlaylist: null,
         selectedAutoPlaylist: null,
         selectedGenre: null,
-        selectedPodcast: null
     };
 
     /**
@@ -483,61 +480,6 @@ function subsonicService(
                         stringArray = _.pluck(genreArray, 'content');
                     }
                     return stringArray;
-                }
-            }
-            // We end up here for every else
-            return $q.reject(exception);
-        });
-        return promise;
-    }
-
-    function getPodcasts() {
-        var exception = { reason: 'No podcast found on the Subsonic server.' };
-        var promise = self.subsonicRequest('getPodcasts.view', {
-            params: {
-                includeEpisodes: false
-            }
-        })
-        .then(function (subsonicResponse) {
-            if (subsonicResponse.podcasts !== undefined && subsonicResponse.podcasts.channel !== undefined) {
-                // Make sure this is an array using concat because Madsonic will return an object when there's only one element
-                var channelArray = [].concat(subsonicResponse.podcasts.channel);
-                if (channelArray.length > 0) {
-                    return channelArray;
-                }
-            }
-            // We end up here for every else
-            return $q.reject(exception);
-        });
-        return promise;
-    }
-
-    function getPodcast(id) {
-        var exception = { reason: 'This podcast was not found on the Subsonic server.' };
-        var promise = self.subsonicRequest('getPodcasts.view', {
-            params: {
-                id: id,
-                includeEpisodes: true
-            }
-        }).then(function (subsonicResponse) {
-            var episodes = [];
-            if (subsonicResponse.podcasts.channel !== undefined) {
-                // Make sure this is an array using concat because Madsonic will return an object when there's only one element
-                var channelArray = [].concat(subsonicResponse.podcasts.channel);
-                if (channelArray.length > 0) {
-                    var channel = channelArray[0];
-                    if (channel !== null && channel.id === id) {
-                        // Make sure this is an array using concat because Madsonic will return an object when there's only one element
-                        var episodesArray = [].concat(channel.episode);
-                        episodes = _.filter(episodesArray, function (episode) {
-                            return episode.status === 'completed';
-                        });
-                        if (episodes.length > 0) {
-                            return map.mapPodcasts(episodes);
-                        } else {
-                            return $q.reject({ reason: 'No downloaded episode found for this podcast. Please check the podcast settings.' });
-                        }
-                    }
                 }
             }
             // We end up here for every else

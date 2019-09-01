@@ -7,22 +7,30 @@
 		margin-right: 0 !important;
 	}
 }
+@media screen and (max-width: 1200px)  {
+	.subactions  {
+        	visibility: hidden;
+        	display: none;
+	}
+}
 @media only screen and (max-width: 840px) {
+	#search  {
+        	visibility: hidden;
+        	display: none;   
+	}
 	#nav {
+                top: 3px;
 		border-bottom: 1px solid #D5D5D5;
 		height: 39px;
 		box-shadow: 0 2px 1px -2px rgba(0, 0, 0, 0.2);
 	} 
 	.smcolumn {
-		top: 80px;
 		margin-bottom: -82px;
 	}
 	.lgsection {
-		top: 80px;
 		margin-bottom: -82px;
 	}
 	#SideBar {
-		top: 80px;
 		margin-bottom: -82px;
 	}
 	.subactions {
@@ -86,18 +94,17 @@
 @media only screen and (max-width: 600px) {
 	.smcolumn {
 		width: 75%;
-		background: rgba(255, 255, 255, 0.8);
 		border-bottom; none;
 		min-width: 292px;
-		top: 120px;
+		top: 41px;
 		margin-bottom: -122px;
 	}
 	.lgsection {
-		top: 120px;
+		top: 41px;
 		margin-bottom: -122px;
 	} 
 	#SideBar {
-		top: 120px;
+		top: 41px;
 		margin-bottom: -122px;
 	}
 	#BreadCrumb {
