@@ -7,7 +7,7 @@ fix login redirect to artists and show a start page
 fix subsonic logo url - make configurable
 fix local storage icon in player fucks layout
 fix folder playlist function does not return playlist
-fix grid with mixed content (folder beuken bv)
+fix grid with mixed content
 fix ul.mainlist li.selected background-color for artists
 
 new login screen with user / pass & possible pre-defined server
