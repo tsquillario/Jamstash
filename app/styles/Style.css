@@ -1650,6 +1650,14 @@ input.chat
     width: 150px;
     margin: 5px;
 }
+input#Search:hover
+{
+   color: #333;
+   border-color: #999;
+   -moz-box-shadow: 0 2px 0 rgba(0,0,0,.2) -webkit-box-shadow:0 2px 5px rgba(0,0,0,.2);
+   box-shadow: 0 1px 2px rgba(0,0,0,.15);
+}
+
 input#Search {
     font:  100% Trebuchet MS, Arial, Helvetica, sans-serif;
     color:  #5b5b4e;
@@ -1695,6 +1703,13 @@ select.large
     -webkit-appearance: none;
     width: 295px;
 }
+select#SearchType:hover
+{
+   color: #333;
+   border-color: #999;
+   -moz-box-shadow: 0 2px 0 rgba(0,0,0,.2) -webkit-box-shadow:0 2px 5px rgba(0,0,0,.2);
+   box-shadow: 0 1px 2px rgba(0,0,0,.15);
+}
 select#SearchType 
 {
     font: 100% Trebuchet MS, Arial, Helvetica, sans-serif;
@@ -1721,7 +1736,13 @@ select#SelectedAlbumSort
     -moz-appearance: none;
     -webkit-appearance: none;
 }
-
+select.folders:hover
+{
+   color: #333;
+   border-color: #999;
+   -moz-box-shadow: 0 2px 0 rgba(0,0,0,.2) -webkit-box-shadow:0 2px 5px rgba(0,0,0,.2);
+   box-shadow: 0 1px 2px rgba(0,0,0,.15);
+}
 select.folders
 {
     font: 100% Trebuchet MS, Arial, Helvetica, sans-serif;
