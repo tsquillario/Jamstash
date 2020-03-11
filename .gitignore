@@ -1,5 +1,6 @@
 images/Thumbs.db
 bower_components
+dist
 node_modules
 /.tmp
 /.ssh

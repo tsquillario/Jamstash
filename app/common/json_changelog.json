@@ -6,7 +6,6 @@
         { "text": "- Fix seeking and duration for transcoded streams (thanks <a href=\"https://github.com/mvn23\">mvn23</a>!)" },
         { "text": "- Fix media key detection" },
         { "text": "- Other UI/usability fixes and improvements" }
-
         ]
     },
     {
