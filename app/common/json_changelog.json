@@ -1,5 +1,15 @@
 [
     {
+        "date": "10/03/2020", "version": "4.7.0",
+        "changes": [
+        { "text": "- Add artist to now playing display" },
+        { "text": "- Fix seeking and duration for transcoded streams (thanks <a href=\"https://github.com/mvn23\">mvn23</a>!)" },
+        { "text": "- Fix media key detection" },
+        { "text": "- Other UI/usability fixes and improvements" }
+
+        ]
+    },
+    {
         "date": "11/01/2017", "version": "4.6.5",
         "changes": [
         { "text": "- Thanks to <a href=\"https://github.com/pR0Ps\">pR0Ps</a> for contributing!" },
