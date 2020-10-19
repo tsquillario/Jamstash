@@ -43,7 +43,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                     swfPath: 'bower_components/jplayer/dist/jplayer/jquery.jplayer.swf',
                     wmode: 'window',
                     solution: audioSolution,
-                    supplied: 'mp3, oga, m4a',
+                    supplied: 'mp3, oga, m4a, flac',
                     preload: 'auto',
                     errorAlerts: false,
                     warningAlerts: false,
@@ -113,12 +113,9 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                         scope.fancyboxOpenImage(newSong.coverartfull);
                     }
                     var media = {};
-                    if (newSong.suffix === 'oga') {
-                        media= { oga: newSong.url, duration: newSong.duration };
-                    } else if (newSong.suffix === 'm4a') {
-                        media= { m4a: newSong.url, duration: newSong.duration };
-                    } else if (newSong.suffix === 'mp3') {
-                        media= { mp3: newSong.url, duration: newSong.duration };
+                    if (['oga', 'm4a', 'mp3', 'flac'].indexOf(newSong.suffix) > -1) {
+                        media[newSong.suffix] = newSong.url;
+                        media['duration'] = newSong.duration;
                     }
                     $player.jPlayer('setMedia', media);
                     if (globals.settings.Jukebox) {
