@@ -1,5 +1,11 @@
 [
     {
+        "date": "18/10/2020", "version": "4.7.1",
+        "changes": [
+        { "text": "- Fix playing FLAC files (thanks <a href=\"https://github.com/d3m3vilurr\">d3m3vilurr</a>!)" }
+        ]
+    },
+    {
         "date": "10/03/2020", "version": "4.7.0",
         "changes": [
         { "text": "- Add artist to now playing display" },
