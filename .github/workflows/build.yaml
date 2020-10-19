@@ -1,0 +1,94 @@
+name: build
+
+# Run manually or each time a version tag is pushed
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  build:
+    name: "Build Jamstash"
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: "Checkout Jamstash"
+        uses: actions/checkout@v2
+        with:
+          # Need the gh-pages branch to be available
+          fetch-depth: 0
+
+      - name: "Install nodejs and npm"
+        run: |-
+          # Make apt retry
+          echo 'Acquire::Retries "5";' | sudo tee -a /etc/apt/apt.conf.d/80-retries >/dev/null
+
+          sudo apt-get update
+          sudo apt-get install -y nodejs git
+
+      - name: "Build Jamstash"
+        run: |-
+          # Make sure the gh-pages branch is available locally
+          git checkout gh-pages
+          git -c advice.detachedHead=false git checkout -
+
+          # Set up the committer for the build script
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+          # Build the ref (builds and commits the result to the gh-pages branch)
+          ./build-commit.sh '${{ github.ref }}'
+
+          # Package the result
+          git checkout gh-pages
+          rm CNAME
+          zip jamstash.zip -r *
+
+      # If the commit is not tagged, just push the build as an artifact
+      - name: "Get short sha"
+        id: get_sha
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        run: echo ::set-output name=SHA::${GITHUB_SHA::8}
+
+      - name: Upload artifact
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        uses: actions/upload-artifact@v2
+        with:
+          name: Jamstash-${{ steps.get_sha.outputs.SHA }}
+          path: ./jamstash.zip
+
+      # If the commit is tagged, update gh-pages, make a release and upload the build
+      - name: "Update gh-pages"
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |-
+          git push origin gh-pages:gh-pages
+
+      - name: "Get version from tag"
+        id: get_version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
+      - name: "Create release"
+        id: create_release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          release_name: Jamstash ${{ steps.get_version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+
+      - name: "Upload build"
+        uses: actions/upload-release-asset@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./jamstash.zip
+          asset_name: Jamstash-${{ steps.get_version.outputs.VERSION }}.zip
+          asset_content_type: application/zip
+
