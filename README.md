@@ -104,9 +104,12 @@ sure to add any notable user-facing changes in this file.
 After bumping the version, modifying the changelog, and committing the updated files, use `git tag
 <version>` to tag the commit with the current version.
 
-To deploy the new Jamstash version to GitHub Pages, the current version needs to be built and
-committed to the 'gh-pages' branch. The `build-commit.sh` script has been provided to automate this
-process. Run `./build-commit.sh --help` for more information.
+Once this tag is pushed to GitHub, GitHub Actions should automatically build it, release it, and
+deploy it to the 'gh-pages' branch (which is served by GitHub Pages).
+
+If this automated process fails, or GitHub Actions is not available, updating the 'gh-pages' branch
+can be done locally. The `build-commit.sh` script has been provided to automate this process. Run
+`./build-commit.sh --help` for more information.
 
 An example of the entire release process:
 ```
@@ -122,11 +125,14 @@ git commit -am "Bump version to v1.2.3"
 # tag the commit
 git tag v1.2.3
 
-# update the gh-pages branch with the current release
-./build-commit.sh v1.2.3
-
 # push the commit and tag to the repo
 git push origin master --tags
+
+```
+Extra steps required if not using GitHub Actions:
+```
+# update the gh-pages branch with the current release
+./build-commit.sh v1.2.3
 
 # push the newly-released version to GitHub Pages to deploy it
 git push origin gh-pages

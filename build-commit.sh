@@ -25,7 +25,7 @@ cd "$tmp"
 echo "Cloning repo into a temp directory..."
 git clone "$repodir" repo
 cd repo
-git checkout --detach "$resolved"
+git -c advice.detachedHead=false checkout --detach "$resolved"
 rm -rf dist
 
 echo ""
