@@ -25,7 +25,7 @@ cd "$tmp"
 echo "Cloning repo into a temp directory..."
 git clone "$repodir" repo
 cd repo
-git checkout --detach "$resolved"
+git -c advice.detachedHead=false checkout --detach "$resolved"
 rm -rf dist
 
 echo ""
@@ -42,7 +42,7 @@ npx grunt build
 echo ""
 echo "Committing built files"
 mv dist ..
-if git rev-parse --verify origin/gh-pages 2> /dev/null; then
+if git rev-parse --quiet --verify origin/gh-pages >/dev/null; then
     git checkout --force gh-pages
 else
     git checkout --orphan gh-pages
@@ -53,6 +53,12 @@ cd ../dist
 
 # Add the CNAME file for the custom domain
 echo "jamstash.com" > CNAME
+
+if git diff --quiet --exit-code; then
+    echo ""
+    echo "No changes since the last build - nothing to commit"
+    exit 0
+fi
 
 # Commit the results and push them to the original repo
 short="$(git rev-parse --short "$resolved")"
