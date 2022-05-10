@@ -203,10 +203,15 @@ module.exports = function (grunt) {
         assetsDirs: ['<%= yeoman.dist %>','<%= yeoman.dist %>/images', '<%= yeoman.dist %>/styles'],
         patterns: {
           js: [
-            [/(images\/albumdefault_50\.jpg)/, 'Replace javascript references to the album default image'],
-            [/(images\/albumdefault_60\.jpg)/, 'Replace javascript references to the album default image'],
-            [/(images\/albumdefault_160\.jpg)/, 'Replace javascript references to the album default image'],
+            [/(images\/albumdefault_50\.jpg)/g, 'Replace javascript references to the album default image'],
+            [/(images\/albumdefault_60\.jpg)/g, 'Replace javascript references to the album default image'],
+            [/(images\/albumdefault_160\.jpg)/g, 'Replace javascript references to the album default image'],
             [/(styles\/Dark\.css)/, 'Replace javascript references to the theme CSS']
+          ],
+          html: [
+            [/(images\/albumdefault_50\.jpg)/g, 'Replace javascript references to the album default image'],
+            [/(images\/albumdefault_60\.jpg)/g, 'Replace javascript references to the album default image'],
+            [/(images\/albumdefault_160\.jpg)/g, 'Replace javascript references to the album default image']
           ]
         }
       }
