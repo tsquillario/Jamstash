@@ -95,4 +95,13 @@ angular.module('JamStash')
             }
         });
     };
+})
+.directive('checkImage', function() {
+   return {
+      link: function(scope, element, attrs) {
+         element.bind('error', function() {
+            element.attr('src', '/images/albumdefault_160.jpg'); // set default image
+         });
+       }
+   }
 });

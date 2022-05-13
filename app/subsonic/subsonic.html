@@ -51,7 +51,7 @@
                                 <a class="hover" href="" title="Star" ng-class="{'favorite': o.starred, 'rate': !o.starred}" ng-click="toggleStar(o)" stop-event="click"></a>
                                 <a class="info hover" href="" title="{{'Created: ' + o.date}}"></a>
                             </div>
-                            <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
+                            <div class="albumart"><img check-image ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
                             <div class="albuminfo">
                                 <div class="title" title="{{o.name}}" ng-bind-html="o.name"></div>
                                 <div class="artist" title="{{o.artist}}"><a href="" id="{{o.parentid}}" ng-click="getDirectory('display', o.parentid, o.artist, 'forward')" stop-event="click" ng-bind-html="o.artist"></a></div>
@@ -59,7 +59,7 @@
                             <div class="clear"></div>
                         </li>
                         <li class="album" ng-switch-when="bytag" id="{{o.id}}" ng-class="{'selected': selectedAlbum == o.id, 'albumgrid': settings.DefaultLibraryLayout.id == 'grid'}" ng-click="getAlbumByTag(o.id)">
-                            <div class="albumart"><img ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
+                            <div class="albumart"><img check-image ng-src="{{o.coverartthumb}}" src="images/albumdefault_160.jpg"></div>
                             <div class="albuminfo">
                                 <div class="title" title="{{o.name}}" ng-bind-html="o.name"></div>
                                 <div class="artist" title="{{o.artist}}"><a href="" ng-click="getArtistByTag(o.artistId)" stop-event="click" ng-bind-html="o.artist"></a></div>

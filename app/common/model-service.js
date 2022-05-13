@@ -66,6 +66,9 @@ angular.module('jamstash.model', ['jamstash.utils'])
         if (typeof album.coverArt != 'undefined') {
             coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=160&id=' + album.coverArt;
             coverartfull = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&id=' + album.coverArt;
+        } else {
+            coverartthumb = 'images/albumdefault_160.jpg';
+            coverartfull = 'images/albumdefault_160.jpg';
         }
         if (typeof album.starred !== 'undefined') { starred = true; } else { starred = false; }
         if (typeof album.title !== 'undefined') { title = album.title; } else { title = album.name; }
@@ -137,6 +140,9 @@ angular.module('jamstash.model', ['jamstash.utils'])
         if (typeof song.coverArt != 'undefined') {
             coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=60&id=' + song.coverArt;
             coverartfull = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&id=' + song.coverArt;
+        } else {
+            coverartthumb = 'images/albumdefault_60.jpg';
+            coverartfull = 'images/albumdefault_160.jpg';
         }
         if (typeof song.album == 'undefined') { album = '&nbsp;'; } else { album = song.album.toString(); }
         if (typeof song.artist == 'undefined') { artist = '&nbsp;'; } else { artist = song.artist.toString(); }
