@@ -67,7 +67,7 @@ angular.module('jamstash.model', ['jamstash.utils'])
             coverartthumb = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&size=160&id=' + album.coverArt;
             coverartfull = globals.BaseURL() + '/getCoverArt.view?' + globals.BaseParams() + '&id=' + album.coverArt;
         } else {
-            coverartthumb = 'images/albumdefault_60.jpg';
+            coverartthumb = 'images/albumdefault_160.jpg';
             coverartfull = 'images/albumdefault_160.jpg';
         }
         if (typeof album.starred !== 'undefined') { starred = true; } else { starred = false; }
