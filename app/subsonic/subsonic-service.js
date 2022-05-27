@@ -552,7 +552,7 @@ function subsonicService(
         var promise = self.subsonicRequest('scrobble.view', {
             params: {
                 id: song.id,
-                submisssion: true
+                submission: true
             }
         }).then(function () {
             if (globals.settings.Debug) { console.log('Successfully scrobbled song: ' + song.id); }

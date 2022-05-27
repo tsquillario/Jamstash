@@ -585,7 +585,7 @@ describe("Subsonic service -", function () {
     it("scrobble() - Given a song, when I scrobble it, then a promise will be resolved with true if there was no error", function () {
         var song = { id: 45872 };
         var url = 'http://demo.subsonic.com/rest/scrobble.view?' +
-            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp' + '&id=45872' + '&p=enc:cGFzc3dvcmQ%3D' + '&submisssion=true' + '&u=Hyzual&v=1.10.2';
+            'c=Jamstash&callback=JSON_CALLBACK&f=jsonp' + '&id=45872' + '&p=enc:cGFzc3dvcmQ%3D' + '&submission=true' + '&u=Hyzual&v=1.10.2';
         mockBackend.expectJSONP(url).respond(JSON.stringify(response));
 
         var promise = subsonic.scrobble(song);
