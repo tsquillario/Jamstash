@@ -42,7 +42,6 @@ jobs:
 
           # Package the result
           git checkout gh-pages
-          rm CNAME
           zip jamstash.zip -r *
 
       # If the commit is not tagged, just push the build as an artifact

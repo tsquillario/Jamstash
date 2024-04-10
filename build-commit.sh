@@ -51,9 +51,6 @@ fi
 mv .git ../dist
 cd ../dist
 
-# Add the CNAME file for the custom domain
-echo "jamstash.com" > CNAME
-
 if git diff --quiet --exit-code; then
     echo ""
     echo "No changes since the last build - nothing to commit"
