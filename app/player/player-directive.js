@@ -113,7 +113,7 @@ angular.module('jamstash.player.directive', ['jamstash.player.service', 'jamstas
                         scope.fancyboxOpenImage(newSong.coverartfull);
                     }
                     var media = {};
-                    if (['oga', 'm4a', 'mp3', 'flac'].indexOf(newSong.suffix) > -1) {
+                    if (['oga', 'm4a', 'mp3', 'flac'].includes(newSong.suffix)) {
                         media[newSong.suffix] = newSong.url;
                         media['duration'] = newSong.duration;
                     }
